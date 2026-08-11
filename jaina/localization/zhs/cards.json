@@ -2,8 +2,6 @@
   "JAINA_CARD_FIREBALL.title": "火球术",
   "JAINA_CARD_FIREBALL.titleUpgraded": "炎爆术",
   "JAINA_CARD_FIREBALL.description": "造成{Damage}点伤害。",
-  "JAINA_CARD_FROST_ARMOR.title": "冰霜护盾",
-  "JAINA_CARD_FROST_ARMOR.description": "获得{Block}点格挡。",
   "JAINA_CARD_FIREBLAST.title": "火焰冲击",
   "JAINA_CARD_FIREBLAST.description": "造成{Damage}点伤害。每回合开始自动加入手牌。",
   "JAINA_CARD_ARCANE_INTELLECT.title": "奥术智慧",
@@ -12,6 +10,6 @@
   "JAINA_CARD_ICE_BARRIER.title": "寒冰护体",
   "JAINA_CARD_ICE_BARRIER.titleUpgraded": "冰冷案例",
   "JAINA_CARD_ICE_BARRIER.description": "{IfUpgraded:show:召唤 2 个 [blue]2/2[/blue] 的[red]不稳定的骷髅[/red]，并获得[blue]4[/blue]点护甲值。|本回合内受到攻击时，获得[blue]{Block}[/blue]点护甲值。}",
-  "JAINA_CARD_VOLATILE_SKELETON.title": "不稳定的骷髅",
-  "JAINA_CARD_VOLATILE_SKELETON.description": "召唤一个[blue]2/2[/blue]的[red]不稳定的骷髅[/red]。"
+  "JAINA_CARD_VOLATILE_SKELETON_CARD.title": "不稳定的骷髅",
+  "JAINA_CARD_VOLATILE_SKELETON_CARD.description": "召唤一个[blue]2/2[/blue]的[red]不稳定的骷髅[/red]。"
 }
