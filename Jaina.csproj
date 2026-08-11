@@ -14,9 +14,9 @@
     <!-- 创意工坊根目录（STS2 的 AppID 为 2868840） -->
     <Sts2WorkshopDir>$(Sts2Dir)\..\..\workshop\content\2868840</Sts2WorkshopDir>
 
-    <!-- 创意工坊 RitsuLib 的 WorkshopID 与 variants 目录 -->
+    <!-- 创意工坊 RitsuLib 的 WorkshopID 与 variants 目录（0.110.1 游戏加载最高兼容 variant lib\0.110.0） -->
     <RitsuLibWorkshopId>3747602295</RitsuLibWorkshopId>
-    <RitsuLibCompatDir>lib\0.107.1</RitsuLibCompatDir>
+    <RitsuLibCompatDir>lib\0.110.0</RitsuLibCompatDir>
     <!-- 创意工坊 MinionLib 的 WorkshopID（随从库） -->
     <MinionLibWorkshopId>3747595039</MinionLibWorkshopId>
   </PropertyGroup>
@@ -40,7 +40,7 @@
       <Private>false</Private>
     </Reference>
 
-    <!-- 创意工坊引用 RitsuLib（兼容 0.107.1 基线） -->
+    <!-- 创意工坊引用 RitsuLib（0.110.1 基线 variant） -->
     <Reference Include="STS2-RitsuLib">
       <HintPath>$(Sts2WorkshopDir)/$(RitsuLibWorkshopId)/$(RitsuLibCompatDir)/STS2-RitsuLib.dll</HintPath>
       <Private>false</Private>
