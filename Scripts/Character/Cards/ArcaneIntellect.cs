@@ -26,12 +26,12 @@ public sealed class ArcaneIntellect : ModCardTemplate
     ];
 
     /// <summary>
-    /// 卡牌原画：炉石传说"奥术智慧"高清原画。
-    /// 升级后变为"时空提速"，卡图同步切换为时间扭曲原画。
+    /// 卡牌原画：炉石传说"奥术智慧"官方高清原画。
+    /// 升级后变为"时空提速 (Chrono Boost)"，卡图同步切换为 Chrono Boost 官方原画。
     /// </summary>
     public override string CustomPortraitPath =>
         IsUpgraded
-            ? "res://assets/card_art/time_warp.png"
+            ? "res://assets/card_art/chrono_boost.png"
             : "res://assets/card_art/arcane_intellect.png";
 
     public ArcaneIntellect()

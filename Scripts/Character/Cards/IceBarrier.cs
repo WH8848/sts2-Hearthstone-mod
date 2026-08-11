@@ -31,12 +31,12 @@ public sealed class IceBarrier : ModCardTemplate
     ];
 
     /// <summary>
-    /// 卡牌原画：炉石传说"寒冰护盾"高清原画。
-    /// 升级后变为"冰冷案例"，卡图同步切换为冰霜新星原画。
+    /// 卡牌原画：炉石传说"寒冰屏障"官方高清原画。
+    /// 升级后变为"冰冷案例 (Cold Case)"，卡图同步切换为 Cold Case 官方原画。
     /// </summary>
     public override string CustomPortraitPath =>
         IsUpgraded
-            ? "res://assets/card_art/frost_nova.png"
+            ? "res://assets/card_art/cold_case.png"
             : "res://assets/card_art/ice_barrier.png";
 
     public IceBarrier()

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bqx1y3qeqrt1x"
-path="res://.godot/imported/time_warp.png-6fb0e708d88ff63f6bb987f1ba100d52.ctex"
+uid="uid://dfuce85p1vvv3"
+path="res://.godot/imported/chrono_boost.png-86bb7eb0c55d943135ebc97a0a18afd8.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/card_art/time_warp.png"
-dest_files=["res://.godot/imported/time_warp.png-6fb0e708d88ff63f6bb987f1ba100d52.ctex"]
+source_file="res://assets/card_art/chrono_boost.png"
+dest_files=["res://.godot/imported/chrono_boost.png-86bb7eb0c55d943135ebc97a0a18afd8.ctex"]
 
 [params]
 
