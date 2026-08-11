@@ -10,6 +10,9 @@
     <!-- 改成你的杀戮尖塔2目录 -->
     <Sts2Dir>E:\SteamLibrary\steamapps\common\Slay the Spire 2</Sts2Dir>
     <Sts2DataDir>$(Sts2Dir)\data_sts2_windows_x86_64</Sts2DataDir>
+
+    <!-- Godot 可执行文件（用于构建后自动导出 pck） -->
+    <GodotExe>E:\MOD\sts2\Godot_v4.5.1-stable_mono_win64\Godot_v4.5.1-stable_mono_win64\Godot_v4.5.1-stable_mono_win64.exe</GodotExe>
   </PropertyGroup>
 
   <ItemGroup>
@@ -56,6 +59,16 @@
     <MakeDir Directories="$(Sts2Dir)\mods\$(MSBuildProjectName)\localization" />
     <Copy SourceFiles="@(LocalizationFiles)"
           DestinationFiles="@(LocalizationFiles->'$(Sts2Dir)\mods\$(MSBuildProjectName)\localization\%(RecursiveDir)%(Filename)%(Extension)')" />
+  </Target>
+
+  <!-- 构建后自动用 Godot 导出 pck 到游戏 mods 目录（headless，走 export_presets.cfg 的 Windows Desktop 预设）。
+       注意：导出时请关闭 Godot 编辑器（避免 .godot 缓存占用冲突）。
+       Condition 防止递归：Godot 导出时会内部执行 dotnet publish（ExportDebug/ExportRelease 配置），
+       那一步必须跳过本 target，否则无限循环。 -->
+  <Target Name="Export Pck" AfterTargets="Copy Mod"
+          Condition="'$(Configuration)' != 'ExportDebug' and '$(Configuration)' != 'ExportRelease'">
+    <Message Text="Exporting pck to $(Sts2Dir)\mods\$(MSBuildProjectName)\$(MSBuildProjectName).pck ..." Importance="high" />
+    <Exec Command="&quot;$(GodotExe)&quot; --headless --path &quot;$(MSBuildProjectDirectory)&quot; --export-pack &quot;Windows Desktop&quot; &quot;$(Sts2Dir)\mods\$(MSBuildProjectName)\$(MSBuildProjectName).pck&quot;" />
   </Target>
 
   <!-- 复制运行库到 .NET 输出目录：sts2/0Harmony/RitsuLib/MinionLib/System.IO.Hashing
