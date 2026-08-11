@@ -10,15 +10,6 @@
     <!-- 改成你的杀戮尖塔2目录 -->
     <Sts2Dir>E:\SteamLibrary\steamapps\common\Slay the Spire 2</Sts2Dir>
     <Sts2DataDir>$(Sts2Dir)\data_sts2_windows_x86_64</Sts2DataDir>
-
-    <!-- 创意工坊根目录（STS2 的 AppID 为 2868840） -->
-    <Sts2WorkshopDir>$(Sts2Dir)\..\..\workshop\content\2868840</Sts2WorkshopDir>
-
-    <!-- 创意工坊 RitsuLib 的 WorkshopID 与 variants 目录（0.110.1 游戏加载最高兼容 variant lib\0.110.0） -->
-    <RitsuLibWorkshopId>3747602295</RitsuLibWorkshopId>
-    <RitsuLibCompatDir>lib\0.110.0</RitsuLibCompatDir>
-    <!-- 创意工坊 MinionLib 的 WorkshopID（随从库） -->
-    <MinionLibWorkshopId>3747595039</MinionLibWorkshopId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -40,18 +31,17 @@
       <Private>false</Private>
     </Reference>
 
-    <!-- 创意工坊引用 RitsuLib（0.110.1 基线 variant） -->
-    <Reference Include="STS2-RitsuLib">
-      <HintPath>$(Sts2WorkshopDir)/$(RitsuLibWorkshopId)/$(RitsuLibCompatDir)/STS2-RitsuLib.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
+    <!-- RitsuLib（0.5.11 主包 = 0.110.0 API 面，与游戏 0.110.1 加载的 variant 一致） -->
+    <PackageReference Include="STS2.RitsuLib" Version="0.5.11" />
 
-    <!-- 创意工坊引用 MinionLib（随从库） -->
-    <Reference Include="MinionLib">
-      <HintPath>$(Sts2WorkshopDir)/$(MinionLibWorkshopId)/MinionLib/MinionLib.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
+    <!-- MinionLib（随从库，含 source generator：按需生成 Jaina.RitsuAdapters 适配器） -->
+    <PackageReference Include="FuYnAloft.Sts2.MinionLib" Version="0.6.2" />
   </ItemGroup>
+
+  <!-- 开发机已订阅工坊 MinionLib，关闭 NuGet 包自动复制到 ModsPath，避免重复部署 -->
+  <PropertyGroup>
+    <ShouldAutoCopyMinionLib>false</ShouldAutoCopyMinionLib>
+  </PropertyGroup>
 
   <!-- 自动复制dll、json 和本地化文件 -->
   <Target Name="Copy Mod" AfterTargets="PostBuildEvent">
@@ -74,8 +64,8 @@
     <ItemGroup>
       <RuntimeDependency Include="$(Sts2DataDir)/sts2.dll" />
       <RuntimeDependency Include="$(Sts2DataDir)/0Harmony.dll" />
-      <RuntimeDependency Include="$(Sts2WorkshopDir)/$(RitsuLibWorkshopId)/$(RitsuLibCompatDir)/STS2-RitsuLib.dll" />
-      <RuntimeDependency Include="$(Sts2WorkshopDir)/$(MinionLibWorkshopId)/MinionLib/MinionLib.dll" />
+      <RuntimeDependency Include="$(NuGetPackageRoot)sts2.ritsulib\0.5.11\lib\net9.0\STS2-RitsuLib.dll" Condition="Exists('$(NuGetPackageRoot)sts2.ritsulib\0.5.11\lib\net9.0\STS2-RitsuLib.dll')" />
+      <RuntimeDependency Include="$(NuGetPackageRoot)fuynaloft.sts2.minionlib\0.6.2\lib\net9.0\MinionLib.dll" Condition="Exists('$(NuGetPackageRoot)fuynaloft.sts2.minionlib\0.6.2\lib\net9.0\MinionLib.dll')" />
       <!-- RitsuLib 的依赖包（若无 NuGet 缓存可改为从本地 lib 目录引用） -->
       <RuntimeDependency Include="$(NuGetPackageRoot)system.io.hashing\9.0.0\lib\net9.0\System.IO.Hashing.dll" Condition="Exists('$(NuGetPackageRoot)system.io.hashing\9.0.0\lib\net9.0\System.IO.Hashing.dll')" />
     </ItemGroup>
