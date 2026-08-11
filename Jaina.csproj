@@ -52,9 +52,10 @@
     <MakeDir Directories="$(Sts2Dir)\mods\" />
     <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(Sts2Dir)\mods\$(MSBuildProjectName)\" />
     <Copy SourceFiles="$(MSBuildProjectName).json" DestinationFolder="$(Sts2Dir)/mods/$(MSBuildProjectName)/" />
-    <!-- 复制 localization 目录（卡牌/随从/关键词等本地化），并保留子目录结构 -->
+    <!-- 复制 localization 目录（卡牌/随从/关键词等本地化），并保留子目录结构。
+         注：游戏从 res://{modId}/localization/ 读取本地化，故项目内路径为 jaina/localization/ -->
     <ItemGroup>
-      <LocalizationFiles Include="localization/**/*.json" />
+      <LocalizationFiles Include="jaina/localization/**/*.json" />
     </ItemGroup>
     <MakeDir Directories="$(Sts2Dir)\mods\$(MSBuildProjectName)\localization" />
     <Copy SourceFiles="@(LocalizationFiles)"
