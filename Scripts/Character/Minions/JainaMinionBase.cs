@@ -19,7 +19,9 @@ namespace jaina.Scripts.Character.Minions;
 /// 吉安娜随从基类 - 真正的生物单位。
 /// 属性：攻击力（上方数字）、生命值（下方数字）。
 /// 不显示血条和意图，视觉使用闪电充能球模型，固定在玩家身边。
-/// 回合结束时：攻击力 > 0 的随从对随机敌人造成攻击力点伤害，并执行各随从独有被动。
+/// 两种行为模式（<see cref="JainaMinionBehaviorMode"/>）：
+/// - 手动模式（默认）：随从永不自动行动，一切行动靠玩家点击随从触发（行动点制）。
+/// - 自动模式：玩家回合结束时自动攻击随机敌人，并执行各随从独有被动。
 /// </summary>
 public abstract class JainaMinionBase : MinionModel
 {
@@ -27,6 +29,16 @@ public abstract class JainaMinionBase : MinionModel
     /// 随从基础攻击力（通过 MinionSummonOptions.PrimaryStatAmount 传入实际值）
     /// </summary>
     public int BaseAttackValue = 0;
+
+    /// <summary>
+    /// 随从行为模式（默认手动：不自动行动，点击驱动）
+    /// </summary>
+    public virtual JainaMinionBehaviorMode BehaviorMode => JainaMinionBehaviorMode.Manual;
+
+    /// <summary>
+    /// 手动模式下每回合可点击攻击的次数（默认 1 次）
+    /// </summary>
+    public virtual int ActionsPerTurn => 1;
 
     /// <summary>
     /// 统一使用闪电充能球战斗视觉（临时方案，后续可替换为专属随从动画）
@@ -49,12 +61,24 @@ public abstract class JainaMinionBase : MinionModel
     public override bool ShouldDisappearFromDoom => true;
 
     /// <summary>
-    /// 随从意图恒定：攻击，伤害 = 攻击力。
-    /// 重写状态机生成一个恒定攻击意图的状态，随从每次敌方回合都会尝试攻击。
+    /// 随从意图与行动状态机。
+    /// 自动模式：恒定攻击意图，伤害 = 攻击力，随从每次敌方回合都会尝试攻击。
+    /// 手动模式：纯 IDLE 状态机（与 MinionLib 默认一致），随从永不自动行动，一切靠玩家点击。
     /// </summary>
     protected override MonsterMoveStateMachine GenerateMoveStateMachine()
     {
-        // 延迟读取 BaseAttackValue，确保召唤时的攻击设定生效
+        // 手动模式：IDLE 状态机，无任何意图，随从不会在自己的回合自动行动
+        if (BehaviorMode == JainaMinionBehaviorMode.Manual)
+        {
+            var idle = new MoveState("MINION_IDLE", _ => Task.CompletedTask)
+            {
+                FollowUpState = null
+            };
+            idle.FollowUpState = idle; // 循环自身
+            return new MonsterMoveStateMachine([idle], idle);
+        }
+
+        // 自动模式：延迟读取 BaseAttackValue，确保召唤时的攻击设定生效
         var attackMove = new MoveState(
             "MINION_ATTACK",
             async targets =>
@@ -92,7 +116,27 @@ public abstract class JainaMinionBase : MinionModel
     }
 
     /// <summary>
-    /// 玩家回合结束时：攻击力 > 0 的随从对随机可命中敌人造成攻击力点伤害，然后执行随从独有被动。
+    /// 玩家回合开始时：手动模式授予本回合的点击攻击行动点。
+    /// （自动模式无需授予，随从会自行攻击。）
+    /// </summary>
+    public override async Task BeforeSideTurnStart(PlayerChoiceContext choiceContext, CombatSide side,
+        IReadOnlyList<Creature> participants, ICombatState combatState)
+    {
+        if (BehaviorMode != JainaMinionBehaviorMode.Manual || side != CombatSide.Player || !Creature.IsAlive)
+        {
+            return;
+        }
+
+        // 行动点由随从主人施加，Amount = 本回合可点击攻击次数
+        var applier = Creature.PetOwner?.Creature ?? Creature;
+        await PowerCmd.Apply<JainaAttackAction>(choiceContext, Creature, ActionsPerTurn, applier, null);
+    }
+
+    /// <summary>
+    /// 玩家回合结束时：
+    /// 自动模式 - 攻击力 > 0 的随从对随机可命中敌人造成攻击力点伤害；
+    /// 手动模式 - 随从不自动行动（靠玩家点击）；
+    /// 两种模式都会执行随从独有回合结束被动。
     /// </summary>
     public override async Task BeforeSideTurnEnd(PlayerChoiceContext choiceContext, CombatSide side, IEnumerable<Creature> participants)
     {
@@ -105,7 +149,10 @@ public abstract class JainaMinionBase : MinionModel
             return;
         }
 
-        await PerformTurnEndAttack(choiceContext);
+        if (BehaviorMode == JainaMinionBehaviorMode.Auto)
+        {
+            await PerformTurnEndAttack(choiceContext);
+        }
         await PerformTurnEndPassive(choiceContext);
     }
 

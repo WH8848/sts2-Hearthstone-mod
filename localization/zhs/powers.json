@@ -1,5 +1,8 @@
 {
   "JAINA_POWER_MINION_SQUAD_POWER.title": "随从军势",
   "JAINA_POWER_MINION_SQUAD_POWER.description": "当吉安娜的护甲无法阻挡伤害时，随从按打出顺序代为承受伤害。",
-  "JAINA_POWER_MINION_SQUAD_POWER.smartDescription": "当护甲无法阻挡伤害时，随从按打出顺序代为承受伤害。"
+  "JAINA_POWER_MINION_SQUAD_POWER.smartDescription": "当护甲无法阻挡伤害时，随从按打出顺序代为承受伤害。",
+  "JAINA_POWER_JAINA_ATTACK_ACTION.title": "攻击",
+  "JAINA_POWER_JAINA_ATTACK_ACTION.description": "[gold]行动[/gold]：选择 1 名敌人。造成等同于该随从攻击力的伤害。消耗 1 点。",
+  "JAINA_POWER_JAINA_ATTACK_ACTION.smartDescription": "[gold]行动[/gold]：选择 1 名敌人。造成等同于该随从攻击力的伤害。消耗 1 点。"
 }

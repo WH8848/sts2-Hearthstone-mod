@@ -18,6 +18,11 @@ namespace jaina.Scripts.Character.Minions;
 [RegisterMonster]
 public sealed class Zealot : JainaMinionBase
 {
+    /// <summary>
+    /// 自动模式：被生成时立刻攻击 + 回合结束自动攻击
+    /// </summary>
+    public override JainaMinionBehaviorMode BehaviorMode => JainaMinionBehaviorMode.Auto;
+
     public override int MinInitialHp => 4;
 
     public override int MaxInitialHp => 4;

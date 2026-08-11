@@ -19,6 +19,11 @@ namespace jaina.Scripts.Character.Minions;
 public sealed class VolatileSkeleton : JainaMinionBase
 {
     /// <summary>
+    /// 自动模式：回合结束自动攻击随机敌人
+    /// </summary>
+    public override JainaMinionBehaviorMode BehaviorMode => JainaMinionBehaviorMode.Auto;
+
+    /// <summary>
     /// 亡语伤害值
     /// </summary>
     public int DeathrattleDamage => 2;

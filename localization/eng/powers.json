@@ -1,5 +1,8 @@
 {
   "JAINA_POWER_MINION_SQUAD_POWER.title": "Minion Squad",
   "JAINA_POWER_MINION_SQUAD_POWER.description": "When Jaina's Block cannot absorb damage, minions take damage in summon order.",
-  "JAINA_POWER_MINION_SQUAD_POWER.smartDescription": "When Block cannot absorb damage, minions take damage in summon order."
+  "JAINA_POWER_MINION_SQUAD_POWER.smartDescription": "When Block cannot absorb damage, minions take damage in summon order.",
+  "JAINA_POWER_JAINA_ATTACK_ACTION.title": "Attack",
+  "JAINA_POWER_JAINA_ATTACK_ACTION.description": "[gold]Action[/gold]: Choose 1 enemy. Deal damage equal to this minion's attack. Spend 1 point.",
+  "JAINA_POWER_JAINA_ATTACK_ACTION.smartDescription": "[gold]Action[/gold]: Choose 1 enemy. Deal damage equal to this minion's attack. Spend 1 point."
 }
