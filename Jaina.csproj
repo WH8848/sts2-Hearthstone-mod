@@ -62,7 +62,7 @@
   </Target>
 
   <!-- 构建后自动用 Godot 导出 pck 到游戏 mods 目录（headless，走 export_presets.cfg 的 Windows Desktop 预设）。
-       注意：导出时请关闭 Godot 编辑器（避免 .godot 缓存占用冲突）。
+       已实测：与正在运行的 Godot 编辑器并行安全，无需关闭编辑器。
        Condition 防止递归：Godot 导出时会内部执行 dotnet publish（ExportDebug/ExportRelease 配置），
        那一步必须跳过本 target，否则无限循环。 -->
   <Target Name="Export Pck" AfterTargets="Copy Mod"
