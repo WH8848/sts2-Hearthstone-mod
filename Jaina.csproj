@@ -1,0 +1,84 @@
+<Project Sdk="Godot.NET.Sdk/4.5.1">
+  <PropertyGroup>
+    <!-- 如果你安装了10.0并遇到问题，改下这里 -->
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>true</ImplicitUsings>
+    <LangVersion>13.0</LangVersion>
+    <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+
+    <!-- 改成你的杀戮尖塔2目录 -->
+    <Sts2Dir>E:\SteamLibrary\steamapps\common\Slay the Spire 2</Sts2Dir>
+    <Sts2DataDir>$(Sts2Dir)\data_sts2_windows_x86_64</Sts2DataDir>
+
+    <!-- 创意工坊根目录（STS2 的 AppID 为 2868840） -->
+    <Sts2WorkshopDir>$(Sts2Dir)\..\..\workshop\content\2868840</Sts2WorkshopDir>
+
+    <!-- 创意工坊 RitsuLib 的 WorkshopID 与 variants 目录 -->
+    <RitsuLibWorkshopId>3747602295</RitsuLibWorkshopId>
+    <RitsuLibCompatDir>lib\0.107.1</RitsuLibCompatDir>
+    <!-- 创意工坊 MinionLib 的 WorkshopID（随从库） -->
+    <MinionLibWorkshopId>3747595039</MinionLibWorkshopId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- 排除反编译产生的临时目录 -->
+    <Compile Remove="ritsu_decomp/**" />
+    <Compile Remove="game_decomp/**" />
+    <Content Remove="ritsu_decomp/**" />
+    <Content Remove="game_decomp/**" />
+    <None Remove="ritsu_decomp/**" />
+    <None Remove="game_decomp/**" />
+
+    <Reference Include="sts2">
+      <HintPath>$(Sts2DataDir)/sts2.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+
+    <Reference Include="0Harmony">
+      <HintPath>$(Sts2DataDir)/0Harmony.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+
+    <!-- 创意工坊引用 RitsuLib（兼容 0.107.1 基线） -->
+    <Reference Include="STS2-RitsuLib">
+      <HintPath>$(Sts2WorkshopDir)/$(RitsuLibWorkshopId)/$(RitsuLibCompatDir)/STS2-RitsuLib.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+
+    <!-- 创意工坊引用 MinionLib（随从库） -->
+    <Reference Include="MinionLib">
+      <HintPath>$(Sts2WorkshopDir)/$(MinionLibWorkshopId)/MinionLib/MinionLib.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+  <!-- 自动复制dll、json 和本地化文件 -->
+  <Target Name="Copy Mod" AfterTargets="PostBuildEvent">
+    <Message Text="Copying mod to Slay the Spire 2 mods folder..." Importance="high" />
+    <MakeDir Directories="$(Sts2Dir)\mods\" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(Sts2Dir)\mods\$(MSBuildProjectName)\" />
+    <Copy SourceFiles="$(MSBuildProjectName).json" DestinationFolder="$(Sts2Dir)/mods/$(MSBuildProjectName)/" />
+    <!-- 复制 localization 目录（卡牌/随从/关键词等本地化），并保留子目录结构 -->
+    <ItemGroup>
+      <LocalizationFiles Include="localization/**/*.json" />
+    </ItemGroup>
+    <MakeDir Directories="$(Sts2Dir)\mods\$(MSBuildProjectName)\localization" />
+    <Copy SourceFiles="@(LocalizationFiles)"
+          DestinationFiles="@(LocalizationFiles->'$(Sts2Dir)\mods\$(MSBuildProjectName)\localization\%(RecursiveDir)%(Filename)%(Extension)')" />
+  </Target>
+
+  <!-- 复制运行库到 .NET 输出目录：sts2/0Harmony/RitsuLib/MinionLib/System.IO.Hashing
+       Godot 编辑器加载 Jaina.dll 时 AssemblyLoadContext 从输出目录解析这些依赖 -->
+  <Target Name="Copy Runtime Dependencies" AfterTargets="Build">
+    <ItemGroup>
+      <RuntimeDependency Include="$(Sts2DataDir)/sts2.dll" />
+      <RuntimeDependency Include="$(Sts2DataDir)/0Harmony.dll" />
+      <RuntimeDependency Include="$(Sts2WorkshopDir)/$(RitsuLibWorkshopId)/$(RitsuLibCompatDir)/STS2-RitsuLib.dll" />
+      <RuntimeDependency Include="$(Sts2WorkshopDir)/$(MinionLibWorkshopId)/MinionLib/MinionLib.dll" />
+      <!-- RitsuLib 的依赖包（若无 NuGet 缓存可改为从本地 lib 目录引用） -->
+      <RuntimeDependency Include="$(NuGetPackageRoot)system.io.hashing\9.0.0\lib\net9.0\System.IO.Hashing.dll" Condition="Exists('$(NuGetPackageRoot)system.io.hashing\9.0.0\lib\net9.0\System.IO.Hashing.dll')" />
+    </ItemGroup>
+    <Copy SourceFiles="@(RuntimeDependency)" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
+  </Target>
+</Project>

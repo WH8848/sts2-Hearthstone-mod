@@ -1,0 +1,15 @@
+# Godot 4+ specific ignores
+.godot/
+/android/
+
+# C# / .NET build artifacts
+bin/
+obj/
+*.csproj.user
+
+# Mono-specific ignores
+.mono/
+mono_crash.*.json
+
+# ZCode workspace-internal files
+.zcode/

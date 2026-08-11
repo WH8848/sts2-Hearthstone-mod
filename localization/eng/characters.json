@@ -1,0 +1,15 @@
+{
+  "JAINA_CHARACTER_JAINA.title": "Jaina",
+  "JAINA_CHARACTER_JAINA.titleObject": "Jaina",
+  "JAINA_CHARACTER_JAINA.description": "The frost mage of Kul Tiras, freezing all enemies with her icy power.",
+  "JAINA_CHARACTER_JAINA.pronounObject": "her",
+  "JAINA_CHARACTER_JAINA.possessiveAdjective": "her",
+  "JAINA_CHARACTER_JAINA.pronounPossessive": "hers",
+  "JAINA_CHARACTER_JAINA.pronounSubject": "she",
+  "JAINA_CHARACTER_JAINA.cardsModifierTitle": "Frost",
+  "JAINA_CHARACTER_JAINA.cardsModifierDescription": "Jaina's icy power",
+  "JAINA_CHARACTER_JAINA.eventDeathPrevention": "The frost shield saved you at the last moment!",
+  "JAINA_CHARACTER_JAINA.bestiaryQuote": "Jaina has left her frosty footsteps across the land.",
+  "JAINA_CHARACTER_JAINA.unlockText": "{Prerequisite}",
+  "JAINA_CHARACTER_JAINA.characterSelect": "Jaina"
+}

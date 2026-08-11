@@ -1,0 +1,15 @@
+{
+  "JAINA_CHARACTER_JAINA.title": "吉安娜",
+  "JAINA_CHARACTER_JAINA.titleObject": "吉安娜",
+  "JAINA_CHARACTER_JAINA.description": "来自库尔提拉斯的冰霜法师，运用寒冰之力冻结一切敌人。",
+  "JAINA_CHARACTER_JAINA.pronounObject": "她",
+  "JAINA_CHARACTER_JAINA.possessiveAdjective": "她的",
+  "JAINA_CHARACTER_JAINA.pronounPossessive": "她的",
+  "JAINA_CHARACTER_JAINA.pronounSubject": "她",
+  "JAINA_CHARACTER_JAINA.cardsModifierTitle": "冰霜",
+  "JAINA_CHARACTER_JAINA.cardsModifierDescription": "吉安娜的冰霜之力",
+  "JAINA_CHARACTER_JAINA.eventDeathPrevention": "冰霜护盾在最后一刻拯救了你！",
+  "JAINA_CHARACTER_JAINA.bestiaryQuote": "吉安娜已经在这片土地上留下了她冰霜的足迹。",
+  "JAINA_CHARACTER_JAINA.unlockText": "{Prerequisite}",
+  "JAINA_CHARACTER_JAINA.characterSelect": "吉安娜"
+}
