@@ -187,8 +187,12 @@ public abstract class JainaMinionBase : MinionModel
     protected virtual Task PerformTurnEndPassive(PlayerChoiceContext choiceContext) => Task.CompletedTask;
 
     /// <summary>
-    /// 受到伤害后：若随从死亡，触发亡语并从战斗清理。
+    /// 受到伤害后：若随从死亡，触发亡语。
     /// 这是比挡伤钩子更可靠的死亡挂点（在挡伤吸收之后运行）。
+    /// 注意：不从战斗手动清理——参考原版亡灵契约师奥提斯（Osty）的死亡流程：
+    /// 游戏 Kill 流程会播放死亡动画（die + 淡出，ShouldFadeAfterDeath 默认 true），
+    /// MinionLib 的 MinionKillPatch 会在死亡结束后按 ShouldCreatureBeRemovedFromCombatAfterDeath
+    /// 投票结果自动把随从从 CombatState/CombatManager 移除（与 Osty 的 DieForYouPower 同机制）。
     /// </summary>
     public override async Task AfterDamageReceivedLate(PlayerChoiceContext choiceContext, Creature target, MegaCrit.Sts2.Core.Entities.Creatures.DamageResult result, ValueProp props, Creature? dealer, CardModel? cardSource)
     {
@@ -197,7 +201,7 @@ public abstract class JainaMinionBase : MinionModel
             return;
         }
 
-        // 死亡：先触发亡语
+        // 死亡：触发亡语（随从移除由原版流程 + MinionLib 补丁处理）
         if (HasDeathrattle)
         {
             try
@@ -209,10 +213,6 @@ public abstract class JainaMinionBase : MinionModel
                 // 亡语失败不影响战斗
             }
         }
-
-        // 从战斗状态与战斗管理器清理，保证从场上消失
-        Creature.CombatState.RemoveCreature(Creature);
-        MegaCrit.Sts2.Core.Combat.CombatManager.Instance?.RemoveCreature(Creature);
     }
 
     /// <summary>
