@@ -14,7 +14,12 @@ public class JainaNeutralCardPool : TypeListCardPoolModel
 {
     public override string Title => "jaina_neutral";
 
-    public override string EnergyColorName => "jaina_neutral";
+    // 中立池与吉安娜共用能量图标（自定义冰蓝图标）
+    public override string EnergyColorName => "jaina";
+
+    public override string? TextEnergyIconPath => "res://assets/energy/energy_jaina_text.png";
+
+    public override string? BigEnergyIconPath => "res://assets/energy/energy_jaina_big.png";
 
     // 中立池使用灰色调（炉石中立风格）
     public override Color DeckEntryCardColor => new(0.75f, 0.75f, 0.75f);
