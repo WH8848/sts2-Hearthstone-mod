@@ -11,5 +11,7 @@
   "JAINA_CARD_ICE_BARRIER.titleUpgraded": "Cold Case",
   "JAINA_CARD_ICE_BARRIER.description": "{IfUpgraded:show:Summon 2 [blue]2/2[/blue] [red]Volatile Skeletons[/red], and gain [blue]4[/blue] Block.|Gain [blue]{Block}[/blue] Block.}",
   "JAINA_CARD_VOLATILE_SKELETON_CARD.title": "Volatile Skeleton",
-  "JAINA_CARD_VOLATILE_SKELETON_CARD.description": "Summon a [blue]2/2[/blue] [red]Volatile Skeleton[/red]."
+  "JAINA_CARD_VOLATILE_SKELETON_CARD.description": "Summon a [blue]2/2[/blue] [red]Volatile Skeleton[/red].",
+  "JAINA_CARD_ZEALOT_CARD.title": "Zealot",
+  "JAINA_CARD_ZEALOT_CARD.description": "Summon a [blue]3/4[/blue] [red]Zealot[/red]."
 }

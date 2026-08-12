@@ -1,4 +1,6 @@
 {
   "JAINA_KEYWORD_DEATHRATTLE.title": "Deathrattle",
-  "JAINA_KEYWORD_DEATHRATTLE.description": "When a minion dies, trigger its effect."
+  "JAINA_KEYWORD_DEATHRATTLE.description": "When a minion dies, trigger its effect.",
+  "JAINA_KEYWORD_CHARGE.title": "Charge",
+  "JAINA_KEYWORD_CHARGE.description": "Can attack immediately after being summoned."
 }

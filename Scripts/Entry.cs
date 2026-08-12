@@ -1,4 +1,5 @@
 using System.Reflection;
+using HarmonyLib;
 using jaina.Scripts.Character.Minions;
 using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Modding;
@@ -17,10 +18,12 @@ public class Entry
 
     public static void Init()
     {
-        // harmony可用，但是最好用ritsu的封装patch，见补丁系统一章
-        // var harmony = new Harmony("com.example.testmod");
-        // harmony.PatchAll();
         var assembly = Assembly.GetExecutingAssembly();
+
+        // 随从卡类型标签等补丁（NCard.UpdateTypePlaque 显示"随从"）
+        var harmony = new Harmony("jaina");
+        harmony.PatchAll(assembly);
+
         RitsuLibFramework.EnsureGodotScriptsRegistered(assembly, Logger);
         // 自动注册内容
         ModTypeDiscoveryHub.RegisterModAssembly(ModId, assembly);
