@@ -34,9 +34,9 @@ public static class JainaDiscoverHelper
     /// </summary>
     public static List<CardModel> RollCandidates(Player player, int count = 3, int? maxCost = null)
     {
-        // 用 ModelDb 获取 canonical 实例（不能 new，CardPileCmd.Add 会对裸实例重复注册 ModelDb）
+        // ModelDb 取 canonical 后必须 MutableClone：CardPileCmd.Add/选择流程需要可变实例
         var pool = AttackSkillPool
-            .Select(t => MegaCrit.Sts2.Core.Models.ModelDb.GetById<CardModel>(MegaCrit.Sts2.Core.Models.ModelDb.GetId(t)))
+            .Select(t => (CardModel)MegaCrit.Sts2.Core.Models.ModelDb.GetById<CardModel>(MegaCrit.Sts2.Core.Models.ModelDb.GetId(t)).MutableClone())
             .ToList();
         if (maxCost is int max && max >= 0)
         {
