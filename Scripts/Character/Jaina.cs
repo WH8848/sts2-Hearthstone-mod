@@ -26,8 +26,6 @@ public sealed class Jaina : ModCharacterTemplate<JainaCardPool, JainaRelicPool, 
 
     public override int StartingGold => 90;
 
-    public override int BaseOrbSlotCount => 7;
-
     public override float AttackAnimDelay => 0.2f;
 
     public override float CastAnimDelay => 0.3f;
