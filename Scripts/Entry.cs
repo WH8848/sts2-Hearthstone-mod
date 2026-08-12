@@ -20,7 +20,10 @@ public class Entry
     {
         var assembly = Assembly.GetExecutingAssembly();
 
-        // 随从卡类型标签等补丁（NCard.UpdateTypePlaque 显示"随从"）
+        // 注册动态卡牌类型（CardType.Minion 随从类型），须在模型注册前
+        jaina.Scripts.Character.Cards.JainaCardTypes.Initialize();
+
+        // 动态 CardType 兼容补丁（ToLocString 显示"随从"、卡框/边框映射技能样式等）
         var harmony = new Harmony("jaina");
         harmony.PatchAll(assembly);
 

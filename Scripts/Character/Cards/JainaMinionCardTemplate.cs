@@ -13,9 +13,9 @@ namespace jaina.Scripts.Character.Cards;
 /// <summary>
 /// 吉安娜随从牌基类（炉石传说风格）。
 /// 打出后召唤一个随从生物留在场上（随从回合结束自动攻击敌人）。
-/// 卡面通过 [blue]亡语[/blue] 关键词自动注入亡语文本，描述中展示随从的攻击/生命属性。
-/// 注：游戏 CardType 为封闭枚举（Attack/Skill/Power/...），无法新增"随从"类型，
-/// 故使用技能牌 + 亡语关键词 + 描述呈现炉石风格随从牌效果。
+/// 卡面通过关键词（亡语/冲锋）自动注入文本，描述中展示随从的攻击/生命属性。
+/// 卡牌类型为动态注册的"随从"类型（JainaCardTypes.Minion），
+/// 显示文本由 ToLocString patch 提供，卡框/边框由 FramePath 等 patch 映射为技能样式。
 /// </summary>
 public abstract class JainaMinionCardTemplate : ModCardTemplate
 {
@@ -40,10 +40,15 @@ public abstract class JainaMinionCardTemplate : ModCardTemplate
     protected virtual MinionPosition MinionPosition => MinionPosition.FrontUpper;
 
     /// <summary>
+    /// 卡牌类型：动态注册的"随从"类型
+    /// </summary>
+    public override CardType Type => JainaCardTypes.Minion;
+
+    /// <summary>
     /// 内置关键词：亡语。
     /// 通过 CanonicalKeywords 声明（而非构造函数 AddKeyword），
     /// 避免修改游戏创建的 canonical 不可变实例导致 CanonicalModelException。
-    /// 注册了 CardDescriptionPlacement.BeforeCardDescription 的亡语关键词
+    /// 注册了 CardDescriptionPlacement.BeforeCardDescription 的关键词
     /// 会自动将其金色 BBCode 注入到卡面描述之前。
     /// </summary>
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
