@@ -31,6 +31,11 @@ public abstract class JainaMinionBase : MinionModel
     public int BaseAttackValue = 0;
 
     /// <summary>
+    /// 召唤时的回合数（用于"召唤当回合不可攻击"规则）
+    /// </summary>
+    private int _summonedTurn = -1;
+
+    /// <summary>
     /// 随从行为模式（默认手动：不自动行动，点击驱动）
     /// </summary>
     public virtual JainaMinionBehaviorMode BehaviorMode => JainaMinionBehaviorMode.Manual;
@@ -115,6 +120,9 @@ public abstract class JainaMinionBase : MinionModel
             BaseAttackValue = (int)attack;
         }
 
+        // 记录召唤回合（用于"召唤当回合不可攻击"规则，冲锋除外）
+        _summonedTurn = Creature.PetOwner?.PlayerCombatState?.TurnNumber ?? -1;
+
         // 标记为随从副单位（不触发击杀胜利结算、死亡不触发致命等）
         await PowerCmd.Apply<MegaCrit.Sts2.Core.Models.Powers.MinionPower>(
             choiceContext, Creature, 1m, owner.Creature, options.Source);
@@ -128,6 +136,11 @@ public abstract class JainaMinionBase : MinionModel
         IReadOnlyList<Creature> participants, ICombatState combatState)
     {
         if (BehaviorMode != JainaMinionBehaviorMode.Manual || side != CombatSide.Player || !Creature.IsAlive)
+        {
+            return;
+        }
+        // 召唤当回合不可攻击（行动点从下一回合开始授予）
+        if (IsSummonedThisTurn())
         {
             return;
         }
@@ -153,12 +166,26 @@ public abstract class JainaMinionBase : MinionModel
         {
             return;
         }
+        // 召唤当回合不可攻击（冲锋随从例外：Zealot 的立即攻击写在 OnSummon，不受此限制）
+        if (IsSummonedThisTurn())
+        {
+            return;
+        }
 
         if (BehaviorMode == JainaMinionBehaviorMode.Auto)
         {
             await PerformTurnEndAttack(choiceContext);
         }
         await PerformTurnEndPassive(choiceContext);
+    }
+
+    /// <summary>
+    /// 是否为召唤当回合（召唤后第一回合内）
+    /// </summary>
+    private bool IsSummonedThisTurn()
+    {
+        var turn = Creature.PetOwner?.PlayerCombatState?.TurnNumber ?? -1;
+        return turn == _summonedTurn && _summonedTurn >= 0;
     }
 
     /// <summary>

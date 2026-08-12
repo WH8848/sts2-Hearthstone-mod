@@ -39,7 +39,7 @@
   "JAINA_CARD_MOZAKI_CARD.title": "Mozaki Master of Flame",
   "JAINA_CARD_MOZAKI_CARD.description": "Summon a [blue]3/8[/blue] [red]Mozaki Master of Flame[/red]. After you cast an Attack or Skill card, gain +1 Strength.",
   "JAINA_CARD_LUNA_CARD.title": "Stargazer Luna",
-  "JAINA_CARD_LUNA_CARD.description": "Summon a [blue]2/4[/blue] [red]Stargazer Luna[/red]. After you play a card, draw a card.",
+  "JAINA_CARD_LUNA_CARD.description": "Summon a [blue]2/4[/blue] [red]Stargazer Luna[/red]. After you play the rightmost card in your hand, draw a card.",
   "JAINA_CARD_KALECGOS_CARD.title": "Kalecgos",
   "JAINA_CARD_KALECGOS_CARD.description": "Summon a [blue]4/12[/blue] [red]Kalecgos[/red].",
   "JAINA_CARD_AEGWYNN_CARD.title": "Aegwynn the Guardian",

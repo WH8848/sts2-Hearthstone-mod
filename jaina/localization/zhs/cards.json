@@ -39,7 +39,7 @@
   "JAINA_CARD_MOZAKI_CARD.title": "决斗大师莫扎奇",
   "JAINA_CARD_MOZAKI_CARD.description": "召唤一个[blue]3/8[/blue]的[red]决斗大师莫扎奇[/red]。在你施放一张攻击牌或技能牌后，获得力量+1。",
   "JAINA_CARD_LUNA_CARD.title": "观星者露娜",
-  "JAINA_CARD_LUNA_CARD.description": "召唤一个[blue]2/4[/blue]的[red]观星者露娜[/red]。在你使用一张手牌后，抽一张牌。",
+  "JAINA_CARD_LUNA_CARD.description": "召唤一个[blue]2/4[/blue]的[red]观星者露娜[/red]。在你使用最右边的一张手牌后，抽一张牌。",
   "JAINA_CARD_KALECGOS_CARD.title": "卡雷苟斯",
   "JAINA_CARD_KALECGOS_CARD.description": "召唤一个[blue]4/12[/blue]的[red]卡雷苟斯[/red]。",
   "JAINA_CARD_AEGWYNN_CARD.title": "守护者艾格文",

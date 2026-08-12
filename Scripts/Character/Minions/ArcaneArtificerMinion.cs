@@ -26,7 +26,7 @@ public sealed class ArcaneArtificerMinion : JainaMinionBase
     protected override string MinionVisualsPath => "res://assets/minion_visuals/arcane_artificer.tscn";
 
     /// <summary>
-    /// 打出攻击/技能牌时，获得等同于其费用的护甲值
+    /// 打出攻击/技能牌时，吉安娜获得等同于其费用的护甲值
     /// </summary>
     public override async Task AfterCardPlayed(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
@@ -40,9 +40,9 @@ public sealed class ArcaneArtificerMinion : JainaMinionBase
             return;
         }
         var cost = cardPlay.Card.EnergyCost.Canonical;
-        if (cost > 0)
+        if (cost > 0 && Creature.PetOwner != null)
         {
-            await CreatureCmd.GainBlock(Creature, cost, ValueProp.Move, null);
+            await CreatureCmd.GainBlock(Creature.PetOwner.Creature, cost, ValueProp.Move, null);
         }
     }
 }

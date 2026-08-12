@@ -79,7 +79,7 @@ public sealed class IceBarrier : ModCardTemplate
 
     /// <summary>
     /// 打出效果：
-    /// 未升级（寒冰护体）：获得 8 点护甲。
+    /// 未升级（寒冰护盾）：本回合内受到攻击时，获得 8 点护甲。
     /// 已升级（冰冷案例）：召唤 2 个 2/2 不稳定的骷髅 + 获得 4 点护甲。
     /// </summary>
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
@@ -94,8 +94,9 @@ public sealed class IceBarrier : ModCardTemplate
             return;
         }
 
-        // 寒冰护体：获得 8 点护甲
-        await CreatureCmd.GainBlock(base.Owner.Creature, new BlockVar(8m, ValueProp.Move), cardPlay);
+        // 寒冰护盾：本回合内受到攻击时，获得 8 点护甲（受击触发，回合结束失效）
+        await PowerCmd.Apply<jaina.Scripts.Character.Powers.IceBarrierPower>(
+            choiceContext, [base.Owner.Creature], 8m, base.Owner.Creature, this);
     }
 
     protected override void OnUpgrade()

@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.ValueProps;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -35,6 +36,22 @@ public sealed class Fireblast : ModCardTemplate
     /// 卡牌原画：炉石传说法师英雄技能"火焰冲击"高清原画
     /// </summary>
     public override string CustomPortraitPath => "res://assets/card_art/fireblast.png";
+
+    /// <summary>
+    /// 升级后卡牌名称变为"火焰冲击+1"（每级 +1 伤害）
+    /// </summary>
+    public override string Title
+    {
+        get
+        {
+            var title = new LocString("cards", base.Id.Entry + ".title");
+            if (!IsUpgraded)
+            {
+                return title.GetFormattedText();
+            }
+            return title.GetFormattedText() + "+" + CurrentUpgradeLevel;
+        }
+    }
 
     public Fireblast()
         : base(0, CardType.Attack, CardRarity.Basic, TargetType.AnyEnemy, true)
