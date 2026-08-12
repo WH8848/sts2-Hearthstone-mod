@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using jaina.Scripts.Character.Keywords;
 using jaina.Scripts.Character.Minions;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
@@ -16,6 +18,14 @@ namespace jaina.Scripts.Character.Cards;
 [RegisterCard(typeof(JainaNeutralCardPool))]
 public sealed class VolatileSkeletonCard : JainaMinionCardTemplate
 {
+    /// <summary>
+    /// 亡语：随机对一个敌人造成 2 点伤害（随从死亡时触发）
+    /// </summary>
+    public override IEnumerable<CardKeyword> CanonicalKeywords =>
+    [
+        JainaKeywords.Deathrattle
+    ];
+
     /// <summary>
     /// 卡牌原画：炉石传说"不稳定的骷髅"高清原画
     /// </summary>

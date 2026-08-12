@@ -45,16 +45,13 @@ public abstract class JainaMinionCardTemplate : ModCardTemplate
     public override CardType Type => JainaCardTypes.Minion;
 
     /// <summary>
-    /// 内置关键词：亡语。
+    /// 关键词：默认无（子类按需声明亡语/冲锋等）。
     /// 通过 CanonicalKeywords 声明（而非构造函数 AddKeyword），
     /// 避免修改游戏创建的 canonical 不可变实例导致 CanonicalModelException。
     /// 注册了 CardDescriptionPlacement.BeforeCardDescription 的关键词
     /// 会自动将其金色 BBCode 注入到卡面描述之前。
     /// </summary>
-    public override IEnumerable<CardKeyword> CanonicalKeywords =>
-    [
-        JainaKeywords.Deathrattle
-    ];
+    public override IEnumerable<CardKeyword> CanonicalKeywords => [];
 
     protected JainaMinionCardTemplate(int cost, CardRarity rarity)
         : base(cost, CardType.Skill, rarity, TargetType.Self, true)
