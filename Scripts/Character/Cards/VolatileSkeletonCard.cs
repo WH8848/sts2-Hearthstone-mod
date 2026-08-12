@@ -13,7 +13,7 @@ namespace jaina.Scripts.Character.Cards;
 /// 0费：召唤一个 2/2 的[red]不稳定的骷髅[/red]站场。
 /// 随从属性展示在卡面，亡语关键词自动注入到描述前。
 /// </summary>
-[RegisterCard(typeof(JainaCardPool))]
+[RegisterCard(typeof(JainaNeutralCardPool))]
 public sealed class VolatileSkeletonCard : JainaMinionCardTemplate
 {
     /// <summary>

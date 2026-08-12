@@ -10,7 +10,7 @@ namespace jaina.Scripts.Character.Cards;
 /// 小精灵 (Imp) 随从卡 - 0费召唤一个 1/1 的小精灵。
 /// 衍生卡：由灵体采集者/灌注生成，不进入掉落池。
 /// </summary>
-[RegisterCard(typeof(JainaCardPool))]
+[RegisterCard(typeof(JainaNeutralCardPool))]
 public sealed class ImpCard : JainaMinionCardTemplate
 {
     protected override Type MinionType => typeof(ImpMinion);
