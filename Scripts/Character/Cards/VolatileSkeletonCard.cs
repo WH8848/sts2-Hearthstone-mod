@@ -22,7 +22,7 @@ public sealed class VolatileSkeletonCard : JainaMinionCardTemplate
     public override string CustomPortraitPath => "res://assets/card_art/volatile_skeleton.png";
 
     public VolatileSkeletonCard()
-        : base(0, CardRarity.Common)
+        : base(0, CardRarity.Token)
     {
     }
 

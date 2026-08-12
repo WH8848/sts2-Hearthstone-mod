@@ -25,7 +25,7 @@ public sealed class ImpCard : JainaMinionCardTemplate
     public override IEnumerable<CardKeyword> CanonicalKeywords => [];
 
     public ImpCard()
-        : base(0, CardRarity.Common)
+        : base(0, CardRarity.Token)
     {
     }
 }

@@ -30,7 +30,7 @@ public sealed class ZealotCard : JainaMinionCardTemplate
     ];
 
     public ZealotCard()
-        : base(1, CardRarity.Common)
+        : base(1, CardRarity.Token)
     {
     }
 }
