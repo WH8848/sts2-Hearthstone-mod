@@ -11,6 +11,8 @@ namespace jaina.Scripts.Character.Cards;
 [RegisterCard(typeof(JainaCardPool))]
 public sealed class MozakiCard : JainaMinionCardTemplate
 {
+    public override string CustomPortraitPath => "res://assets/card_art/mozaki.png";
+{
     protected override Type MinionType => typeof(MozakiMinion);
 
     protected override int MinionAttack => 3;

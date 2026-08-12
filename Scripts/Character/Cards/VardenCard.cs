@@ -11,6 +11,8 @@ namespace jaina.Scripts.Character.Cards;
 [RegisterCard(typeof(JainaCardPool))]
 public sealed class VardenCard : JainaMinionCardTemplate
 {
+    public override string CustomPortraitPath => "res://assets/card_art/varden_dawngrasp.png";
+{
     protected override Type MinionType => typeof(VardenMinion);
 
     protected override int MinionAttack => 3;

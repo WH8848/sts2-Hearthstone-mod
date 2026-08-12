@@ -11,6 +11,8 @@ namespace jaina.Scripts.Character.Cards;
 [RegisterCard(typeof(JainaCardPool))]
 public sealed class AntonidasCard : JainaMinionCardTemplate
 {
+    public override string CustomPortraitPath => "res://assets/card_art/archmage_antonidas.png";
+{
     protected override Type MinionType => typeof(AntonidasMinion);
 
     protected override int MinionAttack => 5;

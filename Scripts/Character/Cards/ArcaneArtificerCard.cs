@@ -11,6 +11,8 @@ namespace jaina.Scripts.Character.Cards;
 [RegisterCard(typeof(JainaCardPool))]
 public sealed class ArcaneArtificerCard : JainaMinionCardTemplate
 {
+    public override string CustomPortraitPath => "res://assets/card_art/arcane_artificer.png";
+{
     protected override Type MinionType => typeof(ArcaneArtificerMinion);
 
     protected override int MinionAttack => 1;

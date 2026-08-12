@@ -11,6 +11,8 @@ namespace jaina.Scripts.Character.Cards;
 [RegisterCard(typeof(JainaCardPool))]
 public sealed class KalecgosCard : JainaMinionCardTemplate
 {
+    public override string CustomPortraitPath => "res://assets/card_art/kalecgos.png";
+{
     protected override Type MinionType => typeof(KalecgosMinion);
 
     protected override int MinionAttack => 4;
