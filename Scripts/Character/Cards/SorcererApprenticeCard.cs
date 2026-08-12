@@ -12,7 +12,6 @@ namespace jaina.Scripts.Character.Cards;
 public sealed class SorcererApprenticeCard : JainaMinionCardTemplate
 {
     public override string CustomPortraitPath => "res://assets/card_art/sorcerer_apprentice.png";
-{
     protected override Type MinionType => typeof(SorcererApprenticeMinion);
 
     protected override int MinionAttack => 3;

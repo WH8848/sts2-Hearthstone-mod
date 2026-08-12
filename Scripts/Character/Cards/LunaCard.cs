@@ -12,7 +12,6 @@ namespace jaina.Scripts.Character.Cards;
 public sealed class LunaCard : JainaMinionCardTemplate
 {
     public override string CustomPortraitPath => "res://assets/card_art/stargazer_luna.png";
-{
     protected override Type MinionType => typeof(LunaMinion);
 
     protected override int MinionAttack => 2;

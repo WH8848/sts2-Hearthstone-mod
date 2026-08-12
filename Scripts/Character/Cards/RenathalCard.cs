@@ -12,7 +12,6 @@ namespace jaina.Scripts.Character.Cards;
 public sealed class RenathalCard : JainaMinionCardTemplate
 {
     public override string CustomPortraitPath => "res://assets/card_art/prince_renathal.png";
-{
     protected override Type MinionType => typeof(RenathalMinion);
 
     protected override int MinionAttack => 3;

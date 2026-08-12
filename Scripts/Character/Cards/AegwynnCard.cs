@@ -12,7 +12,6 @@ namespace jaina.Scripts.Character.Cards;
 public sealed class AegwynnCard : JainaMinionCardTemplate
 {
     public override string CustomPortraitPath => "res://assets/card_art/aegwynn.png";
-{
     protected override Type MinionType => typeof(AegwynnMinion);
 
     protected override int MinionAttack => 5;

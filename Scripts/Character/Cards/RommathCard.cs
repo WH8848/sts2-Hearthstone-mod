@@ -12,7 +12,6 @@ namespace jaina.Scripts.Character.Cards;
 public sealed class RommathCard : JainaMinionCardTemplate
 {
     public override string CustomPortraitPath => "res://assets/card_art/archmage_rommath.png";
-{
     protected override Type MinionType => typeof(RommathMinion);
 
     protected override int MinionAttack => 5;
