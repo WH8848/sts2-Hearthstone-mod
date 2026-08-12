@@ -23,6 +23,11 @@ public sealed class Zealot : JainaMinionBase
     /// </summary>
     public override JainaMinionBehaviorMode BehaviorMode => JainaMinionBehaviorMode.Auto;
 
+    /// <summary>
+    /// 战斗视觉：狂热者卡图原画场景
+    /// </summary>
+    protected override string MinionVisualsPath => "res://assets/minion_visuals/zealot.tscn";
+
     public override int MinInitialHp => 4;
 
     public override int MaxInitialHp => 4;

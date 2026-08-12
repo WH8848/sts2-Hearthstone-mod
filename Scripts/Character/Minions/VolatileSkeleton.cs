@@ -24,6 +24,11 @@ public sealed class VolatileSkeleton : JainaMinionBase
     public override JainaMinionBehaviorMode BehaviorMode => JainaMinionBehaviorMode.Auto;
 
     /// <summary>
+    /// 战斗视觉：不稳定的骷髅卡图原画场景
+    /// </summary>
+    protected override string MinionVisualsPath => "res://assets/minion_visuals/volatile_skeleton.tscn";
+
+    /// <summary>
     /// 亡语伤害值
     /// </summary>
     public int DeathrattleDamage => 2;

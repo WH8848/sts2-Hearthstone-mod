@@ -41,9 +41,14 @@ public abstract class JainaMinionBase : MinionModel
     public virtual int ActionsPerTurn => 1;
 
     /// <summary>
-    /// 统一使用闪电充能球战斗视觉（临时方案，后续可替换为专属随从动画）
+    /// 随从战斗视觉：使用各随从自己的卡图原画场景（不再用闪电充能球模型）
     /// </summary>
-    protected override string VisualsPath => SceneHelper.GetScenePath("orbs/orb_visuals/lightning_orb");
+    protected override string VisualsPath => MinionVisualsPath;
+
+    /// <summary>
+    /// 各随从的卡图视觉场景路径
+    /// </summary>
+    protected abstract string MinionVisualsPath { get; }
 
     /// <summary>
     /// 随从不显示血条
