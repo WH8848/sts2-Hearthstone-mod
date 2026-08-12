@@ -50,7 +50,7 @@ public sealed class Jaina : ModCharacterTemplate<JainaCardPool, JainaRelicPool, 
             "vfx/vfx_attack_slash",
             "vfx/vfx_bloody_impact",
             "vfx/vfx_rock_shatter",
-            "vfx/vfx_frost"
+            "vfx/vfx_attack_blunt"
         ];
     }
 

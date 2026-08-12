@@ -70,7 +70,7 @@ public sealed class Frostbolt : ModCardTemplate
                 await DamageCmd.Attack(existingFreeze.Amount * 4m)
                     .FromCard(this, cardPlay)
                     .Targeting(target)
-                    .WithHitFx("vfx/vfx_frost")
+                    .WithHitFx("vfx/vfx_attack_blunt")
                     .Execute(choiceContext);
             }
         }
@@ -79,7 +79,7 @@ public sealed class Frostbolt : ModCardTemplate
             await DamageCmd.Attack(base.DynamicVars.Damage.BaseValue)
                 .FromCard(this, cardPlay)
                 .Targeting(target)
-                .WithHitFx("vfx/vfx_frost")
+                .WithHitFx("vfx/vfx_attack_blunt")
                 .Execute(choiceContext);
         }
 
