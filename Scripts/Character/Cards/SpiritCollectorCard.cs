@@ -32,7 +32,7 @@ public sealed class SpiritCollectorCard : JainaMinionCardTemplate
         await base.OnPlay(choiceContext, cardPlay);
 
         // 获取一张 0 费 1/1 的小精灵（加入手牌）
-        await CardPileCmd.Add(new ImpCard(), PileType.Hand);
+        await CardPileCmd.Add(MegaCrit.Sts2.Core.Models.ModelDb.GetById<ImpCard>(MegaCrit.Sts2.Core.Models.ModelDb.GetId(typeof(ImpCard))), PileType.Hand);
 
         // 灌注你的英雄技能（+1 层灌注）
         await PowerCmd.Apply<EmpowerPower>(choiceContext, [base.Owner.Creature], 1m, base.Owner.Creature, this);

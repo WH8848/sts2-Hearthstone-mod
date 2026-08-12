@@ -34,7 +34,10 @@ public static class JainaDiscoverHelper
     /// </summary>
     public static List<CardModel> RollCandidates(Player player, int count = 3, int? maxCost = null)
     {
-        var pool = AttackSkillPool.Select(t => (CardModel)Activator.CreateInstance(t)!).ToList();
+        // 用 ModelDb 获取 canonical 实例（不能 new，CardPileCmd.Add 会对裸实例重复注册 ModelDb）
+        var pool = AttackSkillPool
+            .Select(t => MegaCrit.Sts2.Core.Models.ModelDb.GetById<CardModel>(MegaCrit.Sts2.Core.Models.ModelDb.GetId(t)))
+            .ToList();
         if (maxCost is int max && max >= 0)
         {
             pool = pool.Where(c => c.EnergyCost.Canonical <= max).ToList();
