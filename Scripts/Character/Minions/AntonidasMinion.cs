@@ -39,6 +39,6 @@ public sealed class AntonidasMinion : JainaMinionBase
         {
             return;
         }
-        await CardPileCmd.Add((MegaCrit.Sts2.Core.Models.CardModel)MegaCrit.Sts2.Core.Models.ModelDb.GetById<Fireball>(MegaCrit.Sts2.Core.Models.ModelDb.GetId(typeof(Fireball))).MutableClone(), PileType.Hand);
+        await CardPileCmd.AddGeneratedCardToCombat((MegaCrit.Sts2.Core.Models.CardModel)MegaCrit.Sts2.Core.Models.ModelDb.GetById<Fireball>(MegaCrit.Sts2.Core.Models.ModelDb.GetId(typeof(Fireball))).MutableClone(), PileType.Hand, Creature.PetOwner);
     }
 }

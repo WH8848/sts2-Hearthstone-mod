@@ -81,7 +81,7 @@ public sealed class FreezingPotion : ModCardTemplate
         {
             var copy = (CardModel)MutableClone();
             copy.RemoveKeyword(JainaKeywords.Twinspell);
-            await CardPileCmd.Add(copy, PileType.Hand);
+            await CardPileCmd.AddGeneratedCardToCombat(copy, PileType.Hand, base.Owner);
         }
     }
 

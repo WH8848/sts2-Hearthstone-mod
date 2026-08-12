@@ -69,7 +69,7 @@ public sealed class Awaken : ModCardTemplate
                     if (card != null)
                     {
                         card.AddKeyword(CardKeyword.Ethereal);
-                        await CardPileCmd.Add(card, PileType.Hand);
+                        await CardPileCmd.AddGeneratedCardToCombat(card, PileType.Hand, base.Owner);
                     }
                 }
             }

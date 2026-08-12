@@ -69,7 +69,7 @@ public static class JainaDiscoverHelper
         var chosen = await CardSelectCmd.FromChooseACardScreen(choiceContext, candidates, player, canSkip: true);
         if (chosen != null)
         {
-            await CardPileCmd.Add(chosen, PileType.Hand);
+            await CardPileCmd.AddGeneratedCardToCombat(chosen, PileType.Hand, player);
         }
         return chosen;
     }

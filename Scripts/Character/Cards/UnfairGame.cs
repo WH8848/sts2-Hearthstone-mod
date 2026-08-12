@@ -66,7 +66,7 @@ public sealed class UnfairGame : ModCardTemplate
                         var chosen = await MegaCrit.Sts2.Core.Commands.CardSelectCmd.FromChooseACardScreen(choiceContext, candidates.AsReadOnly(), base.Owner, canSkip: true);
                         if (chosen != null)
                         {
-                            await CardPileCmd.Add(chosen, PileType.Hand);
+                            await CardPileCmd.AddGeneratedCardToCombat(chosen, PileType.Hand, base.Owner);
                         }
                     }
                 }
