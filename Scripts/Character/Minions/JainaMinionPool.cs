@@ -106,6 +106,18 @@ public static class JainaMinionPool
         {
             nameof(Zealot) => await SummonMinion<Zealot>(choiceContext, player, maxHp, attack, position),
             nameof(VolatileSkeleton) => await SummonMinion<VolatileSkeleton>(choiceContext, player, maxHp, attack, position),
+            nameof(ImpMinion) => await SummonMinion<ImpMinion>(choiceContext, player, maxHp, attack, position),
+            nameof(SpiritCollectorMinion) => await SummonMinion<SpiritCollectorMinion>(choiceContext, player, maxHp, attack, position),
+            nameof(RenathalMinion) => await SummonMinion<RenathalMinion>(choiceContext, player, maxHp, attack, position),
+            nameof(SorcererApprenticeMinion) => await SummonMinion<SorcererApprenticeMinion>(choiceContext, player, maxHp, attack, position),
+            nameof(ArcaneArtificerMinion) => await SummonMinion<ArcaneArtificerMinion>(choiceContext, player, maxHp, attack, position),
+            nameof(AntonidasMinion) => await SummonMinion<AntonidasMinion>(choiceContext, player, maxHp, attack, position),
+            nameof(VardenMinion) => await SummonMinion<VardenMinion>(choiceContext, player, maxHp, attack, position),
+            nameof(RommathMinion) => await SummonMinion<RommathMinion>(choiceContext, player, maxHp, attack, position),
+            nameof(MozakiMinion) => await SummonMinion<MozakiMinion>(choiceContext, player, maxHp, attack, position),
+            nameof(LunaMinion) => await SummonMinion<LunaMinion>(choiceContext, player, maxHp, attack, position),
+            nameof(KalecgosMinion) => await SummonMinion<KalecgosMinion>(choiceContext, player, maxHp, attack, position),
+            nameof(AegwynnMinion) => await SummonMinion<AegwynnMinion>(choiceContext, player, maxHp, attack, position),
             _ => null!,
         };
     }
