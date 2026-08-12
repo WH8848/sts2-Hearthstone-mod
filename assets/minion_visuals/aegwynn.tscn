@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3]
 
-[ext_resource type="Script" path="res://src/Core/Nodes/Combat/NCreatureVisuals.cs" id="1_visuals"]
+[ext_resource type="Script" uid="uid://cghtlla3sw0po" path="res://src/Core/Nodes/Combat/NCreatureVisuals.cs" id="1_visuals"]
 [ext_resource type="Texture2D" path="res://assets/card_art/aegwynn.png" id="2_texture"]
 
 [node name="Visuals" type="Node2D"]
