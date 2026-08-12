@@ -13,5 +13,15 @@
   "JAINA_CARD_VOLATILE_SKELETON_CARD.title": "Volatile Skeleton",
   "JAINA_CARD_VOLATILE_SKELETON_CARD.description": "Summon a [blue]2/2[/blue] [red]Volatile Skeleton[/red].",
   "JAINA_CARD_ZEALOT_CARD.title": "Zealot",
-  "JAINA_CARD_ZEALOT_CARD.description": "Summon a [blue]3/4[/blue] [red]Zealot[/red]."
+  "JAINA_CARD_ZEALOT_CARD.description": "Summon a [blue]3/4[/blue] [red]Zealot[/red].",
+  "JAINA_CARD_FROSTBOLT.title": "Frostbolt",
+  "JAINA_CARD_FROSTBOLT.titleUpgraded": "Icy Lance",
+  "JAINA_CARD_FROSTBOLT.description": "Deal {Damage} damage to a character and give it 1 [blue]Freeze[/blue].",
+  "JAINA_CARD_FREEZING_POTION.title": "Freezing Potion",
+  "JAINA_CARD_FREEZING_POTION.titleUpgraded": "Frost Ray",
+  "JAINA_CARD_FREEZING_POTION.description": "[blue]Freeze[/blue] an enemy.",
+  "JAINA_CARD_IMP_CARD.title": "Imp",
+  "JAINA_CARD_IMP_CARD.description": "Summon a [blue]1/1[/blue] [red]Imp[/red].",
+  "JAINA_CARD_SPIRIT_COLLECTOR_CARD.title": "Spirit Collector",
+  "JAINA_CARD_SPIRIT_COLLECTOR_CARD.description": "Summon a [blue]2/1[/blue] [red]Spirit Collector[/red]. Add a [blue]0-cost 1/1[/blue] [red]Imp[/red] to your hand, and [blue]Empower[/blue] your Hero Power."
 }

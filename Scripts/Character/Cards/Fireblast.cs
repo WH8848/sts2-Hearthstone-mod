@@ -43,11 +43,23 @@ public sealed class Fireblast : ModCardTemplate
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
-        await DamageCmd.Attack(base.DynamicVars.Damage.BaseValue)
+        // 灌注：每一层灌注增加一点英雄技能伤害
+        var empower = base.Owner.Creature.GetPower<jaina.Scripts.Character.Powers.EmpowerPower>();
+        var empowerStacks = empower?.EmpowerStacks ?? 0;
+        var damage = base.DynamicVars.Damage.BaseValue + empowerStacks;
+
+        await DamageCmd.Attack(damage)
             .FromCard(this, cardPlay)
             .Targeting(cardPlay.Target!)
             .WithHitFx("vfx/vfx_attack_blunt", null, "blunt_attack.mp3")
             .Execute(choiceContext);
+
+        // 灌注：每一层灌注额外召唤一个 1/1 的小精灵
+        for (int i = 0; i < empowerStacks; i++)
+        {
+            await jaina.Scripts.Character.Minions.JainaMinionPool.SummonMinion<jaina.Scripts.Character.Minions.ImpMinion>(
+                choiceContext, base.Owner, maxHp: 1m, attack: 1m);
+        }
     }
 
     /// <summary>

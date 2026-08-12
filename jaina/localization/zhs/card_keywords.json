@@ -1,6 +1,14 @@
 {
   "JAINA_KEYWORD_DEATHRATTLE.title": "亡语",
-  "JAINA_KEYWORD_DEATHRATTLE.description": "当随从死亡时触发其效果。",
+  "JAINA_KEYWORD_DEATHRATTLE.description": "随从死亡或武器被摧毁时，会触发其效果。",
   "JAINA_KEYWORD_CHARGE.title": "冲锋",
-  "JAINA_KEYWORD_CHARGE.description": "召唤后可立即攻击。"
+  "JAINA_KEYWORD_CHARGE.description": "随从在登场的回合即可立即发起攻击。",
+  "JAINA_KEYWORD_FREEZE.title": "冻结",
+  "JAINA_KEYWORD_FREEZE.description": "被冻结的角色攻击造成的伤害减少25%，可叠加。最大可叠加4层，回合结束全部消失。",
+  "JAINA_KEYWORD_TWINSPELL.title": "双生法术",
+  "JAINA_KEYWORD_TWINSPELL.description": "当你施放一个具有“双生法术”关键词的法术时，会立即将一张该法术的复制置入你的手牌。复制出的这张牌不再具有“双生法术”关键词。",
+  "JAINA_KEYWORD_EMPOWER.title": "灌注",
+  "JAINA_KEYWORD_EMPOWER.description": "灌注：将火焰冲击的伤害从n*1改为1*n。每一层灌注都会增加一点英雄技能伤害，以及额外召唤一个1/1的小精灵。",
+  "JAINA_KEYWORD_FINISHER.title": "压轴",
+  "JAINA_KEYWORD_FINISHER.description": "压轴：使用带有“压轴”的卡牌时，如果刚好消耗完你的能量，就会触发额外效果。"
 }

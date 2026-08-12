@@ -13,5 +13,15 @@
   "JAINA_CARD_VOLATILE_SKELETON_CARD.title": "不稳定的骷髅",
   "JAINA_CARD_VOLATILE_SKELETON_CARD.description": "召唤一个[blue]2/2[/blue]的[red]不稳定的骷髅[/red]。",
   "JAINA_CARD_ZEALOT_CARD.title": "狂热者",
-  "JAINA_CARD_ZEALOT_CARD.description": "召唤一个[blue]3/4[/blue]的[red]狂热者[/red]。"
+  "JAINA_CARD_ZEALOT_CARD.description": "召唤一个[blue]3/4[/blue]的[red]狂热者[/red]。",
+  "JAINA_CARD_FROSTBOLT.title": "寒冰箭",
+  "JAINA_CARD_FROSTBOLT.titleUpgraded": "冰枪术",
+  "JAINA_CARD_FROSTBOLT.description": "对一个角色造成{Damage}点伤害，并使其获得1层[blue]冻结[/blue]。",
+  "JAINA_CARD_FREEZING_POTION.title": "冰冻药水",
+  "JAINA_CARD_FREEZING_POTION.titleUpgraded": "霜冻射线",
+  "JAINA_CARD_FREEZING_POTION.description": "[blue]冻结[/blue]一个敌人。",
+  "JAINA_CARD_IMP_CARD.title": "小精灵",
+  "JAINA_CARD_IMP_CARD.description": "召唤一个[blue]1/1[/blue]的[red]小精灵[/red]。",
+  "JAINA_CARD_SPIRIT_COLLECTOR_CARD.title": "灵体采集者",
+  "JAINA_CARD_SPIRIT_COLLECTOR_CARD.description": "召唤一个[blue]2/1[/blue]的[red]灵体采集者[/red]。获取一张[blue]0费1/1[/blue]的[red]小精灵[/red]，并[blue]灌注[/blue]你的英雄技能。"
 }

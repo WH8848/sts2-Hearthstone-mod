@@ -1,6 +1,14 @@
 {
   "JAINA_KEYWORD_DEATHRATTLE.title": "Deathrattle",
-  "JAINA_KEYWORD_DEATHRATTLE.description": "When a minion dies, trigger its effect.",
+  "JAINA_KEYWORD_DEATHRATTLE.description": "Triggers when the minion dies.",
   "JAINA_KEYWORD_CHARGE.title": "Charge",
-  "JAINA_KEYWORD_CHARGE.description": "Can attack immediately after being summoned."
+  "JAINA_KEYWORD_CHARGE.description": "Can attack immediately after being summoned.",
+  "JAINA_KEYWORD_FREEZE.title": "Freeze",
+  "JAINA_KEYWORD_FREEZE.description": "Frozen characters deal 25% less damage with attacks. Stacks up to 4 times. All stacks are removed at end of turn.",
+  "JAINA_KEYWORD_TWINSPELL.title": "Twinspell",
+  "JAINA_KEYWORD_TWINSPELL.description": "When you cast a spell with Twinspell, add a copy of that spell to your hand. The copy does not have Twinspell.",
+  "JAINA_KEYWORD_EMPOWER.title": "Empower",
+  "JAINA_KEYWORD_EMPOWER.description": "Each stack of Empower increases your Hero Power damage by 1, and summons an extra 1/1 Imp.",
+  "JAINA_KEYWORD_FINISHER.title": "Finisher",
+  "JAINA_KEYWORD_FINISHER.description": "When you play a card with Finisher, if you use all your Energy, trigger an additional effect."
 }
