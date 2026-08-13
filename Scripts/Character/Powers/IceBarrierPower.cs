@@ -38,13 +38,16 @@ public sealed class IceBarrierPower : PowerModel
     }
 
     /// <summary>
-    /// 回合结束时移除
+    /// 下一个玩家回合开始时移除。
+    /// 打出后覆盖整个敌方回合的攻击窗口（不能在玩家回合结束就移除）。
     /// </summary>
-    public override async Task BeforeSideTurnEnd(PlayerChoiceContext choiceContext, CombatSide side, IEnumerable<Creature> participants)
+    public override Task BeforeSideTurnStart(PlayerChoiceContext choiceContext, CombatSide side,
+        IReadOnlyList<Creature> participants, ICombatState combatState)
     {
-        if (Owner.Side == side && Amount > 0)
+        if (side == Owner.Side && Amount > 0)
         {
-            await PowerCmd.Remove(this);
+            _ = PowerCmd.Remove(this);
         }
+        return Task.CompletedTask;
     }
 }

@@ -32,6 +32,7 @@ public sealed class PeakInfinityPower : PowerModel
 
     public override async Task BeforeSideTurnEnd(PlayerChoiceContext choiceContext, CombatSide side, IEnumerable<Creature> participants)
     {
+        MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaDebug] PeakInfinity BeforeSideTurnEnd: side={side} ownerSide={Owner.Side} targetCard={TargetCard?.Id.Entry ?? "null"} pile={(TargetCard?.Pile?.Type.ToString() ?? "null")}");
         if (side != Owner.Side)
         {
             return;

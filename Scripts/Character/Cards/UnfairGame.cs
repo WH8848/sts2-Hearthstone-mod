@@ -61,14 +61,20 @@ public sealed class UnfairGame : ModCardTemplate
                 var hand = base.Owner.PlayerCombatState?.Hand.Cards;
                 if (hand != null && hand.Count > 0)
                 {
+                    // 压轴：从手牌中的法术牌里随机取最多 3 张候选（发现界面要求 ≤3）
                     var candidates = new List<CardModel>();
-                    foreach (var c in hand)
+                    var pool = hand.Where(c => c.Type == CardType.Attack || c.Type == CardType.Skill).ToList();
+                    var rng = base.Owner.RunState.Rng.CombatTargets;
+                    while (candidates.Count < 3 && pool.Count > 0)
                     {
-                        if (c.Type == CardType.Attack || c.Type == CardType.Skill)
+                        var c = rng.NextItem(pool);
+                        if (c == null)
                         {
-                            // CreateClone 保留 Owner（MutableClone 的卡无 Owner 会导致入牌堆 NRE）
-                            candidates.Add(c.CreateClone());
+                            break;
                         }
+                        pool.Remove(c);
+                        // CreateClone 保留 Owner（MutableClone 的卡无 Owner 会导致入牌堆 NRE）
+                        candidates.Add(c.CreateClone());
                     }
                     if (candidates.Count > 0)
                     {

@@ -64,10 +64,13 @@ public sealed class Awaken : ModCardTemplate
         }
 
         // 巅峰无限（升级后）压轴：刚好消耗完能量时，回合结束将本牌移回手牌
-        if (IsUpgraded && base.Owner.PlayerCombatState is { Energy: <= 0 })
+        var energy = base.Owner.PlayerCombatState?.Energy;
+        MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaDebug] Awaken OnPlay: upgraded={IsUpgraded} energy={energy}");
+        if (IsUpgraded && energy is <= 0)
         {
             var power = await PowerCmd.Apply<jaina.Scripts.Character.Powers.PeakInfinityPower>(
                 choiceContext, base.Owner.Creature, 1m, base.Owner.Creature, this);
+            MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaDebug] Awaken PeakInfinityPower applied: {(power != null)}");
             if (power != null)
             {
                 power.TargetCard = this;
