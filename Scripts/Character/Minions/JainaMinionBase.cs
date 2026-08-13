@@ -65,22 +65,19 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
     /// RitsuLib 运行时视觉工厂：直接用代码构建 NCreatureVisuals 节点。
     /// 绕开 tscn 场景导出（Godot 导出器会丢弃无法解析的 script 引用，
     /// 导致 pck 内场景退化为纯 Node2D 而 InvalidCastException）。
-    /// 结构对齐原 assets/minion_visuals/*.tscn：%Visuals/%Bounds/%CenterPos/%IntentPos。
-    /// 场上显示为卡图一半大小（ScaledBody 缩放容器），
-    /// 并带悬停卡牌面板（鼠标悬停随从时在左侧/右侧显示卡牌信息）。
+    /// 结构对齐原 assets/minion_visuals/*.tscn：%Visuals/%Bounds/%CenterPos/%IntentPos
+    /// 必须是 root 的直接子节点（游戏用相对路径 GetNode("IntentPos") 等查找，
+    /// 不能嵌套容器）。缩放仅作用于 Sprite2D 自身（场上显示为卡图一半大小），
+    /// Bounds/IntentPos 保持原尺寸供布局/意图定位使用。
     /// </summary>
     public NCreatureVisuals? TryCreateCreatureVisuals()
     {
         var root = new NCreatureVisuals();
 
-        // 缩放容器：场上随从显示为卡图原尺寸的一半
-        var body = new Node2D { Name = "ScaledBody", Scale = new Vector2(0.5f, 0.5f) };
-        root.AddChild(body);
-
-        // 子节点 Owner 都指向 root，保证 GetNode("%Visuals") 等唯一名查找可用
+        // 卡图显示缩小为一半（仅缩放 Sprite2D，不嵌套容器）
         var texture = ResourceLoader.Load<Texture2D>(MinionVisualsPath);
-        var sprite = new Sprite2D { Name = "Visuals", Texture = texture };
-        body.AddChild(sprite);
+        var sprite = new Sprite2D { Name = "Visuals", Texture = texture, Scale = new Vector2(0.5f, 0.5f) };
+        root.AddChild(sprite);
         sprite.UniqueNameInOwner = true;
         sprite.Owner = root;
 
@@ -95,17 +92,17 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
             OffsetBottom = 190f,
             MouseFilter = Control.MouseFilterEnum.Ignore
         };
-        body.AddChild(bounds);
+        root.AddChild(bounds);
         bounds.UniqueNameInOwner = true;
         bounds.Owner = root;
 
         var center = new Marker2D { Name = "CenterPos" };
-        body.AddChild(center);
+        root.AddChild(center);
         center.UniqueNameInOwner = true;
         center.Owner = root;
 
         var intent = new Marker2D { Name = "IntentPos", Position = new Vector2(0f, -235f) };
-        body.AddChild(intent);
+        root.AddChild(intent);
         intent.UniqueNameInOwner = true;
         intent.Owner = root;
 
