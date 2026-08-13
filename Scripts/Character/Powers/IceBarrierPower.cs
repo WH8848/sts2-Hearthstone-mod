@@ -23,7 +23,7 @@ public sealed class IceBarrierPower : PowerModel
     public override PowerStackType StackType => PowerStackType.Counter;
 
     /// <summary>
-    /// 吉安娜或其随从受到攻击时（伤害结算前），获得 Amount 点护甲。
+    /// 吉安娜或其随从受到攻击时（伤害结算前），获得 Amount 点护甲，然后本 Power 消失。
     /// 随从受击的伤害会转移到主人的护甲（DamageCmd 内 PetOwner 转移），
     /// 因此随从被攻击时同样触发。
     /// </summary>
@@ -34,6 +34,7 @@ public sealed class IceBarrierPower : PowerModel
         if (isOwnerOrPet && amount > 0 && Amount > 0)
         {
             await CreatureCmd.GainBlock(Owner, Amount, ValueProp.Move, null);
+            await PowerCmd.Remove(this);
         }
     }
 

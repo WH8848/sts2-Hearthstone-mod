@@ -279,9 +279,10 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
         {
             return;
         }
-        // 召唤当回合不可攻击（冲锋随从例外：Zealot 的立即攻击写在 OnSummon，不受此限制）
+        // 召唤当回合：不可以攻击，但随从独有回合结束被动照常触发
         if (IsSummonedThisTurn())
         {
+            await PerformTurnEndPassive(choiceContext);
             return;
         }
 
