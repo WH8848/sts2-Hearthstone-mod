@@ -24,6 +24,12 @@ namespace jaina.Scripts.Character.Cards;
 public sealed class FreezingPotion : ModCardTemplate
 {
     /// <summary>
+    /// 双生法术复制品标记：复制品打出时不再复制（替代依赖 Keywords 的判断，
+    /// 因为 LocalKeywords 懒初始化在升级前可能已缓存）
+    /// </summary>
+    public bool IsTwinspellCopy;
+
+    /// <summary>
     /// 双生法术关键词（升级后生效）+ 冻结 + 冰霜派系 + 法术牌
     /// </summary>
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
@@ -79,18 +85,20 @@ public sealed class FreezingPotion : ModCardTemplate
         // 冻结目标 1 层
         await PowerCmd.Apply<FreezePower>(choiceContext, [target], 1m, base.Owner.Creature, this);
 
-        // 双生法术：仅当本卡仍具有双生法术关键词时复制。
-        // 不能按 IsUpgraded 判断——复制品也是升级实例，但已 RemoveKeyword 移除词条，
-        // 用 Keywords 判断可保证复制品打出时不再复制（避免无限复制链）。
-        MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaDebug] FreezingPotion OnPlay: upgraded={IsUpgraded} hasTwinspell={Keywords.Contains(JainaKeywords.Twinspell)}");
-        if (Keywords.Contains(JainaKeywords.Twinspell))
+        // 双生法术：仅原件（非复制品）复制。
+        // 不依赖 Keywords.Contains——LocalKeywords 懒初始化只算一次，
+        // 升级前初始化过的卡升级后 Keywords 不含 Twinspell（时序依赖）。
+        // 用显式标记判断：复制品标记 IsTwinspellCopy，打出时不再复制。
+        MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaDebug] FreezingPotion OnPlay: upgraded={IsUpgraded} isCopy={IsTwinspellCopy}");
+        if (IsUpgraded && !IsTwinspellCopy)
         {
             // CreateClone 保留 Owner（MutableClone 的卡无 Owner 会导致入牌堆 NRE）
             var copy = CreateClone();
             copy.RemoveKeyword(JainaKeywords.Twinspell);
+            copy.IsTwinspellCopy = true;
             jaina.Scripts.Character.JainaCastTracker.MarkGenerated(copy);
             await CardPileCmd.AddGeneratedCardToCombat(copy, PileType.Hand, base.Owner);
-            MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaDebug] FreezingPotion twinspell copied: copyKeywords={string.Join(",", copy.Keywords)}");
+            MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaDebug] FreezingPotion twinspell copied");
         }
     }
 
