@@ -20,6 +20,11 @@ namespace jaina.Scripts.Character.Cards;
 [RegisterCard(typeof(JainaCardPool))]
 public sealed class ArcaneIntellect : ModCardTemplate
 {
+    /// <summary>
+    /// 法术牌：攻击牌和技能牌都视为法术牌
+    /// </summary>
+    public override IEnumerable<CardKeyword> CanonicalKeywords => [jaina.Scripts.Character.Keywords.JainaKeywords.Spell];
+
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
         new CardsVar(2)

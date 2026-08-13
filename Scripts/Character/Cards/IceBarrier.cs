@@ -25,6 +25,11 @@ namespace jaina.Scripts.Character.Cards;
 [RegisterCharacterStarterCard(typeof(Jaina), 4)]
 public sealed class IceBarrier : ModCardTemplate
 {
+    /// <summary>
+    /// 法术牌：攻击牌和技能牌都视为法术牌
+    /// </summary>
+    public override IEnumerable<CardKeyword> CanonicalKeywords => [jaina.Scripts.Character.Keywords.JainaKeywords.Spell];
+
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
         new BlockVar(8m, ValueProp.Move)

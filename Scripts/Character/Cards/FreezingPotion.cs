@@ -24,12 +24,12 @@ namespace jaina.Scripts.Character.Cards;
 public sealed class FreezingPotion : ModCardTemplate
 {
     /// <summary>
-    /// 双生法术关键词（升级后生效）
+    /// 双生法术关键词（升级后生效）+ 法术牌（攻击牌和技能牌都视为法术牌）
     /// </summary>
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
         IsUpgraded
-            ? [JainaKeywords.Twinspell]
-            : [];
+            ? [JainaKeywords.Twinspell, JainaKeywords.Spell]
+            : [JainaKeywords.Spell];
 
     /// <summary>
     /// 卡牌原画：炉石传说"冰冻药水"高清原画

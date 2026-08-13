@@ -10,5 +10,7 @@
   "JAINA_KEYWORD_EMPOWER.title": "Empower",
   "JAINA_KEYWORD_EMPOWER.description": "Each stack of Empower increases your Hero Power damage by 1, and summons an extra 1/1 Imp.",
   "JAINA_KEYWORD_FINISHER.title": "Finisher",
-  "JAINA_KEYWORD_FINISHER.description": "When you play a card with Finisher, if you use all your Energy, trigger an additional effect."
+  "JAINA_KEYWORD_FINISHER.description": "When you play a card with Finisher, if you use all your Energy, trigger an additional effect.",
+  "JAINA_KEYWORD_SPELL.title": "Spell",
+  "JAINA_KEYWORD_SPELL.description": "Attack and Skill cards are both Spell cards."
 }

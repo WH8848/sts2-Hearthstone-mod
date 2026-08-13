@@ -10,5 +10,7 @@
   "JAINA_KEYWORD_EMPOWER.title": "灌注",
   "JAINA_KEYWORD_EMPOWER.description": "灌注：将火焰冲击的伤害从n*1改为1*n。每一层灌注都会增加一点英雄技能伤害，以及额外召唤一个1/1的小精灵。",
   "JAINA_KEYWORD_FINISHER.title": "压轴",
-  "JAINA_KEYWORD_FINISHER.description": "压轴：使用带有“压轴”的卡牌时，如果刚好消耗完你的能量，就会触发额外效果。"
+  "JAINA_KEYWORD_FINISHER.description": "压轴：使用带有“压轴”的卡牌时，如果刚好消耗完你的能量，就会触发额外效果。",
+  "JAINA_KEYWORD_SPELL.title": "法术牌",
+  "JAINA_KEYWORD_SPELL.description": "攻击牌和技能牌都视为法术牌。"
 }

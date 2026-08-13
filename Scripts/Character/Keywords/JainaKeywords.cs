@@ -15,6 +15,8 @@ namespace jaina.Scripts.Character.Keywords;
 [RegisterOwnedKeyword(nameof(Twinspell), IconPath = "res://icon.svg", CardDescriptionPlacement = ModKeywordCardDescriptionPlacement.BeforeCardDescription)]
 [RegisterOwnedKeyword(nameof(Empower), IconPath = "res://icon.svg", CardDescriptionPlacement = ModKeywordCardDescriptionPlacement.BeforeCardDescription)]
 [RegisterOwnedKeyword(nameof(Finisher), IconPath = "res://icon.svg", CardDescriptionPlacement = ModKeywordCardDescriptionPlacement.BeforeCardDescription)]
+// 法术牌：术语关键词（不注入卡面描述，仅提供悬停解释；攻击牌和技能牌都视为法术牌）
+[RegisterOwnedKeyword(nameof(Spell), IconPath = "res://icon.svg")]
 public class JainaKeywords
 {
     /// <summary>
@@ -46,4 +48,9 @@ public class JainaKeywords
     /// 压轴：使用带有"压轴"的卡牌时，如果刚好消耗完你的能量，就会触发额外效果。
     /// </summary>
     public static readonly CardKeyword Finisher = ModContentRegistry.GetQualifiedKeywordId(Entry.ModId, nameof(Finisher)).GetModCardKeyword();
+
+    /// <summary>
+    /// 法术牌：攻击牌和技能牌都视为法术牌。
+    /// </summary>
+    public static readonly CardKeyword Spell = ModContentRegistry.GetQualifiedKeywordId(Entry.ModId, nameof(Spell)).GetModCardKeyword();
 }
