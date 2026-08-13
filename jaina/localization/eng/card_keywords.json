@@ -15,7 +15,12 @@
   "JAINA_KEYWORD_SPELL.description": "Attack and Skill cards are both Spell cards.",
   "JAINA_KEYWORD_BATTLECRY.title": "Battlecry",
   "JAINA_KEYWORD_BATTLECRY.description": "Battlecry: When this card is played from your hand, its effect triggers immediately.",
-  "JAINA_SCHOOL_FIRE": "Fire",
-  "JAINA_SCHOOL_FROST": "Frost",
-  "JAINA_SCHOOL_ARCANE": "Arcane"
+  "JAINA_KEYWORD_FIRE.title": "Fire",
+  "JAINA_KEYWORD_FIRE.description": "Fire school spell.",
+  "JAINA_KEYWORD_FROST.title": "Frost",
+  "JAINA_KEYWORD_FROST.description": "Frost school spell.",
+  "JAINA_KEYWORD_ARCANE.title": "Arcane",
+  "JAINA_KEYWORD_ARCANE.description": "Arcane school spell.",
+  "JAINA_KEYWORD_SHADOW.title": "Shadow",
+  "JAINA_KEYWORD_SHADOW.description": "Shadow school spell."
 }

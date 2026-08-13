@@ -24,8 +24,8 @@ public sealed class Awaken : ModCardTemplate
     /// </summary>
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
         IsUpgraded
-            ? [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Finisher]
-            : [jaina.Scripts.Character.Keywords.JainaKeywords.Spell];
+            ? [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Finisher, jaina.Scripts.Character.Keywords.JainaKeywords.Arcane]
+            : [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Arcane];
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [];
 

@@ -21,6 +21,11 @@ namespace jaina.Scripts.Character.Keywords;
 [RegisterOwnedKeyword(nameof(Battlecry), IconPath = "res://icon.svg")]
 // 法术牌：术语关键词（不注入卡面描述，仅提供悬停解释；攻击牌和技能牌都视为法术牌）
 [RegisterOwnedKeyword(nameof(Spell), IconPath = "res://icon.svg")]
+// 法术派系关键词（不注入卡面描述，描述文本中以金色词条样式出现，悬停显示解释）
+[RegisterOwnedKeyword(nameof(Fire), IconPath = "res://icon.svg")]
+[RegisterOwnedKeyword(nameof(Frost), IconPath = "res://icon.svg")]
+[RegisterOwnedKeyword(nameof(Arcane), IconPath = "res://icon.svg")]
+[RegisterOwnedKeyword(nameof(Shadow), IconPath = "res://icon.svg")]
 public class JainaKeywords
 {
     /// <summary>
@@ -62,4 +67,24 @@ public class JainaKeywords
     /// 战吼：卡牌从手牌中被使用时，会立即触发其效果。
     /// </summary>
     public static readonly CardKeyword Battlecry = ModContentRegistry.GetQualifiedKeywordId(Entry.ModId, nameof(Battlecry)).GetModCardKeyword();
+
+    /// <summary>
+    /// 火焰派系
+    /// </summary>
+    public static readonly CardKeyword Fire = ModContentRegistry.GetQualifiedKeywordId(Entry.ModId, nameof(Fire)).GetModCardKeyword();
+
+    /// <summary>
+    /// 冰霜派系
+    /// </summary>
+    public static readonly CardKeyword Frost = ModContentRegistry.GetQualifiedKeywordId(Entry.ModId, nameof(Frost)).GetModCardKeyword();
+
+    /// <summary>
+    /// 奥术派系
+    /// </summary>
+    public static readonly CardKeyword Arcane = ModContentRegistry.GetQualifiedKeywordId(Entry.ModId, nameof(Arcane)).GetModCardKeyword();
+
+    /// <summary>
+    /// 暗影派系
+    /// </summary>
+    public static readonly CardKeyword Shadow = ModContentRegistry.GetQualifiedKeywordId(Entry.ModId, nameof(Shadow)).GetModCardKeyword();
 }

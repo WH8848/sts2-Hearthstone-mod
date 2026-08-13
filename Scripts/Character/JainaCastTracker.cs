@@ -110,27 +110,4 @@ public static class JainaCastTracker
         var rec = Records.TryGetValue(combatState, out var r) ? r : null;
         return rec != null && rec.Schools.Count >= 3;
     }
-
-    /// <summary>
-    /// 查询卡牌类型对应的派系（无派系返回 false）
-    /// </summary>
-    public static bool TryGetSchool(Type cardType, out JainaSpellSchool school)
-    {
-        return SchoolByCardType.TryGetValue(cardType, out school);
-    }
-
-    /// <summary>
-    /// 派系显示名（本地化：火焰/冰霜/奥术）
-    /// </summary>
-    public static string GetSchoolDisplayName(JainaSpellSchool school)
-    {
-        var key = school switch
-        {
-            JainaSpellSchool.Fire => "JAINA_SCHOOL_FIRE",
-            JainaSpellSchool.Frost => "JAINA_SCHOOL_FROST",
-            JainaSpellSchool.Arcane => "JAINA_SCHOOL_ARCANE",
-            _ => "JAINA_SCHOOL_ARCANE"
-        };
-        return new MegaCrit.Sts2.Core.Localization.LocString("card_keywords", key).GetFormattedText();
-    }
 }

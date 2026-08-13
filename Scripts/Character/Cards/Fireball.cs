@@ -24,7 +24,7 @@ public sealed class Fireball : ModCardTemplate
     /// <summary>
     /// 法术牌：攻击牌和技能牌都视为法术牌
     /// </summary>
-    public override IEnumerable<CardKeyword> CanonicalKeywords => [jaina.Scripts.Character.Keywords.JainaKeywords.Spell];
+    public override IEnumerable<CardKeyword> CanonicalKeywords => [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Fire];
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
