@@ -12,5 +12,7 @@
   "JAINA_KEYWORD_FINISHER.title": "压轴",
   "JAINA_KEYWORD_FINISHER.description": "压轴：使用带有“压轴”的卡牌时，如果刚好消耗完你的能量，就会触发额外效果。",
   "JAINA_KEYWORD_SPELL.title": "法术牌",
-  "JAINA_KEYWORD_SPELL.description": "攻击牌和技能牌都视为法术牌。"
+  "JAINA_KEYWORD_SPELL.description": "攻击牌和技能牌都视为法术牌。",
+  "JAINA_KEYWORD_BATTLECRY.title": "战吼",
+  "JAINA_KEYWORD_BATTLECRY.description": "战吼：卡牌从手牌中被使用时，会立即触发其效果。"
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using jaina.Scripts.Character.Minions;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -11,6 +12,12 @@ namespace jaina.Scripts.Character.Cards;
 [RegisterCard(typeof(JainaCardPool))]
 public sealed class KalecgosCard : JainaMinionCardTemplate
 {
+    /// <summary>
+    /// 战吼：发现一张法术牌
+    /// </summary>
+    public override IEnumerable<CardKeyword> CanonicalKeywords =>
+        [jaina.Scripts.Character.Keywords.JainaKeywords.Battlecry];
+
     public override string CustomPortraitPath => "res://assets/card_art/kalecgos.png";
     protected override Type MinionType => typeof(KalecgosMinion);
 

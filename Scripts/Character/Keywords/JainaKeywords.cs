@@ -15,6 +15,7 @@ namespace jaina.Scripts.Character.Keywords;
 [RegisterOwnedKeyword(nameof(Twinspell), IconPath = "res://icon.svg", CardDescriptionPlacement = ModKeywordCardDescriptionPlacement.BeforeCardDescription)]
 [RegisterOwnedKeyword(nameof(Empower), IconPath = "res://icon.svg", CardDescriptionPlacement = ModKeywordCardDescriptionPlacement.BeforeCardDescription)]
 [RegisterOwnedKeyword(nameof(Finisher), IconPath = "res://icon.svg", CardDescriptionPlacement = ModKeywordCardDescriptionPlacement.BeforeCardDescription)]
+[RegisterOwnedKeyword(nameof(Battlecry), IconPath = "res://icon.svg", CardDescriptionPlacement = ModKeywordCardDescriptionPlacement.BeforeCardDescription)]
 // 法术牌：术语关键词（不注入卡面描述，仅提供悬停解释；攻击牌和技能牌都视为法术牌）
 [RegisterOwnedKeyword(nameof(Spell), IconPath = "res://icon.svg")]
 public class JainaKeywords
@@ -53,4 +54,9 @@ public class JainaKeywords
     /// 法术牌：攻击牌和技能牌都视为法术牌。
     /// </summary>
     public static readonly CardKeyword Spell = ModContentRegistry.GetQualifiedKeywordId(Entry.ModId, nameof(Spell)).GetModCardKeyword();
+
+    /// <summary>
+    /// 战吼：卡牌从手牌中被使用时，会立即触发其效果。
+    /// </summary>
+    public static readonly CardKeyword Battlecry = ModContentRegistry.GetQualifiedKeywordId(Entry.ModId, nameof(Battlecry)).GetModCardKeyword();
 }

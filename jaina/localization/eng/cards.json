@@ -35,7 +35,7 @@
   "JAINA_CARD_VARDEN_CARD.title": "Varden Dawngrasp",
   "JAINA_CARD_VARDEN_CARD.description": "Summon a [blue]3/3[/blue] [red]Varden Dawngrasp[/red]. Battlecry: Give all enemies 4 [blue]Freeze[/blue]. If an enemy is already Frozen, deal 4 damage for each stack of Freeze.",
   "JAINA_CARD_ROMMATH_CARD.title": "Archmage Rommath",
-  "JAINA_CARD_ROMMATH_CARD.description": "Summon a [blue]5/7[/blue] [red]Archmage Rommath[/red]. Recast every [blue]Spell card[/blue] from outside your deck that you have cast this combat (targets chosen randomly).",
+  "JAINA_CARD_ROMMATH_CARD.description": "Summon a [blue]5/7[/blue] [red]Archmage Rommath[/red]. Battlecry: Recast every [blue]Spell card[/blue] from outside your deck that you have cast this combat (targets chosen randomly).",
   "JAINA_CARD_MOZAKI_CARD.title": "Mozaki Master of Flame",
   "JAINA_CARD_MOZAKI_CARD.description": "Summon a [blue]3/8[/blue] [red]Mozaki Master of Flame[/red]. After you cast a [blue]Spell card[/blue], gain +1 Strength.",
   "JAINA_CARD_LUNA_CARD.title": "Stargazer Luna",
