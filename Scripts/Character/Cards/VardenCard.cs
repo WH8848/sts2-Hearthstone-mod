@@ -16,7 +16,7 @@ public sealed class VardenCard : JainaMinionCardTemplate
     /// 战吼：给予敌方全体冻结
     /// </summary>
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
-        [jaina.Scripts.Character.Keywords.JainaKeywords.Battlecry];
+        [jaina.Scripts.Character.Keywords.JainaKeywords.Battlecry, jaina.Scripts.Character.Keywords.JainaKeywords.Freeze];
 
     public override string CustomPortraitPath => "res://assets/card_art/varden_dawngrasp.png";
     protected override Type MinionType => typeof(VardenMinion);

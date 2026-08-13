@@ -11,6 +11,12 @@ namespace jaina.Scripts.Character.Cards;
 [RegisterCard(typeof(JainaCardPool))]
 public sealed class AegwynnCard : JainaMinionCardTemplate
 {
+    /// <summary>
+    /// 亡语：下一张抽到的随从牌继承此能力
+    /// </summary>
+    public override IEnumerable<CardKeyword> CanonicalKeywords =>
+        [jaina.Scripts.Character.Keywords.JainaKeywords.Deathrattle];
+
     public override string CustomPortraitPath => "res://assets/card_art/aegwynn.png";
     protected override Type MinionType => typeof(AegwynnMinion);
 

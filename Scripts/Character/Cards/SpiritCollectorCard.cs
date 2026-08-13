@@ -21,7 +21,7 @@ public sealed class SpiritCollectorCard : JainaMinionCardTemplate
     /// 战吼：获取一张 0 费 1/1 小精灵并灌注英雄技能
     /// </summary>
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
-        [jaina.Scripts.Character.Keywords.JainaKeywords.Battlecry];
+        [jaina.Scripts.Character.Keywords.JainaKeywords.Battlecry, jaina.Scripts.Character.Keywords.JainaKeywords.Empower];
 
     protected override Type MinionType => typeof(SpiritCollectorMinion);
 
