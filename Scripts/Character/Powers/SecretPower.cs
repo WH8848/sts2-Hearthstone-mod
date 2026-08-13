@@ -29,17 +29,51 @@ public sealed class SecretPower : PowerModel
     public bool IsCounterspell;
 
     /// <summary>
-    /// 异议：敌人造成的攻击伤害降为 0，触发一次后移除
+    /// 异议是否已拦截过一次（预览阶段的 ModifyDamage 调用也会触发拦截，
+    /// 因此不能在 ModifyDamageAdditive 里移除 Power——等实际伤害结算后再移除）
+    /// </summary>
+    private bool _consumed;
+
+    /// <summary>
+    /// 异议：敌人造成的攻击伤害降为 0。
+    /// 注意：敌人意图预览（每回合开始计算意图伤害）也会调用本钩子，
+    /// 若在这里立即消耗 Power，实际攻击时拦截已失效——所以只标记，
+    /// 待 AfterDamageReceived（实际伤害结算）后再移除。
     /// </summary>
     public override decimal ModifyDamageAdditive(Creature? target, decimal amount, ValueProp props, Creature? dealer, CardModel? cardSource, CardPlay? cardPlay)
     {
-        MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaDebug] SecretPower ModifyDamageAdditive: counterspell={IsCounterspell} amount={amount} dealer={dealer?.LogName ?? "null"} dealerSide={dealer?.Side} myAmount={Amount}");
+        MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaDebug] SecretPower ModifyDamageAdditive: counterspell={IsCounterspell} amount={amount} dealer={dealer?.LogName ?? "null"} dealerSide={dealer?.Side} myAmount={Amount} consumed={_consumed}");
         if (!IsCounterspell && dealer != null && dealer.Side == CombatSide.Enemy && amount > 0 && Amount > 0)
         {
-            _ = PowerCmd.Decrement(this);
+            _consumed = true;
             return -amount;
         }
         return 0m;
+    }
+
+    /// <summary>
+    /// 异议实际拦截生效后：敌人伤害结算（含被拦为 0 的伤害）后移除 Power
+    /// </summary>
+    public override Task AfterDamageReceived(PlayerChoiceContext choiceContext, Creature target, DamageResult result, ValueProp props, Creature? dealer, CardModel? cardSource)
+    {
+        if (_consumed && dealer != null && dealer.Side == CombatSide.Enemy)
+        {
+            _ = PowerCmd.Remove(this);
+        }
+        return Task.CompletedTask;
+    }
+
+    /// <summary>
+    /// 玩家回合开始：兜底清理（若敌人始终未攻击，防止残留）
+    /// </summary>
+    public override Task BeforeSideTurnStart(PlayerChoiceContext choiceContext, CombatSide side,
+        IReadOnlyList<Creature> participants, MegaCrit.Sts2.Core.Combat.ICombatState combatState)
+    {
+        if (side == Owner.Side)
+        {
+            _ = PowerCmd.Remove(this);
+        }
+        return Task.CompletedTask;
     }
 
     /// <summary>
