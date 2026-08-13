@@ -48,7 +48,7 @@
   "JAINA_CARD_REWIND.description": "发现一张你在本局对战中施放过的其他[blue]法术牌[/blue]的一张复制。",
   "JAINA_CARD_TRICK.title": "魔术戏法",
   "JAINA_CARD_TRICK.titleUpgraded": "广阔智慧",
-  "JAINA_CARD_TRICK.description": "{IfUpgraded:show:发现两张费用小于或等于1点的[blue]法术牌[/blue]。|发现一张费用小于或等于1点的[blue]法术牌[/blue]。}",
+  "JAINA_CARD_TRICK.description": "{IfUpgraded:show:发现两张费用小于或等于1点的[blue]法术牌[/blue]。交换其费用消耗。|发现一张费用小于或等于1点的[blue]法术牌[/blue]。}",
   "JAINA_CARD_UNFAIR_GAME.title": "非公平游戏",
   "JAINA_CARD_UNFAIR_GAME.titleUpgraded": "加大音量",
   "JAINA_CARD_UNFAIR_GAME.description": "{IfUpgraded:show:抽三张[blue]法术牌[/blue]。[blue]压轴[/blue]：从中发现一张复制。|如果你这个回合没有受到任何伤害，下个回合抽三张牌。}",

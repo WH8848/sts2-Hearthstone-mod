@@ -48,7 +48,7 @@
   "JAINA_CARD_REWIND.description": "Discover a copy of another [blue]Spell card[/blue] you have cast this combat.",
   "JAINA_CARD_TRICK.title": "Trick",
   "JAINA_CARD_TRICK.titleUpgraded": "Broad Wisdom",
-  "JAINA_CARD_TRICK.description": "{IfUpgraded:show:Discover two [blue]Spell cards[/blue] that cost 1 or less.|Discover a [blue]Spell card[/blue] that costs 1 or less.}",
+  "JAINA_CARD_TRICK.description": "{IfUpgraded:show:Discover two [blue]Spell cards[/blue] that cost 1 or less. Swap their costs.|Discover a [blue]Spell card[/blue] that costs 1 or less.}",
   "JAINA_CARD_UNFAIR_GAME.title": "Unfair Game",
   "JAINA_CARD_UNFAIR_GAME.titleUpgraded": "Turn Up Volume",
   "JAINA_CARD_UNFAIR_GAME.description": "{IfUpgraded:show:Draw three [blue]Spell cards[/blue]. [blue]Finale[/blue]: Discover a copy from among them.|If you took no damage this turn, draw three cards next turn.}",
