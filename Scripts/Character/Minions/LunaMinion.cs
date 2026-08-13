@@ -35,7 +35,7 @@ namespace jaina.Scripts.Character.Minions;
         public override Task BeforeCardPlayed(CardPlay cardPlay)
         {
             _playedRightmost = false;
-            if (cardPlay.Card.Owner != Creature.PetOwner || Creature.PetOwner == null)
+            if (!Creature.IsAlive || cardPlay.Card.Owner != Creature.PetOwner || Creature.PetOwner == null)
             {
                 return Task.CompletedTask;
             }
@@ -48,11 +48,11 @@ namespace jaina.Scripts.Character.Minions;
         }
 
         /// <summary>
-        /// 使用最右边的手牌后抽一张牌
+        /// 使用最右边的手牌后抽一张牌（光环：仅露娜在场时生效）
         /// </summary>
         public override async Task AfterCardPlayed(PlayerChoiceContext choiceContext, CardPlay cardPlay)
         {
-            if (!_playedRightmost)
+            if (!_playedRightmost || !Creature.IsAlive)
             {
                 return;
             }

@@ -30,7 +30,7 @@ public sealed class AntonidasMinion : JainaMinionBase
     /// </summary>
     public override async Task AfterCardPlayed(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
-        if (cardPlay.Card.Owner != Creature.PetOwner)
+        if (!Creature.IsAlive || cardPlay.Card.Owner != Creature.PetOwner)
         {
             return;
         }

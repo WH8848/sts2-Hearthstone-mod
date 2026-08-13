@@ -32,12 +32,8 @@ public sealed class KalecgosMinion : JainaMinionBase
     {
         await base.OnSummon(choiceContext, owner, options);
 
-        // 每回合第一张攻击/技能牌 0 费（效果挂玩家，来源随从死亡后失效）
-        var power = await PowerCmd.Apply<KalecgosPower>(choiceContext, owner.Creature, 1m, Creature, options.Source);
-        if (power != null)
-        {
-            power.SourceMinion = Creature;
-        }
+        // 每回合第一张攻击/技能牌 0 费（光环挂随从自身，随从死亡自动失效）
+        await PowerCmd.Apply<KalecgosPower>(choiceContext, [Creature], 1m, Creature, options.Source);
 
         // 战吼：发现一张攻击牌或技能牌
         await JainaDiscoverHelper.DiscoverAndAddToHand(choiceContext, owner);

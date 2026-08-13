@@ -32,7 +32,7 @@ public sealed class SorcererApprenticeMinion : JainaMinionBase
     /// </summary>
     public override Task AfterCardPlayed(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
-        if (cardPlay.Card.Owner != Creature.PetOwner || Creature.PetOwner == null)
+        if (!Creature.IsAlive || cardPlay.Card.Owner != Creature.PetOwner || Creature.PetOwner == null)
         {
             return Task.CompletedTask;
         }
