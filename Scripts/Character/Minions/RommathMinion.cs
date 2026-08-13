@@ -27,7 +27,7 @@ public sealed class RommathMinion : JainaMinionBase
 
     public override int MaxInitialHp => 7;
 
-    protected override string MinionVisualsPath => "res://assets/minion_visuals/archmage_rommath.tscn";
+    protected override string MinionVisualsPath => "res://assets/card_art/archmage_rommath.png";
 
     /// <summary>
     /// 战吼：重放本局施放过的每张牌库之外的攻击/技能牌（免费自动打出，随机目标）

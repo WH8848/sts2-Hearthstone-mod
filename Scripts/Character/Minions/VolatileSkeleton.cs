@@ -26,7 +26,7 @@ public sealed class VolatileSkeleton : JainaMinionBase
     /// <summary>
     /// 战斗视觉：不稳定的骷髅卡图原画场景
     /// </summary>
-    protected override string MinionVisualsPath => "res://assets/minion_visuals/volatile_skeleton.tscn";
+    protected override string MinionVisualsPath => "res://assets/card_art/volatile_skeleton.png";
 
     /// <summary>
     /// 亡语伤害值

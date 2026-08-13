@@ -22,7 +22,7 @@ public sealed class AntonidasMinion : JainaMinionBase
 
     public override int MaxInitialHp => 7;
 
-    protected override string MinionVisualsPath => "res://assets/minion_visuals/antonidas.tscn";
+    protected override string MinionVisualsPath => "res://assets/card_art/antonidas.png";
 
     /// <summary>
     /// 召唤时挂上送火球术光环

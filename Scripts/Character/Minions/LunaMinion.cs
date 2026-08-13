@@ -22,7 +22,7 @@ namespace jaina.Scripts.Character.Minions;
 
         public override int MaxInitialHp => 4;
 
-        protected override string MinionVisualsPath => "res://assets/minion_visuals/stargazer_luna.tscn";
+        protected override string MinionVisualsPath => "res://assets/card_art/stargazer_luna.png";
 
         /// <summary>
         /// 记录本回合打出的牌是否为手牌最右边（打出前判定）

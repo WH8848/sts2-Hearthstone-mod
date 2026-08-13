@@ -24,7 +24,7 @@ public sealed class VardenMinion : JainaMinionBase
 
     public override int MaxInitialHp => 3;
 
-    protected override string MinionVisualsPath => "res://assets/minion_visuals/varden_dawngrasp.tscn";
+    protected override string MinionVisualsPath => "res://assets/card_art/varden_dawngrasp.png";
 
     /// <summary>
     /// 战吼：先按现有冻结层数结算伤害，再给予全体敌人 4 层冻结

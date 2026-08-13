@@ -23,7 +23,7 @@ public sealed class SorcererApprenticeMinion : JainaMinionBase
 
     public override int MaxInitialHp => 2;
 
-    protected override string MinionVisualsPath => "res://assets/minion_visuals/sorcerer_apprentice.tscn";
+    protected override string MinionVisualsPath => "res://assets/card_art/sorcerer_apprentice.png";
 
     /// <summary>
     /// 召唤时挂上减费光环

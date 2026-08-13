@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Godot;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Creatures;
@@ -10,8 +11,11 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.MonsterMoves.Intents;
 using MegaCrit.Sts2.Core.MonsterMoves.MonsterMoveStateMachine;
+using MegaCrit.Sts2.Core.Nodes.Combat;
 using MegaCrit.Sts2.Core.ValueProps;
 using MinionLib.Minion;
+using STS2RitsuLib.Scaffolding.Content;
+using STS2RitsuLib.Scaffolding.Godot;
 
 namespace jaina.Scripts.Character.Minions;
 
@@ -23,7 +27,7 @@ namespace jaina.Scripts.Character.Minions;
 /// - 手动模式（默认）：随从永不自动行动，一切行动靠玩家点击随从触发（行动点制）。
 /// - 自动模式：玩家回合结束时自动攻击随机敌人，并执行各随从独有被动。
 /// </summary>
-public abstract class JainaMinionBase : MinionModel
+public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
 {
     /// <summary>
     /// 随从基础攻击力（通过 MinionSummonOptions.PrimaryStatAmount 传入实际值）
@@ -51,9 +55,39 @@ public abstract class JainaMinionBase : MinionModel
     protected override string VisualsPath => MinionVisualsPath;
 
     /// <summary>
-    /// 各随从的卡图视觉场景路径
+    /// 各随从的卡图视觉资源路径
     /// </summary>
     protected abstract string MinionVisualsPath { get; }
+
+    /// <summary>
+    /// RitsuLib 运行时视觉工厂：直接用代码构建 NCreatureVisuals 节点。
+    /// 绕开 tscn 场景导出（Godot 导出器会丢弃无法解析的 script 引用，
+    /// 导致 pck 内场景退化为纯 Node2D 而 InvalidCastException）。
+    /// 结构对齐原 assets/minion_visuals/*.tscn：%Visuals/%Bounds/%CenterPos/%IntentPos。
+    /// </summary>
+    public NCreatureVisuals? TryCreateCreatureVisuals()
+    {
+        var root = new NCreatureVisuals();
+
+        var texture = ResourceLoader.Load<Texture2D>(MinionVisualsPath);
+        root.AddUniqueChild(new Sprite2D { Texture = texture }, "Visuals");
+
+        var bounds = new Control
+        {
+            AnchorRight = 1f,
+            AnchorBottom = 1f,
+            OffsetLeft = -250f,
+            OffsetTop = -190f,
+            OffsetRight = 250f,
+            OffsetBottom = 190f,
+            MouseFilter = Control.MouseFilterEnum.Ignore
+        };
+        root.AddUniqueChild(bounds, "Bounds");
+
+        root.AddUniqueChild(new Marker2D(), "CenterPos");
+        root.AddUniqueChild(new Marker2D { Position = new Vector2(0f, -235f) }, "IntentPos");
+        return root;
+    }
 
     /// <summary>
     /// 随从不显示血条

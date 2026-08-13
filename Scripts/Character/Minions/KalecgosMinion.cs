@@ -23,7 +23,7 @@ public sealed class KalecgosMinion : JainaMinionBase
 
     public override int MaxInitialHp => 12;
 
-    protected override string MinionVisualsPath => "res://assets/minion_visuals/kalecgos.tscn";
+    protected override string MinionVisualsPath => "res://assets/card_art/kalecgos.png";
 
     /// <summary>
     /// 战吼：发现一张攻击牌或技能牌；同时挂上"第一张攻击/技能牌 0 费"的效果

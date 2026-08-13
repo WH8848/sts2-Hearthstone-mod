@@ -23,9 +23,6 @@
     <Content Remove="game_decomp/**" />
     <None Remove="ritsu_decomp/**" />
     <None Remove="game_decomp/**" />
-    <!-- 排除游戏脚本 uid 占位文件（仅用于导出时保留 tscn 的 script 引用，非本 mod 代码） -->
-    <Compile Remove="src/**" />
-    <None Remove="src/**" />
 
     <Reference Include="sts2">
       <HintPath>$(Sts2DataDir)/sts2.dll</HintPath>

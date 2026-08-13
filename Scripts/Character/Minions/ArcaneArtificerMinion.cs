@@ -23,7 +23,7 @@ public sealed class ArcaneArtificerMinion : JainaMinionBase
 
     public override int MaxInitialHp => 3;
 
-    protected override string MinionVisualsPath => "res://assets/minion_visuals/arcane_artificer.tscn";
+    protected override string MinionVisualsPath => "res://assets/card_art/arcane_artificer.png";
 
     /// <summary>
     /// 召唤时挂上护甲光环

@@ -25,7 +25,7 @@ public sealed class MozakiMinion : JainaMinionBase
 
     public override int MaxInitialHp => 8;
 
-    protected override string MinionVisualsPath => "res://assets/minion_visuals/mozaki.tscn";
+    protected override string MinionVisualsPath => "res://assets/card_art/mozaki.png";
 
     /// <summary>
     /// 召唤时挂上力量光环（初始 0 层）

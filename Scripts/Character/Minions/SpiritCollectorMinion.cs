@@ -26,5 +26,5 @@ public sealed class SpiritCollectorMinion : JainaMinionBase
     /// <summary>
     /// 战斗视觉：灵体采集者卡图原画场景
     /// </summary>
-    protected override string MinionVisualsPath => "res://assets/minion_visuals/spirit_collector.tscn";
+    protected override string MinionVisualsPath => "res://assets/card_art/spirit_collector.png";
 }

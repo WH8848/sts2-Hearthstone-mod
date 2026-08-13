@@ -22,7 +22,7 @@ public sealed class AegwynnMinion : JainaMinionBase
 
     public override int MaxInitialHp => 5;
 
-    protected override string MinionVisualsPath => "res://assets/minion_visuals/aegwynn.tscn";
+    protected override string MinionVisualsPath => "res://assets/card_art/aegwynn.png";
 
     /// <summary>
     /// 拥有亡语词条

@@ -16,5 +16,5 @@ public sealed class RenathalMinion : JainaMinionBase
 
     public override int MaxInitialHp => 4;
 
-    protected override string MinionVisualsPath => "res://assets/minion_visuals/prince_renathal.tscn";
+    protected override string MinionVisualsPath => "res://assets/card_art/prince_renathal.png";
 }

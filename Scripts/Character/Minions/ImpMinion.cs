@@ -27,7 +27,7 @@ public sealed class ImpMinion : JainaMinionBase
     /// <summary>
     /// 战斗视觉：小精灵卡图原画场景
     /// </summary>
-    protected override string MinionVisualsPath => "res://assets/minion_visuals/imp.tscn";
+    protected override string MinionVisualsPath => "res://assets/card_art/imp.png";
 
     /// <summary>
     /// 小精灵无亡语

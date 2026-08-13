@@ -26,7 +26,7 @@ public sealed class Zealot : JainaMinionBase
     /// <summary>
     /// 战斗视觉：狂热者卡图原画场景
     /// </summary>
-    protected override string MinionVisualsPath => "res://assets/minion_visuals/zealot.tscn";
+    protected override string MinionVisualsPath => "res://assets/card_art/zealot.png";
 
     public override int MinInitialHp => 4;
 
