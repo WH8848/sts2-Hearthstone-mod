@@ -12,7 +12,8 @@ using STS2RitsuLib.Interop.AutoRegistration;
 namespace jaina.Scripts.Character.Powers;
 
 /// <summary>
-/// 寒冰护盾：本回合内受到攻击时，获得 Amount 点护甲。回合结束时移除。
+/// 寒冰护盾：受到攻击时（伤害结算前），获得 Amount 点护甲。回合结束时移除。
+/// 用 BeforeDamageReceived：护甲在本次伤害结算前获得，可挡住当次攻击。
 /// </summary>
 [RegisterPower]
 public sealed class IceBarrierPower : PowerModel
@@ -22,11 +23,11 @@ public sealed class IceBarrierPower : PowerModel
     public override PowerStackType StackType => PowerStackType.Counter;
 
     /// <summary>
-    /// 玩家受到攻击时，获得 Amount 点护甲
+    /// 玩家受到攻击时（结算前），获得 Amount 点护甲
     /// </summary>
-    public override async Task AfterDamageReceived(PlayerChoiceContext choiceContext, Creature target, DamageResult result, ValueProp props, Creature? dealer, CardModel? cardSource)
+    public override async Task BeforeDamageReceived(PlayerChoiceContext choiceContext, Creature target, decimal amount, ValueProp props, Creature? dealer, CardModel? cardSource)
     {
-        if (target == Owner && result.UnblockedDamage > 0 && Amount > 0)
+        if (target == Owner && amount > 0 && Amount > 0)
         {
             await CreatureCmd.GainBlock(Owner, Amount, ValueProp.Move, null);
         }

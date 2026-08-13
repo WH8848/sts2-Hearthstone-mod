@@ -41,7 +41,7 @@ public sealed class Rewind : ModCardTemplate
         }
         var rec = jaina.Scripts.Character.JainaCastTracker.For(combatState);
         var playedTypes = rec.PlayedAttackSkills
-            .Where(t => t != typeof(Rewind))
+            .Where(t => t != typeof(Rewind) && t != typeof(Fireblast)) // 排除自身与英雄技能（火焰冲击）
             .ToList();
         if (playedTypes.Count == 0)
         {

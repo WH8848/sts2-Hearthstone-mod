@@ -17,13 +17,13 @@ namespace jaina.Scripts.Character.Cards;
 public static class JainaDiscoverHelper
 {
     /// <summary>
-    /// 吉安娜攻击/技能牌池（可被发现）
+    /// 吉安娜攻击/技能牌池（可被发现）。
+    /// 注意：火焰冲击是英雄技能，不可被衍生发现。
     /// </summary>
     private static readonly Type[] AttackSkillPool =
     [
         typeof(Fireball),
         typeof(Frostbolt),
-        typeof(Fireblast),
         typeof(ArcaneIntellect),
         typeof(FreezingPotion),
         typeof(IceBarrier)
