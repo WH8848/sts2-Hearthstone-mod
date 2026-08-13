@@ -39,14 +39,14 @@ public static class NCardSchoolLabelPatch
             {
                 Name = LabelName,
                 // 卡面逻辑坐标系 300x422（Frame 中心锚定）：描述区底部 y=173，
-                // 卡框底部 y=211——派系标签放在描述区下方、卡框内侧上方（y≈178~205）
-                Position = new Vector2(-100f, 178f),
-                Size = new Vector2(200f, 26f),
+                // 卡框底部 y=211——派系标签固定落在描述区下方、卡框内侧上方
+                Position = new Vector2(-100f, 176f),
+                Size = new Vector2(200f, 30f),
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
                 MouseFilter = Control.MouseFilterEnum.Ignore
             };
-            label.AddThemeFontSizeOverride("font_size", 13);
+            label.AddThemeFontSizeOverride("font_size", 18);
             __instance.AddChild(label);
         }
 
