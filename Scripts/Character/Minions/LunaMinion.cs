@@ -54,6 +54,7 @@ public sealed class LunaMinion : JainaMinionBase
             {
                 _handOrder.AddRange(hand);
             }
+            MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaDebug] Luna TurnStart: snapshotCount={_handOrder.Count}");
         }
         return Task.CompletedTask;
     }
@@ -88,11 +89,13 @@ public sealed class LunaMinion : JainaMinionBase
     public override Task BeforeCardPlayed(CardPlay cardPlay)
     {
         _playedRightmost = false;
+        MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaDebug] Luna BeforePlay: card={cardPlay.Card.Id.Entry} alive={Creature.IsAlive} snapCount={_handOrder.Count}");
         if (!Creature.IsAlive || cardPlay.Card.Owner != Creature.PetOwner || Creature.PetOwner == null)
         {
             return Task.CompletedTask;
         }
         int index = _handOrder.IndexOf(cardPlay.Card);
+        MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaDebug] Luna BeforePlay: index={index} isRightmost={(index >= 0 && index == _handOrder.Count - 1)}");
         if (index >= 0)
         {
             _playedRightmost = index == _handOrder.Count - 1;
@@ -113,6 +116,7 @@ public sealed class LunaMinion : JainaMinionBase
         {
             _handOrder.Remove(cardPlay.Card);
         }
+        MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaDebug] Luna AfterPlay: card={cardPlay.Card.Id.Entry} flag={_playedRightmost} alive={Creature.IsAlive}");
         if (!_playedRightmost || !Creature.IsAlive)
         {
             return;

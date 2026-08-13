@@ -79,8 +79,10 @@ public sealed class FreezingPotion : ModCardTemplate
         // 冻结目标 1 层
         await PowerCmd.Apply<FreezePower>(choiceContext, [target], 1m, base.Owner.Creature, this);
 
-        // 双生法术：立即将一张该法术的复制置入你的手牌（复制品不再具有双生法术）
-        if (IsUpgraded)
+        // 双生法术：仅当本卡仍具有双生法术关键词时复制。
+        // 不能按 IsUpgraded 判断——复制品也是升级实例，但已 RemoveKeyword 移除词条，
+        // 用 Keywords 判断可保证复制品打出时不再复制（避免无限复制链）。
+        if (Keywords.Contains(JainaKeywords.Twinspell))
         {
             // CreateClone 保留 Owner（MutableClone 的卡无 Owner 会导致入牌堆 NRE）
             var copy = CreateClone();
