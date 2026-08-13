@@ -54,6 +54,7 @@ public sealed class Objection : ModCardTemplate
 
         // 异议：拦截下一次敌人攻击伤害；法术反制（升级）：拦截下一次敌人减益
         var secret = await PowerCmd.Apply<SecretPower>(choiceContext, base.Owner.Creature, 1m, base.Owner.Creature, this);
+        MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaDebug] Objection Apply SecretPower: {(secret != null)} counterspell={IsUpgraded}");
         if (secret != null)
         {
             secret.IsCounterspell = IsUpgraded;

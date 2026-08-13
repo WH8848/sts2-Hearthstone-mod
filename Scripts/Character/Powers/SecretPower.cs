@@ -33,6 +33,7 @@ public sealed class SecretPower : PowerModel
     /// </summary>
     public override decimal ModifyDamageAdditive(Creature? target, decimal amount, ValueProp props, Creature? dealer, CardModel? cardSource, CardPlay? cardPlay)
     {
+        MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaDebug] SecretPower ModifyDamageAdditive: counterspell={IsCounterspell} amount={amount} dealer={dealer?.LogName ?? "null"} dealerSide={dealer?.Side} myAmount={Amount}");
         if (!IsCounterspell && dealer != null && dealer.Side == CombatSide.Enemy && amount > 0 && Amount > 0)
         {
             _ = PowerCmd.Decrement(this);
@@ -46,6 +47,7 @@ public sealed class SecretPower : PowerModel
     /// </summary>
     public override bool TryModifyPowerAmountReceived(PowerModel canonicalPower, Creature target, decimal amount, Creature? applier, out decimal modifiedAmount)
     {
+        MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaDebug] SecretPower TryModifyPowerAmountReceived: counterspell={IsCounterspell} power={canonicalPower?.Id.Entry ?? "null"} amount={amount} applier={applier?.LogName ?? "null"} applierSide={applier?.Side} targetSide={target.Side} myAmount={Amount}");
         modifiedAmount = amount;
         if (!IsCounterspell || Amount <= 0)
         {
