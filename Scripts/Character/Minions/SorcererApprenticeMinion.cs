@@ -11,7 +11,7 @@ namespace jaina.Scripts.Character.Minions;
 /// <summary>
 /// 巫师学徒 (Sorcerer's Apprentice) - 吉安娜专属随从。
 /// 属性：攻击 3，生命 2。
-/// 你每打出四张攻击牌或技能牌，下一张攻击牌或技能牌消耗减少1点。
+/// 你的法术牌（攻击牌/技能牌）费用减少1点。
 /// 光环效果：挂在随从自身，随从死亡后被动失效。
 /// </summary>
 [RegisterMonster]

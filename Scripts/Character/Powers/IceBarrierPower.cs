@@ -12,8 +12,9 @@ using STS2RitsuLib.Interop.AutoRegistration;
 namespace jaina.Scripts.Character.Powers;
 
 /// <summary>
-/// 寒冰护盾：受到攻击时（伤害结算前），获得 Amount 点护甲。回合结束时移除。
+/// 寒冰护盾：本回合内受到攻击时（伤害结算前），获得 Amount 点护甲，随后本 Power 消失。
 /// 用 BeforeDamageReceived：护甲在本次伤害结算前获得，可挡住当次攻击。
+/// 已触发过即消失（本回合内最多挡一次）；若本回合内未被攻击，下个玩家回合开始兜底移除。
 /// </summary>
 [RegisterPower]
 public sealed class IceBarrierPower : PowerModel

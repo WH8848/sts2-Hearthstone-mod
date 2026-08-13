@@ -9,7 +9,9 @@ namespace jaina.Scripts.Character.Minions;
 
 /// <summary>
 /// 灵体采集者 (Spirit Collector) - 吉安娜专属随从。
-/// 属性：攻击 2，生命 1。被召唤时：获取一张 0 费 1/1 的小精灵，并灌注你的英雄技能。
+/// 属性：攻击 2，生命 1。
+/// 战吼效果（获取 0 费 1/1 小精灵 + 灌注英雄技能）在卡牌层
+/// SpiritCollectorCard.OnPlay 中实现（打出卡牌时触发），随从本体无额外逻辑。
 /// </summary>
 [RegisterMonster]
 public sealed class SpiritCollectorMinion : JainaMinionBase
