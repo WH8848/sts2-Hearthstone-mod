@@ -93,7 +93,7 @@ public sealed class FreezingPotion : ModCardTemplate
         if (IsUpgraded && !IsTwinspellCopy)
         {
             // CreateClone 保留 Owner（MutableClone 的卡无 Owner 会导致入牌堆 NRE）
-            var copy = CreateClone();
+            var copy = (FreezingPotion)CreateClone();
             copy.RemoveKeyword(JainaKeywords.Twinspell);
             copy.IsTwinspellCopy = true;
             jaina.Scripts.Character.JainaCastTracker.MarkGenerated(copy);
