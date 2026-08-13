@@ -77,4 +77,10 @@ public sealed class Awaken : ModCardTemplate
             }
         }
     }
+
+    protected override void OnUpgrade()
+    {
+        // 升级为巅峰无限：加入压轴关键词（LocalKeywords 懒缓存可能已在未升级状态初始化）
+        AddKeyword(jaina.Scripts.Character.Keywords.JainaKeywords.Finisher);
+    }
 }

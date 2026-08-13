@@ -69,4 +69,10 @@ public sealed class Objection : ModCardTemplate
                 choiceContext, base.Owner.Creature, 1m, base.Owner.Creature, this);
         }
     }
+
+    protected override void OnUpgrade()
+    {
+        // 升级为法术反制：加入奥术派系关键词（LocalKeywords 懒缓存可能已在未升级状态初始化）
+        AddKeyword(jaina.Scripts.Character.Keywords.JainaKeywords.Arcane);
+    }
 }

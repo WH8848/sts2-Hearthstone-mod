@@ -104,6 +104,9 @@ public sealed class FreezingPotion : ModCardTemplate
 
     protected override void OnUpgrade()
     {
-        // 升级为霜冻射线：双生法术 + 目标改为任一角色
+        // 升级为霜冻射线：双生法术 + 目标改为任一角色。
+        // LocalKeywords 懒缓存可能已在未升级状态初始化（不含 Twinspell），
+        // 升级时显式加入，保证原件拥有双生法术关键词（悬停可见）。
+        AddKeyword(JainaKeywords.Twinspell);
     }
 }
