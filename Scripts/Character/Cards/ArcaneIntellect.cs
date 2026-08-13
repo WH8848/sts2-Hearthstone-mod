@@ -35,7 +35,7 @@ public sealed class ArcaneIntellect : ModCardTemplate
             : "res://assets/card_art/arcane_intellect.png";
 
     public ArcaneIntellect()
-        : base(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self, true)
+        : base(1, CardType.Skill, CardRarity.Common, TargetType.Self, true)
     {
     }
 

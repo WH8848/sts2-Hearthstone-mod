@@ -9,30 +9,54 @@ using STS2RitsuLib.Interop.AutoRegistration;
 
 namespace jaina.Scripts.Character.Minions;
 
-/// <summary>
-/// 观星者露娜 (Stargazer Luna) - 吉安娜专属随从。
-/// 属性：攻击 2，生命 4。在你使用一张手牌后，抽一张牌。
-/// </summary>
-[RegisterMonster]
-public sealed class LunaMinion : JainaMinionBase
-{
-    public override JainaMinionBehaviorMode BehaviorMode => JainaMinionBehaviorMode.Manual;
-
-    public override int MinInitialHp => 4;
-
-    public override int MaxInitialHp => 4;
-
-    protected override string MinionVisualsPath => "res://assets/minion_visuals/stargazer_luna.tscn";
-
     /// <summary>
-    /// 使用任意手牌后抽一张牌
+    /// 观星者露娜 (Stargazer Luna) - 吉安娜专属随从。
+    /// 属性：攻击 2，生命 4。在你使用最右边的一张手牌后，抽一张牌。
     /// </summary>
-    public override async Task AfterCardPlayed(PlayerChoiceContext choiceContext, CardPlay cardPlay)
+    [RegisterMonster]
+    public sealed class LunaMinion : JainaMinionBase
     {
-        if (cardPlay.Card.Owner != Creature.PetOwner || Creature.PetOwner == null)
+        public override JainaMinionBehaviorMode BehaviorMode => JainaMinionBehaviorMode.Manual;
+
+        public override int MinInitialHp => 4;
+
+        public override int MaxInitialHp => 4;
+
+        protected override string MinionVisualsPath => "res://assets/minion_visuals/stargazer_luna.tscn";
+
+        /// <summary>
+        /// 记录本回合打出的牌是否为手牌最右边（打出前判定）
+        /// </summary>
+        private bool _playedRightmost;
+
+        /// <summary>
+        /// 打出前：判定该牌是否为手牌最右边的一张（此时牌还在手牌中）
+        /// </summary>
+        public override Task BeforeCardPlayed(CardPlay cardPlay)
         {
-            return;
+            _playedRightmost = false;
+            if (cardPlay.Card.Owner != Creature.PetOwner || Creature.PetOwner == null)
+            {
+                return Task.CompletedTask;
+            }
+            var hand = Creature.PetOwner.PlayerCombatState?.Hand?.Cards;
+            if (hand is { Count: > 0 })
+            {
+                _playedRightmost = ReferenceEquals(hand[^1], cardPlay.Card);
+            }
+            return Task.CompletedTask;
         }
-        await CardPileCmd.Draw(choiceContext, 1, Creature.PetOwner);
+
+        /// <summary>
+        /// 使用最右边的手牌后抽一张牌
+        /// </summary>
+        public override async Task AfterCardPlayed(PlayerChoiceContext choiceContext, CardPlay cardPlay)
+        {
+            if (!_playedRightmost)
+            {
+                return;
+            }
+            _playedRightmost = false;
+            await CardPileCmd.Draw(choiceContext, 1, Creature.PetOwner!);
+        }
     }
-}
