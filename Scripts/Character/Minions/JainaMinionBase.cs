@@ -4,11 +4,13 @@ using System.Threading.Tasks;
 using Godot;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Helpers;
+using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.MonsterMoves.Intents;
 using MegaCrit.Sts2.Core.MonsterMoves.MonsterMoveStateMachine;
 using MegaCrit.Sts2.Core.Nodes.Combat;
@@ -64,16 +66,27 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
     /// 绕开 tscn 场景导出（Godot 导出器会丢弃无法解析的 script 引用，
     /// 导致 pck 内场景退化为纯 Node2D 而 InvalidCastException）。
     /// 结构对齐原 assets/minion_visuals/*.tscn：%Visuals/%Bounds/%CenterPos/%IntentPos。
+    /// 场上显示为卡图一半大小（ScaledBody 缩放容器），
+    /// 并带悬停卡牌面板（鼠标悬停随从时在左侧/右侧显示卡牌信息）。
     /// </summary>
     public NCreatureVisuals? TryCreateCreatureVisuals()
     {
         var root = new NCreatureVisuals();
 
+        // 缩放容器：场上随从显示为卡图原尺寸的一半
+        var body = new Node2D { Name = "ScaledBody", Scale = new Vector2(0.5f, 0.5f) };
+        root.AddChild(body);
+
+        // 子节点 Owner 都指向 root，保证 GetNode("%Visuals") 等唯一名查找可用
         var texture = ResourceLoader.Load<Texture2D>(MinionVisualsPath);
-        root.AddUniqueChild(new Sprite2D { Texture = texture }, "Visuals");
+        var sprite = new Sprite2D { Name = "Visuals", Texture = texture };
+        body.AddChild(sprite);
+        sprite.UniqueNameInOwner = true;
+        sprite.Owner = root;
 
         var bounds = new Control
         {
+            Name = "Bounds",
             AnchorRight = 1f,
             AnchorBottom = 1f,
             OffsetLeft = -250f,
@@ -82,11 +95,80 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
             OffsetBottom = 190f,
             MouseFilter = Control.MouseFilterEnum.Ignore
         };
-        root.AddUniqueChild(bounds, "Bounds");
+        body.AddChild(bounds);
+        bounds.UniqueNameInOwner = true;
+        bounds.Owner = root;
 
-        root.AddUniqueChild(new Marker2D(), "CenterPos");
-        root.AddUniqueChild(new Marker2D { Position = new Vector2(0f, -235f) }, "IntentPos");
+        var center = new Marker2D { Name = "CenterPos" };
+        body.AddChild(center);
+        center.UniqueNameInOwner = true;
+        center.Owner = root;
+
+        var intent = new Marker2D { Name = "IntentPos", Position = new Vector2(0f, -235f) };
+        body.AddChild(intent);
+        intent.UniqueNameInOwner = true;
+        intent.Owner = root;
+
+        // 悬停交互区（覆盖缩小后的显示区域 ±125×±95）与悬停卡牌面板
+        var hoverArea = new Control
+        {
+            Name = "HoverArea",
+            OffsetLeft = -125f,
+            OffsetTop = -95f,
+            OffsetRight = 125f,
+            OffsetBottom = 95f,
+            MouseFilter = Control.MouseFilterEnum.Stop
+        };
+        root.AddChild(hoverArea);
+
+        var tooltip = new JainaMinionTooltip();
+        root.AddChild(tooltip);
+        SetupTooltipContent(tooltip);
+
+        hoverArea.MouseEntered += () =>
+        {
+            if (!Creature.IsAlive)
+            {
+                return;
+            }
+            var screenX = root.GetGlobalTransformWithCanvas().Origin.X;
+            var viewportWidth = root.GetViewport().GetVisibleRect().Size.X;
+            tooltip.ShowTip(screenX > viewportWidth / 2f);
+        };
+        hoverArea.MouseExited += () => tooltip.HideTip();
+
         return root;
+    }
+
+    /// <summary>
+    /// 填充悬停卡牌面板内容（卡图 + 本地化名称/描述 + 关键词行）
+    /// </summary>
+    private void SetupTooltipContent(JainaMinionTooltip tooltip)
+    {
+        var cardType = JainaMinionCardMap.GetCardType(GetType());
+        if (cardType == null)
+        {
+            return;
+        }
+        var canonical = MegaCrit.Sts2.Core.Models.ModelDb.GetById<MegaCrit.Sts2.Core.Models.CardModel>(
+            MegaCrit.Sts2.Core.Models.ModelDb.GetId(cardType));
+        if (canonical == null)
+        {
+            return;
+        }
+        var texture = ResourceLoader.Load<Texture2D>(MinionVisualsPath);
+        var title = new LocString("cards", canonical.Id.Entry + ".title").GetFormattedText();
+        var description = new LocString("cards", canonical.Id.Entry + ".description").GetFormattedText();
+
+        // 关键词行（如"冲锋""亡语"）
+        var keywordTitles = canonical.Keywords
+            .Select(k => ((MegaCrit.Sts2.Core.HoverTips.HoverTip)MegaCrit.Sts2.Core.HoverTips.HoverTipFactory.FromKeyword(k)).Title)
+            .Where(t => !string.IsNullOrEmpty(t))
+            .Select(t => $"[color=#ffd75e]{t}[/color]")
+            .ToList();
+        var keywordsLine = string.Join("  ", keywordTitles);
+
+        tooltip.Setup(this, texture, title, keywordsLine, description);
     }
 
     /// <summary>
