@@ -86,7 +86,8 @@ public sealed class LunaMinion : JainaMinionBase
     }
 
     /// <summary>
-    /// 打出前：在共享快照中定位该牌，判定是否为最右一张，并从快照移除
+    /// 打出前：判定该牌是否为共享快照末尾（最右）。
+    /// 只判定不移除——多只露娜必须看到同一快照（移除统一在 AfterCardPlayed）。
     /// </summary>
     public override Task BeforeCardPlayed(CardPlay cardPlay)
     {
@@ -95,13 +96,13 @@ public sealed class LunaMinion : JainaMinionBase
         {
             return Task.CompletedTask;
         }
-        _playedRightmost = JainaHandOrderTracker.TryConsume(Creature.PetOwner, cardPlay.Card);
+        _playedRightmost = JainaHandOrderTracker.IsRightmost(Creature.PetOwner, cardPlay.Card);
         return Task.CompletedTask;
     }
 
     /// <summary>
     /// 使用最右边的手牌后抽一张牌（光环：仅露娜在场时生效）。
-    /// 兜底清理共享快照残留（召唤当回合钩子挂载前的卡）。
+    /// 这里才从共享快照移除打出卡（所有露娜的判定已完成）。
     /// </summary>
     public override async Task AfterCardPlayed(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {

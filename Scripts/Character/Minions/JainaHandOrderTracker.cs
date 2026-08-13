@@ -42,19 +42,16 @@ public static class JainaHandOrderTracker
     }
 
     /// <summary>
-    /// 打出时定位并移除，返回是否为最右一张
+    /// 判定该卡是否为快照末尾（最右一张）。
+    /// 只判定不移除：多只露娜必须在同一时刻看到同一快照，
+    /// 若在 BeforeCardPlayed 就移除，后续露娜会判定失败（index=-1）。
+    /// 移除统一延后到 AfterCardPlayed（所有露娜判定完毕后）。
     /// </summary>
-    public static bool TryConsume(Player player, CardModel card)
+    public static bool IsRightmost(Player player, CardModel card)
     {
         var list = For(player);
         int index = list.IndexOf(card);
-        if (index < 0)
-        {
-            return false;
-        }
-        bool rightmost = index == list.Count - 1;
-        list.RemoveAt(index);
-        return rightmost;
+        return index >= 0 && index == list.Count - 1;
     }
 
     /// <summary>
