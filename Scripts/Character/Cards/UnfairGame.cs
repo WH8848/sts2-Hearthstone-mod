@@ -58,7 +58,8 @@ public sealed class UnfairGame : ModCardTemplate
                     {
                         if (c.Type == CardType.Attack || c.Type == CardType.Skill)
                         {
-                            candidates.Add((CardModel)c.MutableClone());
+                            // CreateClone 保留 Owner（MutableClone 的卡无 Owner 会导致入牌堆 NRE）
+                            candidates.Add(c.CreateClone());
                         }
                     }
                     if (candidates.Count > 0)

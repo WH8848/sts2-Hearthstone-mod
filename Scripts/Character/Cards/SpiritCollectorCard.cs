@@ -31,8 +31,10 @@ public sealed class SpiritCollectorCard : JainaMinionCardTemplate
     {
         await base.OnPlay(choiceContext, cardPlay);
 
-        // 获取一张 0 费 1/1 的小精灵（加入手牌）
-        await CardPileCmd.AddGeneratedCardToCombat((MegaCrit.Sts2.Core.Models.CardModel)MegaCrit.Sts2.Core.Models.ModelDb.GetById<ImpCard>(MegaCrit.Sts2.Core.Models.ModelDb.GetId(typeof(ImpCard))).MutableClone(), PileType.Hand, base.Owner);
+        // 获取一张 0 费 1/1 的小精灵（加入手牌）——MutableClone 无 Owner 会 NRE，用 CreateCard 生成带 Owner 的实例
+        var combatState = base.Owner.Creature.CombatState;
+        var imp = combatState.CreateCard((MegaCrit.Sts2.Core.Models.CardModel)MegaCrit.Sts2.Core.Models.ModelDb.GetById<ImpCard>(MegaCrit.Sts2.Core.Models.ModelDb.GetId(typeof(ImpCard))), base.Owner);
+        await CardPileCmd.AddGeneratedCardToCombat(imp, PileType.Hand, base.Owner);
 
         // 灌注你的英雄技能（+1 层灌注）
         await PowerCmd.Apply<EmpowerPower>(choiceContext, [base.Owner.Creature], 1m, base.Owner.Creature, this);

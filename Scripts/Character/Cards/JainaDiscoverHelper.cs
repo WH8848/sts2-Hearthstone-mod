@@ -34,9 +34,10 @@ public static class JainaDiscoverHelper
     /// </summary>
     public static List<CardModel> RollCandidates(Player player, int count = 3, int? maxCost = null)
     {
-        // ModelDb 取 canonical 后必须 MutableClone：CardPileCmd.Add/选择流程需要可变实例
+        // 用 CreateCard 生成带 Owner 的实例（MutableClone 的卡无 Owner，AddGeneratedCardToCombat 会 NRE）
+        var combatState = player.Creature.CombatState;
         var pool = AttackSkillPool
-            .Select(t => (CardModel)MegaCrit.Sts2.Core.Models.ModelDb.GetById<CardModel>(MegaCrit.Sts2.Core.Models.ModelDb.GetId(t)).MutableClone())
+            .Select(t => combatState.CreateCard(ModelDb.GetById<CardModel>(ModelDb.GetId(t)), player))
             .ToList();
         if (maxCost is int max && max >= 0)
         {

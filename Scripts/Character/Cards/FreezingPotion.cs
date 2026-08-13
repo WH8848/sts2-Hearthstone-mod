@@ -79,7 +79,8 @@ public sealed class FreezingPotion : ModCardTemplate
         // 双生法术：立即将一张该法术的复制置入你的手牌（复制品不再具有双生法术）
         if (IsUpgraded)
         {
-            var copy = (CardModel)MutableClone();
+            // CreateClone 保留 Owner（MutableClone 的卡无 Owner 会导致入牌堆 NRE）
+            var copy = CreateClone();
             copy.RemoveKeyword(JainaKeywords.Twinspell);
             await CardPileCmd.AddGeneratedCardToCombat(copy, PileType.Hand, base.Owner);
         }
