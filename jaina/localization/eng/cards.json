@@ -60,5 +60,5 @@
   "JAINA_CARD_AWAKEN.description": "{IfUpgraded:show:Discover a [blue]Spell card[/blue]. It costs 1 less.\n[gold]Finisher[/gold]: At the start of your next turn, return this card to your hand.|Discover a [blue]Spell card[/blue]. It costs 1 less.}\n[blue]Arcane[/blue]",
   "JAINA_CARD_OBJECTION.title": "Objection",
   "JAINA_CARD_OBJECTION.titleUpgraded": "Counterspell",
-  "JAINA_CARD_OBJECTION.description": "{IfUpgraded:show:The enemy's next non-Attack intent has no effect.|The enemy's next Attack intent deals no damage.}\n[blue]Arcane[/blue]"
+  "JAINA_CARD_OBJECTION.description": "{IfUpgraded:show:The enemy's next non-Attack intent has no effect.\n[blue]Arcane[/blue]|The enemy's next Attack intent deals no damage.}"
 }

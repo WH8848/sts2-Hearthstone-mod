@@ -60,5 +60,5 @@
   "JAINA_CARD_AWAKEN.description": "{IfUpgraded:show:发现一张[blue]法术牌[/blue]，使其费用减少1点。\n[gold]压轴[/gold]：下回合开始时，将本牌移回你的手牌。|发现一张[blue]法术牌[/blue]，使其费用减少1点。}\n[blue]奥术[/blue]",
   "JAINA_CARD_OBJECTION.title": "异议",
   "JAINA_CARD_OBJECTION.titleUpgraded": "法术反制",
-  "JAINA_CARD_OBJECTION.description": "{IfUpgraded:show:敌人的下一个非攻击意图不会触发任何效果。|敌人的下一个攻击意图不会造成任何伤害。}\n[blue]奥术[/blue]"
+  "JAINA_CARD_OBJECTION.description": "{IfUpgraded:show:敌人的下一个非攻击意图不会触发任何效果。\n[blue]奥术[/blue]|敌人的下一个攻击意图不会造成任何伤害。}"
 }
