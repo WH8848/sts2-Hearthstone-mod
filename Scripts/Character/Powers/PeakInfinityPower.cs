@@ -30,9 +30,12 @@ public sealed class PeakInfinityPower : PowerModel
     /// </summary>
     public CardModel? TargetCard;
 
-    public override async Task BeforeSideTurnEnd(PlayerChoiceContext choiceContext, CombatSide side, IEnumerable<Creature> participants)
+    /// <summary>
+    /// 压轴：下回合开始时，将本牌从弃牌堆移回手牌，本 Power 移除。
+    /// </summary>
+    public override async Task BeforeSideTurnStart(PlayerChoiceContext choiceContext, CombatSide side,
+        IReadOnlyList<Creature> participants, ICombatState combatState)
     {
-        MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaDebug] PeakInfinity BeforeSideTurnEnd: side={side} ownerSide={Owner.Side} targetCard={TargetCard?.Id.Entry ?? "null"} pile={(TargetCard?.Pile?.Type.ToString() ?? "null")}");
         if (side != Owner.Side)
         {
             return;

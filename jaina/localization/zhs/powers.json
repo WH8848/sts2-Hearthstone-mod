@@ -15,6 +15,6 @@
   "JAINA_POWER_AEGWYNN_LEGACY_POWER.description": "你抽到的下一张随从牌会继承艾格文的能力。",
   "JAINA_POWER_AEGWYNN_LEGACY_POWER.smartDescription": "你抽到的下一张随从牌会继承艾格文的能力。",
   "JAINA_POWER_PEAK_INFINITY_POWER.title": "巅峰无限",
-  "JAINA_POWER_PEAK_INFINITY_POWER.description": "回合结束时将巅峰无限移回你的手牌。",
-  "JAINA_POWER_PEAK_INFINITY_POWER.smartDescription": "回合结束时将巅峰无限移回你的手牌。"
+  "JAINA_POWER_PEAK_INFINITY_POWER.description": "下回合开始时，将巅峰无限移回你的手牌。",
+  "JAINA_POWER_PEAK_INFINITY_POWER.smartDescription": "下回合开始时，将巅峰无限移回你的手牌。"
 }
