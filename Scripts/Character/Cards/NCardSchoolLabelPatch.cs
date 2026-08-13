@@ -41,15 +41,15 @@ public static class NCardSchoolLabelPatch
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
                 MouseFilter = Control.MouseFilterEnum.Ignore,
-                // 锚定卡面底部（卡框上面一点）
+                // 锚定卡面底部、卡框内侧上方（炉石式：描述区下方、卡框上面一点）
                 AnchorLeft = 0f,
                 AnchorTop = 1f,
                 AnchorRight = 1f,
                 AnchorBottom = 1f,
                 OffsetLeft = 0f,
-                OffsetTop = -40f,
+                OffsetTop = -20f,
                 OffsetRight = 0f,
-                OffsetBottom = -22f
+                OffsetBottom = -8f
             };
             label.AddThemeFontSizeOverride("font_size", 13);
             __instance.AddChild(label);
