@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -16,6 +17,12 @@ namespace jaina.Scripts.Character.Cards;
 [RegisterCard(typeof(JainaCardPool))]
 public sealed class SpiritCollectorCard : JainaMinionCardTemplate
 {
+    /// <summary>
+    /// 战吼：获取一张 0 费 1/1 小精灵并灌注英雄技能
+    /// </summary>
+    public override IEnumerable<CardKeyword> CanonicalKeywords =>
+        [jaina.Scripts.Character.Keywords.JainaKeywords.Battlecry];
+
     protected override Type MinionType => typeof(SpiritCollectorMinion);
 
     protected override int MinionAttack => 2;

@@ -23,7 +23,7 @@
   "JAINA_CARD_IMP_CARD.title": "Imp",
   "JAINA_CARD_IMP_CARD.description": "Summon a [blue]1/1[/blue] [red]Imp[/red].",
   "JAINA_CARD_SPIRIT_COLLECTOR_CARD.title": "Spirit Collector",
-  "JAINA_CARD_SPIRIT_COLLECTOR_CARD.description": "Summon a [blue]2/1[/blue] [red]Spirit Collector[/red]. Add a [blue]0-cost 1/1[/blue] [red]Imp[/red] to your hand, and [blue]Empower[/blue] your Hero Power.",
+  "JAINA_CARD_SPIRIT_COLLECTOR_CARD.description": "Summon a [blue]2/1[/blue] [red]Spirit Collector[/red]. Battlecry: Add a [blue]0-cost 1/1[/blue] [red]Imp[/red] to your hand. [blue]Empower[/blue] your Hero Power.",
   "JAINA_CARD_RENATHAL_CARD.title": "Prince Renathal",
   "JAINA_CARD_RENATHAL_CARD.description": "Summon a [blue]3/4[/blue] [red]Prince Renathal[/red].",
   "JAINA_CARD_SORCERER_APPRENTICE_CARD.title": "Sorcerer's Apprentice",
