@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization;
@@ -41,15 +42,40 @@ public sealed class Trick : ModCardTemplate
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
-        // 广阔智慧（升级后）：发现两张费用≤1的牌
-        int discoveries = IsUpgraded ? 2 : 1;
-        for (int i = 0; i < discoveries; i++)
+        // 记录施放（倒带/罗曼斯/三派系追踪）
+        jaina.Scripts.Character.JainaCastTracker.RecordPlayed(this);
+
+        if (IsUpgraded)
         {
-            var chosen = await JainaDiscoverHelper.DiscoverAndAddToHand(choiceContext, base.Owner, maxCost: 1);
-            if (chosen != null)
+            // 广阔智慧：发现两张费用≤1的攻击/技能牌，交换其费用消耗
+            var first = await JainaDiscoverHelper.SelectCandidate(choiceContext, base.Owner, maxCost: 1);
+            var second = await JainaDiscoverHelper.SelectCandidate(choiceContext, base.Owner, maxCost: 1);
+            if (first != null && second != null)
             {
-                // 交换费用消耗（简化：两张发现牌的展示费用互换，此处仅保持选择顺序）
+                // 交换展示费用（SetUntilPlayed 直到打出）
+                int cost1 = first.EnergyCost.GetResolved();
+                int cost2 = second.EnergyCost.GetResolved();
+                first.EnergyCost.SetUntilPlayed(cost2);
+                second.EnergyCost.SetUntilPlayed(cost1);
             }
+            if (first != null)
+            {
+                jaina.Scripts.Character.JainaCastTracker.MarkGenerated(first);
+                await CardPileCmd.AddGeneratedCardToCombat(first, PileType.Hand, base.Owner);
+            }
+            if (second != null)
+            {
+                jaina.Scripts.Character.JainaCastTracker.MarkGenerated(second);
+                await CardPileCmd.AddGeneratedCardToCombat(second, PileType.Hand, base.Owner);
+            }
+            return;
+        }
+
+        // 魔术戏法：发现一张费用≤1的攻击/技能牌
+        var chosen = await JainaDiscoverHelper.DiscoverAndAddToHand(choiceContext, base.Owner, maxCost: 1);
+        if (chosen != null)
+        {
+            jaina.Scripts.Character.JainaCastTracker.MarkGenerated(chosen);
         }
     }
 }

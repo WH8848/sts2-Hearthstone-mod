@@ -41,8 +41,26 @@ public sealed class NorgannonWisdom : ModCardTemplate
         }
     }
 
+    /// <summary>
+    /// 在本局对战中释放过火焰/奥术/冰霜三派系攻击或技能牌各一张后，本牌费用降为 0（实时生效）
+    /// </summary>
+    public override bool TryModifyEnergyCostInCombat(MegaCrit.Sts2.Core.Models.CardModel card, decimal originalCost, out decimal modifiedCost)
+    {
+        modifiedCost = originalCost;
+        if (ReferenceEquals(card, this) && base.CombatState != null &&
+            jaina.Scripts.Character.JainaCastTracker.HasAllThreeSchools(base.CombatState))
+        {
+            modifiedCost = 0m;
+            return true;
+        }
+        return false;
+    }
+
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
+        // 记录施放（倒带/罗曼斯/三派系追踪）
+        jaina.Scripts.Character.JainaCastTracker.RecordPlayed(this);
+
         var drawn = await CardPileCmd.Draw(choiceContext, 2, base.Owner);
 
         // 清凉的泉水（升级后）：每抽到一张攻击牌或技能牌回一费

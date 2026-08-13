@@ -62,16 +62,25 @@ public static class JainaDiscoverHelper
     /// </summary>
     public static async Task<CardModel?> DiscoverAndAddToHand(PlayerChoiceContext choiceContext, Player player, int count = 3, int? maxCost = null)
     {
+        var chosen = await SelectCandidate(choiceContext, player, count, maxCost);
+        if (chosen != null)
+        {
+            jaina.Scripts.Character.JainaCastTracker.MarkGenerated(chosen);
+            await CardPileCmd.AddGeneratedCardToCombat(chosen, PileType.Hand, player);
+        }
+        return chosen;
+    }
+
+    /// <summary>
+    /// 三选一发现（可跳过），仅选择不加入手牌（广阔智慧交换费用用）
+    /// </summary>
+    public static async Task<CardModel?> SelectCandidate(PlayerChoiceContext choiceContext, Player player, int count = 3, int? maxCost = null)
+    {
         var candidates = RollCandidates(player, count, maxCost);
         if (candidates.Count == 0)
         {
             return null;
         }
-        var chosen = await CardSelectCmd.FromChooseACardScreen(choiceContext, candidates, player, canSkip: true);
-        if (chosen != null)
-        {
-            await CardPileCmd.AddGeneratedCardToCombat(chosen, PileType.Hand, player);
-        }
-        return chosen;
+        return await CardSelectCmd.FromChooseACardScreen(choiceContext, candidates, player, canSkip: true);
     }
 }

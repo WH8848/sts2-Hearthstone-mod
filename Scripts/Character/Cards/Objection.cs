@@ -44,7 +44,14 @@ public sealed class Objection : ModCardTemplate
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
-        // 施放一个拦截下一次敌人伤害的"奥秘"（挂在玩家身上）
-        await PowerCmd.Apply<SecretPower>(choiceContext, [base.Owner.Creature], 1m, base.Owner.Creature, this);
+        // 记录施放（倒带/罗曼斯/三派系追踪）
+        jaina.Scripts.Character.JainaCastTracker.RecordPlayed(this);
+
+        // 异议：拦截下一次敌人攻击伤害；法术反制（升级）：拦截下一次敌人减益
+        var secret = await PowerCmd.Apply<SecretPower>(choiceContext, base.Owner.Creature, 1m, base.Owner.Creature, this);
+        if (secret != null)
+        {
+            secret.IsCounterspell = IsUpgraded;
+        }
     }
 }

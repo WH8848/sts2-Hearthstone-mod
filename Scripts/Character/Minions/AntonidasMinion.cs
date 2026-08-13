@@ -42,6 +42,7 @@ public sealed class AntonidasMinion : JainaMinionBase
         // MutableClone 的卡无 Owner，AddGeneratedCardToCombat 内部会 NRE；用 CreateCard 生成带 Owner 的实例
         var combatState = Creature.PetOwner.Creature.CombatState;
         var fireball = combatState.CreateCard(ModelDb.GetById<CardModel>(ModelDb.GetId(typeof(Fireball))), Creature.PetOwner);
+        jaina.Scripts.Character.JainaCastTracker.MarkGenerated(fireball);
         await CardPileCmd.AddGeneratedCardToCombat(fireball, PileType.Hand, Creature.PetOwner);
     }
 }

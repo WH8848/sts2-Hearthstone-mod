@@ -4,5 +4,14 @@
   "JAINA_POWER_MINION_SQUAD_POWER.smartDescription": "When Block cannot absorb damage, minions take damage in summon order.",
   "JAINA_POWER_JAINA_ATTACK_ACTION.title": "Attack",
   "JAINA_POWER_JAINA_ATTACK_ACTION.description": "[gold]Action[/gold]: Choose 1 enemy. Deal damage equal to this minion's attack. Spend 1 point.",
-  "JAINA_POWER_JAINA_ATTACK_ACTION.smartDescription": "[gold]Action[/gold]: Choose 1 enemy. Deal damage equal to this minion's attack. Spend 1 point."
+  "JAINA_POWER_JAINA_ATTACK_ACTION.smartDescription": "[gold]Action[/gold]: Choose 1 enemy. Deal damage equal to this minion's attack. Spend 1 point.",
+  "JAINA_POWER_KALECGOS_POWER.title": "Kalecgos",
+  "JAINA_POWER_KALECGOS_POWER.description": "The first Attack or Skill card you play each turn costs 0.",
+  "JAINA_POWER_KALECGOS_POWER.smartDescription": "The first Attack or Skill card you play each turn costs 0.",
+  "JAINA_POWER_AEGWYNN_LEGACY_POWER.title": "Aegwynn's Legacy",
+  "JAINA_POWER_AEGWYNN_LEGACY_POWER.description": "The next minion card you draw inherits Aegwynn's ability.",
+  "JAINA_POWER_AEGWYNN_LEGACY_POWER.smartDescription": "The next minion card you draw inherits Aegwynn's ability.",
+  "JAINA_POWER_PEAK_INFINITY_POWER.title": "Peak Infinity",
+  "JAINA_POWER_PEAK_INFINITY_POWER.description": "At the end of your turn, return Peak Infinity to your hand.",
+  "JAINA_POWER_PEAK_INFINITY_POWER.smartDescription": "At the end of your turn, return Peak Infinity to your hand."
 }

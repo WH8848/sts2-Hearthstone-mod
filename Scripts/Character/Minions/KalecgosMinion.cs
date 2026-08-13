@@ -1,3 +1,10 @@
+using System.Threading.Tasks;
+using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Entities.Players;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using jaina.Scripts.Character.Cards;
+using jaina.Scripts.Character.Powers;
+using MinionLib.Minion;
 using STS2RitsuLib.Interop.AutoRegistration;
 
 namespace jaina.Scripts.Character.Minions;
@@ -5,7 +12,7 @@ namespace jaina.Scripts.Character.Minions;
 /// <summary>
 /// 卡雷苟斯 (Kalecgos) - 吉安娜专属随从。
 /// 属性：攻击 4，生命 12。
-/// 注：原效果"每回合第一张攻击/技能牌 0 费 + 战吼发现"——机制复杂，暂为纯属性随从。
+/// 你每个回合使用的第一张攻击牌或技能牌的费用为0点。战吼：发现一张攻击牌或技能牌。
 /// </summary>
 [RegisterMonster]
 public sealed class KalecgosMinion : JainaMinionBase
@@ -17,4 +24,22 @@ public sealed class KalecgosMinion : JainaMinionBase
     public override int MaxInitialHp => 12;
 
     protected override string MinionVisualsPath => "res://assets/minion_visuals/kalecgos.tscn";
+
+    /// <summary>
+    /// 战吼：发现一张攻击牌或技能牌；同时挂上"第一张攻击/技能牌 0 费"的效果
+    /// </summary>
+    public override async Task OnSummon(PlayerChoiceContext choiceContext, Player owner, MinionSummonOptions options)
+    {
+        await base.OnSummon(choiceContext, owner, options);
+
+        // 每回合第一张攻击/技能牌 0 费（效果挂玩家，来源随从死亡后失效）
+        var power = await PowerCmd.Apply<KalecgosPower>(choiceContext, owner.Creature, 1m, Creature, options.Source);
+        if (power != null)
+        {
+            power.SourceMinion = Creature;
+        }
+
+        // 战吼：发现一张攻击牌或技能牌
+        await JainaDiscoverHelper.DiscoverAndAddToHand(choiceContext, owner);
+    }
 }

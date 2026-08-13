@@ -59,6 +59,9 @@ public sealed class Fireball : ModCardTemplate
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
+        // 记录施放（倒带/罗曼斯/三派系追踪）
+        jaina.Scripts.Character.JainaCastTracker.RecordPlayed(this);
+
         await DamageCmd.Attack(base.DynamicVars.Damage.BaseValue)
             .FromCard(this, cardPlay)
             .Targeting(cardPlay.Target!)

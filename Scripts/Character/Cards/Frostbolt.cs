@@ -56,6 +56,9 @@ public sealed class Frostbolt : ModCardTemplate
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
+        // 记录施放（倒带/罗曼斯/三派系追踪）
+        jaina.Scripts.Character.JainaCastTracker.RecordPlayed(this);
+
         if (cardPlay.Target is not { IsAlive: true } target)
         {
             return;

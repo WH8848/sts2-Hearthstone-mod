@@ -60,6 +60,9 @@ public sealed class Fireblast : ModCardTemplate
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
+        // 记录施放（倒带/罗曼斯/三派系追踪）
+        jaina.Scripts.Character.JainaCastTracker.RecordPlayed(this);
+
         // 灌注：每一层灌注增加一点英雄技能伤害
         var empower = base.Owner.Creature.GetPower<jaina.Scripts.Character.Powers.EmpowerPower>();
         var empowerStacks = empower?.EmpowerStacks ?? 0;

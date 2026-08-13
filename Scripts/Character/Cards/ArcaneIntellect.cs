@@ -58,6 +58,9 @@ public sealed class ArcaneIntellect : ModCardTemplate
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
+        // 记录施放（倒带/罗曼斯/三派系追踪）
+        jaina.Scripts.Character.JainaCastTracker.RecordPlayed(this);
+
         await CardPileCmd.Draw(choiceContext, DynamicVars.Cards.BaseValue, base.Owner);
 
         // 升级后：召唤狂热者（3/4，生成时立刻攻击）

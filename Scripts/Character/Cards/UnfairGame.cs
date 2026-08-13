@@ -43,6 +43,9 @@ public sealed class UnfairGame : ModCardTemplate
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
+        // 记录施放（倒带/罗曼斯追踪）
+        jaina.Scripts.Character.JainaCastTracker.RecordPlayed(this);
+
         if (IsUpgraded)
         {
             // 加大音量：抽三张攻击牌或技能牌
@@ -67,6 +70,7 @@ public sealed class UnfairGame : ModCardTemplate
                         var chosen = await MegaCrit.Sts2.Core.Commands.CardSelectCmd.FromChooseACardScreen(choiceContext, candidates.AsReadOnly(), base.Owner, canSkip: true);
                         if (chosen != null)
                         {
+                            jaina.Scripts.Character.JainaCastTracker.MarkGenerated(chosen);
                             await CardPileCmd.AddGeneratedCardToCombat(chosen, PileType.Hand, base.Owner);
                         }
                     }

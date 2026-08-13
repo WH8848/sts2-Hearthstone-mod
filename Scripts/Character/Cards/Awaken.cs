@@ -46,6 +46,9 @@ public sealed class Awaken : ModCardTemplate
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
+        // 记录施放（倒带/罗曼斯/诺干农派系追踪）
+        jaina.Scripts.Character.JainaCastTracker.RecordPlayed(this);
+
         if (IsUpgraded)
         {
             // 远古雕文/巅峰无限：发现一张牌，费用减少 1 点
@@ -54,6 +57,17 @@ public sealed class Awaken : ModCardTemplate
             {
                 // 简化：直接减少 1 点展示费用（mutable 实例）
                 chosen.EnergyCost.SetUntilPlayed((int)chosen.EnergyCost.Canonical - 1);
+            }
+
+            // 巅峰无限（二级升级）压轴：刚好消耗完能量时，回合结束将本牌移回手牌
+            if (CurrentUpgradeLevel >= 2 && base.Owner.PlayerCombatState is { Energy: <= 0 })
+            {
+                var power = await PowerCmd.Apply<jaina.Scripts.Character.Powers.PeakInfinityPower>(
+                    choiceContext, base.Owner.Creature, 1m, base.Owner.Creature, this);
+                if (power != null)
+                {
+                    power.TargetCard = this;
+                }
             }
         }
         else
@@ -69,6 +83,7 @@ public sealed class Awaken : ModCardTemplate
                     if (card != null)
                     {
                         card.AddKeyword(CardKeyword.Ethereal);
+                        jaina.Scripts.Character.JainaCastTracker.MarkGenerated(card);
                         await CardPileCmd.AddGeneratedCardToCombat(card, PileType.Hand, base.Owner);
                     }
                 }

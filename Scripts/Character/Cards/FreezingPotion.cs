@@ -66,6 +66,9 @@ public sealed class FreezingPotion : ModCardTemplate
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
+        // 记录施放（倒带/罗曼斯/三派系追踪）
+        jaina.Scripts.Character.JainaCastTracker.RecordPlayed(this);
+
         // 霜冻射线（升级后）：目标是任一角色
         Creature? target = cardPlay.Target;
         if (target is not { IsAlive: true })
@@ -82,6 +85,7 @@ public sealed class FreezingPotion : ModCardTemplate
             // CreateClone 保留 Owner（MutableClone 的卡无 Owner 会导致入牌堆 NRE）
             var copy = CreateClone();
             copy.RemoveKeyword(JainaKeywords.Twinspell);
+            jaina.Scripts.Character.JainaCastTracker.MarkGenerated(copy);
             await CardPileCmd.AddGeneratedCardToCombat(copy, PileType.Hand, base.Owner);
         }
     }

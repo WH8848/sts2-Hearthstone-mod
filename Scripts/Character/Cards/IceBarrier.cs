@@ -84,6 +84,9 @@ public sealed class IceBarrier : ModCardTemplate
     /// </summary>
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
+        // 记录施放（倒带/罗曼斯/三派系追踪）
+        jaina.Scripts.Character.JainaCastTracker.RecordPlayed(this);
+
         if (IsUpgraded)
         {
             // 冰冷案例：召唤 2 个 2/2 不稳定的骷髅（衍生物）
