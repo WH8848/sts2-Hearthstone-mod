@@ -57,7 +57,7 @@
   "JAINA_CARD_NORGANNON_WISDOM.description": "{IfUpgraded:show:Draw 2 cards. Gain 1 energy for each [blue]Spell card[/blue] drawn.|Draw 2 cards. If you have cast a [blue]Spell card[/blue] from the Fire, Arcane and Frost schools this combat, this card costs 0.}",
   "JAINA_CARD_AWAKEN.title": "Ancient Glyph",
   "JAINA_CARD_AWAKEN.titleUpgraded": "Peak Infinity",
-  "JAINA_CARD_AWAKEN.description": "Discover a [blue]Spell card[/blue]. It costs 1 less.",
+  "JAINA_CARD_AWAKEN.description": "{IfUpgraded:show:Discover a [blue]Spell card[/blue]. It costs 1 less.\n[blue]Finisher[/blue]: At the end of your turn, return this card to your hand.|Discover a [blue]Spell card[/blue]. It costs 1 less.}",
   "JAINA_CARD_OBJECTION.title": "Objection",
   "JAINA_CARD_OBJECTION.titleUpgraded": "Counterspell",
   "JAINA_CARD_OBJECTION.description": "{IfUpgraded:show:The enemy's next non-Attack intent has no effect.|The enemy's next Attack intent deals no damage.}"
