@@ -8,6 +8,7 @@ using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
+using MinionLib.Minion;
 using STS2RitsuLib.Interop.AutoRegistration;
 
 namespace jaina.Scripts.Character.Minions;
@@ -39,6 +40,22 @@ public sealed class LunaMinion : JainaMinionBase
     /// 记录本回合打出的牌是否为手牌最右边（打出前判定）
     /// </summary>
     private bool _playedRightmost;
+
+    /// <summary>
+    /// 召唤时立即初始化手牌快照（回合中途召唤时 BeforeSideTurnStart 已过，
+    /// 快照为空会导致召唤当回合所有判定 index=-1）
+    /// </summary>
+    public override async Task OnSummon(PlayerChoiceContext choiceContext, Player owner, MinionSummonOptions options)
+    {
+        await base.OnSummon(choiceContext, owner, options);
+
+        _handOrder.Clear();
+        var hand = Creature.PetOwner?.PlayerCombatState?.Hand?.Cards;
+        if (hand != null)
+        {
+            _handOrder.AddRange(hand);
+        }
+    }
 
     /// <summary>
     /// 玩家回合开始：重建手牌顺序快照
