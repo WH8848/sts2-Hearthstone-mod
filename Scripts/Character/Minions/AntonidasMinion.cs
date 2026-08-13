@@ -1,11 +1,9 @@
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
-using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
-using MegaCrit.Sts2.Core.Entities.Cards;
-using MegaCrit.Sts2.Core.Models;
-using jaina.Scripts.Character.Cards;
+using jaina.Scripts.Character.Powers;
+using MinionLib.Minion;
 using STS2RitsuLib.Interop.AutoRegistration;
 
 namespace jaina.Scripts.Character.Minions;
@@ -13,6 +11,7 @@ namespace jaina.Scripts.Character.Minions;
 /// <summary>
 /// 大法师安东尼达斯 (Archmage Antonidas) - 吉安娜专属随从。
 /// 属性：攻击 5，生命 7。每当你施放一个攻击牌或技能牌，将一张"火球术"攻击牌置入你的手牌。
+/// 光环效果：挂在随从自身，随从死亡后被动失效。
 /// </summary>
 [RegisterMonster]
 public sealed class AntonidasMinion : JainaMinionBase
@@ -26,23 +25,12 @@ public sealed class AntonidasMinion : JainaMinionBase
     protected override string MinionVisualsPath => "res://assets/minion_visuals/antonidas.tscn";
 
     /// <summary>
-    /// 施放攻击/技能牌后，将一张火球术置入手牌
+    /// 召唤时挂上送火球术光环
     /// </summary>
-    public override async Task AfterCardPlayed(PlayerChoiceContext choiceContext, CardPlay cardPlay)
+    public override async Task OnSummon(PlayerChoiceContext choiceContext, Player owner, MinionSummonOptions options)
     {
-        if (!Creature.IsAlive || cardPlay.Card.Owner != Creature.PetOwner)
-        {
-            return;
-        }
-        var type = cardPlay.Card.Type;
-        if (type != CardType.Attack && type != CardType.Skill)
-        {
-            return;
-        }
-        // MutableClone 的卡无 Owner，AddGeneratedCardToCombat 内部会 NRE；用 CreateCard 生成带 Owner 的实例
-        var combatState = Creature.PetOwner.Creature.CombatState;
-        var fireball = combatState.CreateCard(ModelDb.GetById<CardModel>(ModelDb.GetId(typeof(Fireball))), Creature.PetOwner);
-        jaina.Scripts.Character.JainaCastTracker.MarkGenerated(fireball);
-        await CardPileCmd.AddGeneratedCardToCombat(fireball, PileType.Hand, Creature.PetOwner);
+        await base.OnSummon(choiceContext, owner, options);
+
+        await PowerCmd.Apply<AntonidasPower>(choiceContext, [Creature], 1m, Creature, options.Source);
     }
 }
