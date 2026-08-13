@@ -55,12 +55,18 @@ public sealed class Objection : ModCardTemplate
         // 记录施放（倒带/罗曼斯/三派系追踪）
         jaina.Scripts.Character.JainaCastTracker.RecordPlayed(this);
 
-        // 异议：拦截下一次敌人攻击伤害；法术反制（升级）：拦截下一次敌人减益
-        var secret = await PowerCmd.Apply<SecretPower>(choiceContext, base.Owner.Creature, 1m, base.Owner.Creature, this);
-        MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaDebug] Objection Apply SecretPower: {(secret != null)} counterspell={IsUpgraded}");
-        if (secret != null)
+        // 异议：拦截敌人下一次攻击意图的伤害（只拦攻击）；
+        // 法术反制（升级）：拦截敌人下一次非攻击意图的效果（只拦非攻击）。
+        // 两个独立 Power，同时在场时各自拦截一类意图。
+        if (IsUpgraded)
         {
-            secret.IsCounterspell = IsUpgraded;
+            await PowerCmd.Apply<jaina.Scripts.Character.Powers.CounterspellPower>(
+                choiceContext, base.Owner.Creature, 1m, base.Owner.Creature, this);
+        }
+        else
+        {
+            await PowerCmd.Apply<jaina.Scripts.Character.Powers.ObjectionPower>(
+                choiceContext, base.Owner.Creature, 1m, base.Owner.Creature, this);
         }
     }
 }

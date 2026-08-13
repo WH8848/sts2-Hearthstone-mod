@@ -19,5 +19,11 @@
   "JAINA_POWER_AEGWYNN_LEGACY_POWER.smartDescription": "The next minion card you draw inherits Aegwynn's ability.",
   "JAINA_POWER_PEAK_INFINITY_POWER.title": "Peak Infinity",
   "JAINA_POWER_PEAK_INFINITY_POWER.description": "At the start of your next turn, return Peak Infinity to your hand.",
-  "JAINA_POWER_PEAK_INFINITY_POWER.smartDescription": "At the start of your next turn, return Peak Infinity to your hand."
+  "JAINA_POWER_PEAK_INFINITY_POWER.smartDescription": "At the start of your next turn, return Peak Infinity to your hand.",
+  "JAINA_POWER_OBJECTION_POWER.title": "Objection",
+  "JAINA_POWER_OBJECTION_POWER.description": "The enemy's next Attack intent deals no damage.",
+  "JAINA_POWER_OBJECTION_POWER.smartDescription": "The enemy's next Attack intent deals no damage.",
+  "JAINA_POWER_COUNTERSPELL_POWER.title": "Counterspell",
+  "JAINA_POWER_COUNTERSPELL_POWER.description": "The enemy's next non-Attack intent has no effect.",
+  "JAINA_POWER_COUNTERSPELL_POWER.smartDescription": "The enemy's next non-Attack intent has no effect."
 }
