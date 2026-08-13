@@ -82,6 +82,7 @@ public sealed class FreezingPotion : ModCardTemplate
         // 双生法术：仅当本卡仍具有双生法术关键词时复制。
         // 不能按 IsUpgraded 判断——复制品也是升级实例，但已 RemoveKeyword 移除词条，
         // 用 Keywords 判断可保证复制品打出时不再复制（避免无限复制链）。
+        MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaDebug] FreezingPotion OnPlay: upgraded={IsUpgraded} hasTwinspell={Keywords.Contains(JainaKeywords.Twinspell)}");
         if (Keywords.Contains(JainaKeywords.Twinspell))
         {
             // CreateClone 保留 Owner（MutableClone 的卡无 Owner 会导致入牌堆 NRE）
@@ -89,6 +90,7 @@ public sealed class FreezingPotion : ModCardTemplate
             copy.RemoveKeyword(JainaKeywords.Twinspell);
             jaina.Scripts.Character.JainaCastTracker.MarkGenerated(copy);
             await CardPileCmd.AddGeneratedCardToCombat(copy, PileType.Hand, base.Owner);
+            MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaDebug] FreezingPotion twinspell copied: copyKeywords={string.Join(",", copy.Keywords)}");
         }
     }
 
