@@ -38,18 +38,13 @@ public static class NCardSchoolLabelPatch
             label = new Label
             {
                 Name = LabelName,
+                // 卡面逻辑坐标系 300x422（Frame 中心锚定）：描述区底部 y=173，
+                // 卡框底部 y=211——派系标签放在描述区下方、卡框内侧上方（y≈178~205）
+                Position = new Vector2(-100f, 178f),
+                Size = new Vector2(200f, 26f),
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
-                MouseFilter = Control.MouseFilterEnum.Ignore,
-                // 锚定卡面底部、卡框内侧上方（炉石式：描述区下方、卡框上面一点）
-                AnchorLeft = 0f,
-                AnchorTop = 1f,
-                AnchorRight = 1f,
-                AnchorBottom = 1f,
-                OffsetLeft = 0f,
-                OffsetTop = -20f,
-                OffsetRight = 0f,
-                OffsetBottom = -8f
+                MouseFilter = Control.MouseFilterEnum.Ignore
             };
             label.AddThemeFontSizeOverride("font_size", 13);
             __instance.AddChild(label);
