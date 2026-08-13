@@ -46,11 +46,26 @@
     <ShouldAutoCopyMinionLib>false</ShouldAutoCopyMinionLib>
   </PropertyGroup>
 
+  <!-- 调试配置：生成 portable pdb（断点调试 + 热重载必需） -->
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <Optimize>false</Optimize>
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+
+  <!-- 发布配置：关闭调试符号 -->
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <Optimize>true</Optimize>
+    <DebugType>none</DebugType>
+    <PathMap>$(AppOutputBase)=.\</PathMap>
+  </PropertyGroup>
+
   <!-- 自动复制dll、json 和本地化文件 -->
   <Target Name="Copy Mod" AfterTargets="PostBuildEvent">
     <Message Text="Copying mod to Slay the Spire 2 mods folder..." Importance="high" />
     <MakeDir Directories="$(Sts2Dir)\mods\" />
     <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(Sts2Dir)\mods\$(MSBuildProjectName)\" />
+    <!-- 拷贝 pdb（断点调试必需；存在才拷） -->
+    <Copy SourceFiles="$(TargetDir)$(TargetName).pdb" DestinationFolder="$(Sts2Dir)\mods\$(MSBuildProjectName)\" Condition="Exists('$(TargetDir)$(TargetName).pdb')" />
     <Copy SourceFiles="$(MSBuildProjectName).json" DestinationFolder="$(Sts2Dir)/mods/$(MSBuildProjectName)/" />
     <!-- 复制 localization 目录（卡牌/随从/关键词等本地化），并保留子目录结构。
          注：游戏从 res://{modId}/localization/ 读取本地化，故项目内路径为 jaina/localization/ -->
