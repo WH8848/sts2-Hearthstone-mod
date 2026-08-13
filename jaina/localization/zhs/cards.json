@@ -19,7 +19,7 @@
   "JAINA_CARD_FROSTBOLT.description": "[gold]冰霜[/gold]。\n{IfUpgraded:show:给予一个角色1层[gold]冻结[/gold]。如果该角色已拥有冻结，则每层冻结对其额外造成4点伤害。|对一个角色造成{Damage}点伤害，并使其获得1层[gold]冻结[/gold]。}",
   "JAINA_CARD_FREEZING_POTION.title": "冰冻药水",
   "JAINA_CARD_FREEZING_POTION.titleUpgraded": "霜冻射线",
-  "JAINA_CARD_FREEZING_POTION.description": "[gold]冰霜[/gold]。\n{IfUpgraded:show:[gold]双生法术[/gold]。[gold]冻结[/gold]一个角色。|[gold]冻结[/gold]一个敌人。}",
+  "JAINA_CARD_FREEZING_POTION.description": "[gold]冰霜[/gold]。\n{IfUpgraded:show:[gold]冻结[/gold]一个角色。|[gold]冻结[/gold]一个敌人。}",
   "JAINA_CARD_IMP_CARD.title": "小精灵",
   "JAINA_CARD_IMP_CARD.description": "召唤一个[blue]1/1[/blue]的[red]小精灵[/red]。",
   "JAINA_CARD_SPIRIT_COLLECTOR_CARD.title": "灵体采集者",
