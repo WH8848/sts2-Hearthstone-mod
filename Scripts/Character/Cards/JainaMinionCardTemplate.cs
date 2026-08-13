@@ -53,6 +53,11 @@ public abstract class JainaMinionCardTemplate : ModCardTemplate
     /// </summary>
     public override IEnumerable<CardKeyword> CanonicalKeywords => [];
 
+    /// <summary>
+    /// 本卡最近一次打出时召唤的随从生物（艾格文亡语转移光环用）
+    /// </summary>
+    public MegaCrit.Sts2.Core.Entities.Creatures.Creature? LastSummonedMinion { get; private set; }
+
     protected JainaMinionCardTemplate(int cost, CardRarity rarity)
         : base(cost, CardType.Skill, rarity, TargetType.Self, true)
     {
@@ -63,7 +68,7 @@ public abstract class JainaMinionCardTemplate : ModCardTemplate
     /// </summary>
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
-        await JainaMinionPool.SummonMinionByType(
+        LastSummonedMinion = await JainaMinionPool.SummonMinionByType(
             choiceContext,
             base.Owner,
             MinionType,

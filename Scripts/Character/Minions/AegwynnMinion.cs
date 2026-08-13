@@ -30,13 +30,13 @@ public sealed class AegwynnMinion : JainaMinionBase
     public override bool HasDeathrattle => true;
 
     /// <summary>
-    /// 战吼：力量+2（召唤时玩家获得 2 层力量）
+    /// 战吼：力量光环 +2（挂在随从自身，随从在场期间主人攻击 +2，死亡自动消失）
     /// </summary>
     public override async Task OnSummon(PlayerChoiceContext choiceContext, Player owner, MinionSummonOptions options)
     {
         await base.OnSummon(choiceContext, owner, options);
 
-        await PowerCmd.Apply<StrengthPower>(choiceContext, [owner.Creature], 2m, Creature, options.Source);
+        await PowerCmd.Apply<AegwynnAuraPower>(choiceContext, [Creature], 2m, Creature, options.Source);
     }
 
     /// <summary>

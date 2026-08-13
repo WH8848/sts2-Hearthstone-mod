@@ -4,16 +4,15 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
-using MegaCrit.Sts2.Core.Models.Powers;
 using jaina.Scripts.Character.Cards;
 using STS2RitsuLib.Interop.AutoRegistration;
 
 namespace jaina.Scripts.Character.Powers;
 
 /// <summary>
-/// 守护者艾格文的亡语：你抽到的下一张随从牌会继承此能力（打出该随从时获得力量+2）。
-/// 挂在玩家身上：抽到随从牌（JainaMinionCardTemplate）时记录该卡实例，
-/// 该卡被打出时给玩家施加 2 层力量并移除本 Power。
+/// 守护者艾格文的亡语：你抽到的下一张随从牌会继承"力量光环+2"。
+/// 挂在玩家身上：抽到随从牌（JainaMinionCardTemplate）时记录该卡实例；
+/// 该卡打出并召唤随从后，把 AegwynnAuraPower 转移到新召唤的随从身上，本 Power 移除。
 /// </summary>
 [RegisterPower]
 public sealed class AegwynnLegacyPower : PowerModel
@@ -40,16 +39,21 @@ public sealed class AegwynnLegacyPower : PowerModel
     }
 
     /// <summary>
-    /// 被标记的随从牌打出时：玩家获得力量+2，本 Power 移除
+    /// 被标记的随从牌打出并召唤随从后：力量光环转移到新随从身上，本 Power 移除
     /// </summary>
-    public override async Task BeforeCardPlayed(CardPlay cardPlay)
+    public override async Task AfterCardPlayed(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
         if (_claimedCard == null || !ReferenceEquals(_claimedCard, cardPlay.Card))
         {
             return;
         }
         _claimedCard = null;
-        await PowerCmd.Apply<StrengthPower>(new ThrowingPlayerChoiceContext(), [Owner], 2m, Owner, null);
+
+        // 该卡在 OnPlay 中记录了召唤出的随从生物
+        if (cardPlay.Card is JainaMinionCardTemplate { LastSummonedMinion: { } minion })
+        {
+            await PowerCmd.Apply<AegwynnAuraPower>(choiceContext, [minion], 2m, minion, null);
+        }
         await PowerCmd.Remove(this);
     }
 }
