@@ -102,10 +102,17 @@ public sealed class LunaMinion : JainaMinionBase
     }
 
     /// <summary>
-    /// 使用最右边的手牌后抽一张牌（光环：仅露娜在场时生效）
+    /// 使用最右边的手牌后抽一张牌（光环：仅露娜在场时生效）。
+    /// 召唤当回合（打出露娜时钩子尚未挂载）快照可能残留本卡，
+    /// 这里兜底清理，保证多只露娜各自快照始终同步。
     /// </summary>
     public override async Task AfterCardPlayed(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
+        // 兜底：把打出卡从快照移除（当回合残留的露娜卡/任何未移除的卡）
+        if (cardPlay.Card.Owner == Creature.PetOwner)
+        {
+            _handOrder.Remove(cardPlay.Card);
+        }
         if (!_playedRightmost || !Creature.IsAlive)
         {
             return;
