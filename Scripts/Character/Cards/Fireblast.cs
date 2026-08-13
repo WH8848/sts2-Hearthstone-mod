@@ -27,10 +27,7 @@ public sealed class Fireblast : ModCardTemplate
     /// </summary>
     public override int MaxUpgradeLevel => int.MaxValue;
 
-    /// <summary>
-    /// 法术牌：攻击牌和技能牌都视为法术牌
-    /// </summary>
-    public override IEnumerable<CardKeyword> CanonicalKeywords => [jaina.Scripts.Character.Keywords.JainaKeywords.Spell];
+    // 英雄技能：不挂"法术牌"关键词，不被任何衍生发现
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [

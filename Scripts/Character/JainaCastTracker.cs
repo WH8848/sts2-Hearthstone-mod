@@ -40,12 +40,12 @@ public static class JainaCastTracker
     private static readonly ConditionalWeakTable<ICombatState, CombatRecord> Records = new();
 
     /// <summary>
-    /// 卡牌类型 → 法术派系（未列出的攻击/技能牌无派系）
+    /// 卡牌类型 → 法术派系（未列出的攻击/技能牌无派系）。
+    /// 注意：火焰冲击是英雄技能，不属于法术牌，不计入派系。
     /// </summary>
     private static readonly Dictionary<Type, JainaSpellSchool> SchoolByCardType = new()
     {
         [typeof(Fireball)] = JainaSpellSchool.Fire,
-        [typeof(Fireblast)] = JainaSpellSchool.Fire,
         [typeof(Frostbolt)] = JainaSpellSchool.Frost,
         [typeof(FreezingPotion)] = JainaSpellSchool.Frost,
         [typeof(IceBarrier)] = JainaSpellSchool.Frost,
