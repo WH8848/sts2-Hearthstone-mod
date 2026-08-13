@@ -77,26 +77,37 @@ public sealed class SecretPower : PowerModel
     }
 
     /// <summary>
-    /// 法术反制：敌人对玩家施加的减益数量改为 0（拦截非攻击意图），触发一次后移除
+    /// 法术反制：拦截敌人的 Buff/Debuff/CardDebuff 意图——敌人施加的任何 Power
+    /// （增益自身或减益玩家）数量改为 0，触发一次后移除。
     /// </summary>
     public override bool TryModifyPowerAmountReceived(PowerModel canonicalPower, Creature target, decimal amount, Creature? applier, out decimal modifiedAmount)
     {
-        MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaDebug] SecretPower TryModifyPowerAmountReceived: counterspell={IsCounterspell} power={canonicalPower?.Id.Entry ?? "null"} amount={amount} applier={applier?.LogName ?? "null"} applierSide={applier?.Side} targetSide={target.Side} myAmount={Amount}");
+        MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaDebug] SecretPower TryModifyPowerAmountReceived: counterspell={IsCounterspell} power={canonicalPower?.Id.Entry ?? "null"} amount={amount} applier={applier?.LogName ?? "null"} applierSide={applier?.Side} myAmount={Amount}");
         modifiedAmount = amount;
         if (!IsCounterspell || Amount <= 0)
         {
             return false;
         }
-        if (applier == null || applier.Side != CombatSide.Enemy || target.Side != CombatSide.Player)
-        {
-            return false;
-        }
-        if (canonicalPower.Type != PowerType.Debuff)
+        // 敌人施加的任何 Power（Buff 增益自身 / Debuff 减益玩家 / CardDebuff 类）全部拦截
+        if (applier == null || applier.Side != CombatSide.Enemy)
         {
             return false;
         }
         modifiedAmount = 0m;
         _ = PowerCmd.Decrement(this);
         return true;
+    }
+
+    /// <summary>
+    /// 法术反制：拦截敌人的 Defend 意图——敌人获得的格挡改为 0
+    /// </summary>
+    public override decimal ModifyBlockAdditive(Creature target, decimal block, ValueProp props, CardModel? cardSource, CardPlay? cardPlay)
+    {
+        if (IsCounterspell && Amount > 0 && target.Side == CombatSide.Enemy && block > 0)
+        {
+            _ = PowerCmd.Decrement(this);
+            return -block;
+        }
+        return 0m;
     }
 }
