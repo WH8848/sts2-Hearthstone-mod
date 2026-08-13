@@ -14,5 +14,8 @@
   "JAINA_KEYWORD_SPELL.title": "法术牌",
   "JAINA_KEYWORD_SPELL.description": "攻击牌和技能牌都视为法术牌。",
   "JAINA_KEYWORD_BATTLECRY.title": "战吼",
-  "JAINA_KEYWORD_BATTLECRY.description": "战吼：卡牌从手牌中被使用时，会立即触发其效果。"
+  "JAINA_KEYWORD_BATTLECRY.description": "战吼：卡牌从手牌中被使用时，会立即触发其效果。",
+  "JAINA_SCHOOL_FIRE": "火焰",
+  "JAINA_SCHOOL_FROST": "冰霜",
+  "JAINA_SCHOOL_ARCANE": "奥术"
 }
