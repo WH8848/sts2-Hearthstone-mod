@@ -15,6 +15,11 @@ namespace jaina.Scripts.Character.Cards;
 [RegisterCard(typeof(JainaNeutralCardPool))]
 public sealed class ZealotCard : JainaMinionCardTemplate
 {
+    /// <summary>
+    /// 卡牌原画：狂热者原画
+    /// </summary>
+    public override string CustomPortraitPath => "res://assets/card_art/zealot.png";
+
     protected override Type MinionType => typeof(Zealot);
 
     protected override int MinionAttack => 3;

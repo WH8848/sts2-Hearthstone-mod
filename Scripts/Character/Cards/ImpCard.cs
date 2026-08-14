@@ -13,6 +13,11 @@ namespace jaina.Scripts.Character.Cards;
 [RegisterCard(typeof(JainaNeutralCardPool))]
 public sealed class ImpCard : JainaMinionCardTemplate
 {
+    /// <summary>
+    /// 卡牌原画：炉石传说"小精灵"官方原画
+    /// </summary>
+    public override string CustomPortraitPath => "res://assets/card_art/imp.png";
+
     protected override Type MinionType => typeof(ImpMinion);
 
     protected override int MinionAttack => 1;

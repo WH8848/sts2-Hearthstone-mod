@@ -111,7 +111,8 @@ public sealed class FlameWard : JainaSpellCardTemplate
                 break;
             }
             var target = combatState.RunState.Rng.CombatTargets.NextItem(enemies);
-            await CreatureCmd.Damage(choiceContext, [target], base.DynamicVars.Damage.BaseValue, ValueProp.Unpowered, base.Owner.Creature);
+            // 攻击伤害：吃力量加成（与原版多次攻击牌一致，每次命中都计算力量）
+            await CreatureCmd.Damage(choiceContext, [target], base.DynamicVars.Damage.BaseValue, ValueProp.Move, base.Owner.Creature);
         }
     }
 

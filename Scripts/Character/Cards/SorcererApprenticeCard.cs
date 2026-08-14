@@ -26,7 +26,7 @@ public sealed class SorcererApprenticeCard : JainaMinionCardTemplate
     protected override int MinionHealth => 2;
 
     public SorcererApprenticeCard()
-        : base(1, CardRarity.Uncommon)
+        : base(1, CardRarity.Common)
     {
     }
 }

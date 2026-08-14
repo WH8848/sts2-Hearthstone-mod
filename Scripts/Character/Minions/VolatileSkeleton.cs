@@ -19,14 +19,20 @@ namespace jaina.Scripts.Character.Minions;
 public sealed class VolatileSkeleton : JainaMinionBase
 {
     /// <summary>
-    /// 自动模式：回合结束自动攻击随机敌人
+    /// 手动模式：玩家可点击攻击（有行动点），回合结束仍自动攻击随机敌人。
     /// </summary>
-    public override JainaMinionBehaviorMode BehaviorMode => JainaMinionBehaviorMode.Auto;
+    public override JainaMinionBehaviorMode BehaviorMode => JainaMinionBehaviorMode.Manual;
 
     /// <summary>
     /// 战斗视觉：不稳定的骷髅卡图原画场景
     /// </summary>
     protected override string MinionVisualsPath => "res://assets/card_art/volatile_skeleton.png";
+
+    /// <summary>
+    /// 回合结束被动：攻击随机敌人（保留"回合结束自动攻击"特性）
+    /// </summary>
+    protected override Task PerformTurnEndPassive(PlayerChoiceContext choiceContext) =>
+        PerformTurnEndAttack(choiceContext);
 
     /// <summary>
     /// 亡语伤害值

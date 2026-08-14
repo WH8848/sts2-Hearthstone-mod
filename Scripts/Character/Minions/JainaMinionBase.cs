@@ -201,18 +201,38 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
                 MegaCrit.Sts2.Core.Logging.Log.Info("[JainaHover] NCard.Create null (TestMode?)");
                 return;
             }
-            // 挂到战斗 UI 的随从节点（在场景树中，NCard.UpdateVisuals 需要 IsNodeReady）
-            var host = (CanvasItem?)MegaCrit.Sts2.Core.Nodes.Rooms.NCombatRoom.Instance?.GetCreatureNode(Creature) ?? _visualsRoot;
+            // 挂到战斗房间根（所有随从之上，避免多随从时卡面被其他随从视觉遮挡"图层忽高忽低"）；
+            // 战斗房间不可用时回退到随从节点，再回退到视觉根
+            var room = MegaCrit.Sts2.Core.Nodes.Rooms.NCombatRoom.Instance;
+            var creatureNode = room?.GetCreatureNode(Creature);
+            var host = (CanvasItem?)(room ?? (Godot.Node?)creatureNode) ?? _visualsRoot;
+            if (host == null)
+            {
+                MegaCrit.Sts2.Core.Logging.Log.Warn("[JainaHover] no host for hover card");
+                return;
+            }
             cardNode.UpdateVisuals(MegaCrit.Sts2.Core.Entities.Cards.PileType.None,
                 MegaCrit.Sts2.Core.Entities.Cards.CardPreviewMode.Normal);
             cardNode.MouseFilter = Control.MouseFilterEnum.Ignore;
             host.AddChild(cardNode);
             // 卡面放随从旁边（横跨 ±90 起，卡面宽约 112 缩放后；稍抬高对齐卡图区域）
             cardNode.Scale = Vector2.One * 0.72f;
-            cardNode.Position = showOnLeft
-                ? new Vector2(-cardNode.Size.X * 0.72f - 100f, -190f)
-                : new Vector2(100f, -190f);
-            cardNode.ZIndex = 50;
+            // 以随从节点的全局位置为锚点计算卡面全局位置，再转成 host 局部坐标
+            // （host 为战斗房间根时，卡面坐标是房间坐标而非随从局部坐标）
+            Vector2 anchor = Vector2.Zero;
+            try
+            {
+                anchor = ((CanvasItem?)creatureNode ?? _visualsRoot)?.GetGlobalTransformWithCanvas().Origin ?? Vector2.Zero;
+            }
+            catch
+            {
+            }
+            var hoverCardSize = cardNode.Size * cardNode.Scale;
+            var targetGlobal = showOnLeft
+                ? anchor + new Vector2(-hoverCardSize.X - 100f, -190f)
+                : anchor + new Vector2(100f, -190f);
+            cardNode.Position = host.GetGlobalTransformWithCanvas().AffineInverse() * targetGlobal;
+            cardNode.ZIndex = 500;
             // 视口约束：卡面必须完整出现在屏幕内（含 8px 边距），超出部分平移到视口内
             ClampCardToViewport(host, cardNode);
             MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaHover] card shown: {canonical.Id} host={(host == _visualsRoot ? "visuals-root" : "creature-node")} insideTree={cardNode.IsInsideTree()} ready={cardNode.IsNodeReady()}");

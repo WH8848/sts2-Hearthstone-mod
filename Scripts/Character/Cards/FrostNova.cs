@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.Powers;
@@ -22,12 +23,33 @@ namespace jaina.Scripts.Character.Cards;
 public sealed class FrostNova : JainaSpellCardTemplate
 {
     /// <summary>
-    /// 法术牌 + 冰霜派系
+    /// 法术牌 + 冰霜派系；未升级还有"冻结"关键词（悬停解释），
+    /// 升级后（脱罪力证）为"无实体"，由 AdditionalHoverTips 提供 FromPower 解释。
     /// </summary>
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
-        [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Frost];
+        IsUpgraded
+            ? [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Frost]
+            : [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Frost, jaina.Scripts.Character.Keywords.JainaKeywords.Freeze];
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [];
+
+    /// <summary>
+    /// 悬停提示：基础关键词解释 + 升级后（脱罪力证）追加"无实体"Power 解释
+    /// </summary>
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips
+    {
+        get
+        {
+            foreach (var tip in base.AdditionalHoverTips)
+            {
+                yield return tip;
+            }
+            if (IsUpgraded)
+            {
+                yield return HoverTipFactory.FromPower<IntangiblePower>();
+            }
+        }
+    }
 
     /// <summary>
     /// 卡牌原画：冰霜新星 / 升级后（脱罪力证）切换原画

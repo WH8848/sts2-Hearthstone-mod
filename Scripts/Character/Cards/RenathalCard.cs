@@ -9,6 +9,7 @@ namespace jaina.Scripts.Character.Cards;
 /// RenathalCard - 吉安娜随从卡。召唤 3/4 的 RenathalMinion。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
+[RegisterCharacterStarterCard(typeof(Jaina), 1)]
 public sealed class RenathalCard : JainaMinionCardTemplate
 {
     public override string CustomPortraitPath => "res://assets/card_art/prince_renathal.png";
