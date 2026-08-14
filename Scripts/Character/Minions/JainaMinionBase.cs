@@ -320,7 +320,19 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
         {
             // 战斗场景未就绪时忽略，回合开始揭示流程会再次刷新
         }
+
+        // 战吼只在"从手牌打出随从卡"时触发（炉石规则：随机召唤/效果召唤不触发战吼）。
+        // 判断依据：只有 JainaMinionCardTemplate.OnPlay 召唤时 Source 传的是随从卡实例。
+        if (options.Source is jaina.Scripts.Character.Cards.JainaMinionCardTemplate)
+        {
+            await OnBattlecry(choiceContext);
+        }
     }
+
+    /// <summary>
+    /// 战吼效果：随从从手牌打出时触发（随机召唤/效果召唤不触发）。子类重写。
+    /// </summary>
+    public virtual Task OnBattlecry(PlayerChoiceContext choiceContext) => Task.CompletedTask;
 
     /// <summary>
     /// 玩家回合开始时：

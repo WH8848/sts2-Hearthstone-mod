@@ -26,7 +26,7 @@ public sealed class KalecgosMinion : JainaMinionBase
     protected override string MinionVisualsPath => "res://assets/card_art/kalecgos.png";
 
     /// <summary>
-    /// 战吼：发现一张攻击牌或技能牌；同时挂上"第一张攻击/技能牌 0 费"的效果
+    /// 召唤时：挂上"第一张攻击/技能牌 0 费"的光环（任何召唤方式都生效）
     /// </summary>
     public override async Task OnSummon(PlayerChoiceContext choiceContext, Player owner, MinionSummonOptions options)
     {
@@ -34,8 +34,17 @@ public sealed class KalecgosMinion : JainaMinionBase
 
         // 每回合第一张攻击/技能牌 0 费（光环挂随从自身，随从死亡自动失效）
         await PowerCmd.Apply<KalecgosPower>(choiceContext, [Creature], 1m, Creature, options.Source);
+    }
 
-        // 战吼：发现一张攻击牌或技能牌
-        await JainaDiscoverHelper.DiscoverAndAddToHand(choiceContext, owner);
+    /// <summary>
+    /// 战吼：发现一张攻击牌或技能牌。仅手牌打出时触发。
+    /// </summary>
+    public override async Task OnBattlecry(PlayerChoiceContext choiceContext)
+    {
+        var owner = Creature.PetOwner;
+        if (owner != null)
+        {
+            await JainaDiscoverHelper.DiscoverAndAddToHand(choiceContext, owner);
+        }
     }
 }

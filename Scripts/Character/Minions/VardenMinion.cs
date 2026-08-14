@@ -27,13 +27,13 @@ public sealed class VardenMinion : JainaMinionBase
     protected override string MinionVisualsPath => "res://assets/card_art/varden_dawngrasp.png";
 
     /// <summary>
-    /// 战吼：先按现有冻结层数结算伤害，再给予全体敌人 4 层冻结
+    /// 战吼：先按现有冻结层数结算伤害，再给予全体敌人 4 层冻结。
+    /// 仅手牌打出时触发，随机召唤不触发。
     /// </summary>
-    public override async Task OnSummon(PlayerChoiceContext choiceContext, Player owner, MinionSummonOptions options)
+    public override async Task OnBattlecry(PlayerChoiceContext choiceContext)
     {
-        await base.OnSummon(choiceContext, owner, options);
-
-        if (Creature.CombatState == null)
+        var owner = Creature.PetOwner;
+        if (owner == null || Creature.CombatState == null)
         {
             return;
         }

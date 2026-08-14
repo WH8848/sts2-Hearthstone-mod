@@ -68,12 +68,14 @@ public static class JainaMinionPool
     /// </summary>
     /// <param name="maxHp">随从生命值（null 使用模型默认值）</param>
     /// <param name="attack">随从攻击力（null 不设置）</param>
+    /// <param name="source">召唤来源卡（手牌打出随从卡时传随从卡实例，触发战吼；其余不传）</param>
     public static async Task<Creature> SummonMinion<T>(
         PlayerChoiceContext choiceContext,
         Player player,
         decimal? maxHp = null,
         decimal? attack = null,
-        MinionPosition position = MinionPosition.FrontUpper) where T : JainaMinionBase
+        MinionPosition position = MinionPosition.FrontUpper,
+        MegaCrit.Sts2.Core.Models.CardModel? source = null) where T : JainaMinionBase
     {
         // 随从上限：最多 7 个，超过则不召唤
         if (GetCurrentMinionCount(player) >= MaxMinions)
@@ -83,7 +85,7 @@ public static class JainaMinionPool
         return await MinionCmd.AddMinion<T>(choiceContext, player, new MinionSummonOptions(
             MaxHp: maxHp,
             PrimaryStatAmount: attack,
-            Source: null,
+            Source: source,
             Position: position));
     }
 
@@ -96,7 +98,8 @@ public static class JainaMinionPool
         Type minionType,
         decimal? maxHp = null,
         decimal? attack = null,
-        MinionPosition position = MinionPosition.FrontUpper)
+        MinionPosition position = MinionPosition.FrontUpper,
+        MegaCrit.Sts2.Core.Models.CardModel? source = null)
     {
         if (minionType == null || !typeof(JainaMinionBase).IsAssignableFrom(minionType))
         {
@@ -104,20 +107,20 @@ public static class JainaMinionPool
         }
         return minionType.Name switch
         {
-            nameof(Zealot) => await SummonMinion<Zealot>(choiceContext, player, maxHp, attack, position),
-            nameof(VolatileSkeleton) => await SummonMinion<VolatileSkeleton>(choiceContext, player, maxHp, attack, position),
-            nameof(ImpMinion) => await SummonMinion<ImpMinion>(choiceContext, player, maxHp, attack, position),
-            nameof(SpiritCollectorMinion) => await SummonMinion<SpiritCollectorMinion>(choiceContext, player, maxHp, attack, position),
-            nameof(RenathalMinion) => await SummonMinion<RenathalMinion>(choiceContext, player, maxHp, attack, position),
-            nameof(SorcererApprenticeMinion) => await SummonMinion<SorcererApprenticeMinion>(choiceContext, player, maxHp, attack, position),
-            nameof(ArcaneArtificerMinion) => await SummonMinion<ArcaneArtificerMinion>(choiceContext, player, maxHp, attack, position),
-            nameof(AntonidasMinion) => await SummonMinion<AntonidasMinion>(choiceContext, player, maxHp, attack, position),
-            nameof(VardenMinion) => await SummonMinion<VardenMinion>(choiceContext, player, maxHp, attack, position),
-            nameof(RommathMinion) => await SummonMinion<RommathMinion>(choiceContext, player, maxHp, attack, position),
-            nameof(MozakiMinion) => await SummonMinion<MozakiMinion>(choiceContext, player, maxHp, attack, position),
-            nameof(LunaMinion) => await SummonMinion<LunaMinion>(choiceContext, player, maxHp, attack, position),
-            nameof(KalecgosMinion) => await SummonMinion<KalecgosMinion>(choiceContext, player, maxHp, attack, position),
-            nameof(AegwynnMinion) => await SummonMinion<AegwynnMinion>(choiceContext, player, maxHp, attack, position),
+            nameof(Zealot) => await SummonMinion<Zealot>(choiceContext, player, maxHp, attack, position, source),
+            nameof(VolatileSkeleton) => await SummonMinion<VolatileSkeleton>(choiceContext, player, maxHp, attack, position, source),
+            nameof(ImpMinion) => await SummonMinion<ImpMinion>(choiceContext, player, maxHp, attack, position, source),
+            nameof(SpiritCollectorMinion) => await SummonMinion<SpiritCollectorMinion>(choiceContext, player, maxHp, attack, position, source),
+            nameof(RenathalMinion) => await SummonMinion<RenathalMinion>(choiceContext, player, maxHp, attack, position, source),
+            nameof(SorcererApprenticeMinion) => await SummonMinion<SorcererApprenticeMinion>(choiceContext, player, maxHp, attack, position, source),
+            nameof(ArcaneArtificerMinion) => await SummonMinion<ArcaneArtificerMinion>(choiceContext, player, maxHp, attack, position, source),
+            nameof(AntonidasMinion) => await SummonMinion<AntonidasMinion>(choiceContext, player, maxHp, attack, position, source),
+            nameof(VardenMinion) => await SummonMinion<VardenMinion>(choiceContext, player, maxHp, attack, position, source),
+            nameof(RommathMinion) => await SummonMinion<RommathMinion>(choiceContext, player, maxHp, attack, position, source),
+            nameof(MozakiMinion) => await SummonMinion<MozakiMinion>(choiceContext, player, maxHp, attack, position, source),
+            nameof(LunaMinion) => await SummonMinion<LunaMinion>(choiceContext, player, maxHp, attack, position, source),
+            nameof(KalecgosMinion) => await SummonMinion<KalecgosMinion>(choiceContext, player, maxHp, attack, position, source),
+            nameof(AegwynnMinion) => await SummonMinion<AegwynnMinion>(choiceContext, player, maxHp, attack, position, source),
             _ => null!,
         };
     }

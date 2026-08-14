@@ -30,14 +30,14 @@ public sealed class RommathMinion : JainaMinionBase
     protected override string MinionVisualsPath => "res://assets/card_art/archmage_rommath.png";
 
     /// <summary>
-    /// 战吼：重放本局施放过的每张牌库之外的攻击/技能牌（免费自动打出，随机目标）
+    /// 战吼：重放本局施放过的每张牌库之外的攻击/技能牌（免费自动打出，随机目标）。
+    /// 仅手牌打出时触发，随机召唤不触发。
     /// </summary>
-    public override async Task OnSummon(PlayerChoiceContext choiceContext, Player owner, MinionSummonOptions options)
+    public override async Task OnBattlecry(PlayerChoiceContext choiceContext)
     {
-        await base.OnSummon(choiceContext, owner, options);
-
+        var owner = Creature.PetOwner;
         var combatState = Creature.CombatState;
-        if (combatState == null)
+        if (owner == null || combatState == null)
         {
             return;
         }
