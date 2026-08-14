@@ -34,4 +34,9 @@ public static class JainaMinionCardMap
     {
         return CardByMinionType.TryGetValue(minionType, out var cardType) ? cardType : null;
     }
+
+    /// <summary>
+    /// 全部随从生物类型
+    /// </summary>
+    public static IEnumerable<Type> MinionTypes => CardByMinionType.Keys;
 }

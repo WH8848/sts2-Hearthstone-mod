@@ -36,6 +36,16 @@ public abstract class JainaMinionCardTemplate : ModCardTemplate
     protected abstract int MinionHealth { get; }
 
     /// <summary>
+    /// 标准攻击力（供 JainaMinionPool 等外部按卡面属性召唤时读取）
+    /// </summary>
+    public int StandardMinionAttack => MinionAttack;
+
+    /// <summary>
+    /// 标准生命值（供 JainaMinionPool 等外部按卡面属性召唤时读取）
+    /// </summary>
+    public int StandardMinionHealth => MinionHealth;
+
+    /// <summary>
     /// 随从站场位置（默认玩家前方上方区域）
     /// </summary>
     protected virtual MinionPosition MinionPosition => MinionPosition.FrontUpper;

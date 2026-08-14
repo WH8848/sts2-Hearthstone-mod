@@ -133,4 +133,47 @@ public static class JainaMinionPool
         Type type = GetRandomMinionType(player);
         return await SummonMinionByType(choiceContext, player, type, position: position);
     }
+
+    /// <summary>
+    /// 随机召唤一个指定费用消耗的随从（如埃匹希斯冲击/火焰之地传送门）。
+    /// 按随从卡牌模型的费用筛选，属性取卡面标准值；无匹配时返回 null。
+    /// </summary>
+    public static async Task<Creature> SummonRandomMinionOfCost(
+        PlayerChoiceContext choiceContext,
+        Player player,
+        int cost,
+        MinionPosition position = MinionPosition.FrontUpper)
+    {
+        // 收集费用匹配的随从类型
+        var candidates = new List<Type>();
+        foreach (var minionType in JainaMinionCardMap.MinionTypes)
+        {
+            var cardType = JainaMinionCardMap.GetCardType(minionType);
+            if (cardType == null)
+            {
+                continue;
+            }
+            var cardModel = ModelDb.GetById<MegaCrit.Sts2.Core.Models.CardModel>(ModelDb.GetId(cardType));
+            if (cardModel != null && cardModel.EnergyCost.Canonical == cost)
+            {
+                candidates.Add(minionType);
+            }
+        }
+        if (candidates.Count == 0)
+        {
+            return null!;
+        }
+
+        var combatState = player.Creature.CombatState;
+        var chosen = combatState.RunState.Rng.CombatTargets.NextItem(candidates) ?? candidates[0];
+
+        // 属性取对应随从卡的标准值
+        var chosenCard = ModelDb.GetById<MegaCrit.Sts2.Core.Models.CardModel>(ModelDb.GetId(JainaMinionCardMap.GetCardType(chosen)))
+            as jaina.Scripts.Character.Cards.JainaMinionCardTemplate;
+        return await SummonMinionByType(
+            choiceContext, player, chosen,
+            maxHp: chosenCard?.StandardMinionHealth,
+            attack: chosenCard?.StandardMinionAttack,
+            position: position);
+    }
 }
