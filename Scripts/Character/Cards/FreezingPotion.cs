@@ -21,7 +21,7 @@ namespace jaina.Scripts.Character.Cards;
 /// 升级后变为霜冻射线 (Frost Ray)：双生法术，冻结一个角色。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
-public sealed class FreezingPotion : ModCardTemplate
+public sealed class FreezingPotion : JainaSpellCardTemplate
 {
     /// <summary>
     /// 双生法术复制品标记：复制品打出时不再复制（替代依赖 Keywords 的判断，

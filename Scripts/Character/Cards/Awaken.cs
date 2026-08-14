@@ -17,7 +17,7 @@ namespace jaina.Scripts.Character.Cards;
 /// 压轴：在回合结束时将本牌移回你的手牌。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
-public sealed class Awaken : ModCardTemplate
+public sealed class Awaken : JainaSpellCardTemplate
 {
     /// <summary>
     /// 法术牌关键词 + 升级后压轴关键词（卡面显示压轴词条）

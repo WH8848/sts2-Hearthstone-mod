@@ -16,7 +16,7 @@ namespace jaina.Scripts.Character.Cards;
 /// 升级后变为加大音量 (Turn Up Volume)：抽三张攻击牌或技能牌。压轴：从中发现一张复制。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
-public sealed class UnfairGame : ModCardTemplate
+public sealed class UnfairGame : JainaSpellCardTemplate
 {
     /// <summary>
     /// 法术牌：攻击牌和技能牌都视为法术牌。

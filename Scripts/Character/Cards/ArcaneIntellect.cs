@@ -20,7 +20,7 @@ namespace jaina.Scripts.Character.Cards;
 /// 升级后变为"时空提速 (Chrono Boost)"：抽两张牌，并召唤一个 3/4 狂热者。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
-public sealed class ArcaneIntellect : ModCardTemplate
+public sealed class ArcaneIntellect : JainaSpellCardTemplate
 {
     /// <summary>
     /// 法术牌：攻击牌和技能牌都视为法术牌

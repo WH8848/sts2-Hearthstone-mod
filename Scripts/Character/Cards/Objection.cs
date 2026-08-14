@@ -17,7 +17,7 @@ namespace jaina.Scripts.Character.Cards;
 /// 简化实现：异议拦截下一次敌人造成的攻击伤害；法术反制拦截下一次敌人造成的任何伤害。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
-public sealed class Objection : ModCardTemplate
+public sealed class Objection : JainaSpellCardTemplate
 {
     /// <summary>
     /// 法术牌 + 奥术派系（仅升级后：法术反制才有派系）

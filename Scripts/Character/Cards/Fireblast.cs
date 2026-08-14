@@ -20,7 +20,7 @@ namespace jaina.Scripts.Character.Cards;
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
 [RegisterCharacterStarterCard(typeof(Jaina), 1)]
-public sealed class Fireblast : ModCardTemplate
+public sealed class Fireblast : JainaSpellCardTemplate
 {
     /// <summary>
     /// 无限升级 - 允许无限次升级

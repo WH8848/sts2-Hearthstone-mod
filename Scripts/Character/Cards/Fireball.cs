@@ -17,7 +17,7 @@ namespace jaina.Scripts.Character.Cards;
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
 [RegisterCharacterStarterCard(typeof(Jaina), 5)]
-public sealed class Fireball : ModCardTemplate
+public sealed class Fireball : JainaSpellCardTemplate
 {
     protected override HashSet<CardTag> CanonicalTags => new HashSet<CardTag> { CardTag.Strike };
 

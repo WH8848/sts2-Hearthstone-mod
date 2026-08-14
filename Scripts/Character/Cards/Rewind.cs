@@ -18,7 +18,7 @@ namespace jaina.Scripts.Character.Cards;
 /// 通过 JainaCastTracker 追踪本局施放过的攻击/技能牌类型。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
-public sealed class Rewind : ModCardTemplate
+public sealed class Rewind : JainaSpellCardTemplate
 {
     /// <summary>
     /// 法术牌：攻击牌和技能牌都视为法术牌

@@ -23,7 +23,7 @@ namespace jaina.Scripts.Character.Cards;
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
 [RegisterCharacterStarterCard(typeof(Jaina), 4)]
-public sealed class IceBarrier : ModCardTemplate
+public sealed class IceBarrier : JainaSpellCardTemplate
 {
     /// <summary>
     /// 法术牌：攻击牌和技能牌都视为法术牌

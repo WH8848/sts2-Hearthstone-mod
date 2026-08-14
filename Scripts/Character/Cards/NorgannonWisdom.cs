@@ -16,7 +16,7 @@ namespace jaina.Scripts.Character.Cards;
 /// 升级后变为清凉的泉水 (Cooling Spring)：抽 2 张牌，每抽到一张攻击牌或技能牌回一费。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
-public sealed class NorgannonWisdom : ModCardTemplate
+public sealed class NorgannonWisdom : JainaSpellCardTemplate
 {
     /// <summary>
     /// 法术牌：攻击牌和技能牌都视为法术牌

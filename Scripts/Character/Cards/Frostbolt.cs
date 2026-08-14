@@ -20,7 +20,7 @@ namespace jaina.Scripts.Character.Cards;
 /// 则每层冻结对其额外造成 4 点伤害。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
-public sealed class Frostbolt : ModCardTemplate
+public sealed class Frostbolt : JainaSpellCardTemplate
 {
     /// <summary>
     /// 法术牌：攻击牌和技能牌都视为法术牌

@@ -15,7 +15,7 @@ namespace jaina.Scripts.Character.Cards;
 /// 升级后变为广阔智慧 (Broad Wisdom)：发现两张费用小于或等于 1 点的攻击牌或技能牌，交换其费用消耗。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
-public sealed class Trick : ModCardTemplate
+public sealed class Trick : JainaSpellCardTemplate
 {
     /// <summary>
     /// 法术牌：攻击牌和技能牌都视为法术牌
