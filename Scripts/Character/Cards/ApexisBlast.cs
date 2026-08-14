@@ -46,7 +46,8 @@ public sealed class ApexisBlast : JainaSpellCardTemplate
     }
 
     /// <summary>
-    /// 升级后卡牌名称变为"火焰之地传送门 (Firelands Portal)"，费用变为 2
+    /// 升级后卡牌名称变为"火焰之地传送门 (Firelands Portal)"，费用保持 1 费不变
+    /// （升级不改变费用；效果增强：伤害 5->6，召唤 1 费随从 -> 2 费随从）。
     /// </summary>
     public override string Title
     {
@@ -60,21 +61,6 @@ public sealed class ApexisBlast : JainaSpellCardTemplate
             LocString? upgraded = LocString.GetIfExists("cards", base.Id.Entry + ".titleUpgraded");
             return upgraded?.GetFormattedText() ?? title.GetFormattedText() + "+";
         }
-    }
-
-    /// <summary>
-    /// 升级后（火焰之地传送门）费用变为 2（展示与结算同步生效）。
-    /// 注意：必须校验 card 是本卡自身——费用钩子会被战斗内所有牌堆的所有卡调用。
-    /// </summary>
-    public override bool TryModifyEnergyCostInCombat(CardModel card, decimal originalCost, out decimal modifiedCost)
-    {
-        if (ReferenceEquals(card, this) && IsUpgraded)
-        {
-            modifiedCost = 2m;
-            return true;
-        }
-        modifiedCost = originalCost;
-        return false;
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
@@ -115,7 +101,7 @@ public sealed class ApexisBlast : JainaSpellCardTemplate
 
     protected override void OnUpgrade()
     {
-        // 升级为火焰之地传送门：伤害 5 -> 6（费用 1 -> 2 由 TryModifyEnergyCostInCombat 处理）
+        // 升级为火焰之地传送门：伤害 5 -> 6（费用保持 1 费不变）
         base.DynamicVars.Damage.BaseValue = 6m;
     }
 }

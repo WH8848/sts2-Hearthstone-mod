@@ -17,7 +17,8 @@ namespace jaina.Scripts.Character.Cards;
 /// <summary>
 /// 火焰结界 (Flame Ward) - 吉安娜专属攻击牌（罕见，1 费）。
 /// 受到攻击时，对敌人造成 4 次 3 点伤害，随机分配到所有敌人身上。
-/// 升级后变为"烈焰风暴 (Flamestrike)"（2 费）：造成 4 次 5 点伤害，随机分配到所有敌人身上。
+/// 升级后变为"烈焰风暴 (Flamestrike)"（1 费）：造成 4 次 5 点伤害，随机分配到所有敌人身上。
+/// 升级不改变费用（避免 TryModifyEnergyCostInCombat 只对战斗内生效导致的显示不一致）。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
 public sealed class FlameWard : JainaSpellCardTemplate
@@ -40,12 +41,12 @@ public sealed class FlameWard : JainaSpellCardTemplate
         IsUpgraded ? "res://assets/card_art/flamestrike.png" : "res://assets/card_art/flame_ward.png";
 
     public FlameWard()
-        : base(2, CardType.Attack, CardRarity.Uncommon, TargetType.None, true)
+        : base(1, CardType.Attack, CardRarity.Uncommon, TargetType.None, true)
     {
     }
 
     /// <summary>
-    /// 升级后卡牌名称变为"烈焰风暴 (Flamestrike)"，费用为 2
+    /// 升级后卡牌名称变为"烈焰风暴 (Flamestrike)"，费用保持 1 费不变
     /// </summary>
     public override string Title
     {
@@ -59,22 +60,6 @@ public sealed class FlameWard : JainaSpellCardTemplate
             LocString? upgraded = LocString.GetIfExists("cards", base.Id.Entry + ".titleUpgraded");
             return upgraded?.GetFormattedText() ?? title.GetFormattedText() + "+";
         }
-    }
-
-    /// <summary>
-    /// 费用：canonical 为 2（烈焰风暴/升级后各界面一致显示 2 费）；
-    /// 未升级（火焰结界）通过此钩子降为 1 费（展示与结算同步）。
-    /// 注意：必须校验 card 是本卡自身——费用钩子会被战斗内所有牌堆的所有卡调用。
-    /// </summary>
-    public override bool TryModifyEnergyCostInCombat(CardModel card, decimal originalCost, out decimal modifiedCost)
-    {
-        if (ReferenceEquals(card, this) && !IsUpgraded)
-        {
-            modifiedCost = 1m;
-            return true;
-        }
-        modifiedCost = originalCost;
-        return false;
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
