@@ -15,7 +15,7 @@ public sealed class ArcaneArtificerCard : JainaMinionCardTemplate
     /// 描述中提及"法术牌"，挂法术牌关键词以提供右侧悬停解释（不注入卡面）
     /// </summary>
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
-        [jaina.Scripts.Character.Keywords.JainaKeywords.Spell];
+        [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, CardKeyword.Exhaust];
 
     public override string CustomPortraitPath => "res://assets/card_art/arcane_artificer.png";
     protected override Type MinionType => typeof(ArcaneArtificerMinion);

@@ -22,7 +22,7 @@ public sealed class ImpCard : JainaMinionCardTemplate
     /// <summary>
     /// 小精灵无亡语无冲锋
     /// </summary>
-    public override IEnumerable<CardKeyword> CanonicalKeywords => [];
+    public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Exhaust];
 
     public ImpCard()
         : base(0, CardRarity.Token)

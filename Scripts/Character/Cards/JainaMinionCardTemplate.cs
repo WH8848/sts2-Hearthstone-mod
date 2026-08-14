@@ -92,7 +92,7 @@ public abstract class JainaMinionCardTemplate : ModCardTemplate, MinionLib.Utili
     /// 注册了 CardDescriptionPlacement.BeforeCardDescription 的关键词
     /// 会自动将其金色 BBCode 注入到卡面描述之前。
     /// </summary>
-    public override IEnumerable<CardKeyword> CanonicalKeywords => [];
+    public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Exhaust];
 
     /// <summary>
     /// 悬停提示：随从卡右侧显示各关键词（战吼/亡语/冲锋等）的详细解释。

@@ -24,7 +24,7 @@ public sealed class VolatileSkeletonCard : JainaMinionCardTemplate
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
     [
         JainaKeywords.Deathrattle
-    ];
+    , CardKeyword.Exhaust];
 
     /// <summary>
     /// 卡牌原画：炉石传说"不稳定的骷髅"高清原画

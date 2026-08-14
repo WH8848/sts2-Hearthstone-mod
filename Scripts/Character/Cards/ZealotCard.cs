@@ -27,7 +27,7 @@ public sealed class ZealotCard : JainaMinionCardTemplate
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
     [
         JainaKeywords.Charge
-    ];
+    , CardKeyword.Exhaust];
 
     public ZealotCard()
         : base(1, CardRarity.Token)
