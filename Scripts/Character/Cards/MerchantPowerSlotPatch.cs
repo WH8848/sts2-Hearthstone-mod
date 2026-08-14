@@ -24,10 +24,11 @@ public static class MerchantPowerSlotPatch
 {
     /// <summary>
     /// 商店稀有度池：掷骰与 GetNextAllowedRarity 只会命中这些稀有度
+    /// （CardRarity 无 Shop 成员；Basic 被商店过滤，Ancient/Event/Token 等不在商店池）
     /// </summary>
     private static bool IsMerchantRarity(CardModel card)
     {
-        return card.Rarity is CardRarity.Common or CardRarity.Uncommon or CardRarity.Rare or CardRarity.Shop;
+        return card.Rarity is CardRarity.Common or CardRarity.Uncommon or CardRarity.Rare;
     }
 
     private static void Prefix(ref CardType type, IEnumerable<CardModel> options)
