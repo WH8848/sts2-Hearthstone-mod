@@ -67,13 +67,8 @@
     <!-- 拷贝 pdb（断点调试必需；存在才拷） -->
     <Copy SourceFiles="$(TargetDir)$(TargetName).pdb" DestinationFolder="$(Sts2Dir)\mods\$(MSBuildProjectName)\" Condition="Exists('$(TargetDir)$(TargetName).pdb')" />
     <Copy SourceFiles="$(MSBuildProjectName).json" DestinationFolder="$(Sts2Dir)/mods/$(MSBuildProjectName)/" />
-    <!-- 复制 localization 目录（卡牌/随从/关键词等本地化），并保留子目录结构。
-         注：游戏从 res://{modId}/localization/ 读取本地化，故项目内路径为 jaina/localization/ -->
-    <ItemGroup>
-      <LocalizationFiles Include="jaina/localization/**/*.json" />
-    </ItemGroup>
-    <MakeDir Directories="$(Sts2Dir)\mods\$(MSBuildProjectName)\localization" />
-    <Copy SourceFiles="@(LocalizationFiles)" DestinationFiles="@(LocalizationFiles->'$(Sts2Dir)\mods\$(MSBuildProjectName)\localization\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <!-- 本地化不打到 mods 目录：localization 已随 Godot 导出打进 Jaina.pck，
+         游戏从 res://jaina/localization/ 读取，mods 目录无需重复存放 -->
   </Target>
 
   <!-- 构建后自动用 Godot 导出 pck 到游戏 mods 目录（headless，走 export_presets.cfg 的 Windows Desktop 预设）。
