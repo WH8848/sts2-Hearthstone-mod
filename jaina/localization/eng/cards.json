@@ -78,5 +78,8 @@
   "JAINA_CARD_FIREBLAST_ANCIENT.description": "Deal {Damage} damage. At the start of each turn, add this card to your hand. [gold]Replay 1[/gold].",
   "JAINA_CARD_CONE_OF_COLD.title": "Cone of Cold",
   "JAINA_CARD_CONE_OF_COLD.titleUpgraded": "Blizzard",
-  "JAINA_CARD_CONE_OF_COLD.description": "[gold]Frost[/gold].\n{IfUpgraded:show:Deal 7 instances of [blue]{Damage}[/blue] damage, split randomly among all enemies. Each instance gives an enemy 1 [gold]Freeze[/gold].|Deal 3 instances of [blue]{Damage}[/blue] damage, split randomly among all enemies. Each instance gives an enemy 1 [gold]Freeze[/gold].}"
+  "JAINA_CARD_CONE_OF_COLD.description": "[gold]Frost[/gold].\n{IfUpgraded:show:Deal 7 instances of [blue]{Damage}[/blue] damage, split randomly among all enemies. Each instance gives an enemy 1 [gold]Freeze[/gold].|Deal 3 instances of [blue]{Damage}[/blue] damage, split randomly among all enemies. Each instance gives an enemy 1 [gold]Freeze[/gold].}",
+  "JAINA_CARD_FLAME_LANCE.title": "Flame Lance",
+  "JAINA_CARD_FLAME_LANCE.titleUpgraded": "Meteor",
+  "JAINA_CARD_FLAME_LANCE.description": "[gold]Fire[/gold].\n{IfUpgraded:show:Deal [blue]{Damage}[/blue] damage to an enemy, then deal 2 instances of [blue]4[/blue] damage to random enemies.|Deal [blue]{Damage}[/blue] damage to an enemy.}"
 }
