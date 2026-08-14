@@ -10,7 +10,6 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using jaina.Scripts.Character.Keywords;
 using jaina.Scripts.Character.Powers;
-using MinionLib.Targeting;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -44,15 +43,9 @@ public sealed class FreezingPotion : JainaSpellCardTemplate
         IsUpgraded ? "res://assets/card_art/ray_of_frost.png" : "res://assets/card_art/freezing_potion.png";
 
     public FreezingPotion()
-        : base(0, CardType.Skill, CardRarity.Common, TargetType.AnyEnemy, true)
+        : base(0, CardType.Skill, CardRarity.Common, JainaTargetTypes.EnemyOrOwnMinion, true)
     {
     }
-
-    /// <summary>
-    /// 霜冻射线（升级后）：目标是任一角色（敌我通用）
-    /// </summary>
-    public override TargetType TargetType =>
-        IsUpgraded ? MinionTargetTypes.AnyCreature : TargetType.AnyEnemy;
 
     /// <summary>
     /// 升级后卡牌名称变为"霜冻射线 (Frost Ray)"

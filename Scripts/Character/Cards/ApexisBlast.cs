@@ -41,7 +41,7 @@ public sealed class ApexisBlast : JainaSpellCardTemplate
         IsUpgraded ? "res://assets/card_art/firelands_portal.png" : "res://assets/card_art/apexis_blast.png";
 
     public ApexisBlast()
-        : base(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy, true)
+        : base(1, CardType.Attack, CardRarity.Common, JainaTargetTypes.EnemyOrOwnMinion, true)
     {
     }
 

@@ -44,7 +44,6 @@ public sealed class RommathMinion : JainaMinionBase
         var rec = jaina.Scripts.Character.JainaCastTracker.For(combatState);
         // 快照遍历，避免重放触发的新记录影响本循环
         var types = rec.GeneratedAttackSkills.ToList();
-        var hittable = combatState.HittableEnemies.Where(e => e != null && e.IsAlive).ToList();
         foreach (var type in types)
         {
             var canonical = ModelDb.GetById<CardModel>(ModelDb.GetId(type));
@@ -54,11 +53,19 @@ public sealed class RommathMinion : JainaMinionBase
             }
             var card = combatState.CreateCard(canonical, owner);
 
-            // 需要目标时随机选择可命中敌人（AnyEnemy/自定义 AnyCreature）
+            // 需要目标时（单目标卡：原生 AnyEnemy/AnyPlayer 或自定义单目标类型），
+            // 按卡的目标校验从场上活物中随机选一个合法目标
+            // （涵盖敌人与己方随从——如 EnemyOrOwnMinion 这类自定义目标类型）。
             Creature? target = null;
-            if (card.TargetType == TargetType.AnyEnemy || card.TargetType == MinionTargetTypes.AnyCreature)
+            if (card.TargetType == TargetType.AnyEnemy || card.TargetType == TargetType.AnyPlayer ||
+                card.TargetType == TargetType.AnyAlly ||
+                (MinionLib.Targeting.CustomTargetTypeManager.TryGetCustomTargetType(card.TargetType, out var customType) &&
+                 customType.IsSingleTarget))
             {
-                target = hittable.Count > 0 ? owner.RunState.Rng.CombatTargets.NextItem(hittable) : null;
+                var pool = combatState.Creatures
+                    .Where(c => c != null && c.IsAlive && card.IsValidTarget(c))
+                    .ToList();
+                target = pool.Count > 0 ? owner.RunState.Rng.CombatTargets.NextItem(pool) : null;
                 if (target == null)
                 {
                     continue;

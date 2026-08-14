@@ -62,7 +62,7 @@ public sealed class Fireblast : JainaSpellCardTemplate
     }
 
     public Fireblast()
-        : base(0, CardType.Attack, CardRarity.Basic, TargetType.AnyEnemy, true)
+        : base(0, CardType.Attack, CardRarity.Basic, JainaTargetTypes.EnemyOrOwnMinion, true)
     {
     }
 
