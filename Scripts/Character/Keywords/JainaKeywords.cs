@@ -22,15 +22,13 @@ namespace jaina.Scripts.Character.Keywords;
 [RegisterOwnedKeyword(nameof(Replay), IconPath = "res://icon.svg")]
 // 英雄技能：英雄技能卡（如火焰冲击）专属关键词，不注入卡面描述，仅提供悬停解释
 [RegisterOwnedKeyword(nameof(HeroPower), IconPath = "res://icon.svg")]
-// 法术牌：术语关键词（不注入卡面描述；攻击牌和技能牌都视为法术牌）。
-// IncludeInCardHoverTip=false：法术牌/派系为每张卡都挂的低信息量术语，排除出悬停提示
-// 以避免提示面板过高遮挡相邻卡/压过顶部栏（关键词仍保留在 Keywords，机制与追踪不受影响）。
-[RegisterOwnedKeyword(nameof(Spell), IconPath = "res://icon.svg", IncludeInCardHoverTip = false)]
-// 法术派系关键词（不注入卡面描述，描述文本中以金色词条样式出现）
-[RegisterOwnedKeyword(nameof(Fire), IconPath = "res://icon.svg", IncludeInCardHoverTip = false)]
-[RegisterOwnedKeyword(nameof(Frost), IconPath = "res://icon.svg", IncludeInCardHoverTip = false)]
-[RegisterOwnedKeyword(nameof(Arcane), IconPath = "res://icon.svg", IncludeInCardHoverTip = false)]
-[RegisterOwnedKeyword(nameof(Shadow), IconPath = "res://icon.svg", IncludeInCardHoverTip = false)]
+// 法术牌：术语关键词（不注入卡面描述，仅提供悬停解释；攻击牌和技能牌都视为法术牌）
+[RegisterOwnedKeyword(nameof(Spell), IconPath = "res://icon.svg")]
+// 法术派系关键词（不注入卡面描述，描述文本中以金色词条样式出现，悬停显示解释）
+[RegisterOwnedKeyword(nameof(Fire), IconPath = "res://icon.svg")]
+[RegisterOwnedKeyword(nameof(Frost), IconPath = "res://icon.svg")]
+[RegisterOwnedKeyword(nameof(Arcane), IconPath = "res://icon.svg")]
+[RegisterOwnedKeyword(nameof(Shadow), IconPath = "res://icon.svg")]
 public class JainaKeywords
 {
     /// <summary>
