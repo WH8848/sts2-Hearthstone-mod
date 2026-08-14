@@ -10,6 +10,8 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.ValueProps;
 using STS2RitsuLib.Interop.AutoRegistration;
+using STS2RitsuLib.Scaffolding.Content;
+using STS2RitsuLib.Scaffolding.Content.Patches;
 
 namespace jaina.Scripts.Character.Powers;
 
@@ -18,8 +20,17 @@ namespace jaina.Scripts.Character.Powers;
 /// 最大可叠加 4 层，回合结束全部消失。
 /// </summary>
 [RegisterPower]
-public sealed class FreezePower : PowerModel
+public sealed class FreezePower : PowerModel, IModPowerAssetOverrides
 {
+    /// <inheritdoc />
+    public PowerAssetProfile AssetProfile => new("res://assets/power_icons/jaina_power_freeze_power.png");
+
+    /// <inheritdoc />
+    public string? CustomIconPath => AssetProfile.IconPath;
+
+    /// <inheritdoc />
+    public string? CustomBigIconPath => AssetProfile.BigIconPath;
+
     /// <summary>
     /// 最大冻结层数
     /// </summary>

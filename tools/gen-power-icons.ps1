@@ -1,0 +1,153 @@
+# ============================================================
+# Jaina MOD 力量图标生成工具
+# 用法: powershell -ExecutionPolicy Bypass -File gen-power-icons.ps1
+# 作用: 为可见力量(Power)生成 128x128 程序绘制图标
+#       输出到 assets/power_icons/ (会被 Godot 打进 pck)
+# ============================================================
+$ErrorActionPreference = 'Stop'
+Add-Type -AssemblyName System.Drawing
+
+$root = 'E:\MOD\sts2\godot_project\jaina'
+$outDir = Join-Path $root 'assets\power_icons'
+New-Item -ItemType Directory -Force -Path $outDir | Out-Null
+
+$iceBlue = [System.Drawing.Color]::FromArgb(255, 120, 200, 255)
+$white   = [System.Drawing.Color]::FromArgb(255, 240, 245, 255)
+$gold    = [System.Drawing.Color]::FromArgb(255, 255, 210, 110)
+$red     = [System.Drawing.Color]::FromArgb(255, 255, 110, 110)
+
+function New-IconBase {
+    param($g)
+    $bg = New-Object System.Drawing.SolidBrush([System.Drawing.Color]::FromArgb(255, 24, 32, 48))
+    $g.FillEllipse($bg, 4, 4, 120, 120)
+    $bg.Dispose()
+}
+
+function Draw-IceBarrier {
+    param($g)
+    New-IconBase $g
+    $pen = New-Object System.Drawing.Pen($iceBlue, 7)
+    $pts = @()
+    $pts += New-Object System.Drawing.PointF(64, 22)
+    $pts += New-Object System.Drawing.PointF(100, 38)
+    $pts += New-Object System.Drawing.PointF(100, 70)
+    $pts += New-Object System.Drawing.PointF(64, 106)
+    $pts += New-Object System.Drawing.PointF(28, 70)
+    $pts += New-Object System.Drawing.PointF(28, 38)
+    $g.DrawPolygon($pen, $pts)
+    $pen2 = New-Object System.Drawing.Pen($white, 4)
+    $g.DrawLine($pen2, 64, 46, 64, 82)
+    $g.DrawLine($pen2, 48, 60, 80, 60)
+    $g.DrawLine($pen2, 50, 92, 78, 92)
+    $pen.Dispose(); $pen2.Dispose()
+}
+
+function Draw-MinionSquad {
+    param($g)
+    New-IconBase $g
+    $brush = New-Object System.Drawing.SolidBrush($white)
+    $dark = New-Object System.Drawing.SolidBrush([System.Drawing.Color]::FromArgb(255, 140, 160, 190))
+    $g.FillEllipse($dark, 22, 36, 26, 26)
+    $g.FillRectangle($dark, 28, 62, 14, 34)
+    $g.FillEllipse($brush, 52, 30, 28, 28)
+    $g.FillRectangle($brush, 58, 58, 16, 38)
+    $g.FillEllipse($brush, 82, 40, 24, 24)
+    $g.FillRectangle($brush, 87, 64, 14, 32)
+    $dark.Dispose(); $brush.Dispose()
+}
+
+function Draw-Freeze {
+    param($g)
+    New-IconBase $g
+    $pen = New-Object System.Drawing.Pen($iceBlue, 5)
+    $cx = 64; $cy = 64; $r = 34
+    for ($i = 0; $i -lt 6; $i++) {
+        $ang = $i * 60 * [Math]::PI / 180
+        $x2 = $cx + [Math]::Cos($ang) * $r
+        $y2 = $cy + [Math]::Sin($ang) * $r
+        $g.DrawLine($pen, $cx, $cy, $x2, $y2)
+        $bx = $cx + [Math]::Cos($ang) * ($r * 0.55)
+        $by = $cy + [Math]::Sin($ang) * ($r * 0.55)
+        $pa = $ang + 25 * [Math]::PI / 180
+        $pb = $ang - 25 * [Math]::PI / 180
+        $g.DrawLine($pen, $bx, $by, $bx + [Math]::Cos($pa) * 12, $by + [Math]::Sin($pa) * 12)
+        $g.DrawLine($pen, $bx, $by, $bx + [Math]::Cos($pb) * 12, $by + [Math]::Sin($pb) * 12)
+    }
+    $pen.Dispose()
+}
+
+function Draw-AttackAction {
+    param($g)
+    New-IconBase $g
+    $pen = New-Object System.Drawing.Pen($white, 6)
+    $g.DrawLine($pen, 40, 30, 96, 88)
+    $g.DrawLine($pen, 96, 30, 40, 88)
+    $g.DrawLine($pen, 30, 40, 34, 66)
+    $g.DrawLine($pen, 94, 66, 98, 40)
+    $pen2 = New-Object System.Drawing.Pen($gold, 5)
+    $g.DrawEllipse($pen2, 50, 50, 28, 28)
+    $pen.Dispose(); $pen2.Dispose()
+}
+
+function Draw-Objection {
+    param($g)
+    New-IconBase $g
+    $pen = New-Object System.Drawing.Pen($red, 10)
+    $g.DrawLine($pen, 64, 36, 64, 78)
+    $g.DrawLine($pen, 64, 90, 64, 94)
+    $pen2 = New-Object System.Drawing.Pen($white, 3)
+    $g.DrawArc($pen2, 30, 26, 68, 68, 200, 140)
+    $pen.Dispose(); $pen2.Dispose()
+}
+
+function Draw-Counterspell {
+    param($g)
+    New-IconBase $g
+    $pen = New-Object System.Drawing.Pen([System.Drawing.Color]::FromArgb(255, 190, 140, 255), 6)
+    $g.DrawArc($pen, 30, 30, 68, 68, 0, 300)
+    $pen2 = New-Object System.Drawing.Pen($white, 4)
+    $g.DrawLine($pen2, 84, 30, 44, 94)
+    $g.DrawLine($pen2, 96, 22, 106, 12)
+    $pen.Dispose(); $pen2.Dispose()
+}
+
+function Draw-AegwynnLegacy {
+    param($g)
+    New-IconBase $g
+    $pen = New-Object System.Drawing.Pen($gold, 6)
+    $pts = @()
+    $pts += New-Object System.Drawing.PointF(30, 88)
+    $pts += New-Object System.Drawing.PointF(30, 50)
+    $pts += New-Object System.Drawing.PointF(48, 66)
+    $pts += New-Object System.Drawing.PointF(64, 38)
+    $pts += New-Object System.Drawing.PointF(80, 66)
+    $pts += New-Object System.Drawing.PointF(98, 50)
+    $pts += New-Object System.Drawing.PointF(98, 88)
+    $g.DrawPolygon($pen, $pts)
+    $pen2 = New-Object System.Drawing.Pen($white, 3)
+    $g.DrawLine($pen2, 36, 100, 92, 100)
+    $pen.Dispose(); $pen2.Dispose()
+}
+
+function Save-Icon {
+    param($name, $drawFunc)
+    $bmp = New-Object System.Drawing.Bitmap(128, 128)
+    $g = [System.Drawing.Graphics]::FromImage($bmp)
+    $g.SmoothingMode = [System.Drawing.Drawing2D.SmoothingMode]::AntiAlias
+    $g.Clear([System.Drawing.Color]::Transparent)
+    & $drawFunc $g
+    $dest = Join-Path $outDir "$name.png"
+    $bmp.Save($dest, [System.Drawing.Imaging.ImageFormat]::Png)
+    $g.Dispose(); $bmp.Dispose()
+    Write-Host "  OK  $name.png"
+}
+
+Save-Icon 'jaina_power_ice_barrier_power'  (Get-Command Draw-IceBarrier)
+Save-Icon 'jaina_power_minion_squad_power' (Get-Command Draw-MinionSquad)
+Save-Icon 'jaina_power_freeze_power'       (Get-Command Draw-Freeze)
+Save-Icon 'jaina_power_jaina_attack_action' (Get-Command Draw-AttackAction)
+Save-Icon 'jaina_power_objection_power'    (Get-Command Draw-Objection)
+Save-Icon 'jaina_power_counterspell_power' (Get-Command Draw-Counterspell)
+Save-Icon 'jaina_power_aegwynn_legacy_power' (Get-Command Draw-AegwynnLegacy)
+
+Write-Host "完成: 7 个力量图标 -> $outDir"

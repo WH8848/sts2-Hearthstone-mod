@@ -8,6 +8,8 @@ using MegaCrit.Sts2.Core.ValueProps;
 using MinionLib.Action;
 using MinionLib.Commands;
 using STS2RitsuLib.Interop.AutoRegistration;
+using STS2RitsuLib.Scaffolding.Content;
+using STS2RitsuLib.Scaffolding.Content.Patches;
 
 namespace jaina.Scripts.Character.Minions;
 
@@ -18,8 +20,17 @@ namespace jaina.Scripts.Character.Minions;
 /// 由 <see cref="JainaMinionBase"/> 在每回合开始时重新授予。
 /// </summary>
 [RegisterPower]
-public sealed class JainaAttackAction : ActionModel
+public sealed class JainaAttackAction : ActionModel, IModPowerAssetOverrides
 {
+    /// <inheritdoc />
+    public PowerAssetProfile AssetProfile => new("res://assets/power_icons/jaina_power_jaina_attack_action.png");
+
+    /// <inheritdoc />
+    public string? CustomIconPath => AssetProfile.IconPath;
+
+    /// <inheritdoc />
+    public string? CustomBigIconPath => AssetProfile.BigIconPath;
+
     public override TargetType TargetType => TargetType.AnyEnemy;
 
     /// <summary>
