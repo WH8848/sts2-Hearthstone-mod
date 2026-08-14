@@ -40,7 +40,7 @@ public sealed class FlameWard : JainaSpellCardTemplate
         IsUpgraded ? "res://assets/card_art/flamestrike.png" : "res://assets/card_art/flame_ward.png";
 
     public FlameWard()
-        : base(2, CardType.Attack, CardRarity.Uncommon, TargetType.None, true)
+        : base(3, CardType.Attack, CardRarity.Uncommon, TargetType.None, true)
     {
     }
 
@@ -62,13 +62,14 @@ public sealed class FlameWard : JainaSpellCardTemplate
     }
 
     /// <summary>
-    /// 升级后（烈焰风暴）费用变为 3（展示与结算同步生效）
+    /// 费用：canonical 为 3（烈焰风暴/升级后各界面一致显示 3 费）；
+    /// 未升级（火焰结界）通过此钩子降为 2 费（展示与结算同步）。
     /// </summary>
     public override bool TryModifyEnergyCostInCombat(CardModel card, decimal originalCost, out decimal modifiedCost)
     {
-        if (IsUpgraded)
+        if (!IsUpgraded)
         {
-            modifiedCost = 3m;
+            modifiedCost = 2m;
             return true;
         }
         modifiedCost = originalCost;
@@ -115,7 +116,7 @@ public sealed class FlameWard : JainaSpellCardTemplate
 
     protected override void OnUpgrade()
     {
-        // 升级为烈焰风暴：伤害 3 -> 5（费用 2 -> 3 由 TryModifyEnergyCostInCombat 处理）
+        // 升级为烈焰风暴：伤害 3 -> 5（费用 canonical 3；未升级降为 2 由 TryModifyEnergyCostInCombat 处理）
         base.DynamicVars.Damage.BaseValue = 5m;
     }
 }

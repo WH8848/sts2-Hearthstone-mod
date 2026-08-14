@@ -186,14 +186,17 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
     /// <summary>
     /// 随从意图与行动状态机。
     /// 自动模式：恒定攻击意图，伤害 = 攻击力，随从每次敌方回合都会尝试攻击。
-    /// 手动模式：纯 IDLE 状态机（与 MinionLib 默认一致），随从永不自动行动，一切靠玩家点击。
+    /// 手动模式：随从永不自动行动（一切靠玩家点击），但同样显示等同于攻击力的攻击意图。
     /// </summary>
     protected override MonsterMoveStateMachine GenerateMoveStateMachine()
     {
-        // 手动模式：IDLE 状态机，无任何意图，随从不会在自己的回合自动行动
+        // 手动模式：IDLE 状态机（不自动行动），带攻击意图显示（等同于攻击力）
         if (BehaviorMode == JainaMinionBehaviorMode.Manual)
         {
-            var idle = new MoveState("MINION_IDLE", _ => Task.CompletedTask)
+            var idle = new MoveState(
+                "MINION_IDLE",
+                _ => Task.CompletedTask,
+                new SingleAttackIntent(() => BaseAttackValue))
             {
                 FollowUpState = null
             };
@@ -333,12 +336,9 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
     protected virtual Task PerformTurnEndPassive(PlayerChoiceContext choiceContext) => Task.CompletedTask;
 
     /// <summary>
-    /// 受到伤害后：若随从死亡，触发亡语。
-    /// 这是比挡伤钩子更可靠的死亡挂点（在挡伤吸收之后运行）。
-    /// 注意：不从战斗手动清理——参考原版亡灵契约师奥提斯（Osty）的死亡流程：
-    /// 游戏 Kill 流程会播放死亡动画（die + 淡出，ShouldFadeAfterDeath 默认 true），
-    /// MinionLib 的 MinionKillPatch 会在死亡结束后按 ShouldCreatureBeRemovedFromCombatAfterDeath
-    /// 投票结果自动把随从从 CombatState/CombatManager 移除（与 Osty 的 DieForYouPower 同机制）。
+    /// 受到伤害后：若随从死亡，触发亡语并清理。
+    /// 清理包括：移除随从身上挂载的全部能力（光环效果消失）并从场面移除。
+    /// 场面移除为防御性双保险（MinionLib 的 MinionKillPatch 正常工作时幂等）。
     /// </summary>
     public override async Task AfterDamageReceivedLate(PlayerChoiceContext choiceContext, Creature target, MegaCrit.Sts2.Core.Entities.Creatures.DamageResult result, ValueProp props, Creature? dealer, CardModel? cardSource)
     {
@@ -347,7 +347,7 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
             return;
         }
 
-        // 死亡：触发亡语（随从移除由原版流程 + MinionLib 补丁处理）
+        // 死亡：触发亡语
         if (HasDeathrattle)
         {
             try
@@ -358,6 +358,34 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
             {
                 // 亡语失败不影响战斗
             }
+        }
+
+        // 清理：移除随从身上全部能力（光环效果随死亡消失）
+        foreach (var power in Creature.Powers.ToList())
+        {
+            try
+            {
+                await PowerCmd.Remove(power);
+            }
+            catch
+            {
+                // 单个能力移除失败不影响整体清理
+            }
+        }
+
+        // 清理：确保随从从场面移除（MinionLib 补丁失效时的双保险，幂等）
+        try
+        {
+            var combatState = Creature.CombatState;
+            if (combatState != null)
+            {
+                combatState.RemoveCreature(Creature, true);
+            }
+            MegaCrit.Sts2.Core.Combat.CombatManager.Instance?.RemoveCreature(Creature);
+        }
+        catch
+        {
+            // 已由 MinionLib 清理时可能重复移除，忽略
         }
     }
 
