@@ -16,7 +16,7 @@ public sealed class KalecgosCard : JainaMinionCardTemplate
     /// 战吼：发现一张法术牌
     /// </summary>
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
-        [jaina.Scripts.Character.Keywords.JainaKeywords.Battlecry];
+        [jaina.Scripts.Character.Keywords.JainaKeywords.Battlecry, jaina.Scripts.Character.Keywords.JainaKeywords.Spell];
 
     public override string CustomPortraitPath => "res://assets/card_art/kalecgos.png";
     protected override Type MinionType => typeof(KalecgosMinion);
