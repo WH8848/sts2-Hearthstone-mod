@@ -119,7 +119,7 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
         intent.UniqueNameInOwner = true;
         intent.Owner = root;
 
-        // 悬停交互区（覆盖缩小后的显示区域 ±125×±95）与悬停卡牌面板
+        // 悬停交互区（覆盖缩小后的显示区域 ±125×±95）：悬停显示随从卡完整卡面（炉石式）
         var hoverArea = new Control
         {
             Name = "HoverArea",
@@ -131,10 +131,6 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
         };
         root.AddChild(hoverArea);
 
-        var tooltip = new JainaMinionTooltip();
-        root.AddChild(tooltip);
-        SetupTooltipContent(tooltip);
-
         hoverArea.MouseEntered += () =>
         {
             if (!Creature.IsAlive)
@@ -143,20 +139,30 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
             }
             var screenX = root.GetGlobalTransformWithCanvas().Origin.X;
             var viewportWidth = root.GetViewport().GetVisibleRect().Size.X;
-            tooltip.ShowTip(screenX > viewportWidth / 2f);
+            ShowMinionCard(root, screenX > viewportWidth / 2f);
         };
-        hoverArea.MouseExited += () => tooltip.HideTip();
+        hoverArea.MouseExited += HideMinionCard;
 
         return root;
     }
 
     /// <summary>
-    /// 填充悬停卡牌面板内容（卡图 + 本地化名称/描述 + 关键词行）
+    /// 悬停时显示的随从卡卡面节点（游戏官方 NCard 渲染，炉石式完整卡面）
     /// </summary>
-    private void SetupTooltipContent(JainaMinionTooltip tooltip)
+    private Godot.Node? _hoverCardNode;
+
+    /// <summary>
+    /// 显示随从卡的完整卡面（NCard：卡框/费用/卡图/名称/描述/关键词），
+    /// 显示在随从左侧或右侧（showOnLeft=true 左侧）。
+    /// </summary>
+    private void ShowMinionCard(Node root, bool showOnLeft)
     {
         try
         {
+            if (_hoverCardNode != null)
+            {
+                return;
+            }
             var cardType = JainaMinionCardMap.GetCardType(GetType());
             if (cardType == null)
             {
@@ -168,23 +174,38 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
             {
                 return;
             }
-            var texture = ResourceLoader.Load<Texture2D>(MinionVisualsPath);
-            var title = new LocString("cards", canonical.Id.Entry + ".title").GetFormattedText();
-            var description = new LocString("cards", canonical.Id.Entry + ".description").GetFormattedText();
-
-            // 关键词行（如"冲锋""亡语"）
-            var keywordTitles = canonical.Keywords
-                .Select(k => ((MegaCrit.Sts2.Core.HoverTips.HoverTip)MegaCrit.Sts2.Core.HoverTips.HoverTipFactory.FromKeyword(k)).Title)
-                .Where(t => !string.IsNullOrEmpty(t))
-                .Select(t => $"[color=#ffd75e]{t}[/color]")
-                .ToList();
-            var keywordsLine = string.Join("  ", keywordTitles);
-
-            tooltip.Setup(this, texture, title, keywordsLine, description);
+            var cardNode = MegaCrit.Sts2.Core.Nodes.Cards.NCard.Create(canonical);
+            if (cardNode == null)
+            {
+                return;
+            }
+            cardNode.UpdateVisuals(MegaCrit.Sts2.Core.Entities.Cards.PileType.None,
+                MegaCrit.Sts2.Core.Entities.Cards.CardPreviewMode.Normal);
+            cardNode.MouseFilter = Control.MouseFilterEnum.Ignore;
+            root.AddChild(cardNode);
+            // 卡面放随从旁边（横跨 ±90 起，卡面宽约 112 缩放后；稍抬高对齐卡图区域）
+            cardNode.Scale = Vector2.One * 0.72f;
+            cardNode.Position = showOnLeft
+                ? new Vector2(-cardNode.Size.X * 0.72f - 100f, -190f)
+                : new Vector2(100f, -190f);
+            cardNode.ZIndex = 50;
+            _hoverCardNode = cardNode;
         }
         catch
         {
-            // 悬停面板失败不影响随从视觉/战斗（例如卡片类型尚未注册进 ModelDb）
+            // 悬停卡面失败不影响随从视觉/战斗
+        }
+    }
+
+    /// <summary>
+    /// 隐藏随从卡卡面
+    /// </summary>
+    private void HideMinionCard()
+    {
+        if (_hoverCardNode != null)
+        {
+            _hoverCardNode.QueueFreeSafely();
+            _hoverCardNode = null;
         }
     }
 
