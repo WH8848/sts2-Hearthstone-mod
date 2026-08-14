@@ -101,8 +101,10 @@ public sealed class IceBarrier : JainaSpellCardTemplate
         if (IsUpgraded)
         {
             // 冰冷案例：召唤 2 个 2/2 不稳定的骷髅（衍生物）
-            _ = JainaMinionPool.SummonMinion<VolatileSkeleton>(choiceContext, base.Owner, maxHp: 2m, attack: 2m);
-            _ = JainaMinionPool.SummonMinion<VolatileSkeleton>(choiceContext, base.Owner, maxHp: 2m, attack: 2m);
+            // 注意：必须 await —— 召唤走随从动作同步流，fire-and-forget
+            // 会导致两端执行时序错位，联机状态分歧断联。
+            await JainaMinionPool.SummonMinion<VolatileSkeleton>(choiceContext, base.Owner, maxHp: 2m, attack: 2m);
+            await JainaMinionPool.SummonMinion<VolatileSkeleton>(choiceContext, base.Owner, maxHp: 2m, attack: 2m);
             // 获得 4 点护甲
             await CreatureCmd.GainBlock(base.Owner.Creature, new BlockVar(4m, ValueProp.Move), cardPlay);
             return;

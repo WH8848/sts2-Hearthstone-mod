@@ -97,7 +97,9 @@ public sealed class ApexisBlast : JainaSpellCardTemplate
         if (IsUpgraded)
         {
             // 火焰之地传送门：随机召唤一个 2 费随从
-            _ = JainaMinionPool.SummonRandomMinionOfCost(choiceContext, base.Owner, 2);
+            // 注意：必须 await —— 随机召唤消耗游戏同步 RNG（RunState.Rng），
+            // fire-and-forget 会导致两端 RNG 消耗时序错位，联机状态分歧断联。
+            await JainaMinionPool.SummonRandomMinionOfCost(choiceContext, base.Owner, 2);
         }
         else
         {
@@ -106,7 +108,7 @@ public sealed class ApexisBlast : JainaSpellCardTemplate
                 c => c.Type == JainaCardTypes.Minion);
             if (!hasMinionInDrawPile)
             {
-                _ = JainaMinionPool.SummonRandomMinionOfCost(choiceContext, base.Owner, 1);
+                await JainaMinionPool.SummonRandomMinionOfCost(choiceContext, base.Owner, 1);
             }
         }
     }
