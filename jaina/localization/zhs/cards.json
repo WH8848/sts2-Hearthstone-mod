@@ -71,5 +71,7 @@
   "JAINA_CARD_LUCKY_COIN.description": "获得 1 点能量。",
   "JAINA_CARD_MEDIVH_ECHO.title": "麦迪文的残影",
   "JAINA_CARD_MEDIVH_ECHO.titleUpgraded": "幻觉药水",
-  "JAINA_CARD_MEDIVH_ECHO.description": "[gold]奥术[/gold]。\n{IfUpgraded:show:将你的所有随从的[blue]1/1[/blue]复制置入你的手牌，并使其法力值消耗变为[blue]0[/blue]点。|将每个友方随从的各一张复制置入你的手牌。}"
+  "JAINA_CARD_MEDIVH_ECHO.description": "[gold]奥术[/gold]。\n{IfUpgraded:show:将你的所有随从的[blue]1/1[/blue]复制置入你的手牌，并使其法力值消耗变为[blue]0[/blue]点。|将每个友方随从的各一张复制置入你的手牌。}",
+  "JAINA_CARD_MILLHOUSE_MANASTORM.title": "米尔豪斯·法力风暴",
+  "JAINA_CARD_MILLHOUSE_MANASTORM.description": "每当你打出一张[blue]法术牌[/blue]，随机召唤一个费用消耗相同的随从。"
 }
