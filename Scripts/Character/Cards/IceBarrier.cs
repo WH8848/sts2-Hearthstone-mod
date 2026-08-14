@@ -26,6 +26,12 @@ namespace jaina.Scripts.Character.Cards;
 public sealed class IceBarrier : JainaSpellCardTemplate
 {
     /// <summary>
+    /// 防御类卡牌标签（CardTag.Defend）：与"防御"（Defend）类效果联动
+    /// （升级为冰冷案例后标签不变，等价于"防御+"）
+    /// </summary>
+    public override HashSet<CardTag> CanonicalTags => new HashSet<CardTag> { CardTag.Defend };
+
+    /// <summary>
     /// 法术牌：攻击牌和技能牌都视为法术牌
     /// </summary>
     public override IEnumerable<CardKeyword> CanonicalKeywords => [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Frost];
