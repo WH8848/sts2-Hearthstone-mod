@@ -12,29 +12,29 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace jaina.Scripts.Character.Relics;
 
 /// <summary>
-/// 冰霜符文 - 吉安娜的初始遗物。
+/// 旗鼓相当的对手 (Even Match) - 吉安娜的初始遗物。
 /// 开始战斗：每场战斗开始时，获得一张幸运币（0费：获得 1 点能量，保留）。
 /// </summary>
 [RegisterRelic(typeof(JainaRelicPool))]
 [RegisterCharacterStarterRelic(typeof(Jaina))]
-public sealed class FrostRune : ModRelicTemplate
+public sealed class EvenMatch : ModRelicTemplate
 {
     public override RelicRarity Rarity => RelicRarity.Starter;
 
     /// <summary>
-    /// 遗物图标：小图 85x85（程序生成的冰霜符文）
+    /// 遗物图标：小图 85x85（幸运币原画裁剪）
     /// </summary>
-    public override string? CustomIconPath => "res://assets/relic_icons/frost_rune_icon.png";
+    public override string? CustomIconPath => "res://assets/relic_icons/even_match_icon.png";
 
     /// <summary>
     /// 遗物轮廓图标：85x85
     /// </summary>
-    public override string? CustomIconOutlinePath => "res://assets/relic_icons/frost_rune_outline.png";
+    public override string? CustomIconOutlinePath => "res://assets/relic_icons/even_match_outline.png";
 
     /// <summary>
     /// 遗物大图：256x256
     /// </summary>
-    public override string? CustomBigIconPath => "res://assets/relic_icons/frost_rune_big.png";
+    public override string? CustomBigIconPath => "res://assets/relic_icons/even_match_big.png";
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [];
 

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://5npd7uyntfye"
-path="res://.godot/imported/frost_rune_big.png-17b8d91e9319a9cc5a4e84f41257e07b.ctex"
+uid="uid://bc8tteihq6i3o"
+path="res://.godot/imported/even_match_big.png-2f402c0001fc04399366474ef40f2a0c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/relic_icons/frost_rune_big.png"
-dest_files=["res://.godot/imported/frost_rune_big.png-17b8d91e9319a9cc5a4e84f41257e07b.ctex"]
+source_file="res://assets/relic_icons/even_match_big.png"
+dest_files=["res://.godot/imported/even_match_big.png-2f402c0001fc04399366474ef40f2a0c.ctex"]
 
 [params]
 

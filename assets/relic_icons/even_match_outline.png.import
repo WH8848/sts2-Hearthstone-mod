@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bq5cvkk33ouxj"
-path="res://.godot/imported/frost_rune_outline.png-250f853f13acf94473489d2c47930e6c.ctex"
+uid="uid://ddcqa0oiaxpbg"
+path="res://.godot/imported/even_match_outline.png-5332d9cdddee4052324140d2fafa1ee2.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/relic_icons/frost_rune_outline.png"
-dest_files=["res://.godot/imported/frost_rune_outline.png-250f853f13acf94473489d2c47930e6c.ctex"]
+source_file="res://assets/relic_icons/even_match_outline.png"
+dest_files=["res://.godot/imported/even_match_outline.png-5332d9cdddee4052324140d2fafa1ee2.ctex"]
 
 [params]
 
