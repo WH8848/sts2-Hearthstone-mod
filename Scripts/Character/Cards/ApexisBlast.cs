@@ -63,11 +63,12 @@ public sealed class ApexisBlast : JainaSpellCardTemplate
     }
 
     /// <summary>
-    /// 升级后（火焰之地传送门）费用变为 2（展示与结算同步生效）
+    /// 升级后（火焰之地传送门）费用变为 2（展示与结算同步生效）。
+    /// 注意：必须校验 card 是本卡自身——费用钩子会被战斗内所有牌堆的所有卡调用。
     /// </summary>
     public override bool TryModifyEnergyCostInCombat(CardModel card, decimal originalCost, out decimal modifiedCost)
     {
-        if (IsUpgraded)
+        if (ReferenceEquals(card, this) && IsUpgraded)
         {
             modifiedCost = 2m;
             return true;

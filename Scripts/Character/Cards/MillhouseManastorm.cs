@@ -42,10 +42,11 @@ public sealed class MillhouseManastorm : JainaSpellCardTemplate
     /// <summary>
     /// 费用：canonical 为 1（升级后各界面一致显示 1 费）；
     /// 未升级通过此钩子显示/结算为 2 费。
+    /// 注意：必须校验 card 是本卡自身——费用钩子会被战斗内所有牌堆的所有卡调用。
     /// </summary>
     public override bool TryModifyEnergyCostInCombat(CardModel card, decimal originalCost, out decimal modifiedCost)
     {
-        if (!IsUpgraded)
+        if (ReferenceEquals(card, this) && !IsUpgraded)
         {
             modifiedCost = 2m;
             return true;
