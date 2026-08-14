@@ -133,15 +133,29 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
 
         hoverArea.MouseEntered += () =>
         {
+            MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaHover] MouseEntered alive={Creature.IsAlive} insideTree={root.IsInsideTree()}");
             if (!Creature.IsAlive)
             {
                 return;
             }
-            var screenX = root.GetGlobalTransformWithCanvas().Origin.X;
-            var viewportWidth = root.GetViewport().GetVisibleRect().Size.X;
-            ShowMinionCard(root, screenX > viewportWidth / 2f);
+            bool showOnLeft = false;
+            try
+            {
+                var screenX = root.GetGlobalTransformWithCanvas().Origin.X;
+                var viewportWidth = root.GetViewport().GetVisibleRect().Size.X;
+                showOnLeft = screenX > viewportWidth / 2f;
+            }
+            catch (System.Exception ex)
+            {
+                MegaCrit.Sts2.Core.Logging.Log.Warn($"[JainaHover] viewport calc failed: {ex.Message}");
+            }
+            ShowMinionCard(root, showOnLeft);
         };
-        hoverArea.MouseExited += HideMinionCard;
+        hoverArea.MouseExited += () =>
+        {
+            MegaCrit.Sts2.Core.Logging.Log.Info("[JainaHover] MouseExited");
+            HideMinionCard();
+        };
 
         return root;
     }
