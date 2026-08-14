@@ -31,16 +31,13 @@ public sealed class AegwynnMinion : JainaMinionBase
     public override bool HasDeathrattle => true;
 
     /// <summary>
-    /// 战吼：力量+2（玩家获得 2 层力量）。仅手牌打出时触发，随机召唤不触发。
+    /// 力量+2：常驻效果（非战吼）——任何召唤方式都触发，随从死亡时由亡语移除
     /// </summary>
-    public override async Task OnBattlecry(PlayerChoiceContext choiceContext)
+    public override async Task OnSummon(PlayerChoiceContext choiceContext, Player owner, MinionSummonOptions options)
     {
-        var owner = Creature.PetOwner;
-        if (owner == null)
-        {
-            return;
-        }
-        await PowerCmd.Apply<StrengthPower>(choiceContext, [owner.Creature], 2m, Creature, null);
+        await base.OnSummon(choiceContext, owner, options);
+
+        await PowerCmd.Apply<StrengthPower>(choiceContext, [owner.Creature], 2m, Creature, options.Source);
     }
 
     /// <summary>
