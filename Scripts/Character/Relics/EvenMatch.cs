@@ -17,6 +17,7 @@ namespace jaina.Scripts.Character.Relics;
 /// </summary>
 [RegisterRelic(typeof(JainaRelicPool))]
 [RegisterCharacterStarterRelic(typeof(Jaina))]
+[RegisterTouchOfOrobasRefinement(typeof(EvenMatchAncient))]
 public sealed class EvenMatch : ModRelicTemplate
 {
     public override RelicRarity Rarity => RelicRarity.Starter;
