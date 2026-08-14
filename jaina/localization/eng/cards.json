@@ -84,5 +84,8 @@
   "JAINA_CARD_FLAME_LANCE.description": "[gold]Fire[/gold].\n{IfUpgraded:show:Deal [blue]{Damage}[/blue] damage to an enemy, then deal 2 instances of [blue]4[/blue] damage to random enemies.|Deal [blue]{Damage}[/blue] damage to an enemy.}",
   "JAINA_CARD_FROST_NOVA.title": "Frost Nova",
   "JAINA_CARD_FROST_NOVA.titleUpgraded": "Exoneration",
-  "JAINA_CARD_FROST_NOVA.description": "[gold]Frost[/gold].\n{IfUpgraded:show:Gain 1 [gold]Intangible[/gold].|Give all enemies 4 [gold]Freeze[/gold].}"
+  "JAINA_CARD_FROST_NOVA.description": "[gold]Frost[/gold].\n{IfUpgraded:show:Gain 1 [gold]Intangible[/gold].|Give all enemies 4 [gold]Freeze[/gold].}",
+  "JAINA_CARD_ARCANE_BARRAGE.title": "Arcane Barrage",
+  "JAINA_CARD_ARCANE_BARRAGE.titleUpgraded": "Arcane Surge",
+  "JAINA_CARD_ARCANE_BARRAGE.description": "[gold]Arcane[/gold].\n{IfUpgraded:show:Deal [blue]{Damage}[/blue] damage to an enemy, then deal 4 instances of [blue]2[/blue] damage to random enemies.|Deal [blue]{Damage}[/blue] damage to an enemy, then deal 2 instances of [blue]2[/blue] damage to random enemies.}"
 }
