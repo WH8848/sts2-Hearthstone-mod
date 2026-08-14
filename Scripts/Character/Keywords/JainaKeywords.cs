@@ -19,6 +19,7 @@ namespace jaina.Scripts.Character.Keywords;
 [RegisterOwnedKeyword(nameof(Empower), IconPath = "res://icon.svg")]
 [RegisterOwnedKeyword(nameof(Finisher), IconPath = "res://icon.svg")]
 [RegisterOwnedKeyword(nameof(Battlecry), IconPath = "res://icon.svg")]
+[RegisterOwnedKeyword(nameof(Replay), IconPath = "res://icon.svg")]
 // 英雄技能：英雄技能卡（如火焰冲击）专属关键词，不注入卡面描述，仅提供悬停解释
 [RegisterOwnedKeyword(nameof(HeroPower), IconPath = "res://icon.svg")]
 // 法术牌：术语关键词（不注入卡面描述，仅提供悬停解释；攻击牌和技能牌都视为法术牌）
@@ -69,6 +70,11 @@ public class JainaKeywords
     /// 战吼：卡牌从手牌中被使用时，会立即触发其效果。
     /// </summary>
     public static readonly CardKeyword Battlecry = ModContentRegistry.GetQualifiedKeywordId(Entry.ModId, nameof(Battlecry)).GetModCardKeyword();
+
+    /// <summary>
+    /// 重放：卡牌打出后自动重放一次（同一效果再执行一次）。
+    /// </summary>
+    public static readonly CardKeyword Replay = ModContentRegistry.GetQualifiedKeywordId(Entry.ModId, nameof(Replay)).GetModCardKeyword();
 
     /// <summary>
     /// 英雄技能：英雄的专属技能（如火焰冲击），每回合开始自动加入手牌，可无限升级。

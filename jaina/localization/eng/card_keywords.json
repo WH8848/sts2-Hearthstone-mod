@@ -24,5 +24,7 @@
   "JAINA_KEYWORD_ARCANE.title": "Arcane",
   "JAINA_KEYWORD_ARCANE.description": "Arcane school spell.",
   "JAINA_KEYWORD_SHADOW.title": "Shadow",
-  "JAINA_KEYWORD_SHADOW.description": "Shadow school spell."
+  "JAINA_KEYWORD_SHADOW.description": "Shadow school spell.",
+  "JAINA_KEYWORD_REPLAY.title": "Replay 1",
+  "JAINA_KEYWORD_REPLAY.description": "Replay 1: After this card is played, replay it once (its effect triggers again)."
 }

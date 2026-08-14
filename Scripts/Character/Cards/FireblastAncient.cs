@@ -8,33 +8,33 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.ValueProps;
+using jaina.Scripts.Character.Keywords;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
 namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
-/// 火焰冲击 (Fireblast) - 吉安娜专属卡牌，只出现在初始卡组中。
-/// 0费造成1点伤害，可无限升级，每回合开始自动加入手牌。
-/// 使用 Basic 稀有度使其不出现战斗奖励掉落中。
+/// 二级火焰冲击 (Fireblast II) - 吉安娜专属先古英雄技能（欧罗巴斯/古老牙齿
+/// 把初始卡"火焰冲击"升级为此卡）。
+/// 0费造成1点伤害，每回合开始自动加入手牌，可无限升级。
+/// [gold]重放1[/gold]：打出后自动重放一次（效果执行两次）。
+/// 同样可以被灌注（灌注逻辑与火焰冲击一致）。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
-[RegisterCharacterStarterCard(typeof(Jaina), 1)]
-[RegisterArchaicToothTranscendence(typeof(FireblastAncient))]
-public sealed class Fireblast : JainaSpellCardTemplate
+[RegisterDustyTomeCard(typeof(jaina.Scripts.Character.Jaina))]
+public sealed class FireblastAncient : JainaSpellCardTemplate
 {
     /// <summary>
     /// 无限升级 - 允许无限次升级
     /// </summary>
     public override int MaxUpgradeLevel => int.MaxValue;
 
-    // 英雄技能：不挂"法术牌"关键词，不被任何衍生发现；挂"英雄技能"关键词用于悬停解释
-
     /// <summary>
-    /// 英雄技能关键词（悬停显示解释；不注入卡面描述）
+    /// 英雄技能 + 重放（悬停解释）
     /// </summary>
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
-        [jaina.Scripts.Character.Keywords.JainaKeywords.HeroPower];
+        [JainaKeywords.HeroPower, JainaKeywords.Replay];
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
@@ -42,12 +42,12 @@ public sealed class Fireblast : JainaSpellCardTemplate
     ];
 
     /// <summary>
-    /// 卡牌原画：炉石传说法师英雄技能"火焰冲击"高清原画
+    /// 卡牌原画：程序绘制的"二级火焰冲击"（火焰冲击强化版：火焰+能量环）
     /// </summary>
-    public override string CustomPortraitPath => "res://assets/card_art/fireblast.png";
+    public override string CustomPortraitPath => "res://assets/card_art/fireblast_ancient.png";
 
     /// <summary>
-    /// 升级后卡牌名称变为"火焰冲击+1"（每级 +1 伤害）
+    /// 升级后卡牌名称变为"二级火焰冲击+1"（每级 +1 伤害）
     /// </summary>
     public override string Title
     {
@@ -62,8 +62,8 @@ public sealed class Fireblast : JainaSpellCardTemplate
         }
     }
 
-    public Fireblast()
-        : base(0, CardType.Attack, CardRarity.Basic, JainaTargetTypes.AnyTargetable, true)
+    public FireblastAncient()
+        : base(0, CardType.Attack, CardRarity.Ancient, JainaTargetTypes.AnyTargetable, true)
     {
     }
 
@@ -72,39 +72,43 @@ public sealed class Fireblast : JainaSpellCardTemplate
         // 记录施放（倒带/罗曼斯/三派系追踪）
         jaina.Scripts.Character.JainaCastTracker.RecordPlayed(this);
 
-        // 灌注：每一层灌注增加一点英雄技能伤害；灌注后伤害从 n*1（高伤单段）
-        // 变为 1*n（1 伤多段），段数 = 总伤害
-        var empower = base.Owner.Creature.GetPower<jaina.Scripts.Character.Powers.EmpowerPower>();
-        var empowerStacks = empower?.EmpowerStacks ?? 0;
-        var totalDamage = (int)(base.DynamicVars.Damage.BaseValue + empowerStacks);
+        // 重放 1：打出后自动重放一次（效果执行两次）
+        for (int replay = 0; replay < 2; replay++)
+        {
+            // 灌注：每一层灌注增加一点英雄技能伤害；灌注后伤害从 n*1（高伤单段）
+            // 变为 1*n（1 伤多段），段数 = 总伤害
+            var empower = base.Owner.Creature.GetPower<jaina.Scripts.Character.Powers.EmpowerPower>();
+            var empowerStacks = empower?.EmpowerStacks ?? 0;
+            var totalDamage = (int)(base.DynamicVars.Damage.BaseValue + empowerStacks);
 
-        if (empowerStacks <= 0)
-        {
-            // 无灌注：单段总伤害
-            await DamageCmd.Attack(totalDamage)
-                .FromCard(this, cardPlay)
-                .Targeting(cardPlay.Target!)
-                .WithHitFx("vfx/vfx_attack_blunt", null, "blunt_attack.mp3")
-                .Execute(choiceContext);
-        }
-        else
-        {
-            // 灌注：1*n 多段攻击（每段 1 点伤害，段数 = 总伤害）
-            for (int i = 0; i < totalDamage; i++)
+            if (empowerStacks <= 0)
             {
-                await DamageCmd.Attack(1m)
+                // 无灌注：单段总伤害
+                await DamageCmd.Attack(totalDamage)
                     .FromCard(this, cardPlay)
                     .Targeting(cardPlay.Target!)
                     .WithHitFx("vfx/vfx_attack_blunt", null, "blunt_attack.mp3")
                     .Execute(choiceContext);
             }
-        }
+            else
+            {
+                // 灌注：1*n 多段攻击（每段 1 点伤害，段数 = 总伤害）
+                for (int i = 0; i < totalDamage; i++)
+                {
+                    await DamageCmd.Attack(1m)
+                        .FromCard(this, cardPlay)
+                        .Targeting(cardPlay.Target!)
+                        .WithHitFx("vfx/vfx_attack_blunt", null, "blunt_attack.mp3")
+                        .Execute(choiceContext);
+                }
+            }
 
-        // 灌注：每一层灌注额外召唤一个 1/1 的小精灵
-        for (int i = 0; i < empowerStacks; i++)
-        {
-            await jaina.Scripts.Character.Minions.JainaMinionPool.SummonMinion<jaina.Scripts.Character.Minions.ImpMinion>(
-                choiceContext, base.Owner, maxHp: 1m, attack: 1m);
+            // 灌注：每一层灌注额外召唤一个 1/1 的小精灵
+            for (int i = 0; i < empowerStacks; i++)
+            {
+                await jaina.Scripts.Character.Minions.JainaMinionPool.SummonMinion<jaina.Scripts.Character.Minions.ImpMinion>(
+                    choiceContext, base.Owner, maxHp: 1m, attack: 1m);
+            }
         }
     }
 

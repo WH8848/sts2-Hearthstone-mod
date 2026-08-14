@@ -24,5 +24,7 @@
   "JAINA_KEYWORD_ARCANE.title": "奥术",
   "JAINA_KEYWORD_ARCANE.description": "奥术派系法术。",
   "JAINA_KEYWORD_SHADOW.title": "暗影",
-  "JAINA_KEYWORD_SHADOW.description": "暗影派系法术。"
+  "JAINA_KEYWORD_SHADOW.description": "暗影派系法术。",
+  "JAINA_KEYWORD_REPLAY.title": "重放1",
+  "JAINA_KEYWORD_REPLAY.description": "重放1：卡牌打出后自动重放一次（同一效果再执行一次）。"
 }
