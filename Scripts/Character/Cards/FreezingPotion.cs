@@ -38,9 +38,10 @@ public sealed class FreezingPotion : ModCardTemplate
             : [JainaKeywords.Spell, JainaKeywords.Freeze, JainaKeywords.Frost];
 
     /// <summary>
-    /// 卡牌原画：炉石传说"冰冻药水"高清原画
+    /// 卡牌原画：冰冻药水 / 升级后（霜冻射线）切换原画
     /// </summary>
-    public override string CustomPortraitPath => "res://assets/card_art/freezing_potion.png";
+    public override string CustomPortraitPath =>
+        IsUpgraded ? "res://assets/card_art/ray_of_frost.png" : "res://assets/card_art/freezing_potion.png";
 
     public FreezingPotion()
         : base(0, CardType.Skill, CardRarity.Common, TargetType.AnyEnemy, true)

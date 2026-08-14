@@ -25,7 +25,8 @@ public sealed class UnfairGame : ModCardTemplate
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [];
 
-    public override string CustomPortraitPath => "res://assets/card_art/unfair_game.png";
+    public override string CustomPortraitPath =>
+        IsUpgraded ? "res://assets/card_art/volume_up.png" : "res://assets/card_art/unfair_game.png";
 
     public UnfairGame()
         : base(1, CardType.Skill, CardRarity.Uncommon, TargetType.None, true)

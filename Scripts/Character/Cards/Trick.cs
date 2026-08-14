@@ -24,7 +24,8 @@ public sealed class Trick : ModCardTemplate
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [];
 
-    public override string CustomPortraitPath => "res://assets/card_art/trick.png";
+    public override string CustomPortraitPath =>
+        IsUpgraded ? "res://assets/card_art/vast_wisdom.png" : "res://assets/card_art/trick.png";
 
     public Trick()
         : base(0, CardType.Skill, CardRarity.Common, TargetType.None, true)

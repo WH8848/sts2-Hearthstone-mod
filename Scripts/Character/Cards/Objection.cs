@@ -29,7 +29,8 @@ public sealed class Objection : ModCardTemplate
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [];
 
-    public override string CustomPortraitPath => "res://assets/card_art/objection.png";
+    public override string CustomPortraitPath =>
+        IsUpgraded ? "res://assets/card_art/counterspell.png" : "res://assets/card_art/objection.png";
 
     public Objection()
         : base(1, CardType.Skill, CardRarity.Uncommon, TargetType.None, true)

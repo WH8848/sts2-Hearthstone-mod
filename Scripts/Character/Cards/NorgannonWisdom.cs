@@ -25,7 +25,8 @@ public sealed class NorgannonWisdom : ModCardTemplate
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [];
 
-    public override string CustomPortraitPath => "res://assets/card_art/norgannon_wisdom.png";
+    public override string CustomPortraitPath =>
+        IsUpgraded ? "res://assets/card_art/refreshing_spring_water.png" : "res://assets/card_art/norgannon_wisdom.png";
 
     public NorgannonWisdom()
         : base(1, CardType.Skill, CardRarity.Uncommon, TargetType.None, true)

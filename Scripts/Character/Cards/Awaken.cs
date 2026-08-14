@@ -29,7 +29,8 @@ public sealed class Awaken : ModCardTemplate
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [];
 
-    public override string CustomPortraitPath => "res://assets/card_art/awaken.png";
+    public override string CustomPortraitPath =>
+        IsUpgraded ? "res://assets/card_art/peak_infinity.png" : "res://assets/card_art/awaken.png";
 
     public Awaken()
         : base(0, CardType.Skill, CardRarity.Rare, TargetType.None, true)

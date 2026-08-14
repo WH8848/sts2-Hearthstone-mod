@@ -33,9 +33,10 @@ public sealed class Frostbolt : ModCardTemplate
     ];
 
     /// <summary>
-    /// 卡牌原画：炉石传说"寒冰箭"高清原画
+    /// 卡牌原画：寒冰箭 / 升级后（冰枪术）切换原画
     /// </summary>
-    public override string CustomPortraitPath => "res://assets/card_art/frostbolt.png";
+    public override string CustomPortraitPath =>
+        IsUpgraded ? "res://assets/card_art/ice_lance.png" : "res://assets/card_art/frostbolt.png";
 
     public Frostbolt()
         : base(0, CardType.Attack, CardRarity.Common, MinionTargetTypes.AnyCreature, true)
