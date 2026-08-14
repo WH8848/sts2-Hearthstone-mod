@@ -327,6 +327,15 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
         {
             await OnBattlecry(choiceContext);
         }
+
+        // 随从军势：吉安娜护甲无法阻挡的伤害由随从按召唤顺序抵挡（吉安娜固有机制，与遗物无关）。
+        // 在第一个随从召唤时挂到吉安娜身上（幂等）。
+        var petOwner = Creature.PetOwner;
+        if (petOwner != null && !petOwner.Creature.Powers.Any(p => p is Powers.MinionSquadPower))
+        {
+            await PowerCmd.Apply<Powers.MinionSquadPower>(
+                choiceContext, [petOwner.Creature], 1m, petOwner.Creature, null);
+        }
     }
 
     /// <summary>
