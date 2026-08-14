@@ -59,6 +59,12 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
     public virtual int ActionsPerTurn => 1;
 
     /// <summary>
+    /// 冲锋：召唤当回合即可点击攻击（召唤时立即授予行动点，炉石语义）。
+    /// 非冲锋随从召唤当回合不可攻击。
+    /// </summary>
+    public virtual bool HasCharge => false;
+
+    /// <summary>
     /// 随从战斗视觉：使用各随从自己的卡图原画场景（不再用闪电充能球模型）
     /// </summary>
     protected override string VisualsPath => MinionVisualsPath;
@@ -251,7 +257,12 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
     /// </summary>
     public bool CanShowAttackIntent()
     {
-        if (!Creature.IsAlive || BaseAttackValue <= 0 || IsSummonedThisTurn())
+        if (!Creature.IsAlive || BaseAttackValue <= 0)
+        {
+            return false;
+        }
+        // 召唤当回合不可攻击（冲锋随从除外：召唤当回合即可攻击）
+        if (!HasCharge && IsSummonedThisTurn())
         {
             return false;
         }
@@ -335,6 +346,14 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
         {
             await PowerCmd.Apply<Powers.MinionSquadPower>(
                 choiceContext, [petOwner.Creature], 1m, petOwner.Creature, null);
+        }
+
+        // 冲锋：召唤当回合立即授予行动点（可点击攻击；行动点回合末自动移除，下回合正常授予）
+        if (HasCharge && BehaviorMode == JainaMinionBehaviorMode.Manual)
+        {
+            var applier = Creature.PetOwner?.Creature ?? Creature;
+            await PowerCmd.Apply<JainaAttackAction>(choiceContext, Creature, ActionsPerTurn, applier, null);
+            RefreshIntentDisplay();
         }
     }
 
