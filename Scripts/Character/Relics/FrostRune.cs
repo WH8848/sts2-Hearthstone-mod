@@ -22,6 +22,21 @@ public sealed class FrostRune : ModRelicTemplate
 {
     public override RelicRarity Rarity => RelicRarity.Starter;
 
+    /// <summary>
+    /// 遗物图标：小图 85x85（程序生成的冰霜符文）
+    /// </summary>
+    public override string? CustomIconPath => "res://assets/relic_icons/frost_rune_icon.png";
+
+    /// <summary>
+    /// 遗物轮廓图标：85x85
+    /// </summary>
+    public override string? CustomIconOutlinePath => "res://assets/relic_icons/frost_rune_outline.png";
+
+    /// <summary>
+    /// 遗物大图：256x256
+    /// </summary>
+    public override string? CustomBigIconPath => "res://assets/relic_icons/frost_rune_big.png";
+
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
         new BlockVar(6m, ValueProp.Move)
