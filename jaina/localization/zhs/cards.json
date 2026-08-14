@@ -68,5 +68,8 @@
   "JAINA_CARD_OBJECTION.titleUpgraded": "法术反制",
   "JAINA_CARD_OBJECTION.description": "{IfUpgraded:show:[gold]奥术[/gold]。\n敌人的下一个非攻击意图不会触发任何效果。|敌人的下一个攻击意图不会造成任何伤害。}",
   "JAINA_CARD_LUCKY_COIN.title": "幸运币",
-  "JAINA_CARD_LUCKY_COIN.description": "获得 1 点能量。"
+  "JAINA_CARD_LUCKY_COIN.description": "获得 1 点能量。",
+  "JAINA_CARD_MEDIVH_ECHO.title": "麦迪文的残影",
+  "JAINA_CARD_MEDIVH_ECHO.titleUpgraded": "幻觉药水",
+  "JAINA_CARD_MEDIVH_ECHO.description": "[gold]奥术[/gold]。\n{IfUpgraded:show:将你的所有随从的[blue]1/1[/blue]复制置入你的手牌，并使其法力值消耗变为[blue]0[/blue]点。|将每个友方随从的各一张复制置入你的手牌。}"
 }

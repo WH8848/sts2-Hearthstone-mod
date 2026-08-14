@@ -18,7 +18,7 @@ namespace jaina.Scripts.Character.Cards;
 /// 卡牌类型为动态注册的"随从"类型（JainaCardTypes.Minion），
 /// 显示文本由 ToLocString patch 提供，卡框/边框由 FramePath 等 patch 映射为技能样式。
 /// </summary>
-public abstract class JainaMinionCardTemplate : ModCardTemplate
+public abstract class JainaMinionCardTemplate : ModCardTemplate, MinionLib.Utilities.DescriptionPostProcess.IDescriptionPostProcessCard
 {
     /// <summary>
     /// 该随从牌召唤的随从生物类型
@@ -36,14 +36,44 @@ public abstract class JainaMinionCardTemplate : ModCardTemplate
     protected abstract int MinionHealth { get; }
 
     /// <summary>
-    /// 标准攻击力（供 JainaMinionPool 等外部按卡面属性召唤时读取）
+    /// 覆写攻击/生命（幻觉药水的 1/1 复制用；null = 使用卡面标准值）
     /// </summary>
-    public int StandardMinionAttack => MinionAttack;
+    private int? _overrideAttack;
+    private int? _overrideHealth;
 
     /// <summary>
-    /// 标准生命值（供 JainaMinionPool 等外部按卡面属性召唤时读取）
+    /// 设置覆写属性（复制卡召唤时使用，如 1/1）
     /// </summary>
-    public int StandardMinionHealth => MinionHealth;
+    public void SetOverrideStats(int? attack, int? health)
+    {
+        _overrideAttack = attack;
+        _overrideHealth = health;
+    }
+
+    /// <summary>
+    /// 标准攻击力（供 JainaMinionPool 等外部按卡面属性召唤时读取；含覆写）
+    /// </summary>
+    public int StandardMinionAttack => _overrideAttack ?? MinionAttack;
+
+    /// <summary>
+    /// 标准生命值（供 JainaMinionPool 等外部按卡面属性召唤时读取；含覆写）
+    /// </summary>
+    public int StandardMinionHealth => _overrideHealth ?? MinionHealth;
+
+    /// <summary>
+    /// 描述后处理（MinionLib IDescriptionPostProcessCard）：
+    /// 覆写属性时把卡面描述中的"攻击/生命"替换为覆写值（如 3/4 → 1/1）
+    /// </summary>
+    public string PostProcessDescription(string description, MegaCrit.Sts2.Core.Entities.Cards.PileType pileType,
+        MinionLib.Utilities.BetterExtraArgs.DescriptionPreviewType previewType,
+        MegaCrit.Sts2.Core.Entities.Creatures.Creature? target = null)
+    {
+        if (_overrideAttack is int atk && _overrideHealth is int hp)
+        {
+            description = description.Replace($"{MinionAttack}/{MinionHealth}", $"{atk}/{hp}");
+        }
+        return description;
+    }
 
     /// <summary>
     /// 随从站场位置（默认玩家前方上方区域）
@@ -100,8 +130,8 @@ public abstract class JainaMinionCardTemplate : ModCardTemplate
             choiceContext,
             base.Owner,
             MinionType,
-            maxHp: MinionHealth,
-            attack: MinionAttack,
+            maxHp: StandardMinionHealth,
+            attack: StandardMinionAttack,
             position: MinionPosition,
             source: this);
     }

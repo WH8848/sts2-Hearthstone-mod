@@ -68,5 +68,8 @@
   "JAINA_CARD_OBJECTION.titleUpgraded": "Counterspell",
   "JAINA_CARD_OBJECTION.description": "{IfUpgraded:show:[gold]Arcane[/gold].\nThe enemy's next non-Attack intent has no effect.|The enemy's next Attack intent deals no damage.}",
   "JAINA_CARD_LUCKY_COIN.title": "The Coin",
-  "JAINA_CARD_LUCKY_COIN.description": "Gain 1 Energy."
+  "JAINA_CARD_LUCKY_COIN.description": "Gain 1 Energy.",
+  "JAINA_CARD_MEDIVH_ECHO.title": "Medivh's Echo",
+  "JAINA_CARD_MEDIVH_ECHO.titleUpgraded": "Illusion Potion",
+  "JAINA_CARD_MEDIVH_ECHO.description": "[gold]Arcane[/gold].\n{IfUpgraded:show:Add [blue]1/1[/blue] copies of all your minions to your hand. They cost [blue]0[/blue].|Add a copy of each friendly minion to your hand.}"
 }
