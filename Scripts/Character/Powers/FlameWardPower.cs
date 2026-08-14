@@ -12,14 +12,14 @@ using STS2RitsuLib.Interop.AutoRegistration;
 namespace jaina.Scripts.Character.Powers;
 
 /// <summary>
-/// 火焰结界：吉安娜或其随从受到攻击时，对敌人造成 7 次 Amount 点伤害（每次随机分配到一个敌人），随后消失。
+/// 火焰结界：吉安娜或其随从受到攻击时，对敌人造成 4 次 Amount 点伤害（每次随机分配到一个敌人），随后消失。
 /// 挂一次性（参照寒冰护盾 IceBarrierPower 模式）：受击触发后移除；若整回合未被攻击，下个玩家回合开始兜底移除。
 /// </summary>
 [RegisterPower]
 public sealed class FlameWardPower : PowerModel
 {
     /// <summary>随机攻击次数</summary>
-    private const int Hits = 7;
+    private const int Hits = 4;
 
     public override PowerType Type => PowerType.Buff;
 
