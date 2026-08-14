@@ -63,9 +63,7 @@ public sealed class RommathMinion : JainaMinionBase
                  customType.IsSingleTarget))
             {
                 var pool = combatState.Creatures
-                    .Where(c => c != null && c.IsAlive && card.IsValidTarget(c)
-                                // 重放为 AI 随机选目标：排除施法者本体（不会火球打自己）
-                                && !(c.Side == MegaCrit.Sts2.Core.Combat.CombatSide.Player && !c.IsPet))
+                    .Where(c => c != null && c.IsAlive && card.IsValidTarget(c))
                     .ToList();
                 target = pool.Count > 0 ? owner.RunState.Rng.CombatTargets.NextItem(pool) : null;
                 if (target == null)
