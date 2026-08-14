@@ -23,6 +23,11 @@ public sealed class SpiritCollectorCard : JainaMinionCardTemplate
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
         [jaina.Scripts.Character.Keywords.JainaKeywords.Battlecry, jaina.Scripts.Character.Keywords.JainaKeywords.Empower];
 
+    /// <summary>
+    /// 卡牌原画：炉石传说"灵体采集者"（Spirit Gatherer, EDR_871）官方原画
+    /// </summary>
+    public override string CustomPortraitPath => "res://assets/card_art/spirit_collector.png";
+
     protected override Type MinionType => typeof(SpiritCollectorMinion);
 
     protected override int MinionAttack => 2;
