@@ -419,7 +419,7 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
     /// <summary>
     /// 回合结束攻击：对随机可命中敌人造成攻击力点伤害。
     /// </summary>
-    private async Task PerformTurnEndAttack(PlayerChoiceContext choiceContext)
+    protected async Task PerformTurnEndAttack(PlayerChoiceContext choiceContext)
     {
         if (BaseAttackValue <= 0 || Creature == null || Creature.CombatState == null)
         {

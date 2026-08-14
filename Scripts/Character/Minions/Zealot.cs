@@ -13,15 +13,15 @@ namespace jaina.Scripts.Character.Minions;
 /// <summary>
 /// 狂热者 (Zealot) - 吉安娜专属随从。
 /// 属性：攻击 3，生命 4。
-/// 效果：被生成时立刻攻击一次（随机攻击一个敌人）。回合结束攻击。
+/// 效果：被生成时立刻攻击一次（随机攻击一个敌人）。回合结束攻击。可点击攻击。
 /// </summary>
 [RegisterMonster]
 public sealed class Zealot : JainaMinionBase
 {
     /// <summary>
-    /// 自动模式：被生成时立刻攻击 + 回合结束自动攻击
+    /// 手动模式：玩家可点击攻击（有行动点）；同时保留"被生成时立刻攻击"与"回合结束攻击"
     /// </summary>
-    public override JainaMinionBehaviorMode BehaviorMode => JainaMinionBehaviorMode.Auto;
+    public override JainaMinionBehaviorMode BehaviorMode => JainaMinionBehaviorMode.Manual;
 
     /// <summary>
     /// 战斗视觉：狂热者卡图原画场景
@@ -31,6 +31,12 @@ public sealed class Zealot : JainaMinionBase
     public override int MinInitialHp => 4;
 
     public override int MaxInitialHp => 4;
+
+    /// <summary>
+    /// 回合结束被动：继续攻击随机敌人（保留"回合结束攻击"特性）
+    /// </summary>
+    protected override Task PerformTurnEndPassive(PlayerChoiceContext choiceContext) =>
+        PerformTurnEndAttack(choiceContext);
 
     /// <summary>
     /// 被生成时立刻攻击一次
@@ -53,8 +59,7 @@ public sealed class Zealot : JainaMinionBase
         if (target == null) return;
         await CreatureCmd.Damage(choiceContext, [target], BaseAttackValue, ValueProp.Unpowered, Creature);
 
-        // 召唤当回合已攻击：意图不再显示（冲锋语义，下回合恢复）
-        _hasAttackedThisTurn = true;
+        // 召唤当回合意图不显示（Manual 模式：召唤当回合无行动点，下回合授予后显示）
         RefreshIntentDisplay();
     }
 }
