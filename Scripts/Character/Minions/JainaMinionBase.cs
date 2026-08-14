@@ -226,15 +226,27 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
     }
 
     /// <summary>
-    /// 隐藏随从卡卡面
+    /// 隐藏随从卡卡面。
+    /// 场景切换（回主菜单/结束战斗）时父节点可能正在增删子节点，
+    /// 此时 QueueFreeSafely 内的同步 RemoveChild 会报
+    /// "Parent node is busy adding/removing children" —— 延迟到帧末安全清理。
     /// </summary>
     private void HideMinionCard()
     {
-        if (_hoverCardNode != null)
+        var node = _hoverCardNode;
+        _hoverCardNode = null;
+        if (node == null || !GodotObject.IsInstanceValid(node))
         {
-            _hoverCardNode.QueueFreeSafely();
-            _hoverCardNode = null;
+            return;
         }
+        // 延迟清理：等当前帧的节点增删完成后移除，避免 busy 报错
+        Callable.From(() =>
+        {
+            if (GodotObject.IsInstanceValid(node))
+            {
+                node.QueueFreeSafely();
+            }
+        }).CallDeferred();
     }
 
     /// <summary>

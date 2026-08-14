@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using MegaCrit.Sts2.Core.Combat;
+using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
@@ -70,6 +71,14 @@ public sealed class MinionSquadPower : PowerModel, IModPowerAssetOverrides
                 minion.LoseHpInternal(absorbed, ValueProp.Unpowered);
                 Flash();
                 amount -= absorbed;
+            }
+
+            // 随从被挡伤致死：LoseHpInternal 不会触发死亡流程，
+            // 必须手动走 Kill（触发死亡动画、移除战场节点、亡语），
+            // 否则尸体卡图留在场上挡住其他随从。
+            if (minion.IsDead)
+            {
+                _ = CreatureCmd.Kill(minion, force: false);
             }
 
             if (amount <= 0m)
