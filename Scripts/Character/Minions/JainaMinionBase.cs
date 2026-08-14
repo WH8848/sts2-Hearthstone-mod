@@ -211,9 +211,10 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
     /// </summary>
     protected override MonsterMoveStateMachine GenerateMoveStateMachine()
     {
-        // 攻击意图随"当前是否可攻击"动态显示/隐藏
+        // 攻击意图随"当前是否可攻击"动态显示/隐藏（继承 SingleAttackIntent，
+        // 显示攻击力数值标签）
         var intent = new JainaConditionalAttackIntent(
-            new SingleAttackIntent(() => BaseAttackValue),
+            () => BaseAttackValue,
             CanShowAttackIntent);
 
         // 手动模式：IDLE 状态机（不自动行动），意图由行动点驱动

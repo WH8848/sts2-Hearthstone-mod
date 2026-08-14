@@ -8,49 +8,35 @@ using MegaCrit.Sts2.Core.MonsterMoves.Intents;
 namespace jaina.Scripts.Character.Minions;
 
 /// <summary>
-/// 条件攻击意图：包装一个 <see cref="SingleAttackIntent"/>，
+/// 条件攻击意图：继承 <see cref="SingleAttackIntent"/>（而非包装），
+/// 因此 0.111.1 的 NIntent 会走 `intent is AttackIntent` 分支渲染**攻击数值标签**
+/// （intents 表 FORMAT_DAMAGE_SINGLE = "{Damage}"，意图图标旁显示攻击力数字）。
 /// 只有当 <c>isVisible</c> 委托返回 true 时才显示攻击意图；
-/// 条件不成立时视觉退化为游戏原生的"隐藏意图"（intent_hidden 图标 + 无粒子 + 无悬停提示）。
-/// 求值发生在意图 UI 刷新时（UpdateVisuals），因此调用方在状态变化后
+/// 条件不成立时视觉退化为游戏原生的"隐藏意图"（intent_hidden 图标 + 无粒子 + 无悬停提示 + 空标签）。
+/// 求值发生在意图 UI 刷新时（UpdateVisuals），调用方在状态变化后
 /// 触发 <see cref="JainaMinionBase.RefreshIntentDisplay"/> 即可让意图即时出现/消失。
 /// </summary>
-public sealed class JainaConditionalAttackIntent : AbstractIntent
+public sealed class JainaConditionalAttackIntent : SingleAttackIntent
 {
-    private readonly SingleAttackIntent _inner;
     private readonly Func<bool> _isVisible;
 
-    public JainaConditionalAttackIntent(SingleAttackIntent inner, Func<bool> isVisible)
+    public JainaConditionalAttackIntent(Func<decimal> damageCalc, Func<bool> isVisible)
+        : base(damageCalc)
     {
-        _inner = inner;
         _isVisible = isVisible;
     }
 
     /// <summary>
-    /// 可攻击时表现为攻击意图；不可攻击时表现为隐藏意图
-    /// </summary>
-    public override IntentType IntentType => _isVisible() ? _inner.IntentType : IntentType.Hidden;
-
-    /// <summary>
     /// 隐藏状态下不显示悬停提示
     /// </summary>
-    public override bool HasIntentTip => _isVisible() && _inner.HasIntentTip;
+    public override bool HasIntentTip => _isVisible() && base.HasIntentTip;
 
     /// <summary>
-    /// 悬停提示文案使用攻击意图的词条（仅可攻击时被查询）
-    /// </summary>
-    protected override string IntentPrefix => "ATTACK";
-
-    /// <summary>
-    /// 静态资源收集不需要额外路径（攻击动画帧由游戏全局 IntentAnimData 预加载）
-    /// </summary>
-    protected override string? SpritePath => null;
-
-    /// <summary>
-    /// 动画：可攻击 → 攻击分级动画；不可攻击 → 隐藏动画
+    /// 动画：可攻击 → 攻击分级动画（attack_N）；不可攻击 → 隐藏动画
     /// </summary>
     public override string GetAnimation(IEnumerable<Creature> targets, Creature owner)
     {
-        return _isVisible() ? _inner.GetAnimation(targets, owner) : "hidden";
+        return _isVisible() ? base.GetAnimation(targets, owner) : "hidden";
     }
 
     /// <summary>
@@ -58,14 +44,15 @@ public sealed class JainaConditionalAttackIntent : AbstractIntent
     /// </summary>
     public override Texture2D? GetTexture(IEnumerable<Creature> targets, Creature owner)
     {
-        return _isVisible() ? _inner.GetTexture(targets, owner) : null;
+        return _isVisible() ? base.GetTexture(targets, owner) : null;
     }
 
     /// <summary>
-    /// 数值标签：不可攻击时返回空标签
+    /// 数值标签：可攻击 → 攻击力数字（FORMAT_DAMAGE_SINGLE = {Damage}）；
+    /// 不可攻击 → 空标签
     /// </summary>
     public override LocString GetIntentLabel(IEnumerable<Creature> targets, Creature owner)
     {
-        return _isVisible() ? _inner.GetIntentLabel(targets, owner) : base.GetIntentLabel(targets, owner);
+        return _isVisible() ? base.GetIntentLabel(targets, owner) : new LocString("intents", "FORMAT_EMPTY");
     }
 }
