@@ -17,8 +17,8 @@ namespace jaina.Scripts.Character.Cards;
 /// <summary>
 /// 火焰结界 (Flame Ward) - 吉安娜专属攻击牌（罕见，1 费）。
 /// 受到攻击时，对敌人造成 4 次 3 点伤害，随机分配到所有敌人身上。
-/// 升级后变为"烈焰风暴 (Flamestrike)"（1 费）：造成 4 次 5 点伤害，随机分配到所有敌人身上。
-/// 升级不改变费用（避免 TryModifyEnergyCostInCombat 只对战斗内生效导致的显示不一致）。
+/// 升级后变为"烈焰风暴 (Flamestrike)"（2 费）：造成 4 次 5 点伤害，随机分配到所有敌人身上。
+/// 升级加费通过原版 CardEnergyCost.UpgradeBy(1) 实现（所有界面显示一致）。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
 public sealed class FlameWard : JainaSpellCardTemplate
@@ -103,7 +103,9 @@ public sealed class FlameWard : JainaSpellCardTemplate
 
     protected override void OnUpgrade()
     {
-        // 升级为烈焰风暴：伤害 3 -> 5（费用 canonical 2；未升级降为 1 由 TryModifyEnergyCostInCombat 处理）
+        // 升级为烈焰风暴：伤害 3 -> 5，费用 1 -> 2
+        // （原版机制 CardEnergyCost.UpgradeBy 修改 _base，任何界面显示一致，升级预览绿色高亮）
         base.DynamicVars.Damage.BaseValue = 5m;
+        EnergyCost.UpgradeBy(1);
     }
 }

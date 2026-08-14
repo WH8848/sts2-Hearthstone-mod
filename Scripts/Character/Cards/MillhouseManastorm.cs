@@ -35,24 +35,15 @@ public sealed class MillhouseManastorm : JainaSpellCardTemplate
     public override string CustomPortraitPath => "res://assets/card_art/jailhouse_manastorm.png";
 
     public MillhouseManastorm()
-        : base(1, CardType.Power, CardRarity.Ancient, TargetType.None, true)
+        : base(2, CardType.Power, CardRarity.Ancient, TargetType.None, true)
     {
     }
 
-    /// <summary>
-    /// 费用：canonical 为 1（升级后各界面一致显示 1 费）；
-    /// 未升级通过此钩子显示/结算为 2 费。
-    /// 注意：必须校验 card 是本卡自身——费用钩子会被战斗内所有牌堆的所有卡调用。
-    /// </summary>
-    public override bool TryModifyEnergyCostInCombat(CardModel card, decimal originalCost, out decimal modifiedCost)
+    protected override void OnUpgrade()
     {
-        if (ReferenceEquals(card, this) && !IsUpgraded)
-        {
-            modifiedCost = 2m;
-            return true;
-        }
-        modifiedCost = originalCost;
-        return false;
+        // 升级减费：2 费 -> 1 费（原版机制 CardEnergyCost.UpgradeBy 修改 _base，
+        // 任何界面显示一致，升级预览绿色高亮；不再用 TryModifyEnergyCostInCombat 战斗内钩子）
+        EnergyCost.UpgradeBy(-1);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)

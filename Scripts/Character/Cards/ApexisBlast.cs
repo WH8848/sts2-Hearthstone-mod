@@ -46,8 +46,8 @@ public sealed class ApexisBlast : JainaSpellCardTemplate
     }
 
     /// <summary>
-    /// 升级后卡牌名称变为"火焰之地传送门 (Firelands Portal)"，费用保持 1 费不变
-    /// （升级不改变费用；效果增强：伤害 5->6，召唤 1 费随从 -> 2 费随从）。
+    /// 升级后卡牌名称变为"火焰之地传送门 (Firelands Portal)"，费用变为 2
+    /// （OnUpgrade 里 EnergyCost.UpgradeBy(1) 修改 _base，所有界面显示一致）。
     /// </summary>
     public override string Title
     {
@@ -101,7 +101,9 @@ public sealed class ApexisBlast : JainaSpellCardTemplate
 
     protected override void OnUpgrade()
     {
-        // 升级为火焰之地传送门：伤害 5 -> 6（费用保持 1 费不变）
+        // 升级为火焰之地传送门：伤害 5 -> 6，费用 1 -> 2
+        // （原版机制 CardEnergyCost.UpgradeBy 修改 _base，任何界面显示一致，升级预览绿色高亮）
         base.DynamicVars.Damage.BaseValue = 6m;
+        EnergyCost.UpgradeBy(1);
     }
 }
