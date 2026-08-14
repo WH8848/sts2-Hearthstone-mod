@@ -44,7 +44,12 @@ public sealed class JainaAttackAction : ActionModel
         }
 
         // 攻击力取随从的 BaseAttackValue（与自动模式一致，不吃力量加成）
-        var attack = Owner.Monster is JainaMinionBase minion ? minion.BaseAttackValue : 0;
+        var minion = Owner.Monster as JainaMinionBase;
+        if (minion == null)
+        {
+            return;
+        }
+        var attack = minion.BaseAttackValue;
         if (attack <= 0)
         {
             return;
@@ -53,5 +58,9 @@ public sealed class JainaAttackAction : ActionModel
         var actor = Owner;
         await MinionAnimCmd.PlayBumpAttackAsync(actor, target,
             () => CreatureCmd.Damage(choiceContext, [target], attack, ValueProp.Unpowered, actor));
+
+        // 攻击完成：消耗 1 点行动次数并立即刷新意图显示（攻击过后意图消失）
+        minion.ConsumeAttackPoint();
+        minion.RefreshIntentDisplay();
     }
 }

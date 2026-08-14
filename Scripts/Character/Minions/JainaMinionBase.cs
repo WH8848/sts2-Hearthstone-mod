@@ -14,6 +14,7 @@ using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.MonsterMoves.Intents;
 using MegaCrit.Sts2.Core.MonsterMoves.MonsterMoveStateMachine;
 using MegaCrit.Sts2.Core.Nodes.Combat;
+using MegaCrit.Sts2.Core.Nodes.Rooms;
 using MegaCrit.Sts2.Core.ValueProps;
 using MinionLib.Minion;
 using STS2RitsuLib.Scaffolding.Content;
@@ -40,6 +41,16 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
     /// 召唤时的回合数（用于"召唤当回合不可攻击"规则）
     /// </summary>
     private int _summonedTurn = -1;
+
+    /// <summary>
+    /// 手动模式：本回合剩余可点击攻击次数（每回合开始授予，攻击一次扣 1 点）
+    /// </summary>
+    public int AttackPointsRemaining { get; private set; }
+
+    /// <summary>
+    /// 自动模式：本回合是否已经攻击过（攻击后意图消失，下回合重置）
+    /// </summary>
+    private bool _hasAttackedThisTurn;
 
     /// <summary>
     /// 随从行为模式（默认手动：不自动行动，点击驱动）
@@ -185,18 +196,24 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
 
     /// <summary>
     /// 随从意图与行动状态机。
-    /// 自动模式：恒定攻击意图，伤害 = 攻击力，随从每次敌方回合都会尝试攻击。
-    /// 手动模式：随从永不自动行动（一切靠玩家点击），但同样显示等同于攻击力的攻击意图。
+    /// 两种模式都使用<see cref="JainaConditionalAttackIntent"/>动态意图：
+    /// 随从可以攻击时显示攻击意图（等同于攻击力），
+    /// 攻击过后或不可攻击时（召唤当回合、攻击力为 0、行动点耗尽）意图消失。
     /// </summary>
     protected override MonsterMoveStateMachine GenerateMoveStateMachine()
     {
-        // 手动模式：IDLE 状态机（不自动行动），带攻击意图显示（等同于攻击力）
+        // 攻击意图随"当前是否可攻击"动态显示/隐藏
+        var intent = new JainaConditionalAttackIntent(
+            new SingleAttackIntent(() => BaseAttackValue),
+            CanShowAttackIntent);
+
+        // 手动模式：IDLE 状态机（不自动行动），意图由行动点驱动
         if (BehaviorMode == JainaMinionBehaviorMode.Manual)
         {
             var idle = new MoveState(
                 "MINION_IDLE",
                 _ => Task.CompletedTask,
-                new SingleAttackIntent(() => BaseAttackValue))
+                intent)
             {
                 FollowUpState = null
             };
@@ -213,13 +230,64 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
                 if (target == null || !Creature.IsAlive) return;
                 await CreatureCmd.Damage(new ThrowingPlayerChoiceContext(), [target], BaseAttackValue, ValueProp.Unpowered, Creature);
             },
-            new SingleAttackIntent(() => BaseAttackValue))
+            intent)
         {
             FollowUpState = null
         };
         attackMove.FollowUpState = attackMove; // 循环自身，意图恒定
 
         return new MonsterMoveStateMachine([attackMove], attackMove);
+    }
+
+    /// <summary>
+    /// 当前是否可以向敌人显示攻击意图（= 是否还能发动攻击）：
+    /// - 存活且攻击力 &gt; 0；
+    /// - 非召唤当回合（召唤当回合不可攻击）；
+    /// - 手动模式：本回合还有剩余行动点；
+    /// - 自动模式：本回合尚未攻击过。
+    /// </summary>
+    public bool CanShowAttackIntent()
+    {
+        if (!Creature.IsAlive || BaseAttackValue <= 0 || IsSummonedThisTurn())
+        {
+            return false;
+        }
+        if (BehaviorMode == JainaMinionBehaviorMode.Manual)
+        {
+            return AttackPointsRemaining > 0;
+        }
+        return !_hasAttackedThisTurn;
+    }
+
+    /// <summary>
+    /// 手动模式攻击一次后消耗 1 点行动次数（意图随之隐藏）
+    /// </summary>
+    public void ConsumeAttackPoint()
+    {
+        if (AttackPointsRemaining > 0)
+        {
+            AttackPointsRemaining--;
+        }
+    }
+
+    /// <summary>
+    /// 立即刷新随从的意图显示（游戏原生意图揭示流程也会刷新，
+    /// 但攻击后/回合开始时主动刷新可保证意图即时出现或消失）。
+    /// </summary>
+    public void RefreshIntentDisplay()
+    {
+        try
+        {
+            var node = NCombatRoom.Instance?.GetCreatureNode(Creature);
+            if (node != null)
+            {
+                _ = node.RefreshIntents();
+            }
+        }
+        catch
+        {
+            // 战斗 UI 未就绪时忽略，下一轮揭示流程会自然刷新
+        }
     }
 
     /// <summary>
@@ -245,13 +313,15 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
     }
 
     /// <summary>
-    /// 玩家回合开始时：手动模式授予本回合的点击攻击行动点。
-    /// （自动模式无需授予，随从会自行攻击。）
+    /// 玩家回合开始时：
+    /// 手动模式授予本回合的点击攻击行动点，自动模式重置"本回合已攻击"标记；
+    /// 随后刷新意图显示（可攻击时出现攻击意图）。
+    /// （自动模式无需授予行动点，随从会自行攻击。）
     /// </summary>
     public override async Task BeforeSideTurnStart(PlayerChoiceContext choiceContext, CombatSide side,
         IReadOnlyList<Creature> participants, ICombatState combatState)
     {
-        if (BehaviorMode != JainaMinionBehaviorMode.Manual || side != CombatSide.Player || !Creature.IsAlive)
+        if (side != CombatSide.Player || !Creature.IsAlive)
         {
             return;
         }
@@ -261,9 +331,20 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
             return;
         }
 
-        // 行动点由随从主人施加，Amount = 本回合可点击攻击次数
-        var applier = Creature.PetOwner?.Creature ?? Creature;
-        await PowerCmd.Apply<JainaAttackAction>(choiceContext, Creature, ActionsPerTurn, applier, null);
+        if (BehaviorMode == JainaMinionBehaviorMode.Manual)
+        {
+            // 行动点由随从主人施加，Amount = 本回合可点击攻击次数
+            AttackPointsRemaining = ActionsPerTurn;
+            var applier = Creature.PetOwner?.Creature ?? Creature;
+            await PowerCmd.Apply<JainaAttackAction>(choiceContext, Creature, ActionsPerTurn, applier, null);
+        }
+        else
+        {
+            // 自动模式：新回合可以再次攻击，意图恢复显示
+            _hasAttackedThisTurn = false;
+        }
+
+        RefreshIntentDisplay();
     }
 
     /// <summary>
@@ -328,6 +409,10 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
             return;
         }
         await CreatureCmd.Damage(choiceContext, [target], BaseAttackValue, ValueProp.Unpowered, Creature);
+
+        // 已攻击：意图消失（下回合开始恢复显示）
+        _hasAttackedThisTurn = true;
+        RefreshIntentDisplay();
     }
 
     /// <summary>
