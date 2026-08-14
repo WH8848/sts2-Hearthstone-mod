@@ -75,5 +75,8 @@
   "JAINA_CARD_MILLHOUSE_MANASTORM.title": "Jailhouse Manastorm",
   "JAINA_CARD_MILLHOUSE_MANASTORM.description": "Whenever you play a [blue]Spell card[/blue], summon a random minion that costs the same.",
   "JAINA_CARD_FIREBLAST_ANCIENT.title": "Fireblast II",
-  "JAINA_CARD_FIREBLAST_ANCIENT.description": "Deal {Damage} damage. At the start of each turn, add this card to your hand. [gold]Replay 1[/gold]."
+  "JAINA_CARD_FIREBLAST_ANCIENT.description": "Deal {Damage} damage. At the start of each turn, add this card to your hand. [gold]Replay 1[/gold].",
+  "JAINA_CARD_CONE_OF_COLD.title": "Cone of Cold",
+  "JAINA_CARD_CONE_OF_COLD.titleUpgraded": "Blizzard",
+  "JAINA_CARD_CONE_OF_COLD.description": "[gold]Frost[/gold].\n{IfUpgraded:show:Deal 7 instances of [blue]{Damage}[/blue] damage, split randomly among all enemies. Each instance gives an enemy 1 [gold]Freeze[/gold].|Deal 3 instances of [blue]{Damage}[/blue] damage, split randomly among all enemies. Each instance gives an enemy 1 [gold]Freeze[/gold].}"
 }

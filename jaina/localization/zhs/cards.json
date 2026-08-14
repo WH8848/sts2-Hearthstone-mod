@@ -75,5 +75,8 @@
   "JAINA_CARD_MILLHOUSE_MANASTORM.title": "米尔牢斯·法力风暴",
   "JAINA_CARD_MILLHOUSE_MANASTORM.description": "每当你打出一张[blue]法术牌[/blue]，随机召唤一个费用消耗相同的随从。",
   "JAINA_CARD_FIREBLAST_ANCIENT.title": "二级火焰冲击",
-  "JAINA_CARD_FIREBLAST_ANCIENT.description": "造成{Damage}点伤害，每回合开始自动加入手牌。[gold]重放1[/gold]。"
+  "JAINA_CARD_FIREBLAST_ANCIENT.description": "造成{Damage}点伤害，每回合开始自动加入手牌。[gold]重放1[/gold]。",
+  "JAINA_CARD_CONE_OF_COLD.title": "冰锥术",
+  "JAINA_CARD_CONE_OF_COLD.titleUpgraded": "暴风雪",
+  "JAINA_CARD_CONE_OF_COLD.description": "[gold]冰霜[/gold]。\n{IfUpgraded:show:造成 7 次 [blue]{Damage}[/blue] 点伤害，随机分配到所有敌人身上。每次伤害给予敌人 1 层[gold]冻结[/gold]。|造成 3 次 [blue]{Damage}[/blue] 点伤害，随机分配到所有敌人身上。每次伤害给予敌人 1 层[gold]冻结[/gold]。}"
 }
