@@ -166,34 +166,41 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
             var cardType = JainaMinionCardMap.GetCardType(GetType());
             if (cardType == null)
             {
+                MegaCrit.Sts2.Core.Logging.Log.Info("[JainaHover] cardType null");
                 return;
             }
             var canonical = MegaCrit.Sts2.Core.Models.ModelDb.GetByIdOrNull<MegaCrit.Sts2.Core.Models.CardModel>(
                 MegaCrit.Sts2.Core.Models.ModelDb.GetId(cardType));
             if (canonical == null)
             {
+                MegaCrit.Sts2.Core.Logging.Log.Info("[JainaHover] canonical null");
                 return;
             }
             var cardNode = MegaCrit.Sts2.Core.Nodes.Cards.NCard.Create(canonical);
             if (cardNode == null)
             {
+                MegaCrit.Sts2.Core.Logging.Log.Info("[JainaHover] NCard.Create null (TestMode?)");
                 return;
             }
+            // 挂到战斗 UI 的随从节点（在场景树中，NCard.UpdateVisuals 需要 IsNodeReady）
+            var host = (Node?)MegaCrit.Sts2.Core.Nodes.Rooms.NCombatRoom.Instance?.GetCreatureNode(Creature) ?? root;
             cardNode.UpdateVisuals(MegaCrit.Sts2.Core.Entities.Cards.PileType.None,
                 MegaCrit.Sts2.Core.Entities.Cards.CardPreviewMode.Normal);
             cardNode.MouseFilter = Control.MouseFilterEnum.Ignore;
-            root.AddChild(cardNode);
+            host.AddChild(cardNode);
             // 卡面放随从旁边（横跨 ±90 起，卡面宽约 112 缩放后；稍抬高对齐卡图区域）
             cardNode.Scale = Vector2.One * 0.72f;
             cardNode.Position = showOnLeft
                 ? new Vector2(-cardNode.Size.X * 0.72f - 100f, -190f)
                 : new Vector2(100f, -190f);
             cardNode.ZIndex = 50;
+            MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaHover] card shown: {canonical.Id} host={(host == root ? "visuals-root" : "creature-node")} insideTree={cardNode.IsInsideTree()} ready={cardNode.IsNodeReady()}");
             _hoverCardNode = cardNode;
         }
-        catch
+        catch (System.Exception ex)
         {
             // 悬停卡面失败不影响随从视觉/战斗
+            MegaCrit.Sts2.Core.Logging.Log.Warn($"[JainaHover] error: {ex}");
         }
     }
 
