@@ -50,6 +50,15 @@ public sealed class UnfairGame : JainaSpellCardTemplate
         }
     }
 
+    protected override void OnUpgrade()
+    {
+        // 升级为加大音量：奥术派系 + 压轴关键词。
+        // 需显式加入：LocalKeywords 懒初始化只算一次，升级前缓存的 Keywords
+        // 不含 Arcane/Finisher，悬停提示（原版 HoverTips 遍历 Keywords）不会出现奥术/压轴解释。
+        AddKeyword(jaina.Scripts.Character.Keywords.JainaKeywords.Finisher);
+        AddKeyword(jaina.Scripts.Character.Keywords.JainaKeywords.Arcane);
+    }
+
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
         // 记录施放（倒带/罗曼斯追踪）

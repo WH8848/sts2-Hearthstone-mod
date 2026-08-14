@@ -47,7 +47,8 @@ public sealed class FlameWardPower : PowerModel
                 break;
             }
             var targetEnemy = combatState.RunState.Rng.CombatTargets.NextItem(enemies);
-            await CreatureCmd.Damage(choiceContext, [targetEnemy], Amount, ValueProp.Unpowered, Owner);
+            // 攻击伤害：吃力量加成（与卡面 {Damage:diff()} 显示一致）
+            await CreatureCmd.Damage(choiceContext, [targetEnemy], Amount, ValueProp.Move, Owner);
         }
 
         // 一次性结界：触发后消失

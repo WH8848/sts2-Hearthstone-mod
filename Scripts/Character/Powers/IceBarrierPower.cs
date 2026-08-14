@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.ValueProps;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -35,7 +36,8 @@ public sealed class IceBarrierPower : PowerModel, IModPowerAssetOverrides
     public override PowerStackType StackType => PowerStackType.Counter;
 
     /// <summary>
-    /// 吉安娜或其随从受到攻击时（伤害结算前），获得 Amount 点护甲，然后本 Power 消失。
+    /// 吉安娜或其随从受到攻击时（伤害结算前），获得 Amount 点护甲（动态 BlockVar，
+    /// 吃敏捷加成，与卡面 {Block:diff()} 显示一致），然后本 Power 消失。
     /// 随从受击的伤害会转移到主人的护甲（DamageCmd 内 PetOwner 转移），
     /// 因此随从被攻击时同样触发。
     /// </summary>
@@ -45,7 +47,7 @@ public sealed class IceBarrierPower : PowerModel, IModPowerAssetOverrides
         bool isOwnerOrPet = target == Owner || target.PetOwner?.Creature == Owner;
         if (isOwnerOrPet && amount > 0 && Amount > 0)
         {
-            await CreatureCmd.GainBlock(Owner, Amount, ValueProp.Move, null);
+            await CreatureCmd.GainBlock(Owner, new BlockVar(Amount, ValueProp.Move), null);
             await PowerCmd.Remove(this);
         }
     }

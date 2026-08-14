@@ -117,6 +117,8 @@ public sealed class IceBarrier : JainaSpellCardTemplate
 
     protected override void OnUpgrade()
     {
-        // 升级后 API 不变，效果与悬停预览在 IsUpgraded 分支中实现
+        // 升级为冰冷案例：护甲从 8 降为 4（动态 BlockVar 同步 BaseValue，
+        // 描述 {Block:diff()} 与结算一致；召唤骷髅由 IsUpgraded 分支处理）
+        base.DynamicVars.Block.UpgradeValueBy(-4m);
     }
 }

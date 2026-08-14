@@ -11,7 +11,7 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
-/// 诺干农的智慧 (Norgannon's Wisdom) - 1费：抽两张牌。
+/// 诺甘农的智慧 (Norgannon's Wisdom) - 1费：抽两张牌。
 /// 简化实现（原效果"释放火/奥/冰三系后费用降为0"需追踪派系，暂略）。
 /// 升级后变为清凉的泉水 (Cooling Spring)：抽 2 张牌，每抽到一张攻击牌或技能牌回一费。
 /// </summary>

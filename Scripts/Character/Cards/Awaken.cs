@@ -53,7 +53,7 @@ public sealed class Awaken : JainaSpellCardTemplate
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
-        // 记录施放（倒带/罗曼斯/诺干农派系追踪）
+        // 记录施放（倒带/罗曼斯/诺甘农派系追踪）
         jaina.Scripts.Character.JainaCastTracker.RecordPlayed(this);
 
         // 远古雕文/巅峰无限：发现一张法术牌，使其费用减少 1 点
