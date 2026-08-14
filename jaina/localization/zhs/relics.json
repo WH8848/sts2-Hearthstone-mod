@@ -1,5 +1,8 @@
 {
   "JAINA_RELIC_EVEN_MATCH.title": "旗鼓相当的对手",
   "JAINA_RELIC_EVEN_MATCH.description": "每场战斗开始时，获得一张幸运币。",
-  "JAINA_RELIC_EVEN_MATCH.flavor": "一场势均力敌的对决，胜负只在一念之间。"
+  "JAINA_RELIC_EVEN_MATCH.flavor": "一场势均力敌的对决，胜负只在一念之间。",
+  "JAINA_RELIC_EVEN_MATCH_ANCIENT.title": "正在撬动对手的回合结束按钮",
+  "JAINA_RELIC_EVEN_MATCH_ANCIENT.description": "每场战斗开始时，获得一张幸运币，并额外抽 1 张牌。",
+  "JAINA_RELIC_EVEN_MATCH_ANCIENT.flavor": "在对手按下回合结束按钮之前，你已经赢下了这一回合。"
 }
