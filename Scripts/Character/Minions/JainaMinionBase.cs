@@ -86,6 +86,7 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
     public NCreatureVisuals? TryCreateCreatureVisuals()
     {
         var root = new NCreatureVisuals();
+        _visualsRoot = root;
 
         // 卡图显示缩小为一半（仅缩放 Sprite2D，不嵌套容器）
         var texture = ResourceLoader.Load<Texture2D>(MinionVisualsPath);
@@ -133,7 +134,6 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
 
         hoverArea.MouseEntered += () =>
         {
-            MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaHover] MouseEntered alive={Creature.IsAlive} insideTree={root.IsInsideTree()}");
             if (!Creature.IsAlive)
             {
                 return;
@@ -141,21 +141,16 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
             bool showOnLeft = false;
             try
             {
-                var screenX = root.GetGlobalTransformWithCanvas().Origin.X;
-                var viewportWidth = root.GetViewport().GetVisibleRect().Size.X;
+                var screenX = _visualsRoot?.GetGlobalTransformWithCanvas().Origin.X ?? 0f;
+                var viewportWidth = _visualsRoot?.GetViewport().GetVisibleRect().Size.X ?? 1920f;
                 showOnLeft = screenX > viewportWidth / 2f;
             }
-            catch (System.Exception ex)
+            catch
             {
-                MegaCrit.Sts2.Core.Logging.Log.Warn($"[JainaHover] viewport calc failed: {ex.Message}");
             }
-            ShowMinionCard(root, showOnLeft);
+            ShowMinionCard(showOnLeft);
         };
-        hoverArea.MouseExited += () =>
-        {
-            MegaCrit.Sts2.Core.Logging.Log.Info("[JainaHover] MouseExited");
-            HideMinionCard();
-        };
+        hoverArea.MouseExited += HideMinionCard;
 
         return root;
     }
@@ -166,10 +161,20 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
     private Godot.Node? _hoverCardNode;
 
     /// <summary>
+    /// 视觉根节点（TryCreateCreatureVisuals 创建；悬停卡面的回退挂载点）
+    /// </summary>
+    private Node? _visualsRoot;
+
+    /// <summary>
+    /// 是否已连接游戏原生悬停层（NCreature.Hitbox）
+    /// </summary>
+    private bool _hoverConnected;
+
+    /// <summary>
     /// 显示随从卡的完整卡面（NCard：卡框/费用/卡图/名称/描述/关键词），
     /// 显示在随从左侧或右侧（showOnLeft=true 左侧）。
     /// </summary>
-    private void ShowMinionCard(Node root, bool showOnLeft)
+    private void ShowMinionCard(bool showOnLeft)
     {
         try
         {
@@ -197,7 +202,7 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
                 return;
             }
             // 挂到战斗 UI 的随从节点（在场景树中，NCard.UpdateVisuals 需要 IsNodeReady）
-            var host = (Node?)MegaCrit.Sts2.Core.Nodes.Rooms.NCombatRoom.Instance?.GetCreatureNode(Creature) ?? root;
+            var host = (Node?)MegaCrit.Sts2.Core.Nodes.Rooms.NCombatRoom.Instance?.GetCreatureNode(Creature) ?? _visualsRoot;
             cardNode.UpdateVisuals(MegaCrit.Sts2.Core.Entities.Cards.PileType.None,
                 MegaCrit.Sts2.Core.Entities.Cards.CardPreviewMode.Normal);
             cardNode.MouseFilter = Control.MouseFilterEnum.Ignore;
@@ -208,7 +213,7 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
                 ? new Vector2(-cardNode.Size.X * 0.72f - 100f, -190f)
                 : new Vector2(100f, -190f);
             cardNode.ZIndex = 50;
-            MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaHover] card shown: {canonical.Id} host={(host == root ? "visuals-root" : "creature-node")} insideTree={cardNode.IsInsideTree()} ready={cardNode.IsNodeReady()}");
+            MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaHover] card shown: {canonical.Id} host={(host == _visualsRoot ? "visuals-root" : "creature-node")} insideTree={cardNode.IsInsideTree()} ready={cardNode.IsNodeReady()}");
             _hoverCardNode = cardNode;
         }
         catch (System.Exception ex)
@@ -398,7 +403,63 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
             await PowerCmd.Apply<JainaAttackAction>(choiceContext, Creature, ActionsPerTurn, applier, null);
             RefreshIntentDisplay();
         }
+
+        // 悬停卡面：连接游戏原生悬停层（NCreature.Hitbox）——视觉根节点的 Control
+        // MouseEntered 被游戏层级拦截不触发，Hitbox 是游戏自己悬停检测用的层
+        if (!_hoverConnected)
+        {
+            try
+            {
+                var creatureNode = NCombatRoom.Instance?.GetCreatureNode(Creature);
+                if (creatureNode?.Hitbox != null)
+                {
+                    creatureNode.Hitbox.MouseEntered += OnMinionHoverEnter;
+                    creatureNode.Hitbox.MouseExited += OnMinionHoverExit;
+                    _hoverConnected = true;
+                    MegaCrit.Sts2.Core.Logging.Log.Info("[JainaHover] hitbox hover connected");
+                }
+                else
+                {
+                    MegaCrit.Sts2.Core.Logging.Log.Warn("[JainaHover] creature node not ready for hover connect");
+                }
+            }
+            catch (System.Exception ex)
+            {
+                MegaCrit.Sts2.Core.Logging.Log.Warn($"[JainaHover] hover connect error: {ex.Message}");
+            }
+        }
     }
+
+    /// <summary>
+    /// 悬停进入（Hitbox）：显示随从卡卡面
+    /// </summary>
+    private void OnMinionHoverEnter()
+    {
+        if (!Creature.IsAlive)
+        {
+            return;
+        }
+        bool showOnLeft = false;
+        try
+        {
+            var node = NCombatRoom.Instance?.GetCreatureNode(Creature);
+            if (node != null)
+            {
+                var screenX = node.GetGlobalTransformWithCanvas().Origin.X;
+                var viewportWidth = node.GetViewport().GetVisibleRect().Size.X;
+                showOnLeft = screenX > viewportWidth / 2f;
+            }
+        }
+        catch
+        {
+        }
+        ShowMinionCard(showOnLeft);
+    }
+
+    /// <summary>
+    /// 悬停退出（Hitbox）：隐藏随从卡卡面
+    /// </summary>
+    private void OnMinionHoverExit() => HideMinionCard();
 
     /// <summary>
     /// 战吼效果：随从从手牌打出时触发（随机召唤/效果召唤不触发）。子类重写。
