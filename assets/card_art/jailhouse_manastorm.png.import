@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://d0k0xkhyckpfa"
-path="res://.godot/imported/millhouse_manastorm.png-c30d4ee6bb94e7071c8812ad8f5602ab.ctex"
+uid="uid://k0bja4smg43g"
+path="res://.godot/imported/jailhouse_manastorm.png-19f02449f7ed273bc96931d5d1da3177.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/card_art/millhouse_manastorm.png"
-dest_files=["res://.godot/imported/millhouse_manastorm.png-c30d4ee6bb94e7071c8812ad8f5602ab.ctex"]
+source_file="res://assets/card_art/jailhouse_manastorm.png"
+dest_files=["res://.godot/imported/jailhouse_manastorm.png-19f02449f7ed273bc96931d5d1da3177.ctex"]
 
 [params]
 

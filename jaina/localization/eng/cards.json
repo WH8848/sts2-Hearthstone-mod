@@ -72,6 +72,6 @@
   "JAINA_CARD_MEDIVH_ECHO.title": "Medivh's Echo",
   "JAINA_CARD_MEDIVH_ECHO.titleUpgraded": "Illusion Potion",
   "JAINA_CARD_MEDIVH_ECHO.description": "[gold]Arcane[/gold].\n{IfUpgraded:show:Add [blue]1/1[/blue] copies of all your minions to your hand. They cost [blue]0[/blue].|Add a copy of each friendly minion to your hand.}",
-  "JAINA_CARD_MILLHOUSE_MANASTORM.title": "Millhouse Manastorm",
+  "JAINA_CARD_MILLHOUSE_MANASTORM.title": "Jailhouse Manastorm",
   "JAINA_CARD_MILLHOUSE_MANASTORM.description": "Whenever you play a [blue]Spell card[/blue], summon a random minion that costs the same."
 }

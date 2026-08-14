@@ -13,7 +13,7 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
-/// 米尔豪斯·法力风暴 (Millhouse Manastorm) - 吉安娜专属先古能力牌（2 费）。
+/// 米尔牢斯·法力风暴 (Jailhouse Manastorm) - 吉安娜专属先古能力牌（2 费）。
 /// 每当你打出一张法术牌，随机召唤一个费用消耗相同的随从。
 /// 升级后费用消耗变为 1。
 /// </summary>
@@ -30,9 +30,9 @@ public sealed class MillhouseManastorm : JainaSpellCardTemplate
     protected override IEnumerable<DynamicVar> CanonicalVars => [];
 
     /// <summary>
-    /// 卡牌原画：炉石传说"米尔豪斯·法力风暴"（Millhouse Manastorm, EX1_323）官方原画
+    /// 卡牌原画：程序绘制的"监狱中的法力风暴"主题卡图（铁栏杆 + 法力能量球）
     /// </summary>
-    public override string CustomPortraitPath => "res://assets/card_art/millhouse_manastorm.png";
+    public override string CustomPortraitPath => "res://assets/card_art/jailhouse_manastorm.png";
 
     public MillhouseManastorm()
         : base(1, CardType.Power, CardRarity.Ancient, TargetType.None, true)
