@@ -13,13 +13,14 @@ namespace jaina.Scripts.Character.Minions;
 /// <summary>
 /// 不稳定的骷髅 (Volatile Skeleton) - 吉安娜专属随从。
 /// 属性：攻击 2，生命 2。
+/// 手动模式：玩家可点击攻击（有行动点），回合末不自动攻击。
 /// 亡语：随机对一个敌人造成 2 点伤害。
 /// </summary>
 [RegisterMonster]
 public sealed class VolatileSkeleton : JainaMinionBase
 {
     /// <summary>
-    /// 手动模式：玩家可点击攻击（有行动点），回合结束仍自动攻击随机敌人。
+    /// 手动模式：玩家可点击攻击（有行动点），回合末不自动攻击
     /// </summary>
     public override JainaMinionBehaviorMode BehaviorMode => JainaMinionBehaviorMode.Manual;
 
@@ -27,12 +28,6 @@ public sealed class VolatileSkeleton : JainaMinionBase
     /// 战斗视觉：不稳定的骷髅卡图原画场景
     /// </summary>
     protected override string MinionVisualsPath => "res://assets/card_art/volatile_skeleton.png";
-
-    /// <summary>
-    /// 回合结束被动：攻击随机敌人（保留"回合结束自动攻击"特性）
-    /// </summary>
-    protected override Task PerformTurnEndPassive(PlayerChoiceContext choiceContext) =>
-        PerformTurnEndAttack(choiceContext);
 
     /// <summary>
     /// 亡语伤害值
