@@ -1,20 +1,19 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Relics;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
-using MegaCrit.Sts2.Core.Rooms;
-using MegaCrit.Sts2.Core.ValueProps;
-using jaina.Scripts.Character.Powers;
+using jaina.Scripts.Character.Cards;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
 namespace jaina.Scripts.Character.Relics;
 
 /// <summary>
-/// 冰霜符文 - 吉安娜的初始遗物。战斗开始时获得额外格挡，并激活随从军势能力。
+/// 冰霜符文 - 吉安娜的初始遗物。
+/// 开始战斗：每场战斗开始时，获得一张幸运币（0费：获得 1 点能量，保留）。
 /// </summary>
 [RegisterRelic(typeof(JainaRelicPool))]
 [RegisterCharacterStarterRelic(typeof(Jaina))]
@@ -37,24 +36,25 @@ public sealed class FrostRune : ModRelicTemplate
     /// </summary>
     public override string? CustomBigIconPath => "res://assets/relic_icons/frost_rune_big.png";
 
-    protected override IEnumerable<DynamicVar> CanonicalVars =>
-    [
-        new BlockVar(6m, ValueProp.Move)
-    ];
+    protected override IEnumerable<DynamicVar> CanonicalVars => [];
 
     public override async Task BeforeCombatStart()
     {
-        if (!Owner.Creature.IsDead)
+        if (Owner.Creature.IsDead || Owner.Creature.CombatState == null)
         {
-            Flash();
-            await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block.BaseValue, ValueProp.Move, null);
-
-            // 施加随从军势能力：当吉安娜护甲被打破时，随从按打出顺序抵挡伤害
-            if (!Owner.Creature.Powers.Any(p => p is MinionSquadPower))
-            {
-                await PowerCmd.Apply<MinionSquadPower>(
-                    new ThrowingPlayerChoiceContext(), Owner.Creature, 1m, Owner.Creature, null);
-            }
+            return;
         }
+
+        Flash();
+
+        // 每场战斗开始时，获得一张幸运币（加入手牌）
+        // MutableClone 的卡无 Owner 会 NRE，用 CreateCard 生成带 Owner 的实例
+        var combatState = Owner.Creature.CombatState;
+        var coin = combatState.CreateCard(
+            (MegaCrit.Sts2.Core.Models.CardModel)MegaCrit.Sts2.Core.Models.ModelDb.GetById<LuckyCoin>(
+                MegaCrit.Sts2.Core.Models.ModelDb.GetId(typeof(LuckyCoin))),
+            Owner);
+        jaina.Scripts.Character.JainaCastTracker.MarkGenerated(coin);
+        await CardPileCmd.AddGeneratedCardToCombat(coin, PileType.Hand, Owner);
     }
 }

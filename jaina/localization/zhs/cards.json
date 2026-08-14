@@ -66,5 +66,7 @@
   "JAINA_CARD_AWAKEN.description": "[gold]奥术[/gold]。\n{IfUpgraded:show:发现一张[blue]法术牌[/blue]，使其费用减少1点。\n[gold]压轴[/gold]：下回合开始时，将本牌移回你的手牌。|发现一张[blue]法术牌[/blue]，使其费用减少1点。}",
   "JAINA_CARD_OBJECTION.title": "异议",
   "JAINA_CARD_OBJECTION.titleUpgraded": "法术反制",
-  "JAINA_CARD_OBJECTION.description": "{IfUpgraded:show:[gold]奥术[/gold]。\n敌人的下一个非攻击意图不会触发任何效果。|敌人的下一个攻击意图不会造成任何伤害。}"
+  "JAINA_CARD_OBJECTION.description": "{IfUpgraded:show:[gold]奥术[/gold]。\n敌人的下一个非攻击意图不会触发任何效果。|敌人的下一个攻击意图不会造成任何伤害。}",
+  "JAINA_CARD_LUCKY_COIN.title": "幸运币",
+  "JAINA_CARD_LUCKY_COIN.description": "获得 1 点能量。",
 }
