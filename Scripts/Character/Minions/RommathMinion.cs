@@ -46,12 +46,13 @@ public sealed class RommathMinion : JainaMinionBase
         var types = rec.GeneratedAttackSkills.ToList();
         foreach (var type in types)
         {
-            var canonical = ModelDb.GetByIdOrNull<CardModel>(ModelDb.GetId(type));
-            if (canonical == null)
+            rec.GeneratedUpgradeLevels.TryGetValue(type, out var upgradeLevel);
+            var card = jaina.Scripts.Character.JainaCastTracker.CreateCardWithUpgrade(
+                combatState, owner, type, upgradeLevel);
+            if (card == null)
             {
                 continue;
             }
-            var card = combatState.CreateCard(canonical, owner);
 
             // 需要目标时（单目标卡：原生 AnyEnemy/AnyPlayer 或自定义单目标类型），
             // 按卡的目标校验从场上活物中随机选一个合法目标

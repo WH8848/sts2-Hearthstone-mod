@@ -53,7 +53,7 @@ public sealed class Rewind : JainaSpellCardTemplate
             return;
         }
 
-        // 从施放过的类型中随机取候选（最多 3 张，不重复）
+        // 从施放过的类型中随机取候选（最多 3 张，不重复），按施放时的最高升级级别恢复升级形态
         var rng = base.Owner.RunState.Rng.CombatTargets;
         var pool = new List<Type>(playedTypes);
         var candidates = new List<CardModel>();
@@ -65,10 +65,12 @@ public sealed class Rewind : JainaSpellCardTemplate
                 break;
             }
             pool.Remove(type);
-            var canonical = ModelDb.GetByIdOrNull<CardModel>(ModelDb.GetId(type));
-            if (canonical != null)
+            rec.PlayedUpgradeLevels.TryGetValue(type, out var upgradeLevel);
+            var card = jaina.Scripts.Character.JainaCastTracker.CreateCardWithUpgrade(
+                combatState, base.Owner, type, upgradeLevel);
+            if (card != null)
             {
-                candidates.Add(combatState.CreateCard(canonical, base.Owner));
+                candidates.Add(card);
             }
         }
         if (candidates.Count == 0)

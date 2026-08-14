@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Models;
 using jaina.Scripts.Character.Cards;
 
@@ -34,6 +35,17 @@ public static class JainaCastTracker
     {
         public readonly HashSet<Type> PlayedAttackSkills = [];
         public readonly HashSet<Type> GeneratedAttackSkills = [];
+
+        /// <summary>
+        /// 施放过的牌的最高升级级别（倒带复制时恢复升级状态，如清凉的泉水）
+        /// </summary>
+        public readonly Dictionary<Type, int> PlayedUpgradeLevels = [];
+
+        /// <summary>
+        /// 生成过的牌的最高升级级别（罗曼斯重放时恢复升级状态）
+        /// </summary>
+        public readonly Dictionary<Type, int> GeneratedUpgradeLevels = [];
+
         public readonly HashSet<JainaSpellSchool> Schools = [];
     }
 
@@ -79,6 +91,11 @@ public static class JainaCastTracker
         var rec = For(state);
         var type = card.GetType();
         rec.PlayedAttackSkills.Add(type);
+        if (card.CurrentUpgradeLevel > 0 &&
+            (!rec.PlayedUpgradeLevels.TryGetValue(type, out var prev) || card.CurrentUpgradeLevel > prev))
+        {
+            rec.PlayedUpgradeLevels[type] = card.CurrentUpgradeLevel;
+        }
         if (SchoolByCardType.TryGetValue(type, out var school))
         {
             rec.Schools.Add(school);
@@ -99,7 +116,36 @@ public static class JainaCastTracker
         {
             return;
         }
-        For(state).GeneratedAttackSkills.Add(card.GetType());
+        var rec = For(state);
+        var type = card.GetType();
+        rec.GeneratedAttackSkills.Add(type);
+        if (card.CurrentUpgradeLevel > 0 &&
+            (!rec.GeneratedUpgradeLevels.TryGetValue(type, out var prev) || card.CurrentUpgradeLevel > prev))
+        {
+            rec.GeneratedUpgradeLevels[type] = card.CurrentUpgradeLevel;
+        }
+    }
+
+    /// <summary>
+    /// 按记录的最高升级级别创建一张牌的实例（倒带/罗曼斯复制用）：
+    /// 用 canonical 模板创建后逐级升级，恢复"清凉的泉水"这类升级形态。
+    /// 找不到模板返回 null。
+    /// </summary>
+    public static MegaCrit.Sts2.Core.Models.CardModel? CreateCardWithUpgrade(
+        ICombatState combatState, Player owner, Type type, int upgradeLevel)
+    {
+        var canonical = MegaCrit.Sts2.Core.Models.ModelDb.GetByIdOrNull<MegaCrit.Sts2.Core.Models.CardModel>(
+            MegaCrit.Sts2.Core.Models.ModelDb.GetId(type));
+        if (canonical == null)
+        {
+            return null;
+        }
+        var card = combatState.CreateCard(canonical, owner);
+        for (int i = 0; i < upgradeLevel && card.CurrentUpgradeLevel < card.MaxUpgradeLevel; i++)
+        {
+            MegaCrit.Sts2.Core.Commands.CardCmd.Upgrade(card);
+        }
+        return card;
     }
 
     /// <summary>
