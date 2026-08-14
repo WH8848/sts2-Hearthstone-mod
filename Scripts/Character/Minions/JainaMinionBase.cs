@@ -202,7 +202,7 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
                 return;
             }
             // 挂到战斗 UI 的随从节点（在场景树中，NCard.UpdateVisuals 需要 IsNodeReady）
-            var host = (Node?)MegaCrit.Sts2.Core.Nodes.Rooms.NCombatRoom.Instance?.GetCreatureNode(Creature) ?? _visualsRoot;
+            var host = (CanvasItem?)MegaCrit.Sts2.Core.Nodes.Rooms.NCombatRoom.Instance?.GetCreatureNode(Creature) ?? _visualsRoot;
             cardNode.UpdateVisuals(MegaCrit.Sts2.Core.Entities.Cards.PileType.None,
                 MegaCrit.Sts2.Core.Entities.Cards.CardPreviewMode.Normal);
             cardNode.MouseFilter = Control.MouseFilterEnum.Ignore;
@@ -213,6 +213,8 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
                 ? new Vector2(-cardNode.Size.X * 0.72f - 100f, -190f)
                 : new Vector2(100f, -190f);
             cardNode.ZIndex = 50;
+            // 视口约束：卡面必须完整出现在屏幕内（含 8px 边距），超出部分平移到视口内
+            ClampCardToViewport(host, cardNode);
             MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaHover] card shown: {canonical.Id} host={(host == _visualsRoot ? "visuals-root" : "creature-node")} insideTree={cardNode.IsInsideTree()} ready={cardNode.IsNodeReady()}");
             _hoverCardNode = cardNode;
         }
@@ -232,6 +234,52 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
         {
             _hoverCardNode.QueueFreeSafely();
             _hoverCardNode = null;
+        }
+    }
+
+    /// <summary>
+    /// 视口约束：把悬停卡面的全局位置平移到视口内（8px 边距），保证卡面完整可见。
+    /// </summary>
+    private static void ClampCardToViewport(CanvasItem host, Control cardNode)
+    {
+        try
+        {
+            var canvasTransform = host.GetGlobalTransformWithCanvas();
+            var viewport = host.GetViewport();
+            if (viewport == null)
+            {
+                return;
+            }
+            var vpRect = viewport.GetVisibleRect();
+            // 卡面缩放后的实际尺寸（Control 的 Size 为布局尺寸，Scale 缩放绘制）
+            var cardSize = cardNode.Size * cardNode.Scale;
+            // 卡面当前全局左上角（host 局部坐标 → 全局）
+            var globalTopLeft = canvasTransform * cardNode.Position;
+            const float margin = 8f;
+
+            var x = globalTopLeft.X;
+            var y = globalTopLeft.Y;
+            // 约束：左上角不小于视口+边距，右下角不超出视口-边距
+            x = Mathf.Max(x, vpRect.Position.X + margin);
+            y = Mathf.Max(y, vpRect.Position.Y + margin);
+            x = Mathf.Min(x, vpRect.End.X - margin - cardSize.X);
+            y = Mathf.Min(y, vpRect.End.Y - margin - cardSize.Y);
+            // 卡面大于视口时避免负位置（居中）
+            if (cardSize.X > vpRect.Size.X - margin * 2f)
+            {
+                x = vpRect.Position.X + (vpRect.Size.X - cardSize.X) / 2f;
+            }
+            if (cardSize.Y > vpRect.Size.Y - margin * 2f)
+            {
+                y = vpRect.Position.Y + (vpRect.Size.Y - cardSize.Y) / 2f;
+            }
+
+            // 转回 host 局部坐标
+            cardNode.Position = canvasTransform.AffineInverse() * new Vector2(x, y);
+        }
+        catch
+        {
+            // 约束失败保持原位置
         }
     }
 
