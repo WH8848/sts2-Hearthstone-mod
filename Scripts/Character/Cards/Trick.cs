@@ -67,12 +67,18 @@ public sealed class Trick : JainaSpellCardTemplate
             if (first != null)
             {
                 jaina.Scripts.Character.JainaCastTracker.MarkGenerated(first);
-                await CardPileCmd.AddGeneratedCardToCombat(first, PileType.Hand, base.Owner);
+                if (!jaina.Scripts.Character.JainaHandHelper.IsHandFull(base.Owner))
+                {
+                    await CardPileCmd.AddGeneratedCardToCombat(first, PileType.Hand, base.Owner);
+                }
             }
             if (second != null)
             {
                 jaina.Scripts.Character.JainaCastTracker.MarkGenerated(second);
-                await CardPileCmd.AddGeneratedCardToCombat(second, PileType.Hand, base.Owner);
+                if (!jaina.Scripts.Character.JainaHandHelper.IsHandFull(base.Owner))
+                {
+                    await CardPileCmd.AddGeneratedCardToCombat(second, PileType.Hand, base.Owner);
+                }
             }
             return;
         }

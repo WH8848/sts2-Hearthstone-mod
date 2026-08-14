@@ -42,7 +42,10 @@ public class Entry
     {
         try
         {
-            STS2RitsuLib.RitsuLibFramework.SubscribeLifecycle<STS2RitsuLib.GameReadyEvent>(static _ =>
+            // 0.111.1 审计：GameReadyEvent 依赖 NGame._Ready（可能早于内容就绪/旧 RitsuLib variant 无发布者），
+            // 改用 ModelRegistryInitializedEvent（ModelDb.Init 之后发布，内容就绪信号，与商店候选语义贴合）
+            Logger.Info("[JainaDiag] subscribing to ModelRegistryInitializedEvent...");
+            STS2RitsuLib.RitsuLibFramework.SubscribeLifecycle<STS2RitsuLib.ModelRegistryInitializedEvent>(static _ =>
             {
                 try
                 {
@@ -55,14 +58,13 @@ public class Entry
                     }
                     var frost = all.FirstOrDefault(c => c.Id.Entry.Contains("FROSTBOLT"));
                     Logger.Info($"[JainaDiag] Frostbolt in AllCards: {frost != null}");
-                    var unlocked = pool.GetUnlockedCards(null!, MegaCrit.Sts2.Core.Entities.Cards.CardMultiplayerConstraint.SingleplayerOnly).Select(c => c.Id).ToList();
-                    Logger.Info($"[JainaDiag] GetUnlockedCards(SP) count={unlocked.Count}: {string.Join(",", unlocked)}");
                 }
                 catch (System.Exception ex)
                 {
                     Logger.Info($"[JainaDiag] ERROR: {ex}");
                 }
             });
+            Logger.Info("[JainaDiag] subscribed.");
         }
         catch (System.Exception ex)
         {

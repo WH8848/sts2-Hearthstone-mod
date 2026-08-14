@@ -35,8 +35,18 @@ public sealed class AntonidasPower : PowerModel
             return;
         }
         // MutableClone 的卡无 Owner，AddGeneratedCardToCombat 内部会 NRE；用 CreateCard 生成带 Owner 的实例
+        // 手牌满时不入手（0.111.1 满手时 Add 会把牌静默改道弃牌堆）
+        if (jaina.Scripts.Character.JainaHandHelper.IsHandFull(owner))
+        {
+            return;
+        }
+        var canonical = ModelDb.GetByIdOrNull<CardModel>(ModelDb.GetId(typeof(Fireball)));
+        if (canonical == null)
+        {
+            return;
+        }
         var combatState = owner.Creature.CombatState;
-        var fireball = combatState.CreateCard(ModelDb.GetById<CardModel>(ModelDb.GetId(typeof(Fireball))), owner);
+        var fireball = combatState.CreateCard(canonical, owner);
         jaina.Scripts.Character.JainaCastTracker.MarkGenerated(fireball);
         await CardPileCmd.AddGeneratedCardToCombat(fireball, PileType.Hand, owner);
     }

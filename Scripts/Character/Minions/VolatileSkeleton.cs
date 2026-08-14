@@ -44,10 +44,12 @@ public sealed class VolatileSkeleton : JainaMinionBase
 
     /// <summary>
     /// 亡语：随机对一个敌人造成 2 点伤害。
+    /// 注意：亡语在随从死亡后触发（AfterDeath），此时 Creature.IsAlive 为 false，
+    /// 不要加存活守卫。
     /// </summary>
     public override async Task OnDeathrattle(PlayerChoiceContext choiceContext)
     {
-        if (!Creature.IsAlive || Creature.CombatState == null)
+        if (Creature.CombatState == null)
         {
             return;
         }

@@ -43,14 +43,10 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
     private int _summonedTurn = -1;
 
     /// <summary>
-    /// 手动模式：本回合剩余可点击攻击次数（每回合开始授予，攻击一次扣 1 点）
+    /// 手动模式：本回合剩余可点击攻击次数由 JainaAttackAction 的 Amount 唯一维护
+    /// （MinionLib DecrementAfterAct → PowerCmd.Decrement 自动递减并刷新意图）
     /// </summary>
-    public int AttackPointsRemaining { get; private set; }
-
-    /// <summary>
-    /// 自动模式：本回合是否已经攻击过（攻击后意图消失，下回合重置）
-    /// </summary>
-    private bool _hasAttackedThisTurn;
+    protected bool _hasAttackedThisTurn;
 
     /// <summary>
     /// 随从行为模式（默认手动：不自动行动，点击驱动）
@@ -153,30 +149,37 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
     /// </summary>
     private void SetupTooltipContent(JainaMinionTooltip tooltip)
     {
-        var cardType = JainaMinionCardMap.GetCardType(GetType());
-        if (cardType == null)
+        try
         {
-            return;
+            var cardType = JainaMinionCardMap.GetCardType(GetType());
+            if (cardType == null)
+            {
+                return;
+            }
+            var canonical = MegaCrit.Sts2.Core.Models.ModelDb.GetByIdOrNull<MegaCrit.Sts2.Core.Models.CardModel>(
+                MegaCrit.Sts2.Core.Models.ModelDb.GetId(cardType));
+            if (canonical == null)
+            {
+                return;
+            }
+            var texture = ResourceLoader.Load<Texture2D>(MinionVisualsPath);
+            var title = new LocString("cards", canonical.Id.Entry + ".title").GetFormattedText();
+            var description = new LocString("cards", canonical.Id.Entry + ".description").GetFormattedText();
+
+            // 关键词行（如"冲锋""亡语"）
+            var keywordTitles = canonical.Keywords
+                .Select(k => ((MegaCrit.Sts2.Core.HoverTips.HoverTip)MegaCrit.Sts2.Core.HoverTips.HoverTipFactory.FromKeyword(k)).Title)
+                .Where(t => !string.IsNullOrEmpty(t))
+                .Select(t => $"[color=#ffd75e]{t}[/color]")
+                .ToList();
+            var keywordsLine = string.Join("  ", keywordTitles);
+
+            tooltip.Setup(this, texture, title, keywordsLine, description);
         }
-        var canonical = MegaCrit.Sts2.Core.Models.ModelDb.GetById<MegaCrit.Sts2.Core.Models.CardModel>(
-            MegaCrit.Sts2.Core.Models.ModelDb.GetId(cardType));
-        if (canonical == null)
+        catch
         {
-            return;
+            // 悬停面板失败不影响随从视觉/战斗（例如卡片类型尚未注册进 ModelDb）
         }
-        var texture = ResourceLoader.Load<Texture2D>(MinionVisualsPath);
-        var title = new LocString("cards", canonical.Id.Entry + ".title").GetFormattedText();
-        var description = new LocString("cards", canonical.Id.Entry + ".description").GetFormattedText();
-
-        // 关键词行（如"冲锋""亡语"）
-        var keywordTitles = canonical.Keywords
-            .Select(k => ((MegaCrit.Sts2.Core.HoverTips.HoverTip)MegaCrit.Sts2.Core.HoverTips.HoverTipFactory.FromKeyword(k)).Title)
-            .Where(t => !string.IsNullOrEmpty(t))
-            .Select(t => $"[color=#ffd75e]{t}[/color]")
-            .ToList();
-        var keywordsLine = string.Join("  ", keywordTitles);
-
-        tooltip.Setup(this, texture, title, keywordsLine, description);
     }
 
     /// <summary>
@@ -243,7 +246,7 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
     /// 当前是否可以向敌人显示攻击意图（= 是否还能发动攻击）：
     /// - 存活且攻击力 &gt; 0；
     /// - 非召唤当回合（召唤当回合不可攻击）；
-    /// - 手动模式：本回合还有剩余行动点；
+    /// - 手动模式：本回合还有剩余行动点（JainaAttackAction.Amount 为唯一事实源）；
     /// - 自动模式：本回合尚未攻击过。
     /// </summary>
     public bool CanShowAttackIntent()
@@ -254,20 +257,9 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
         }
         if (BehaviorMode == JainaMinionBehaviorMode.Manual)
         {
-            return AttackPointsRemaining > 0;
+            return (Creature.GetPower<JainaAttackAction>()?.Amount ?? 0m) > 0m;
         }
         return !_hasAttackedThisTurn;
-    }
-
-    /// <summary>
-    /// 手动模式攻击一次后消耗 1 点行动次数（意图随之隐藏）
-    /// </summary>
-    public void ConsumeAttackPoint()
-    {
-        if (AttackPointsRemaining > 0)
-        {
-            AttackPointsRemaining--;
-        }
     }
 
     /// <summary>
@@ -310,6 +302,24 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
         // 标记为随从副单位（不触发击杀胜利结算、死亡不触发致命等）
         await PowerCmd.Apply<MegaCrit.Sts2.Core.Models.Powers.MinionPower>(
             choiceContext, Creature, 1m, owner.Creature, options.Source);
+
+        // 意图自举：玩家侧随从不会被游戏 RollMove（0.111.1 仅对 Enemy 调用，
+        // CombatManager.AfterCreatureAdded 只处理 IsEnemy；CreatureCmd.Add 对非敌人
+        // 显式 rollNewMove:false），Monster.NextMove 默认是空的 UNSET_MOVE，
+        // 意图 UI 会读 NextMove.Intents 导致条件意图静默消失。
+        // 这里主动 RollMove + RefreshIntents 填充 NextMove（含条件意图实例）。
+        try
+        {
+            var opponents = Creature.CombatState?.GetOpponentsOf(Creature);
+            if (opponents != null)
+            {
+                Creature.PrepareForNextTurn(opponents);
+            }
+        }
+        catch
+        {
+            // 战斗场景未就绪时忽略，回合开始揭示流程会再次刷新
+        }
     }
 
     /// <summary>
@@ -333,8 +343,7 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
 
         if (BehaviorMode == JainaMinionBehaviorMode.Manual)
         {
-            // 行动点由随从主人施加，Amount = 本回合可点击攻击次数
-            AttackPointsRemaining = ActionsPerTurn;
+            // 行动点由随从主人施加，Amount = 本回合可点击攻击次数（唯一事实源）
             var applier = Creature.PetOwner?.Creature ?? Creature;
             await PowerCmd.Apply<JainaAttackAction>(choiceContext, Creature, ActionsPerTurn, applier, null);
         }
@@ -421,18 +430,22 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
     protected virtual Task PerformTurnEndPassive(PlayerChoiceContext choiceContext) => Task.CompletedTask;
 
     /// <summary>
-    /// 受到伤害后：若随从死亡，触发亡语并清理。
-    /// 清理包括：移除随从身上挂载的全部能力（光环效果消失）并从场面移除。
-    /// 场面移除为防御性双保险（MinionLib 的 MinionKillPatch 正常工作时幂等）。
+    /// 随从死亡：触发亡语。
+    /// 0.111.1 中致命伤害不会调用 AfterDamageReceived(Late)（CreatureCmd.Damage 对致命伤害
+    /// 直接走 Kill → KillWithoutCheckingWinCondition），因此亡语必须挂 AfterDeath
+    /// （Hook.AfterDeath 在 RemoveAllPowersAfterDeath 之前触发，随从 Monster 天然在监听列表）。
+    /// 场面清理（移除 Powers / 从 CombatManager/CombatState 摘除）由核心死亡流程
+    /// （RemoveAllPowersAfterDeath + OnPetDied）与 MinionLib MinionKillPatch 负责，
+    /// 这里不做 detach（CombatState.RemoveCreature(unattach:true) 会把 CombatState 置 null，
+    /// 干扰核心死亡收尾）。
     /// </summary>
-    public override async Task AfterDamageReceivedLate(PlayerChoiceContext choiceContext, Creature target, MegaCrit.Sts2.Core.Entities.Creatures.DamageResult result, ValueProp props, Creature? dealer, CardModel? cardSource)
+    public override async Task AfterDeath(PlayerChoiceContext choiceContext, Creature creature,
+        bool wasRemovalPrevented, float deathAnimLength)
     {
-        if (target != Creature || Creature.IsAlive || Creature.CombatState == null)
+        if (creature != Creature)
         {
             return;
         }
-
-        // 死亡：触发亡语
         if (HasDeathrattle)
         {
             try
@@ -443,34 +456,6 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
             {
                 // 亡语失败不影响战斗
             }
-        }
-
-        // 清理：移除随从身上全部能力（光环效果随死亡消失）
-        foreach (var power in Creature.Powers.ToList())
-        {
-            try
-            {
-                await PowerCmd.Remove(power);
-            }
-            catch
-            {
-                // 单个能力移除失败不影响整体清理
-            }
-        }
-
-        // 清理：确保随从从场面移除（MinionLib 补丁失效时的双保险，幂等）
-        try
-        {
-            var combatState = Creature.CombatState;
-            if (combatState != null)
-            {
-                combatState.RemoveCreature(Creature, true);
-            }
-            MegaCrit.Sts2.Core.Combat.CombatManager.Instance?.RemoveCreature(Creature);
-        }
-        catch
-        {
-            // 已由 MinionLib 清理时可能重复移除，忽略
         }
     }
 

@@ -153,7 +153,7 @@ public static class JainaMinionPool
             {
                 continue;
             }
-            var cardModel = ModelDb.GetById<MegaCrit.Sts2.Core.Models.CardModel>(ModelDb.GetId(cardType));
+            var cardModel = ModelDb.GetByIdOrNull<MegaCrit.Sts2.Core.Models.CardModel>(ModelDb.GetId(cardType));
             if (cardModel != null && cardModel.EnergyCost.Canonical == cost)
             {
                 candidates.Add(minionType);
@@ -168,7 +168,7 @@ public static class JainaMinionPool
         var chosen = combatState.RunState.Rng.CombatTargets.NextItem(candidates) ?? candidates[0];
 
         // 属性取对应随从卡的标准值
-        var chosenCard = ModelDb.GetById<MegaCrit.Sts2.Core.Models.CardModel>(ModelDb.GetId(JainaMinionCardMap.GetCardType(chosen)))
+        var chosenCard = ModelDb.GetByIdOrNull<MegaCrit.Sts2.Core.Models.CardModel>(ModelDb.GetId(JainaMinionCardMap.GetCardType(chosen)))
             as jaina.Scripts.Character.Cards.JainaMinionCardTemplate;
         return await SummonMinionByType(
             choiceContext, player, chosen,

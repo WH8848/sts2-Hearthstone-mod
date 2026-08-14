@@ -59,8 +59,8 @@ public sealed class JainaAttackAction : ActionModel
         await MinionAnimCmd.PlayBumpAttackAsync(actor, target,
             () => CreatureCmd.Damage(choiceContext, [target], attack, ValueProp.Unpowered, actor));
 
-        // 攻击完成：消耗 1 点行动次数并立即刷新意图显示（攻击过后意图消失）
-        minion.ConsumeAttackPoint();
+        // 行动次数由 MinionLib 框架在 OnAct 之后自动递减（DecrementAfterAct → PowerCmd.Decrement），
+        // 递减会触发意图刷新；此处再主动刷新一次意图显示保证即时隐藏（幂等）。
         minion.RefreshIntentDisplay();
     }
 }

@@ -30,13 +30,19 @@ public sealed class ObjectionPower : PowerModel
     private bool _consumed;
 
     /// <summary>
-    /// 敌人造成的攻击伤害降为 0
+    /// 敌人造成的攻击伤害降为 0。
+    /// 0.111.1 中 ModifyDamageAdditive 在意图预览（cardPlay == null）与实际结算
+    /// （cardPlay != null）两个阶段都会调用；只在结算阶段标记消耗，
+    /// 避免预览后任意其他敌人伤害结算就把拦截提前消耗掉。
     /// </summary>
     public override decimal ModifyDamageAdditive(Creature? target, decimal amount, ValueProp props, Creature? dealer, CardModel? cardSource, CardPlay? cardPlay)
     {
         if (dealer != null && dealer.Side == CombatSide.Enemy && amount > 0 && Amount > 0)
         {
-            _consumed = true;
+            if (cardPlay != null)
+            {
+                _consumed = true;
+            }
             return -amount;
         }
         return 0m;

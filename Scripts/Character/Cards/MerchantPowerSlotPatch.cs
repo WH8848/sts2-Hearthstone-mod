@@ -33,5 +33,11 @@ public static class MerchantPowerSlotPatch
         }
         // 能力槽改为随从槽：按稀有度从随从卡（动态 Minion 类型）中选卡
         type = JainaCardTypes.Minion;
+        // 防御：若随从卡候选也为空（如某稀有度缺卡），回退技能槽交给原逻辑，
+        // 避免 CardFactory.GetNextAllowedRarity 走到 CardRarity.None 抛 InvalidOperationException
+        if (!options.Any(c => c.Type == JainaCardTypes.Minion))
+        {
+            type = CardType.Skill;
+        }
     }
 }

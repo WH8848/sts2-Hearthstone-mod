@@ -65,7 +65,7 @@ public sealed class Rewind : JainaSpellCardTemplate
                 break;
             }
             pool.Remove(type);
-            var canonical = ModelDb.GetById<CardModel>(ModelDb.GetId(type));
+            var canonical = ModelDb.GetByIdOrNull<CardModel>(ModelDb.GetId(type));
             if (canonical != null)
             {
                 candidates.Add(combatState.CreateCard(canonical, base.Owner));
@@ -80,7 +80,10 @@ public sealed class Rewind : JainaSpellCardTemplate
         if (chosen != null)
         {
             jaina.Scripts.Character.JainaCastTracker.MarkGenerated(chosen);
-            await CardPileCmd.AddGeneratedCardToCombat(chosen, PileType.Hand, base.Owner);
+            if (!jaina.Scripts.Character.JainaHandHelper.IsHandFull(base.Owner))
+            {
+                await CardPileCmd.AddGeneratedCardToCombat(chosen, PileType.Hand, base.Owner);
+            }
         }
     }
 }

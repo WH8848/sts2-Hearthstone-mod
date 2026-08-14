@@ -48,11 +48,19 @@ public sealed class EvenMatchAncient : ModRelicTemplate
         Flash();
 
         // 每场战斗开始时，获得一张幸运币（加入手牌）
+        // 手牌满时不入手（0.111.1 满手时 Add 会把牌静默改道弃牌堆）
+        if (jaina.Scripts.Character.JainaHandHelper.IsHandFull(Owner))
+        {
+            return;
+        }
         var combatState = Owner.Creature.CombatState;
-        var coin = combatState.CreateCard(
-            (MegaCrit.Sts2.Core.Models.CardModel)MegaCrit.Sts2.Core.Models.ModelDb.GetById<LuckyCoin>(
-                MegaCrit.Sts2.Core.Models.ModelDb.GetId(typeof(LuckyCoin))),
-            Owner);
+        var canonical = MegaCrit.Sts2.Core.Models.ModelDb.GetByIdOrNull<MegaCrit.Sts2.Core.Models.CardModel>(
+            MegaCrit.Sts2.Core.Models.ModelDb.GetId(typeof(LuckyCoin)));
+        if (canonical == null)
+        {
+            return;
+        }
+        var coin = combatState.CreateCard(canonical, Owner);
         jaina.Scripts.Character.JainaCastTracker.MarkGenerated(coin);
         await CardPileCmd.AddGeneratedCardToCombat(coin, PileType.Hand, Owner);
 

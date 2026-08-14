@@ -46,7 +46,7 @@ public sealed class RommathMinion : JainaMinionBase
         var types = rec.GeneratedAttackSkills.ToList();
         foreach (var type in types)
         {
-            var canonical = ModelDb.GetById<CardModel>(ModelDb.GetId(type));
+            var canonical = ModelDb.GetByIdOrNull<CardModel>(ModelDb.GetId(type));
             if (canonical == null)
             {
                 continue;

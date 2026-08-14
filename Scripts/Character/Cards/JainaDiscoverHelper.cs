@@ -36,9 +36,15 @@ public static class JainaDiscoverHelper
     {
         // 用 CreateCard 生成带 Owner 的实例（MutableClone 的卡无 Owner，AddGeneratedCardToCombat 会 NRE）
         var combatState = player.Creature.CombatState;
-        var pool = AttackSkillPool
-            .Select(t => combatState.CreateCard(ModelDb.GetById<CardModel>(ModelDb.GetId(t)), player))
-            .ToList();
+        var pool = new List<CardModel>();
+        foreach (var t in AttackSkillPool)
+        {
+            var canonical = ModelDb.GetByIdOrNull<CardModel>(ModelDb.GetId(t));
+            if (canonical != null)
+            {
+                pool.Add(combatState.CreateCard(canonical, player));
+            }
+        }
         if (maxCost is int max && max >= 0)
         {
             pool = pool.Where(c => c.EnergyCost.Canonical <= max).ToList();
@@ -58,13 +64,18 @@ public static class JainaDiscoverHelper
     }
 
     /// <summary>
-    /// 三选一发现（可跳过），选中的牌加入手牌
+    /// 三选一发现（可跳过），选中的牌加入手牌。
+    /// 手牌满时不入手（0.111.1 满手时 Add 会把牌静默改道弃牌堆）。
     /// </summary>
     public static async Task<CardModel?> DiscoverAndAddToHand(PlayerChoiceContext choiceContext, Player player, int count = 3, int? maxCost = null)
     {
         var chosen = await SelectCandidate(choiceContext, player, count, maxCost);
         if (chosen != null)
         {
+            if (jaina.Scripts.Character.JainaHandHelper.IsHandFull(player))
+            {
+                return null;
+            }
             jaina.Scripts.Character.JainaCastTracker.MarkGenerated(chosen);
             await CardPileCmd.AddGeneratedCardToCombat(chosen, PileType.Hand, player);
         }

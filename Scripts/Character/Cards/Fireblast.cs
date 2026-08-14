@@ -108,11 +108,11 @@ public sealed class Fireblast : JainaSpellCardTemplate
     }
 
     /// <summary>
-    /// 每回合开始自动加入手牌
+    /// 每回合开始自动加入手牌（手牌满时不加入——0.111.1 满手时 Add 会静默改道弃牌堆）
     /// </summary>
     public override async Task BeforeHandDraw(Player player, PlayerChoiceContext choiceContext, ICombatState combatState)
     {
-        if (player == base.Owner)
+        if (player == base.Owner && !jaina.Scripts.Character.JainaHandHelper.IsHandFull(player))
         {
             CardPile? pile = base.Pile;
             if (pile == null || pile.Type != PileType.Hand)

@@ -87,6 +87,11 @@ public sealed class FreezingPotion : JainaSpellCardTemplate
         if (IsUpgraded && !IsTwinspellCopy)
         {
             // CreateClone 保留 Owner（MutableClone 的卡无 Owner 会导致入牌堆 NRE）
+            // 手牌满时不复制（满手入手会被 0.111.1 静默改道弃牌堆）
+            if (jaina.Scripts.Character.JainaHandHelper.IsHandFull(base.Owner))
+            {
+                return;
+            }
             var copy = (FreezingPotion)CreateClone();
             copy.RemoveKeyword(JainaKeywords.Twinspell);
             copy.IsTwinspellCopy = true;

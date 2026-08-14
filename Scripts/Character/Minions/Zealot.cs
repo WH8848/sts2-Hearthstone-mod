@@ -52,5 +52,9 @@ public sealed class Zealot : JainaMinionBase
         var target = CombatState.RunState.Rng.CombatTargets.NextItem(opponents);
         if (target == null) return;
         await CreatureCmd.Damage(choiceContext, [target], BaseAttackValue, ValueProp.Unpowered, Creature);
+
+        // 召唤当回合已攻击：意图不再显示（冲锋语义，下回合恢复）
+        _hasAttackedThisTurn = true;
+        RefreshIntentDisplay();
     }
 }

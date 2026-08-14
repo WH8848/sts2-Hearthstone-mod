@@ -35,7 +35,7 @@
     </Reference>
 
     <!-- RitsuLib（0.5.11 主包 = 0.110.0 API 面，与游戏 0.110.1 加载的 variant 一致） -->
-    <PackageReference Include="STS2.RitsuLib" Version="0.5.11" />
+    <PackageReference Include="STS2.RitsuLib" Version="0.5.12" />
 
     <!-- MinionLib（随从库，含 source generator：按需生成 Jaina.RitsuAdapters 适配器） -->
     <PackageReference Include="FuYnAloft.Sts2.MinionLib" Version="0.6.2" />
@@ -73,16 +73,14 @@
       <LocalizationFiles Include="jaina/localization/**/*.json" />
     </ItemGroup>
     <MakeDir Directories="$(Sts2Dir)\mods\$(MSBuildProjectName)\localization" />
-    <Copy SourceFiles="@(LocalizationFiles)"
-          DestinationFiles="@(LocalizationFiles->'$(Sts2Dir)\mods\$(MSBuildProjectName)\localization\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(LocalizationFiles)" DestinationFiles="@(LocalizationFiles->'$(Sts2Dir)\mods\$(MSBuildProjectName)\localization\%(RecursiveDir)%(Filename)%(Extension)')" />
   </Target>
 
   <!-- 构建后自动用 Godot 导出 pck 到游戏 mods 目录（headless，走 export_presets.cfg 的 Windows Desktop 预设）。
        已实测：与正在运行的 Godot 编辑器并行安全，无需关闭编辑器。
        Condition 防止递归：Godot 导出时会内部执行 dotnet publish（ExportDebug/ExportRelease 配置），
        那一步必须跳过本 target，否则无限循环。 -->
-  <Target Name="Export Pck" AfterTargets="Copy Mod"
-          Condition="'$(Configuration)' != 'ExportDebug' and '$(Configuration)' != 'ExportRelease'">
+  <Target Name="Export Pck" AfterTargets="Copy Mod" Condition="'$(Configuration)' != 'ExportDebug' and '$(Configuration)' != 'ExportRelease'">
     <Message Text="Exporting pck to $(Sts2Dir)\mods\$(MSBuildProjectName)\$(MSBuildProjectName).pck ..." Importance="high" />
     <Exec Command="&quot;$(GodotExe)&quot; --headless --path &quot;$(MSBuildProjectDirectory)&quot; --export-pack &quot;Windows Desktop&quot; &quot;$(Sts2Dir)\mods\$(MSBuildProjectName)\$(MSBuildProjectName).pck&quot;" />
   </Target>
