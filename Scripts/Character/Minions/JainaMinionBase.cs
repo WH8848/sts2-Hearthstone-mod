@@ -163,7 +163,7 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
     /// <summary>
     /// 视觉根节点（TryCreateCreatureVisuals 创建；悬停卡面的回退挂载点）
     /// </summary>
-    private Node? _visualsRoot;
+    private CanvasItem? _visualsRoot;
 
     /// <summary>
     /// 是否已连接游戏原生悬停层（NCreature.Hitbox）
