@@ -4,6 +4,7 @@ using MegaCrit.Sts2.Core.Entities.Characters;
 using MegaCrit.Sts2.Core.Nodes.Vfx;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Characters;
+using STS2RitsuLib.Scaffolding.Content;
 
 namespace jaina.Scripts.Character;
 
@@ -13,6 +14,22 @@ namespace jaina.Scripts.Character;
 [RegisterCharacter]
 public sealed class Jaina : ModCharacterTemplate<JainaCardPool, JainaRelicPool, JainaPotionPool>
 {
+    /// <summary>
+    /// 角色资源画像：以铁甲战士为基础，覆盖美味饼干遗物图标为吉安娜专属（程序绘制）。
+    /// 海玻璃事件使用角色专属池设置（SEA_GLASS 本地化见 relics.json）。
+    /// </summary>
+    public override CharacterAssetProfile AssetProfile => CharacterAssetProfiles.Merge(
+        CharacterAssetProfiles.Ironclad(),
+        new(
+            VanillaRelicVisualOverrides:
+            [
+                new(CharacterOwnedVanillaRelicModelId.YummyCookie,
+                    new RelicAssetProfile(
+                        "res://assets/relic_icons/yummy_cookie_icon.png",
+                        "res://assets/relic_icons/yummy_cookie_outline.png",
+                        "res://assets/relic_icons/yummy_cookie_big.png"))
+            ]));
+
     public override CharacterGender Gender => CharacterGender.Feminine;
 
     /// <summary>

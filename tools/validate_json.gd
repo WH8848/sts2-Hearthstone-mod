@@ -18,6 +18,10 @@ func _init():
 		"res://jaina/localization/eng/characters.json",
 		"res://jaina/localization/zhs/gameplay_ui.json",
 		"res://jaina/localization/eng/gameplay_ui.json",
+		"res://jaina/localization/zhs/events.json",
+		"res://jaina/localization/eng/events.json",
+		"res://jaina/localization/zhs/ancients.json",
+		"res://jaina/localization/eng/ancients.json",
 	]
 	for p in files:
 		var f := FileAccess.open(p, FileAccess.READ)

@@ -1,14 +1,17 @@
 using Godot;
 using STS2RitsuLib.Interop.AutoRegistration;
+using STS2RitsuLib.Scaffolding.Characters;
 using STS2RitsuLib.Scaffolding.Content;
 
 namespace jaina.Scripts.Character;
 
 /// <summary>
-/// 吉安娜的卡牌池
+/// 吉安娜的卡牌池。
+/// 实现 <see cref="IModColorfulPhilosophersCardPool"/>：色彩哲学家事件会把吉安娜的卡池
+/// 列为候选（本地化见 events.json 的 COLORFUL_PHILOSOPHERS.pages.INITIAL.options.JAINA）。
 /// </summary>
 [RegisterSharedCardPool]
-public class JainaCardPool : TypeListCardPoolModel
+public class JainaCardPool : TypeListCardPoolModel, IModColorfulPhilosophersCardPool
 {
     public override string Title => "jaina";
 
