@@ -19,9 +19,12 @@ namespace jaina.Scripts.Character.Cards;
 public sealed class UnfairGame : ModCardTemplate
 {
     /// <summary>
-    /// 法术牌：攻击牌和技能牌都视为法术牌
+    /// 法术牌：攻击牌和技能牌都视为法术牌。
+    /// 升级后（加大音量）：奥术派系 + 压轴关键词。
     /// </summary>
-    public override IEnumerable<CardKeyword> CanonicalKeywords => IsUpgraded ? [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Finisher] : [jaina.Scripts.Character.Keywords.JainaKeywords.Spell];
+    public override IEnumerable<CardKeyword> CanonicalKeywords => IsUpgraded
+        ? [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Finisher, jaina.Scripts.Character.Keywords.JainaKeywords.Arcane]
+        : [jaina.Scripts.Character.Keywords.JainaKeywords.Spell];
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [];
 

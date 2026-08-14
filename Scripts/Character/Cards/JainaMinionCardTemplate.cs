@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.HoverTips;
 using jaina.Scripts.Character.Keywords;
 using jaina.Scripts.Character.Minions;
 using MinionLib.Minion;
@@ -52,6 +53,21 @@ public abstract class JainaMinionCardTemplate : ModCardTemplate
     /// 会自动将其金色 BBCode 注入到卡面描述之前。
     /// </summary>
     public override IEnumerable<CardKeyword> CanonicalKeywords => [];
+
+    /// <summary>
+    /// 悬停提示：随从卡右侧显示各关键词（战吼/亡语/冲锋等）的详细解释。
+    /// 通过 RitsuLib 补丁后的 HoverTipFactory.FromKeyword 支持自定义关键词。
+    /// </summary>
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips
+    {
+        get
+        {
+            foreach (var keyword in CanonicalKeywords)
+            {
+                yield return HoverTipFactory.FromKeyword(keyword);
+            }
+        }
+    }
 
     /// <summary>
     /// 本卡最近一次打出时召唤的随从生物（艾格文亡语转移光环用）

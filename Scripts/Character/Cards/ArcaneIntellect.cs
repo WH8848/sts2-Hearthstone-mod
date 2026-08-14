@@ -3,8 +3,10 @@ using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
+using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.ValueProps;
 using jaina.Scripts.Character.Minions;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -79,5 +81,21 @@ public sealed class ArcaneIntellect : ModCardTemplate
     {
         // 升级后名称为"时空提速"，效果为抽牌+召唤狂热者
         // 卡牌 ID 不变，通过 titleUpgraded 本地化键显示新名称
+    }
+
+    /// <summary>
+    /// 悬停提示：升级后的时空提速显示狂热者衍生物卡（参考冰冷案例）。
+    /// </summary>
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips
+    {
+        get
+        {
+            if (!IsUpgraded)
+            {
+                yield break;
+            }
+            // 狂热者是时空提速召唤的衍生物（通过 ModelDb 获取已注册的 canonical 卡实例）
+            yield return new CardHoverTip(ModelDb.Card<ZealotCard>());
+        }
     }
 }

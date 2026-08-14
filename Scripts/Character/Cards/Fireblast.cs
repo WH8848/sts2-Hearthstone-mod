@@ -27,7 +27,13 @@ public sealed class Fireblast : ModCardTemplate
     /// </summary>
     public override int MaxUpgradeLevel => int.MaxValue;
 
-    // 英雄技能：不挂"法术牌"关键词，不被任何衍生发现
+    // 英雄技能：不挂"法术牌"关键词，不被任何衍生发现；挂"英雄技能"关键词用于悬停解释
+
+    /// <summary>
+    /// 英雄技能关键词（悬停显示解释；不注入卡面描述）
+    /// </summary>
+    public override IEnumerable<CardKeyword> CanonicalKeywords =>
+        [jaina.Scripts.Character.Keywords.JainaKeywords.HeroPower];
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
