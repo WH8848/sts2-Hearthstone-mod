@@ -41,7 +41,7 @@ public sealed class Fireball : JainaSpellCardTemplate
             : "res://assets/card_art/fireball.png";
 
     public Fireball()
-        : base(1, CardType.Attack, CardRarity.Basic, JainaTargetTypes.EnemyOrOwnMinion, true)
+        : base(1, CardType.Attack, CardRarity.Basic, JainaTargetTypes.AnyTargetable, true)
     {
     }
 

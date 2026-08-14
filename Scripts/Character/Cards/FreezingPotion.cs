@@ -43,7 +43,7 @@ public sealed class FreezingPotion : JainaSpellCardTemplate
         IsUpgraded ? "res://assets/card_art/ray_of_frost.png" : "res://assets/card_art/freezing_potion.png";
 
     public FreezingPotion()
-        : base(0, CardType.Skill, CardRarity.Common, JainaTargetTypes.EnemyOrOwnMinion, true)
+        : base(0, CardType.Skill, CardRarity.Common, JainaTargetTypes.AnyTargetable, true)
     {
     }
 

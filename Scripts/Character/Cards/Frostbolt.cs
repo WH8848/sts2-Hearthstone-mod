@@ -38,7 +38,7 @@ public sealed class Frostbolt : JainaSpellCardTemplate
         IsUpgraded ? "res://assets/card_art/ice_lance.png" : "res://assets/card_art/frostbolt.png";
 
     public Frostbolt()
-        : base(0, CardType.Attack, CardRarity.Common, JainaTargetTypes.EnemyOrOwnMinion, true)
+        : base(0, CardType.Attack, CardRarity.Common, JainaTargetTypes.AnyTargetable, true)
     {
     }
 

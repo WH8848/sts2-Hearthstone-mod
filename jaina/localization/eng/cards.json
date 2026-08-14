@@ -25,7 +25,7 @@
   "JAINA_CARD_FROSTBOLT.description": "[gold]Frost[/gold].\n{IfUpgraded:show:Give a character 1 [gold]Freeze[/gold]. If it already has Freeze, deal 4 damage for each stack of Freeze.|Deal {Damage} damage to a character and give it 1 [gold]Freeze[/gold].}",
   "JAINA_CARD_FREEZING_POTION.title": "Freezing Potion",
   "JAINA_CARD_FREEZING_POTION.titleUpgraded": "Frost Ray",
-  "JAINA_CARD_FREEZING_POTION.description": "[gold]Frost[/gold].\n{IfUpgraded:show:[gold]Freeze[/gold] a character.|[gold]Freeze[/gold] an enemy.}",
+  "JAINA_CARD_FREEZING_POTION.description": "[gold]Frost[/gold].\n{IfUpgraded:show:[gold]Freeze[/gold] a character.|[gold]Freeze[/gold] a character.}",
   "JAINA_CARD_IMP_CARD.title": "Imp",
   "JAINA_CARD_IMP_CARD.description": "Summon a [blue]1/1[/blue] [red]Imp[/red].",
   "JAINA_CARD_SPIRIT_COLLECTOR_CARD.title": "Spirit Collector",

@@ -1,7 +1,6 @@
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MinionLib.Targeting;
 using MinionLib.Targeting.Pets;
-using MinionLib.Targeting.Utilities;
 
 namespace jaina.Scripts.Character.Cards;
 
@@ -11,16 +10,13 @@ namespace jaina.Scripts.Character.Cards;
 public static class JainaTargetTypes
 {
     /// <summary>
-    /// 敌人 + 己方随从（不含施法者本体）。
+    /// 任意活物（含施法者自己、己方随从、敌人）。
     /// 游戏原生 AnyEnemy 只匹配 Side==Enemy 的敌人，而吉安娜的随从是
-    /// 玩家侧宠物（Side==Player, IsPet），所以原生目标类型选不中自己的随从。
-    /// 此类型 = 所有敌人（AnyEnemy）∪ 己方随从（AnyMinion，即 Side==Player、
-    /// IsPet、MinionModel 且 PetOwner==施法者），让火球术/寒冰箭等指向型法术
-    /// 可以把己方随从选为目标（炉石风味），同时不会把施法者本体纳入目标。
+    /// 玩家侧宠物（Side==Player, IsPet），本体也不属于任何敌人。
+    /// 此类型 = 任意存活生物（MinionLib 的 AnyCreature 语义），
+    /// 让火球术/寒冰箭等指向型法术可以把己方随从、甚至自己选为目标（炉石风味）。
     /// </summary>
-    public static readonly TargetType EnemyOrOwnMinion = CustomTargetTypeManager.Register(
-        new UnionTargetType(
-            BuiltInTargetType.From(TargetType.AnyEnemy),
-            new AnyMinionTargetType()),
-        "jaina", nameof(EnemyOrOwnMinion));
+    public static readonly TargetType AnyTargetable = CustomTargetTypeManager.Register(
+        new AnyCreatureTargetType(),
+        "jaina", nameof(AnyTargetable));
 }
