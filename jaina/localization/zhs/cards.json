@@ -87,5 +87,9 @@
   "JAINA_CARD_FROST_NOVA.description": "[gold]冰霜[/gold]。\n{IfUpgraded:show:获得1层[gold]无实体[/gold]。|给予敌方全体4层[gold]冻结[/gold]。}",
   "JAINA_CARD_ARCANE_BARRAGE.title": "奥术弹幕",
   "JAINA_CARD_ARCANE_BARRAGE.titleUpgraded": "奥术涌流",
-  "JAINA_CARD_ARCANE_BARRAGE.description": "[gold]奥术[/gold]。\n{IfUpgraded:show:对一个敌人造成{Damage:diff()}点伤害，再随机对所有敌人造成4次[blue]2[/blue]点伤害。|对一个敌人造成{Damage:diff()}点伤害，再随机对所有敌人造成2次[blue]2[/blue]点伤害。}"
+  "JAINA_CARD_ARCANE_BARRAGE.description": "[gold]奥术[/gold]。\n{IfUpgraded:show:对一个敌人造成{Damage:diff()}点伤害，再随机对所有敌人造成4次[blue]2[/blue]点伤害。|对一个敌人造成{Damage:diff()}点伤害，再随机对所有敌人造成2次[blue]2[/blue]点伤害。}",
+  "JAINA_CARD_FORBIDDEN_SEQUENCE.title": "禁忌序列",
+  "JAINA_CARD_FORBIDDEN_SEQUENCE.description": "{IfUpgraded:show:你发现7张牌后获得奖励：源生之石（打出1次禁忌序列只能获得1次奖励）。|你发现8张牌后获得奖励：源生之石（打出1次禁忌序列只能获得1次奖励）。}",
+  "JAINA_CARD_FORBIDDEN_STONE.title": "源生之石",
+  "JAINA_CARD_FORBIDDEN_STONE.description": "在你发现一张牌后，会自动使用其余选项并失去1点耐久度。耐久度8。耐久度0时能力消失。"
 }
