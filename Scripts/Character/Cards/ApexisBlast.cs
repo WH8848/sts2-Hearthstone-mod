@@ -89,7 +89,7 @@ public sealed class ApexisBlast : JainaSpellCardTemplate
             // 安东尼达斯等光环不响应"召唤出它的这张卡"的施放事件。
             if (summoned?.Monster is jaina.Scripts.Character.Minions.AntonidasMinion ant)
             {
-                ant.SummonSourceCard = this;
+                ant.SetSummonSourceCard(this);
             }
         }
         else

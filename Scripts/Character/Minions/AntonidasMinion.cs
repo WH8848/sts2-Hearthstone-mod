@@ -17,10 +17,19 @@ namespace jaina.Scripts.Character.Minions;
 public sealed class AntonidasMinion : JainaMinionBase
 {
     /// <summary>
-    /// 召唤来源卡（打出随从卡召唤时为随从卡实例）。
+    /// 召唤来源卡（打出随从卡召唤时为随从卡实例；随机召唤等由召唤方显式设置）。
     /// 安东尼达斯的光环不响应"召唤出它的这张卡"的施放事件（炉石：随从进场后才开始计算）。
     /// </summary>
     public MegaCrit.Sts2.Core.Models.CardModel? SummonSourceCard { get; private set; }
+
+    /// <summary>
+    /// 设置召唤来源卡（随机召唤类效果召唤安东尼达斯后由召唤方调用，
+    /// 使该效果卡不触发安东尼达斯光环）
+    /// </summary>
+    public void SetSummonSourceCard(MegaCrit.Sts2.Core.Models.CardModel sourceCard)
+    {
+        SummonSourceCard = sourceCard;
+    }
 
     public override JainaMinionBehaviorMode BehaviorMode => JainaMinionBehaviorMode.Manual;
 
