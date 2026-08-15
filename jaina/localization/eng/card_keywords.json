@@ -26,5 +26,7 @@
   "JAINA_KEYWORD_SHADOW.title": "Shadow",
   "JAINA_KEYWORD_SHADOW.description": "Shadow school spell.",
   "JAINA_KEYWORD_REPLAY.title": "Replay 1",
-  "JAINA_KEYWORD_REPLAY.description": "Replay 1: After this card is played, replay it once (its effect triggers again)."
+  "JAINA_KEYWORD_REPLAY.description": "Replay 1: After this card is played, replay it once (its effect triggers again).",
+  "JAINA_KEYWORD_QUEST.title": "Quest",
+  "JAINA_KEYWORD_QUEST.description": "Quest: Complete the quest to receive a reward."
 }

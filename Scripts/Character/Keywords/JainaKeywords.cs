@@ -29,6 +29,8 @@ namespace jaina.Scripts.Character.Keywords;
 [RegisterOwnedKeyword(nameof(Frost), IconPath = "res://icon.svg")]
 [RegisterOwnedKeyword(nameof(Arcane), IconPath = "res://icon.svg")]
 [RegisterOwnedKeyword(nameof(Shadow), IconPath = "res://icon.svg")]
+// 任务：任务卡专属关键词（不注入卡面描述，仅提供悬停解释）
+[RegisterOwnedKeyword(nameof(Quest), IconPath = "res://icon.svg")]
 public class JainaKeywords
 {
     /// <summary>
@@ -100,4 +102,9 @@ public class JainaKeywords
     /// 暗影派系
     /// </summary>
     public static readonly CardKeyword Shadow = ModContentRegistry.GetQualifiedKeywordId(Entry.ModId, nameof(Shadow)).GetModCardKeyword();
+
+    /// <summary>
+    /// 任务：完成任务可以获得奖励
+    /// </summary>
+    public static readonly CardKeyword Quest = ModContentRegistry.GetQualifiedKeywordId(Entry.ModId, nameof(Quest)).GetModCardKeyword();
 }
