@@ -57,6 +57,28 @@ public static class JainaCastTracker
     private static readonly ConditionalWeakTable<CardModel, object> GeneratedCardInstances = new();
 
     /// <summary>
+    /// 时空扭曲"每局对战限一次"记录（弱引用随战斗结束自动清理）
+    /// </summary>
+    private static readonly ConditionalWeakTable<ICombatState, object> TimeWarpUsed = new();
+
+    /// <summary>
+    /// 本局对战是否已使用过时空扭曲（每局对战限一次）
+    /// </summary>
+    public static bool IsTimeWarpUsedThisCombat(ICombatState combatState)
+    {
+        return TimeWarpUsed.TryGetValue(combatState, out _);
+    }
+
+    /// <summary>
+    /// 标记本局对战已使用过时空扭曲
+    /// </summary>
+    public static void MarkTimeWarpUsed(ICombatState combatState)
+    {
+        TimeWarpUsed.Remove(combatState);
+        TimeWarpUsed.Add(combatState, null!);
+    }
+
+    /// <summary>
     /// 卡牌类型 → 法术派系（未列出的攻击/技能牌无派系）。
     /// 注意：火焰冲击是英雄技能，不属于法术牌，不计入派系。
     /// </summary>

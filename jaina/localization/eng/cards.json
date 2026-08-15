@@ -91,5 +91,11 @@
   "JAINA_CARD_FORBIDDEN_SEQUENCE.title": "Forbidden Sequence",
   "JAINA_CARD_FORBIDDEN_SEQUENCE.description": "{IfUpgraded:show:After you Discover 7 cards, gain a reward: Forbidden Stone (each play of Forbidden Sequence grants the reward once).|After you Discover 8 cards, gain a reward: Forbidden Stone (each play of Forbidden Sequence grants the reward once).}",
   "JAINA_CARD_FORBIDDEN_STONE.title": "Forbidden Stone",
-  "JAINA_CARD_FORBIDDEN_STONE.description": "After you Discover a card, automatically play the other options and lose 1 Durability. Durability 8. When Durability reaches 0, this ability is lost."
+  "JAINA_CARD_FORBIDDEN_STONE.description": "After you Discover a card, automatically play the other options and lose 1 Durability. Durability 8. When Durability reaches 0, this ability is lost.",
+  "JAINA_CARD_OPEN_TIME_GATE.title": "Open the Time Gate",
+  "JAINA_CARD_OPEN_TIME_GATE.titleUpgraded": "Open the Time Gate+",
+  "JAINA_CARD_OPEN_TIME_GATE.description": "{IfUpgraded:show:Cast 8 Spell cards from outside your deck. Gain a reward: Time Warp+ (each play of Open the Time Gate+ grants the reward once).|Cast 8 Spell cards from outside your deck. Gain a reward: Time Warp (each play of Open the Time Gate grants the reward once).}",
+  "JAINA_CARD_TIME_WARP.title": "Time Warp",
+  "JAINA_CARD_TIME_WARP.titleUpgraded": "Time Warp+",
+  "JAINA_CARD_TIME_WARP.description": "{IfUpgraded:show:Take an extra turn.|Take an extra turn. (Once per combat)}"
 }
