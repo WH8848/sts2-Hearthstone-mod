@@ -105,6 +105,22 @@ public abstract class JainaMinionCardTemplate : ModCardTemplate, MinionLib.Utili
     }
 
     /// <summary>
+    /// 满场（7 个随从）时随从牌不可打出：
+    /// UI 显示不可用，拖出尝试会被游戏弹回（不消耗卡），并弹出无法打出的提示气泡。
+    /// </summary>
+    protected override bool IsPlayable
+    {
+        get
+        {
+            if (base.Owner == null)
+            {
+                return true;
+            }
+            return JainaMinionPool.GetCurrentMinionCount(base.Owner) < JainaMinionPool.MaxMinions;
+        }
+    }
+
+    /// <summary>
     /// 打出：召唤随从生物站场。随从由 MinionLib 管理，回合结束自动攻击敌人。
     /// source 传本卡实例——随从 OnSummon 据此判断"从手牌打出"，触发战吼
     /// （随机召唤/效果召唤不传 source，不触发战吼，炉石规则）。
