@@ -19,10 +19,10 @@ namespace jaina.Scripts.Character.Cards;
 public sealed class TimeWarpCard : ModCardTemplate
 {
     /// <summary>
-    /// 奥术派系（悬停解释）
+    /// 奥术派系（悬停解释）+ 消耗：打出后从本场战斗移除
     /// </summary>
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
-        [jaina.Scripts.Character.Keywords.JainaKeywords.Arcane];
+        [jaina.Scripts.Character.Keywords.JainaKeywords.Arcane, CardKeyword.Exhaust];
 
     public override string CustomPortraitPath => "res://assets/card_art/time_warp.png";
 
