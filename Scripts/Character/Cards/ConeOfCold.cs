@@ -14,7 +14,7 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
-/// 冰锥术 (Cone of Cold) - 2费攻击（普通，冰霜派系）。
+/// 冰锥术 (Cone of Cold) - 1费攻击（普通，冰霜派系）。
 /// 造成 3 次 1 点伤害，随机分配到所有敌人身上，每次伤害给予敌人 1 层冻结。
 /// 升级后变为"暴风雪 (Blizzard)"：造成 7 次 2 点伤害，随机分配到所有敌人身上，每次伤害给予 1 层冻结。
 /// </summary>
@@ -39,7 +39,7 @@ public sealed class ConeOfCold : JainaSpellCardTemplate
         IsUpgraded ? "res://assets/card_art/blizzard.png" : "res://assets/card_art/cone_of_cold.png";
 
     public ConeOfCold()
-        : base(2, CardType.Attack, CardRarity.Common, TargetType.None, true)
+        : base(1, CardType.Attack, CardRarity.Common, TargetType.None, true)
     {
     }
 
@@ -95,7 +95,7 @@ public sealed class ConeOfCold : JainaSpellCardTemplate
 
     protected override void OnUpgrade()
     {
-        // 升级为暴风雪：伤害 1 -> 2（次数 3 -> 7 由 HitCount 处理；费用不变 2 费）
+        // 升级为暴风雪：伤害 1 -> 2（次数 3 -> 7 由 HitCount 处理；费用不变 1 费）
         base.DynamicVars.Damage.BaseValue = 2m;
     }
 }
