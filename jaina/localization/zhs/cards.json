@@ -89,7 +89,7 @@
   "JAINA_CARD_ARCANE_BARRAGE.titleUpgraded": "奥术涌流",
   "JAINA_CARD_ARCANE_BARRAGE.description": "[gold]奥术[/gold]。\n对一个敌人造成{Damage:diff()}点伤害，再随机对所有敌人造成{IfUpgraded:show:4|2}次[blue]2[/blue]点伤害。",
   "JAINA_CARD_FORBIDDEN_SEQUENCE_CARD.title": "禁忌序列",
-  "JAINA_CARD_FORBIDDEN_SEQUENCE_CARD.description": "你发现{IfUpgraded:show:7|8}张牌后获得奖励：源生之石。",
+  "JAINA_CARD_FORBIDDEN_SEQUENCE_CARD.description": "[gold]任务[/gold]：你发现{IfUpgraded:show:7|8}张牌。\n[gold]奖励：源生之石[/gold]。",
   "JAINA_CARD_FORBIDDEN_STONE_CARD.title": "源生之石",
   "JAINA_CARD_FORBIDDEN_STONE_CARD.description": "在你发现一张牌后，会自动使用其余选项并失去1点耐久度。耐久度8。耐久度0时能力消失。",
   "JAINA_CARD_OPEN_TIME_GATE_CARD.title": "打开时空之门",
