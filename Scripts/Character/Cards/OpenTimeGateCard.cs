@@ -3,7 +3,9 @@ using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
+using MegaCrit.Sts2.Core.Models;
 using jaina.Scripts.Character.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -25,6 +27,17 @@ public sealed class OpenTimeGateCard : ModCardTemplate
     public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Innate];
 
     public override string CustomPortraitPath => "res://assets/card_art/open_time_gate.png";
+
+    /// <summary>
+    /// 悬停提示：显示奖励衍生物"时空扭曲"卡（参考冰冷案例/时空提速）
+    /// </summary>
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips
+    {
+        get
+        {
+            yield return new CardHoverTip(ModelDb.Card<TimeWarpCard>());
+        }
+    }
 
     public OpenTimeGateCard()
         : base(0, CardType.Power, CardRarity.Rare, TargetType.Self, true)

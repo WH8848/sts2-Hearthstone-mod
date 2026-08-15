@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using jaina.Scripts.Character.Powers;
@@ -26,6 +27,17 @@ public sealed class ForbiddenSequenceCard : ModCardTemplate
     public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Innate];
 
     public override string CustomPortraitPath => "res://assets/card_art/forbidden_sequence.png";
+
+    /// <summary>
+    /// 悬停提示：显示奖励衍生物"源生之石"卡（参考冰冷案例/时空提速）
+    /// </summary>
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips
+    {
+        get
+        {
+            yield return new CardHoverTip(ModelDb.Card<ForbiddenStoneCard>());
+        }
+    }
 
     public ForbiddenSequenceCard()
         : base(0, CardType.Power, CardRarity.Rare, TargetType.Self, true)
