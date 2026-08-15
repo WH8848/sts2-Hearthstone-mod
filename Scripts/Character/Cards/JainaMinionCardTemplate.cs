@@ -1,13 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Godot;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using jaina.Scripts.Character.Keywords;
 using jaina.Scripts.Character.Minions;
 using MinionLib.Minion;
-using MinionLib.Utilities.CustomGlowColor;
 using STS2RitsuLib.Scaffolding.Content;
 
 namespace jaina.Scripts.Character.Cards;
@@ -18,20 +16,11 @@ namespace jaina.Scripts.Character.Cards;
 /// 卡面通过关键词（亡语/冲锋）自动注入文本，描述中展示随从的攻击/生命属性。
 /// 卡牌类型为动态注册的"随从"类型（JainaCardTypes.Minion），
 /// 显示文本由 ToLocString patch 提供，卡框/边框由 FramePath 等 patch 映射为技能样式。
-/// 实现 MinionLib 自定义发光：本局对战内衍生出来的随从卡（如小精灵/幻觉药水复制）
-/// 在手牌中显示浓天蓝色发光标记（仅手牌，牌库查看不显示）。
+/// 手牌发光（仅对局内衍生卡显示浓天蓝）由 JainaHandGlowPatch 统一处理。
 /// </summary>
 public abstract class JainaMinionCardTemplate : ModCardTemplate,
-    MinionLib.Utilities.DescriptionPostProcess.IDescriptionPostProcessCard,
-    ICustomGlowColorCard
+    MinionLib.Utilities.DescriptionPostProcess.IDescriptionPostProcessCard
 {
-    /// <summary>
-    /// 手牌发光颜色：仅本局对战内衍生出来的随从卡显示（浓天蓝色，与法术一致）
-    /// </summary>
-    public virtual Color? GlowColor =>
-        jaina.Scripts.Character.JainaCastTracker.IsGeneratedCard(this)
-            ? new Color(0f, 0.75f, 1f)
-            : null;
     /// <summary>
     /// 该随从牌召唤的随从生物类型
     /// </summary>

@@ -37,11 +37,6 @@ public sealed class FireblastAncient : JainaSpellCardTemplate
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
         [JainaKeywords.HeroPower, JainaKeywords.Replay];
 
-    /// <summary>
-    /// 英雄技能不是法术牌：不显示法术蓝光
-    /// </summary>
-    public override Color? GlowColor => null;
-
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
         new DamageVar(1m, ValueProp.Move)

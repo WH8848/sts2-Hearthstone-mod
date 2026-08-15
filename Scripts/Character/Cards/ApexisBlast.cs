@@ -84,7 +84,13 @@ public sealed class ApexisBlast : JainaSpellCardTemplate
             // 火焰之地传送门：随机召唤一个 2 费随从
             // 注意：必须 await —— 随机召唤消耗游戏同步 RNG（RunState.Rng），
             // fire-and-forget 会导致两端 RNG 消耗时序错位，联机状态分歧断联。
-            await JainaMinionPool.SummonRandomMinionOfCost(choiceContext, base.Owner, 2);
+            var summoned = await JainaMinionPool.SummonRandomMinionOfCost(choiceContext, base.Owner, 2);
+            // 记录召唤来源（不传 source 避免触发战吼）：随从进场后才开始计算——
+            // 安东尼达斯等光环不响应"召唤出它的这张卡"的施放事件。
+            if (summoned?.Monster is jaina.Scripts.Character.Minions.AntonidasMinion ant)
+            {
+                ant.SummonSourceCard = this;
+            }
         }
         else
         {
