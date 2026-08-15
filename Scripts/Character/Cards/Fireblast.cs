@@ -28,14 +28,14 @@ public sealed class Fireblast : JainaSpellCardTemplate
     /// </summary>
     public override int MaxUpgradeLevel => int.MaxValue;
 
-    // 英雄技能：也视为法术牌（法术牌关键词，可被法术相关效果/关键词追踪）；
+    // 英雄技能：不挂"法术牌"关键词，不被视为法术牌（不触发法术相关效果）；
     // 挂"英雄技能"关键词用于悬停解释
 
     /// <summary>
-    /// 法术牌 + 英雄技能关键词（悬停显示解释；不注入卡面描述）
+    /// 英雄技能关键词（悬停显示解释；不注入卡面描述）
     /// </summary>
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
-        [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.HeroPower];
+        [jaina.Scripts.Character.Keywords.JainaKeywords.HeroPower];
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [

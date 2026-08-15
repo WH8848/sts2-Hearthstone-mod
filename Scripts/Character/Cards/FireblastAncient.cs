@@ -31,10 +31,10 @@ public sealed class FireblastAncient : JainaSpellCardTemplate
     public override int MaxUpgradeLevel => int.MaxValue;
 
     /// <summary>
-    /// 法术牌 + 英雄技能 + 重放（悬停解释）
+    /// 英雄技能 + 重放（悬停解释）。英雄技能不视为法术牌（不挂法术牌关键词）。
     /// </summary>
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
-        [JainaKeywords.Spell, JainaKeywords.HeroPower, JainaKeywords.Replay];
+        [JainaKeywords.HeroPower, JainaKeywords.Replay];
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [

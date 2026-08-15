@@ -28,7 +28,7 @@ public sealed class MillhousePower : PowerModel
         {
             return;
         }
-        // 仅法术牌触发（挂"法术牌"关键词；英雄技能同样视为法术牌）
+        // 仅法术牌触发（挂"法术牌"关键词；英雄技能不是法术牌，不触发）
         if (!cardPlay.Card.Keywords.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Spell))
         {
             return;

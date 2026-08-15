@@ -47,11 +47,17 @@ public class Entry
         {
             // 注册金色手牌发光规则（额外法术发光标记）：Spell 关键词卡在手牌中金色发光。
             // 必须在内容注册冻结（ModContentRegistry.IsFrozen）前注册。
+            // 英雄技能（火焰冲击/二级火焰冲击）不是法术牌，不注册发光。
             var rules = STS2RitsuLib.Scaffolding.Cards.HandGlow.ModCardHandGlowRules.Gold(_ => true);
             var spellBase = typeof(jaina.Scripts.Character.Cards.JainaSpellCardTemplate);
             foreach (var type in assembly.GetTypes())
             {
                 if (type.IsAbstract || type.IsInterface || type.ContainsGenericParameters)
+                {
+                    continue;
+                }
+                if (type == typeof(jaina.Scripts.Character.Cards.Fireblast) ||
+                    type == typeof(jaina.Scripts.Character.Cards.FireblastAncient))
                 {
                     continue;
                 }
