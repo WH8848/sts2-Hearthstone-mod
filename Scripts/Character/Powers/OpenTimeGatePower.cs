@@ -51,13 +51,18 @@ public sealed class OpenTimeGatePower : PowerModel, IModPowerAssetOverrides
         {
             return;
         }
-        // 只计数"牌库之外的法术牌"（本局生成过的攻击/技能牌，含实例标记或类型记录）
+        // 只计数"牌库之外的法术牌"（本局生成过的攻击/技能牌，含实例标记或类型记录），
+        // 且必须为玩家手打——不计数随从自动打出的（罗曼斯重放等 AutoPlay 标记的）
         var card = cardPlay.Card;
         if (card.Type != CardType.Attack && card.Type != CardType.Skill)
         {
             return;
         }
         if (!jaina.Scripts.Character.JainaCastTracker.IsOutsideDeckCard(card))
+        {
+            return;
+        }
+        if (RommathReplayTracker.IsMarked(card))
         {
             return;
         }
