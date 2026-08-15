@@ -97,8 +97,9 @@ public sealed class ArcaneBarrage : JainaSpellCardTemplate
             {
                 break;
             }
-            // Move 标记：每段伤害都触发振翅（Flutter）层数减少（IsPoweredAttack）
-            await CreatureCmd.Damage(choiceContext, [randomTarget], 2m, ValueProp.Move, base.Owner.Creature);
+            // Move 标记：每段伤害都触发振翅（Flutter）层数减少（IsPoweredAttack）；
+            // 传 cardSource/cardPlay（蜷身等依赖 cardSource 的敌方 Power 才能触发）
+            await CreatureCmd.Damage(choiceContext, [randomTarget], 2m, ValueProp.Move, base.Owner.Creature, this, cardPlay);
         }
     }
 

@@ -21,7 +21,11 @@ public abstract class JainaSpellCardTemplate : ModCardTemplate, ICustomGlowColor
     }
 
     /// <summary>
-    /// 手牌发光颜色：法术蓝（英雄技能等子类可覆写为 null 取消发光）
+    /// 手牌发光颜色：仅本局对战内衍生出来的卡（牌库之外的卡）显示，
+    /// 浓天蓝色（DeepSkyBlue 系）。英雄技能等子类可覆写为 null 取消发光。
     /// </summary>
-    public virtual Color? GlowColor => new Color(0.35f, 0.65f, 1f);
+    public virtual Color? GlowColor =>
+        jaina.Scripts.Character.JainaCastTracker.IsGeneratedCard(this)
+            ? new Color(0f, 0.75f, 1f)
+            : null;
 }

@@ -52,6 +52,11 @@ public static class JainaCastTracker
     private static readonly ConditionalWeakTable<ICombatState, CombatRecord> Records = new();
 
     /// <summary>
+    /// 本局对战内衍生出来的卡牌实例（法术蓝光判定用；弱引用随卡回收自动清理）
+    /// </summary>
+    private static readonly ConditionalWeakTable<CardModel, object> GeneratedCardInstances = new();
+
+    /// <summary>
     /// 卡牌类型 → 法术派系（未列出的攻击/技能牌无派系）。
     /// 注意：火焰冲击是英雄技能，不属于法术牌，不计入派系。
     /// </summary>
@@ -124,6 +129,17 @@ public static class JainaCastTracker
         {
             rec.GeneratedUpgradeLevels[type] = card.CurrentUpgradeLevel;
         }
+        // 实例级标记（法术蓝光用）：这张卡实例是对局内衍生出来的
+        GeneratedCardInstances.Remove(card);
+        GeneratedCardInstances.Add(card, null!);
+    }
+
+    /// <summary>
+    /// 该卡实例是否为本局对战内衍生出来的（牌库之外的卡）
+    /// </summary>
+    public static bool IsGeneratedCard(CardModel card)
+    {
+        return GeneratedCardInstances.TryGetValue(card, out _);
     }
 
     /// <summary>

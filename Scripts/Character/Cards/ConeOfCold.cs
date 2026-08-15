@@ -86,8 +86,9 @@ public sealed class ConeOfCold : JainaSpellCardTemplate
                 break;
             }
             // 每次伤害都会给予敌人 1 层冻结
-            // 攻击伤害：吃力量加成（与原版多次攻击牌一致，每次命中都计算力量）
-            await CreatureCmd.Damage(choiceContext, [target], base.DynamicVars.Damage.BaseValue, ValueProp.Move, base.Owner.Creature);
+            // 攻击伤害：吃力量加成（与原版多次攻击牌一致，每次命中都计算力量）；
+            // 传 cardSource/cardPlay（蜷身等依赖 cardSource 的敌方 Power 才能触发）
+            await CreatureCmd.Damage(choiceContext, [target], base.DynamicVars.Damage.BaseValue, ValueProp.Move, base.Owner.Creature, this, cardPlay);
             await PowerCmd.Apply<FreezePower>(choiceContext, [target], 1m, base.Owner.Creature, this);
         }
     }
