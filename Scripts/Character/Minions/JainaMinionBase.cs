@@ -250,6 +250,9 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
     /// 场景切换（回主菜单/结束战斗）时父节点可能正在增删子节点，
     /// 此时 QueueFreeSafely 内的同步 RemoveChild 会报
     /// "Parent node is busy adding/removing children" —— 延迟到帧末安全清理。
+    /// 注意：NCard 是对象池化的（NCard.Create 走 NodePool），必须先恢复本方法
+    /// 对卡节点设置过的所有值（ZIndex=500/Scale=0.72/Position），否则节点回池后
+    /// 残留状态会污染复用的卡——正是"图层忽高忽低/别的牌被改了"的根因。
     /// </summary>
     private void HideMinionCard()
     {
@@ -258,6 +261,13 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
         if (node == null || !GodotObject.IsInstanceValid(node))
         {
             return;
+        }
+        // 恢复对池化 NCard 的修改（ShowMinionCard 设置过：ZIndex=500/Scale=0.72/Position）
+        if (node is Control cardControl)
+        {
+            cardControl.ZIndex = 0;
+            cardControl.Scale = Vector2.One;
+            cardControl.Position = Vector2.Zero;
         }
         // 延迟清理：等当前帧的节点增删完成后移除，避免 busy 报错
         Callable.From(() =>
