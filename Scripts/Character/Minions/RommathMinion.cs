@@ -73,8 +73,10 @@ public sealed class RommathMinion : JainaMinionBase
                 }
             }
             // AutoPlay：免费自动打出（不消耗能量），随机目标语义已由上方处理。
-            // 标记为"罗曼斯重放卡"：其对自己造成的伤害不触发随从军势挡伤。
+            // 标记为"罗曼斯重放卡"：其对自己造成的伤害不触发随从军势挡伤；
+            // 同时标记为牌库之外（打开时空之门等计数"牌库外的法术"施放）。
             jaina.Scripts.Character.Powers.RommathReplayTracker.Mark(card);
+            jaina.Scripts.Character.JainaCastTracker.MarkGenerated(card);
             await CardCmd.AutoPlay(choiceContext, card, target);
         }
     }

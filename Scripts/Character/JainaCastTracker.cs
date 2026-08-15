@@ -168,6 +168,28 @@ public static class JainaCastTracker
     }
 
     /// <summary>
+    /// 该攻击/技能牌是否"牌库之外"（本局对战内生成过的类型，含实例标记或类型记录）。
+    /// 实例标记覆盖生成时记录过的卡；类型记录覆盖罗曼斯重放等漏标实例的卡。
+    /// </summary>
+    public static bool IsOutsideDeckCard(CardModel card)
+    {
+        if (card.Type != CardType.Attack && card.Type != CardType.Skill)
+        {
+            return false;
+        }
+        if (GeneratedCardInstances.TryGetValue(card, out _))
+        {
+            return true;
+        }
+        var state = card.CombatState ?? card.Owner?.Creature.CombatState;
+        if (state == null)
+        {
+            return false;
+        }
+        return For(state).GeneratedAttackSkills.Contains(card.GetType());
+    }
+
+    /// <summary>
     /// 按记录的最高升级级别创建一张牌的实例（倒带/罗曼斯复制用）：
     /// 用 canonical 模板创建后逐级升级，恢复"清凉的泉水"这类升级形态。
     /// 找不到模板返回 null。
