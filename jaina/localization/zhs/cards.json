@@ -94,7 +94,7 @@
   "JAINA_CARD_FORBIDDEN_STONE_CARD.description": "在你发现一张牌后，会自动使用其余选项并失去1点耐久度。耐久度8。耐久度0时能力消失。",
   "JAINA_CARD_OPEN_TIME_GATE_CARD.title": "打开时空之门",
   "JAINA_CARD_OPEN_TIME_GATE_CARD.titleUpgraded": "打开时空之门+",
-  "JAINA_CARD_OPEN_TIME_GATE_CARD.description": "{IfUpgraded:show:施放8个你的牌库之外的法术牌。\n[gold]奖励：时空扭曲+[/gold]。|施放8个你的牌库之外的法术牌。\n[gold]奖励：时空扭曲[/gold]。}",
+  "JAINA_CARD_OPEN_TIME_GATE_CARD.description": "{IfUpgraded:show:[gold]任务[/gold]：施放8个你的牌库之外的法术牌。\n[gold]奖励：时空扭曲+[/gold]。|[gold]任务[/gold]：施放8个你的牌库之外的法术牌。\n[gold]奖励：时空扭曲[/gold]。}",
   "JAINA_CARD_TIME_WARP_CARD.title": "时空扭曲",
   "JAINA_CARD_TIME_WARP_CARD.titleUpgraded": "时空扭曲+",
   "JAINA_CARD_TIME_WARP_CARD.description": "{IfUpgraded:show:获得一个额外回合。|获得一个额外回合。（每局对战限一次）}"

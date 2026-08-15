@@ -94,7 +94,7 @@
   "JAINA_CARD_FORBIDDEN_STONE_CARD.description": "After you Discover a card, automatically play the other options and lose 1 Durability. Durability 8. When Durability reaches 0, this ability is lost.",
   "JAINA_CARD_OPEN_TIME_GATE_CARD.title": "Open the Time Gate",
   "JAINA_CARD_OPEN_TIME_GATE_CARD.titleUpgraded": "Open the Time Gate+",
-  "JAINA_CARD_OPEN_TIME_GATE_CARD.description": "{IfUpgraded:show:Cast 8 Spell cards from outside your deck.\n[gold]Reward: Time Warp+[/gold].|Cast 8 Spell cards from outside your deck.\n[gold]Reward: Time Warp[/gold].}",
+  "JAINA_CARD_OPEN_TIME_GATE_CARD.description": "{IfUpgraded:show:[gold]Quest[/gold]: Cast 8 Spell cards from outside your deck.\n[gold]Reward: Time Warp+[/gold].|[gold]Quest[/gold]: Cast 8 Spell cards from outside your deck.\n[gold]Reward: Time Warp[/gold].}",
   "JAINA_CARD_TIME_WARP_CARD.title": "Time Warp",
   "JAINA_CARD_TIME_WARP_CARD.titleUpgraded": "Time Warp+",
   "JAINA_CARD_TIME_WARP_CARD.description": "{IfUpgraded:show:Take an extra turn.|Take an extra turn. (Once per combat)}"
