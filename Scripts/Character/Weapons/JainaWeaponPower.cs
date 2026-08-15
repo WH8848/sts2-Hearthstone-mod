@@ -76,8 +76,8 @@ public sealed class JainaWeaponPower : PowerModel, IModPowerAssetOverrides
     protected override bool IsVisibleInternal => true;
 
     /// <summary>
-    /// 玩家回合开始：如果本回合还没有攻击行动点，则赋予 1 次（每回合最多一次，
-    /// 无论切换多少张武器——切换武器不重置攻击次数）。
+    /// 玩家回合开始：耐久已耗尽时兜底移除（正常流程在攻击后即移除）。
+    /// 攻击行动点是角色每回合固有的（JainaWeaponAttackAction 自己每回合重置），与武器无关。
     /// </summary>
     public override async Task BeforeSideTurnStart(PlayerChoiceContext choiceContext,
         MegaCrit.Sts2.Core.Combat.CombatSide side, IReadOnlyList<Creature> participants,
@@ -92,9 +92,7 @@ public sealed class JainaWeaponPower : PowerModel, IModPowerAssetOverrides
         {
             // 耐久已耗尽（理论上挂载时即移除，这里兜底）
             await PowerCmd.Remove(this);
-            return;
         }
-        await JainaWeaponSlot.EnsureAttackAction(choiceContext, player);
     }
 
     /// <summary>

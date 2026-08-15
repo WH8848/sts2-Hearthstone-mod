@@ -41,8 +41,34 @@ public class Entry
         // 注册吉安娜随从布局：将随从摆放在玩家（充能球区域）周围
         MinionLayoutManager.Register(new OrbStyleMinionLayout(), priority: 100);
 
+        // 武器系统：战斗开始时给玩家挂载角色固有的 1 点攻击行动点（与武器无关，
+        // 武器只赋予攻击力；攻击力为 0 时不可行动）
+        MegaCrit.Sts2.Core.Combat.CombatManager.Instance.CombatBegan += OnCombatBeganForWeaponAction;
+
         // 【临时诊断】游戏就绪后打印 JainaCardPool 实际内容（排查寒冰箭不在商店候选问题）
         RegisterMerchantDiag();
+    }
+
+    /// <summary>
+    /// 战斗开始：给本地玩家挂载角色固有的武器攻击行动点（每回合 1 点，幂等）
+    /// </summary>
+    private static void OnCombatBeganForWeaponAction(MegaCrit.Sts2.Core.Combat.CombatState state)
+    {
+        try
+        {
+            var me = MegaCrit.Sts2.Core.Context.LocalContext.GetMe(state);
+            if (me == null)
+            {
+                return;
+            }
+            var ctx = new MegaCrit.Sts2.Core.GameActions.Multiplayer.ThrowingPlayerChoiceContext();
+            _ = MegaCrit.Sts2.Core.Helpers.TaskHelper.RunSafely(
+                jaina.Scripts.Character.Weapons.JainaWeaponSlot.EnsureAttackAction(ctx, me));
+        }
+        catch (System.Exception ex)
+        {
+            Logger.Info($"[JainaWeapon] combat-began attack action failed: {ex}");
+        }
     }
 
     /// <summary>

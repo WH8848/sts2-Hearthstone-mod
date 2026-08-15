@@ -20,6 +20,8 @@ public static class JainaWeaponSlot
     /// <summary>
     /// 装备武器：顶替旧的武器能力（若有），挂载新武器能力。
     /// 在武器能力卡的 OnPlay 中调用。
+    /// 注意：攻击行动点是角色每回合固有的 1 点（与武器无关，见 Entry 战斗开始挂载），
+    /// 武器只赋予攻击力，这里不涉及行动点。
     /// </summary>
     /// <param name="attack">武器攻击力</param>
     /// <param name="durability">武器初始耐久度</param>
@@ -42,15 +44,12 @@ public static class JainaWeaponSlot
         var power = (JainaWeaponPower)ModelDb.Power<JainaWeaponPower>().ToMutable();
         power.SetWeaponStats(attack);
         await PowerCmd.Apply(choiceContext, power, player.Creature, durability, player.Creature, weaponCard);
-
-        // 赋予本回合攻击行动点（幂等：已有则不重复赋予，保证每回合最多一次）
-        await EnsureAttackAction(choiceContext, player);
     }
 
     /// <summary>
-    /// 确保角色拥有武器攻击行动点（每回合 1 次）。
-    /// 幂等：已有行动点（无论剩余几次）则不动——切换武器不会重置攻击次数，
-    /// 因此"一回合只能攻击一次，无论切换多少张武器"。
+    /// 确保角色拥有武器攻击行动点（角色固有的 1 点攻击行动点，战斗开始时挂载）。
+    /// 幂等：已有行动点则不动。行动点与武器无关——未装备武器时攻击力为 0，不可行动
+    /// （由 JainaWeaponAttackAction.CanAct 检查）。
     /// </summary>
     public static async Task EnsureAttackAction(PlayerChoiceContext choiceContext, Player player)
     {
@@ -63,16 +62,12 @@ public static class JainaWeaponSlot
         {
             return;
         }
-        // 没有武器则不赋予行动点
-        if (!creature.Powers.OfType<JainaWeaponPower>().Any())
-        {
-            return;
-        }
         await PowerCmd.Apply<JainaWeaponAttackAction>(choiceContext, creature, 1m, creature, null);
     }
 
     /// <summary>
-    /// 角色用武器攻击一次后：武器耐久度 -1；归零时武器能力消失（连同攻击行动点）。
+    /// 角色用武器攻击一次后：武器耐久度 -1；归零时武器能力消失。
+    /// 攻击行动点保留（角色固有的行动点，武器只赋予攻击力；攻击力归 0 后 CanAct 会阻止行动）。
     /// 由 <see cref="JainaWeaponAttackAction.OnAct"/> 调用。
     /// </summary>
     public static async Task ConsumeDurability(PlayerChoiceContext choiceContext, Creature owner,
@@ -84,13 +79,8 @@ public static class JainaWeaponSlot
         }
         if (weapon.Amount <= 1)
         {
-            // 耐久归零：武器能力消失，同时收回未用的攻击行动点
+            // 耐久归零：武器能力消失（行动点保留，但攻击力为 0 不可行动）
             await PowerCmd.Remove(weapon);
-            var action = owner.Powers.OfType<JainaWeaponAttackAction>().FirstOrDefault();
-            if (action != null)
-            {
-                await PowerCmd.Remove(action);
-            }
             return;
         }
         await PowerCmd.Decrement(weapon);
