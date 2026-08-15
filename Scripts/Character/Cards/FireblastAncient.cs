@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Godot;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -35,6 +36,11 @@ public sealed class FireblastAncient : JainaSpellCardTemplate
     /// </summary>
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
         [JainaKeywords.HeroPower, JainaKeywords.Replay];
+
+    /// <summary>
+    /// 英雄技能不是法术牌：不显示法术蓝光
+    /// </summary>
+    public override Color? GlowColor => null;
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [

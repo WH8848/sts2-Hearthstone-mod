@@ -29,6 +29,18 @@ public sealed class AntonidasPower : PowerModel
         {
             return;
         }
+        // 英雄技能（火焰冲击等）不是法术/攻击牌意义上的"施放"，不触发
+        if (cardPlay.Card.Keywords.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.HeroPower))
+        {
+            return;
+        }
+        // 不响应"召唤出安东尼达斯的这张卡"的施放事件
+        // （如火焰之地传送门召唤安东尼达斯时，这张传送门本身不触发其效果——炉石：随从进场后才开始计算）
+        if (Owner?.Monster is jaina.Scripts.Character.Minions.AntonidasMinion ant &&
+            ant.SummonSourceCard != null && ReferenceEquals(cardPlay.Card, ant.SummonSourceCard))
+        {
+            return;
+        }
         var type = cardPlay.Card.Type;
         if (type != CardType.Attack && type != CardType.Skill)
         {

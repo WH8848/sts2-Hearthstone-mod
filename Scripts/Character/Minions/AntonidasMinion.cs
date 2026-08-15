@@ -16,6 +16,12 @@ namespace jaina.Scripts.Character.Minions;
 [RegisterMonster]
 public sealed class AntonidasMinion : JainaMinionBase
 {
+    /// <summary>
+    /// 召唤来源卡（打出随从卡召唤时为随从卡实例）。
+    /// 安东尼达斯的光环不响应"召唤出它的这张卡"的施放事件（炉石：随从进场后才开始计算）。
+    /// </summary>
+    public MegaCrit.Sts2.Core.Models.CardModel? SummonSourceCard { get; private set; }
+
     public override JainaMinionBehaviorMode BehaviorMode => JainaMinionBehaviorMode.Manual;
 
     public override int MinInitialHp => 7;
@@ -31,6 +37,7 @@ public sealed class AntonidasMinion : JainaMinionBase
     {
         await base.OnSummon(choiceContext, owner, options);
 
+        SummonSourceCard = options.Source as MegaCrit.Sts2.Core.Models.CardModel;
         await PowerCmd.Apply<AntonidasPower>(choiceContext, [Creature], 1m, Creature, options.Source);
     }
 }

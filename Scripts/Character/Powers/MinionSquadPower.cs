@@ -49,6 +49,11 @@ public sealed class MinionSquadPower : PowerModel, IModPowerAssetOverrides
         {
             return amount;
         }
+        // 罗曼斯重放的额外法术对自己造成的伤害不承担（直接生效）
+        if (cardSource != null && RommathReplayTracker.IsMarked(cardSource))
+        {
+            return amount;
+        }
 
         // 获取吉安娜的所有存活随从（生物随从）
         var player = base.Owner.Player;
