@@ -91,7 +91,7 @@
   "JAINA_CARD_FORBIDDEN_SEQUENCE_CARD.title": "Forbidden Sequence",
   "JAINA_CARD_FORBIDDEN_SEQUENCE_CARD.description": "[gold]Quest[/gold]: After you Discover {IfUpgraded:show:7|8} cards.\n[gold]Reward: Forbidden Stone[/gold].",
   "JAINA_CARD_FORBIDDEN_STONE_CARD.title": "Forbidden Stone",
-  "JAINA_CARD_FORBIDDEN_STONE_CARD.description": "After you Discover a card, automatically play the other options and lose 1 Durability. Durability 8. When Durability reaches 0, this ability is lost.",
+  "JAINA_CARD_FORBIDDEN_STONE_CARD.description": "After you Discover a card, automatically play the other options and lose 1 [gold]Durability[/gold]. [gold]Durability[/gold] 8. When [gold]Durability[/gold] reaches 0, this card is consumed.",
   "JAINA_CARD_OPEN_TIME_GATE_CARD.title": "Open the Time Gate",
   "JAINA_CARD_OPEN_TIME_GATE_CARD.titleUpgraded": "Open the Time Gate+",
   "JAINA_CARD_OPEN_TIME_GATE_CARD.description": "[gold]Quest[/gold]: Cast 8 Spell cards from outside your deck.\n[gold]Reward: Time Warp{IfUpgraded:show:+|}[/gold].",

@@ -28,5 +28,7 @@
   "JAINA_KEYWORD_REPLAY.title": "Replay 1",
   "JAINA_KEYWORD_REPLAY.description": "Replay 1: After this card is played, replay it once (its effect triggers again).",
   "JAINA_KEYWORD_QUEST.title": "Quest",
-  "JAINA_KEYWORD_QUEST.description": "Quest: Complete the quest to receive a reward."
+  "JAINA_KEYWORD_QUEST.description": "Quest: Complete the quest to receive a reward.",
+  "JAINA_KEYWORD_DURABILITY.title": "Durability",
+  "JAINA_KEYWORD_DURABILITY.description": "Durability: When Durability reaches 0, this card is consumed."
 }

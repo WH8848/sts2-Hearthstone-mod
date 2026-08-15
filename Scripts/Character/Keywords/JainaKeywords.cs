@@ -31,6 +31,8 @@ namespace jaina.Scripts.Character.Keywords;
 [RegisterOwnedKeyword(nameof(Shadow), IconPath = "res://icon.svg")]
 // 任务：任务卡专属关键词（不注入卡面描述，仅提供悬停解释）
 [RegisterOwnedKeyword(nameof(Quest), IconPath = "res://icon.svg")]
+// 耐久度：拥有耐久度的卡牌，耐久度为0时卡牌被消耗（不注入卡面描述，仅提供悬停解释）
+[RegisterOwnedKeyword(nameof(Durability), IconPath = "res://icon.svg")]
 public class JainaKeywords
 {
     /// <summary>
@@ -107,4 +109,9 @@ public class JainaKeywords
     /// 任务：完成任务可以获得奖励
     /// </summary>
     public static readonly CardKeyword Quest = ModContentRegistry.GetQualifiedKeywordId(Entry.ModId, nameof(Quest)).GetModCardKeyword();
+
+    /// <summary>
+    /// 耐久度：耐久度为0时卡牌被消耗
+    /// </summary>
+    public static readonly CardKeyword Durability = ModContentRegistry.GetQualifiedKeywordId(Entry.ModId, nameof(Durability)).GetModCardKeyword();
 }
