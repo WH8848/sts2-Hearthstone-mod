@@ -30,13 +30,21 @@ public sealed class OpenTimeGateCard : ModCardTemplate
     public override string CustomPortraitPath => "res://assets/card_art/open_time_gate.png";
 
     /// <summary>
-    /// 悬停提示：显示奖励衍生物"时空扭曲"卡（参考冰冷案例/时空提速）
+    /// 悬停提示：显示奖励衍生物"时空扭曲"卡（升级后显示升级版"时空扭曲+"）
     /// </summary>
     protected override IEnumerable<IHoverTip> AdditionalHoverTips
     {
         get
         {
-            yield return new CardHoverTip(ModelDb.Card<TimeWarpCard>());
+            var canonical = ModelDb.Card<TimeWarpCard>();
+            if (!IsUpgraded)
+            {
+                yield return new CardHoverTip(canonical);
+                yield break;
+            }
+            var upgraded = canonical.MutableClone();
+            upgraded.UpgradeInternal();
+            yield return new CardHoverTip(upgraded);
         }
     }
 

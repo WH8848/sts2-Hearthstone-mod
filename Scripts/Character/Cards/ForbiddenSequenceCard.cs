@@ -30,13 +30,21 @@ public sealed class ForbiddenSequenceCard : ModCardTemplate
     public override string CustomPortraitPath => "res://assets/card_art/forbidden_sequence.png";
 
     /// <summary>
-    /// 悬停提示：显示奖励衍生物"源生之石"卡（参考冰冷案例/时空提速）
+    /// 悬停提示：显示奖励衍生物"源生之石"卡（升级后显示升级版"源生之石+"）
     /// </summary>
     protected override IEnumerable<IHoverTip> AdditionalHoverTips
     {
         get
         {
-            yield return new CardHoverTip(ModelDb.Card<ForbiddenStoneCard>());
+            var canonical = ModelDb.Card<ForbiddenStoneCard>();
+            if (!IsUpgraded)
+            {
+                yield return new CardHoverTip(canonical);
+                yield break;
+            }
+            var upgraded = canonical.MutableClone();
+            upgraded.UpgradeInternal();
+            yield return new CardHoverTip(upgraded);
         }
     }
 
