@@ -32,7 +32,7 @@ public static class HeroPowerHandHelper
     /// <summary>
     /// 手牌中非英雄技能卡数量（英雄技能卡不占位）
     /// </summary>
-    public static int GetNonHeroPowerCardCount(CardPile hand)
+    public static int GetNonHeroPowerCardCountFromPile(CardPile hand)
     {
         int count = 0;
         foreach (var c in hand.Cards)
@@ -48,7 +48,7 @@ public static class HeroPowerHandHelper
     /// <summary>
     /// 卡牌集合中非英雄技能卡数量（CrashLanding 用 CardPile.GetCards(...).Count() 模式）
     /// </summary>
-    public static int GetNonHeroPowerCardCount(IEnumerable<CardModel> cards)
+    public static int GetNonHeroPowerCardCountFromCards(IEnumerable<CardModel> cards)
     {
         int count = 0;
         foreach (var c in cards)
@@ -72,7 +72,7 @@ public static class HeroPowerHandHelper
         {
             return false;
         }
-        return GetNonHeroPowerCardCount(hand) >= CardPile.MaxCardsInHand;
+        return GetNonHeroPowerCardCountFromPile(hand) >= CardPile.MaxCardsInHand;
     }
 }
 
@@ -181,7 +181,7 @@ public static class HeroPowerHandDrawPatch
         typeof(System.Collections.Generic.IReadOnlyCollection<CardModel>).GetMethod("get_Count")!;
 
     private static readonly MethodInfo NonHeroCount =
-        AccessTools.Method(typeof(HeroPowerHandHelper), nameof(HeroPowerHandHelper.GetNonHeroPowerCardCount));
+        AccessTools.Method(typeof(HeroPowerHandHelper), nameof(HeroPowerHandHelper.GetNonHeroPowerCardCountFromPile));
 
     private static MethodBase TargetMethod()
     {
@@ -247,7 +247,7 @@ public static class HeroPowerHandDrawPossiblePatch
             __result = false;
             return false;
         }
-        if (HeroPowerHandHelper.GetNonHeroPowerCardCount(PileType.Hand.GetPile(player)) >= CardPile.MaxCardsInHand)
+        if (HeroPowerHandHelper.GetNonHeroPowerCardCountFromPile(PileType.Hand.GetPile(player)) >= CardPile.MaxCardsInHand)
         {
             ThinkCmd.Play(new LocString("combat_messages", "HAND_FULL"), player.Creature, 2.0);
             __result = false;
@@ -285,12 +285,10 @@ public static class HeroPowerHandFullDrawCardPatch
             .MakeGenericMethod(typeof(CardModel));
 
     private static readonly MethodInfo NonHeroCountFromPile =
-        AccessTools.Method(typeof(HeroPowerHandHelper), nameof(HeroPowerHandHelper.GetNonHeroPowerCardCount),
-            new[] { typeof(CardPile) });
+        AccessTools.Method(typeof(HeroPowerHandHelper), nameof(HeroPowerHandHelper.GetNonHeroPowerCardCountFromPile));
 
     private static readonly MethodInfo NonHeroCountFromEnumerable =
-        AccessTools.Method(typeof(HeroPowerHandHelper), nameof(HeroPowerHandHelper.GetNonHeroPowerCardCount),
-            new[] { typeof(IEnumerable<CardModel>) });
+        AccessTools.Method(typeof(HeroPowerHandHelper), nameof(HeroPowerHandHelper.GetNonHeroPowerCardCountFromCards));
 
     private static IEnumerable<MethodBase> TargetMethods()
     {
