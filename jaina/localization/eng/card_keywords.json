@@ -30,5 +30,7 @@
   "JAINA_KEYWORD_QUEST.title": "Quest",
   "JAINA_KEYWORD_QUEST.description": "Quest: Complete the quest to receive a reward.",
   "JAINA_KEYWORD_DURABILITY.title": "Durability",
-  "JAINA_KEYWORD_DURABILITY.description": "Durability: When Durability reaches 0, this card is consumed."
+  "JAINA_KEYWORD_DURABILITY.description": "Durability: When Durability reaches 0, this card is consumed.",
+  "JAINA_KEYWORD_WEAPON.title": "Weapon",
+  "JAINA_KEYWORD_WEAPON.description": "Weapon: You can only equip 1 weapon. Equipping a second one destroys the first."
 }

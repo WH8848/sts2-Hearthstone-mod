@@ -33,6 +33,8 @@ namespace jaina.Scripts.Character.Keywords;
 [RegisterOwnedKeyword(nameof(Quest), IconPath = "res://icon.svg")]
 // 耐久度：拥有耐久度的卡牌，耐久度为0时卡牌被消耗（不注入卡面描述，仅提供悬停解释）
 [RegisterOwnedKeyword(nameof(Durability), IconPath = "res://icon.svg")]
+// 武器：武器只可装备1把，装备第2把会爆掉第1把（不注入卡面描述，仅提供悬停解释）
+[RegisterOwnedKeyword(nameof(Weapon), IconPath = "res://icon.svg")]
 public class JainaKeywords
 {
     /// <summary>
@@ -114,4 +116,9 @@ public class JainaKeywords
     /// 耐久度：耐久度为0时卡牌被消耗
     /// </summary>
     public static readonly CardKeyword Durability = ModContentRegistry.GetQualifiedKeywordId(Entry.ModId, nameof(Durability)).GetModCardKeyword();
+
+    /// <summary>
+    /// 武器：武器只可装备1把，装备第2把会爆掉第1把
+    /// </summary>
+    public static readonly CardKeyword Weapon = ModContentRegistry.GetQualifiedKeywordId(Entry.ModId, nameof(Weapon)).GetModCardKeyword();
 }
