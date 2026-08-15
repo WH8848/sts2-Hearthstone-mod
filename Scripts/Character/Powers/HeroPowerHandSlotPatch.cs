@@ -46,6 +46,22 @@ public static class HeroPowerHandHelper
     }
 
     /// <summary>
+    /// 卡牌集合中非英雄技能卡数量（CrashLanding 用 CardPile.GetCards(...).Count() 模式）
+    /// </summary>
+    public static int GetNonHeroPowerCardCount(IEnumerable<CardModel> cards)
+    {
+        int count = 0;
+        foreach (var c in cards)
+        {
+            if (!IsHeroPowerCard(c))
+            {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    /// <summary>
     /// Add 满手判定（替代原版 cardPile.Cards.Count >= MaxCardsInHand）：
     /// 英雄技能卡永不视为满手；其余卡按非英雄技能卡数 >= 上限 判定。
     /// </summary>
@@ -239,5 +255,91 @@ public static class HeroPowerHandDrawPossiblePatch
         }
         __result = true;
         return false;
+    }
+}
+
+/// <summary>
+/// 原版"抽牌/加牌到手牌满"卡（潦草急就 Scrawl、受膏 Anointed、坠落 CrashLanding、
+/// 疏浚 Dredge、尼奥的怒火 NeowsFury）的 OnPlay：`MaxCardsInHand - 手牌总数` 的
+/// 空间计算同样排除英雄技能卡（英雄技能卡不占手牌位）。
+/// 模式 A（Scrawl/Anointed/Dredge/NeowsFury）：...get_Hand()/GetPile(Hand) → get_Cards → get_Count
+///   替换 get_Cards + get_Count 为 GetNonHeroPowerCardCount(CardPile)
+/// 模式 B（CrashLanding）：GetCards(owner, Hand) → Enumerable.Count
+///   替换 Enumerable.Count 为 GetNonHeroPowerCardCount(IEnumerable)
+/// </summary>
+[HarmonyPatch]
+public static class HeroPowerHandFullDrawCardPatch
+{
+    private static readonly MethodInfo GetCards =
+        AccessTools.PropertyGetter(typeof(CardPile), nameof(CardPile.Cards));
+
+    private static readonly MethodInfo GetCount =
+        typeof(System.Collections.Generic.IReadOnlyCollection<CardModel>).GetMethod("get_Count")!;
+
+    private static readonly MethodInfo CardPileGetCards =
+        AccessTools.Method(typeof(CardPile), nameof(CardPile.GetCards));
+
+    private static readonly MethodInfo EnumerableCount =
+        typeof(System.Linq.Enumerable).GetMethods()
+            .First(m => m.Name == "Count" && m.GetParameters().Length == 1 && m.IsGenericMethodDefinition)
+            .MakeGenericMethod(typeof(CardModel));
+
+    private static readonly MethodInfo NonHeroCountFromPile =
+        AccessTools.Method(typeof(HeroPowerHandHelper), nameof(HeroPowerHandHelper.GetNonHeroPowerCardCount),
+            new[] { typeof(CardPile) });
+
+    private static readonly MethodInfo NonHeroCountFromEnumerable =
+        AccessTools.Method(typeof(HeroPowerHandHelper), nameof(HeroPowerHandHelper.GetNonHeroPowerCardCount),
+            new[] { typeof(IEnumerable<CardModel>) });
+
+    private static IEnumerable<MethodBase> TargetMethods()
+    {
+        var cardTypes = new[]
+        {
+            typeof(MegaCrit.Sts2.Core.Models.Cards.Scrawl),
+            typeof(MegaCrit.Sts2.Core.Models.Cards.Anointed),
+            typeof(MegaCrit.Sts2.Core.Models.Cards.CrashLanding),
+            typeof(MegaCrit.Sts2.Core.Models.Cards.Dredge),
+            typeof(MegaCrit.Sts2.Core.Models.Cards.NeowsFury)
+        };
+        foreach (var type in cardTypes)
+        {
+            foreach (var nested in type.GetNestedTypes(BindingFlags.NonPublic))
+            {
+                if (nested.Name.StartsWith("<OnPlay>d__", System.StringComparison.Ordinal))
+                {
+                    var moveNext = nested.GetMethod("MoveNext", BindingFlags.Instance | BindingFlags.NonPublic);
+                    if (moveNext != null)
+                    {
+                        yield return moveNext;
+                    }
+                }
+            }
+        }
+    }
+
+    private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+    {
+        var codes = instructions.ToList();
+        for (int i = 0; i < codes.Count; i++)
+        {
+            // 模式 A：get_Cards + get_Count（前一条为产生 CardPile 的指令，保留）
+            if (codes[i].opcode == OpCodes.Callvirt && Equals(codes[i].operand, GetCards) &&
+                i + 1 < codes.Count && codes[i + 1].opcode == OpCodes.Callvirt && Equals(codes[i + 1].operand, GetCount))
+            {
+                codes.RemoveRange(i, 2);
+                codes.InsertRange(i, new[]
+                {
+                    new CodeInstruction(OpCodes.Call, NonHeroCountFromPile)
+                });
+            }
+            // 模式 B：GetCards(owner, Hand) 后跟 Enumerable.Count
+            else if (codes[i].opcode == OpCodes.Call && Equals(codes[i].operand, EnumerableCount) &&
+                     i - 1 >= 0 && codes[i - 1].opcode == OpCodes.Call && Equals(codes[i - 1].operand, CardPileGetCards))
+            {
+                codes[i] = new CodeInstruction(OpCodes.Call, NonHeroCountFromEnumerable);
+            }
+        }
+        return codes;
     }
 }
