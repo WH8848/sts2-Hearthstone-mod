@@ -40,5 +40,10 @@
   "JAINA_POWER_FORBIDDEN_SEQUENCE_POWER.smartDescription": "Quest in progress: Discover cards to gain a reward.",
   "JAINA_POWER_FORBIDDEN_STONE_POWER.title": "Forbidden Stone",
   "JAINA_POWER_FORBIDDEN_STONE_POWER.description": "After you Discover a card, automatically play the other options and lose 1 Durability. Durability 8; when it reaches 0, this ability is lost.",
-  "JAINA_POWER_FORBIDDEN_STONE_POWER.smartDescription": "After Discovering, auto-play the other options; Durability decreases."
+  "JAINA_POWER_FORBIDDEN_STONE_POWER.smartDescription": "After Discovering, auto-play the other options; Durability decreases.",
+  "JAINA_POWER_JAINA_WEAPON_POWER.title": "Weapon",
+  "JAINA_POWER_JAINA_WEAPON_POWER.description": "Attack {Attack}. Durability {Amount}. Click your character to attack once per turn; each attack costs 1 Durability. When it reaches 0, this ability is lost.",
+  "JAINA_POWER_JAINA_WEAPON_ATTACK_ACTION.title": "Weapon Attack",
+  "JAINA_POWER_JAINA_WEAPON_ATTACK_ACTION.description": "[gold]Action[/gold]: Choose 1 enemy. Deal damage equal to your weapon's Attack. Costs 1.",
+  "JAINA_POWER_JAINA_WEAPON_ATTACK_ACTION.smartDescription": "[gold]Action[/gold]: Choose 1 enemy. Deal damage equal to your weapon's Attack. Costs 1."
 }

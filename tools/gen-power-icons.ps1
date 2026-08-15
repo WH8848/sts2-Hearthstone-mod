@@ -165,6 +165,41 @@ function Draw-UnfairGame {
     $brush.Dispose(); $dark.Dispose(); $pen.Dispose()
 }
 
+function Draw-JainaWeaponPower {
+    param($g)
+    New-IconBase $g
+    # 战斧：斧头 + 斧柄
+    $pen = [System.Drawing.Pen]::new($white, 6)
+    $g.DrawLine($pen, 56, 40, 56, 98)          # 斧柄
+    $pts = @()
+    $pts += New-Object System.Drawing.PointF(56, 34)
+    $pts += New-Object System.Drawing.PointF(100, 26)
+    $pts += New-Object System.Drawing.PointF(104, 52)
+    $pts += New-Object System.Drawing.PointF(56, 46)
+    $g.DrawPolygon($pen, $pts)                  # 斧刃
+    $pen2 = [System.Drawing.Pen]::new($gold, 4)
+    $g.DrawEllipse($pen2, 44, 30, 22, 22)       # 耐久指示
+    $g.DrawLine($pen2, 55, 34, 55, 48)
+    $g.DrawLine($pen2, 49, 41, 61, 41)
+    $pen.Dispose(); $pen2.Dispose()
+}
+
+function Draw-JainaWeaponAttackAction {
+    param($g)
+    New-IconBase $g
+    # 攻击箭头 + 小斧头（武器攻击行动点）
+    $pen = [System.Drawing.Pen]::new($white, 6)
+    $g.DrawLine($pen, 36, 34, 96, 34)
+    $g.DrawLine($pen, 96, 34, 78, 22)
+    $g.DrawLine($pen, 96, 34, 78, 46)
+    $pen2 = [System.Drawing.Pen]::new($gold, 4)
+    $g.DrawEllipse($pen2, 46, 56, 34, 34)       # 武器攻击标记
+    $g.DrawLine($pen2, 63, 62, 63, 84)
+    $g.DrawLine($pen2, 63, 70, 46, 64)
+    $g.DrawLine($pen2, 63, 66, 80, 60)
+    $pen.Dispose(); $pen2.Dispose()
+}
+
 function Save-Icon {
     param($name, $drawFunc)
     $bmp = New-Object System.Drawing.Bitmap(128, 128)
@@ -187,5 +222,7 @@ Save-Icon 'jaina_power_counterspell_power' (Get-Command Draw-Counterspell)
 Save-Icon 'jaina_power_aegwynn_legacy_power' (Get-Command Draw-AegwynnLegacy)
 Save-Icon 'jaina_power_empower_power'         (Get-Command Draw-Empower)
 Save-Icon 'jaina_power_unfair_game_power'     (Get-Command Draw-UnfairGame)
+Save-Icon 'jaina_power_jaina_weapon_power'        (Get-Command Draw-JainaWeaponPower)
+Save-Icon 'jaina_power_jaina_weapon_attack_action' (Get-Command Draw-JainaWeaponAttackAction)
 
 Write-Host "完成: 7 个力量图标 -> $outDir"

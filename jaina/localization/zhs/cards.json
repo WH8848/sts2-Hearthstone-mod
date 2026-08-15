@@ -97,5 +97,9 @@
   "JAINA_CARD_OPEN_TIME_GATE_CARD.description": "[gold]任务[/gold]：施放8个你的牌库之外的法术牌。\n[gold]奖励：时空扭曲{IfUpgraded:show:+|}[/gold]。",
   "JAINA_CARD_TIME_WARP_CARD.title": "时空扭曲",
   "JAINA_CARD_TIME_WARP_CARD.titleUpgraded": "时空扭曲+",
-  "JAINA_CARD_TIME_WARP_CARD.description": "获得一个额外回合。{IfUpgraded:show:|（每局对战限一次）}"
+  "JAINA_CARD_TIME_WARP_CARD.description": "获得一个额外回合。{IfUpgraded:show:|（每局对战限一次）}",
+  "JAINA_CARD_FIERY_WAR_AXE.title": "炽炎战斧",
+  "JAINA_CARD_FIERY_WAR_AXE.description": "攻击力{Attack}。耐久度{Durability}。装备后：每回合可点击角色攻击一次。",
+  "JAINA_CARD_RITUAL_CHOPPER.title": "仪式斩斧",
+  "JAINA_CARD_RITUAL_CHOPPER.description": "攻击力{Attack}。耐久度{Durability}。装备后：每回合可点击角色攻击一次。"
 }
