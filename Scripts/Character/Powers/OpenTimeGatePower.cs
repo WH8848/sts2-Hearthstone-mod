@@ -7,6 +7,8 @@ using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
 using STS2RitsuLib.Interop.AutoRegistration;
+using STS2RitsuLib.Scaffolding.Content;
+using STS2RitsuLib.Scaffolding.Content.Patches;
 
 namespace jaina.Scripts.Character.Powers;
 
@@ -14,11 +16,20 @@ namespace jaina.Scripts.Character.Powers;
 /// 打开时空之门光环：施放 8 个"你的牌库之外的法术牌"（对局内衍生的攻击/技能牌）
 /// 后获得奖励：时空扭曲直接置入手牌，随后本 Power 消失
 /// （打出 1 次打开时空之门只能获得 1 次奖励）。
-/// 挂在玩家身上，打出打开时空之门时施加。
+/// 挂在玩家身上，打出打开时空之门时施加。可见（能力图标显示任务进度）。
 /// </summary>
 [RegisterPower]
-public sealed class OpenTimeGatePower : PowerModel
+public sealed class OpenTimeGatePower : PowerModel, IModPowerAssetOverrides
 {
+    /// <inheritdoc />
+    public PowerAssetProfile AssetProfile => new("res://assets/power_icons/jaina_power_open_time_gate_power.png");
+
+    /// <inheritdoc />
+    public string? CustomIconPath => AssetProfile.IconPath;
+
+    /// <inheritdoc />
+    public string? CustomBigIconPath => AssetProfile.BigIconPath;
+
     /// <summary>需要施放的牌库之外法术牌数量</summary>
     private const int RequiredCasts = 8;
 
@@ -31,7 +42,7 @@ public sealed class OpenTimeGatePower : PowerModel
 
     public override PowerStackType StackType => PowerStackType.Single;
 
-    protected override bool IsVisibleInternal => false;
+    protected override bool IsVisibleInternal => true;
 
     public override async Task AfterCardPlayed(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
@@ -51,6 +62,7 @@ public sealed class OpenTimeGatePower : PowerModel
             return;
         }
         _count++;
+        MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaDebug] OpenTimeGate count={_count}/8 card={card.Id.Entry}");
         if (_count < RequiredCasts)
         {
             return;
@@ -74,6 +86,7 @@ public sealed class OpenTimeGatePower : PowerModel
             return;
         }
         jaina.Scripts.Character.JainaCastTracker.MarkGenerated(warp);
+        MegaCrit.Sts2.Core.Logging.Log.Info("[JainaDebug] OpenTimeGate reward granted");
         await CardPileCmd.AddGeneratedCardToCombat(warp, PileType.Hand, player);
         await PowerCmd.Remove(this);
     }

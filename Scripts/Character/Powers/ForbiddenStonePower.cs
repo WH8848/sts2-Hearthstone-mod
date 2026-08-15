@@ -9,24 +9,35 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
 using MinionLib.Targeting;
 using STS2RitsuLib.Interop.AutoRegistration;
+using STS2RitsuLib.Scaffolding.Content;
+using STS2RitsuLib.Scaffolding.Content.Patches;
 
 namespace jaina.Scripts.Character.Powers;
 
 /// <summary>
 /// 源生之石光环：每当你发现一张牌后，会自动使用其余选项（免费自动打出，随机目标）
 /// 并失去 1 点耐久度。耐久度（Amount，初始 8）为 0 时能力消失。
-/// 挂在玩家身上，打出源生之石时施加。
+/// 挂在玩家身上，打出源生之石时施加。可见（能力图标显示剩余耐久）。
 /// </summary>
 [RegisterPower]
-public sealed class ForbiddenStonePower : PowerModel
+public sealed class ForbiddenStonePower : PowerModel, IModPowerAssetOverrides
 {
+    /// <inheritdoc />
+    public PowerAssetProfile AssetProfile => new("res://assets/power_icons/jaina_power_forbidden_stone_power.png");
+
+    /// <inheritdoc />
+    public string? CustomIconPath => AssetProfile.IconPath;
+
+    /// <inheritdoc />
+    public string? CustomBigIconPath => AssetProfile.BigIconPath;
+
     private long _lastSeq;
 
     public override PowerType Type => PowerType.Buff;
 
     public override PowerStackType StackType => PowerStackType.Counter;
 
-    protected override bool IsVisibleInternal => false;
+    protected override bool IsVisibleInternal => true;
 
     public override async Task AfterCardPlayed(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {

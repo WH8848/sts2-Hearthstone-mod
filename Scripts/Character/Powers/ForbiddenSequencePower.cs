@@ -7,6 +7,8 @@ using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
 using STS2RitsuLib.Interop.AutoRegistration;
+using STS2RitsuLib.Scaffolding.Content;
+using STS2RitsuLib.Scaffolding.Content.Patches;
 
 namespace jaina.Scripts.Character.Powers;
 
@@ -14,11 +16,20 @@ namespace jaina.Scripts.Character.Powers;
 /// 禁忌序列光环：每发现一张牌计数 +1，达到阈值（升级前 8 / 升级后 7）后
 /// 获得奖励（源生之石直接置入手牌），随后本 Power 消失——
 /// 即"打出 1 次禁忌序列只能获得 1 次奖励"（再次打出重新计数）。
-/// 挂在玩家身上，打出禁忌序列时施加。
+/// 挂在玩家身上，打出禁忌序列时施加。可见（能力图标显示任务进度）。
 /// </summary>
 [RegisterPower]
-public sealed class ForbiddenSequencePower : PowerModel
+public sealed class ForbiddenSequencePower : PowerModel, IModPowerAssetOverrides
 {
+    /// <inheritdoc />
+    public PowerAssetProfile AssetProfile => new("res://assets/power_icons/jaina_power_forbidden_sequence_power.png");
+
+    /// <inheritdoc />
+    public string? CustomIconPath => AssetProfile.IconPath;
+
+    /// <inheritdoc />
+    public string? CustomBigIconPath => AssetProfile.BigIconPath;
+
     /// <summary>达到该发现次数即获得奖励（升级前 8，升级后 7）</summary>
     public int Threshold { get; set; } = 8;
 
@@ -30,7 +41,7 @@ public sealed class ForbiddenSequencePower : PowerModel
 
     public override PowerStackType StackType => PowerStackType.Single;
 
-    protected override bool IsVisibleInternal => false;
+    protected override bool IsVisibleInternal => true;
 
     public override async Task AfterCardPlayed(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
