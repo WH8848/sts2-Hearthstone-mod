@@ -39,14 +39,17 @@ public sealed class JainaWeaponAttackAction : ActionModel, IModPowerAssetOverrid
     public override TargetType TargetType => TargetType.AnyEnemy;
 
     /// <summary>
-    /// 行动点是角色固有的：常驻（不随回合结束移除），每回合开始重置为 1
+    /// 行动点是角色固有的：常驻（不随回合结束移除），每回合开始重置为 1。
+    /// 注意：不能使用 DecrementAfterAct（框架会走 PowerCmd.Decrement，
+    /// 在 Amount 归零时 ShouldRemoveDueToAmount 会自动移除本 Power）——
+    /// 改为在 OnAct 末尾手动 SetAmount 扣点（SetAmount 不触发移除检查）。
     /// </summary>
     public override bool AutoRemoveAtTurnEnd => false;
 
     /// <summary>
-    /// 每次攻击后消耗 1 点行动次数
+    /// 每次攻击后消耗 1 点行动次数（手动扣除，见 OnAct；避免 Power 被自动移除）
     /// </summary>
-    public override bool DecrementAfterAct => true;
+    public override bool DecrementAfterAct => false;
 
     public override PowerType Type => PowerType.Buff;
 
@@ -103,6 +106,13 @@ public sealed class JainaWeaponAttackAction : ActionModel, IModPowerAssetOverrid
         // 角色冲撞攻击：Move 标记触发荆棘反伤与振翅（IsPoweredAttack）
         await MinionAnimCmd.PlayBumpAttackAsync(Owner, target,
             () => CreatureCmd.Damage(choiceContext, [target], attack, ValueProp.Move, Owner));
+
+        // 手动扣除 1 点行动次数（不用 DecrementAfterAct：PowerCmd.Decrement 在 Amount 归零时
+        // 会经 ShouldRemoveDueToAmount 自动移除本 Power，导致下回合行动点消失）
+        if (Amount > 0)
+        {
+            SetAmount((int)Amount - 1);
+        }
 
         // 每攻击一次，武器耐久度 -1；归零时武器能力消失
         await JainaWeaponSlot.ConsumeDurability(choiceContext, Owner, weapon);
