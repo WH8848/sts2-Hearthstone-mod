@@ -21,7 +21,8 @@ namespace jaina.Scripts.Character.Cards;
 public sealed class ForbiddenStoneCard : ModCardTemplate
 {
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
-        [CardKeyword.Exhaust, jaina.Scripts.Character.Keywords.JainaKeywords.Durability];
+        [CardKeyword.Exhaust, jaina.Scripts.Character.Keywords.JainaKeywords.Weapon,
+         jaina.Scripts.Character.Keywords.JainaKeywords.Durability];
 
     public override string CustomPortraitPath => "res://assets/card_art/forbidden_stone.png";
 
