@@ -42,7 +42,7 @@ public sealed class ForbiddenSequenceCard : ModCardTemplate
                 yield return new CardHoverTip(canonical);
                 yield break;
             }
-            var upgraded = canonical.MutableClone();
+            var upgraded = (MegaCrit.Sts2.Core.Models.CardModel)canonical.MutableClone();
             upgraded.UpgradeInternal();
             yield return new CardHoverTip(upgraded);
         }
