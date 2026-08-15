@@ -97,9 +97,5 @@
   "JAINA_CARD_OPEN_TIME_GATE_CARD.description": "[gold]Quest[/gold]: Cast 8 Spell cards from outside your deck.\n[gold]Reward: Time Warp{IfUpgraded:show:+|}[/gold].",
   "JAINA_CARD_TIME_WARP_CARD.title": "Time Warp",
   "JAINA_CARD_TIME_WARP_CARD.titleUpgraded": "Time Warp+",
-  "JAINA_CARD_TIME_WARP_CARD.description": "Take an extra turn.{IfUpgraded:show:| (Once per combat)}",
-  "JAINA_CARD_FIERY_WAR_AXE.title": "Fiery War Axe",
-  "JAINA_CARD_FIERY_WAR_AXE.description": "Attack {Attack}. Durability {Durability}. After equipping, click your character to attack once per turn.",
-  "JAINA_CARD_RITUAL_CHOPPER.title": "Ritual Chopper",
-  "JAINA_CARD_RITUAL_CHOPPER.description": "Attack {Attack}. Durability {Durability}. After equipping, click your character to attack once per turn."
+  "JAINA_CARD_TIME_WARP_CARD.description": "Take an extra turn.{IfUpgraded:show:| (Once per combat)}"
 }
