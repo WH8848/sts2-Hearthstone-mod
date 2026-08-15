@@ -108,10 +108,16 @@ public static class JainaCastTracker
     }
 
     /// <summary>
-    /// 标记一张"牌库之外"生成的攻击/技能牌（AddGeneratedCardToCombat 前调用，罗曼斯重放用）
+    /// 标记一张"牌库之外"生成的卡（AddGeneratedCardToCombat 前调用，罗曼斯重放用）。
+    /// 实例级标记（法术/随从卡蓝光用）对所有衍生卡生效；
+    /// 类型级记录（罗曼斯重放）仅对攻击/技能牌生效。
     /// </summary>
     public static void MarkGenerated(CardModel card)
     {
+        // 实例级标记：本局对战内衍生出来的卡（蓝光判定用，含随从卡）
+        GeneratedCardInstances.Remove(card);
+        GeneratedCardInstances.Add(card, null!);
+
         if (card.Type != CardType.Attack && card.Type != CardType.Skill)
         {
             return;
@@ -129,9 +135,6 @@ public static class JainaCastTracker
         {
             rec.GeneratedUpgradeLevels[type] = card.CurrentUpgradeLevel;
         }
-        // 实例级标记（法术蓝光用）：这张卡实例是对局内衍生出来的
-        GeneratedCardInstances.Remove(card);
-        GeneratedCardInstances.Add(card, null!);
     }
 
     /// <summary>
