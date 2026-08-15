@@ -15,21 +15,19 @@ namespace jaina.Scripts.Character.Powers;
 /// 发现的消费方（禁忌序列计数/源生之石）在卡打出完成（AfterCardPlayed/
 /// AfterPotionUsed，有 PlayerChoiceContext）时读取待处理记录，用递增 Seq 保证
 /// 多个消费方各自只处理一次。
+///
+/// 支持连续多次发现（如广阔智慧连发现两张）：候选按开始顺序累积为多个集合，
+/// 完成记录按序入队，消费方按自己的 _lastSeq 逐个消费，不再互相覆盖。
 /// </summary>
 public static class DiscoverTracker
 {
-    /// <summary>进行中的发现候选（玩家 → 候选卡集合）</summary>
-    private static readonly ConditionalWeakTable<Player, ActiveRecord> Active = new();
+    /// <summary>进行中的发现候选集合列表（玩家 → 按开始顺序的候选集合）</summary>
+    private static readonly ConditionalWeakTable<Player, List<HashSet<CardModel>>> Active = new();
 
-    /// <summary>最新一次"发现完成"待处理记录（玩家 → 记录）</summary>
-    private static readonly ConditionalWeakTable<Player, PendingDiscover> Pending = new();
+    /// <summary>已完成待消费的发现记录队列（玩家 → 按完成顺序）</summary>
+    private static readonly ConditionalWeakTable<Player, List<PendingDiscover>> Pending = new();
 
     private static long _seq;
-
-    private sealed class ActiveRecord
-    {
-        public readonly HashSet<CardModel> Candidates = [];
-    }
 
     /// <summary>
     /// 一次发现完成：选中的卡 + 其余选项（自动使用用）
@@ -44,21 +42,28 @@ public static class DiscoverTracker
     }
 
     /// <summary>
-    /// 发现界面开始（FromChooseACardScreen 前缀）：记录候选
+    /// 发现界面开始（FromChooseACardScreen 前缀）：追加记录本次候选集合
+    /// （不清空旧集合，支持连续多次发现同时进行）
     /// </summary>
     public static void BeginDiscover(Player player, IReadOnlyList<CardModel> cards)
     {
-        var rec = Active.GetOrCreateValue(player);
-        rec.Candidates.Clear();
+        if (player == null)
+        {
+            return;
+        }
+        var list = Active.GetValue(player, _ => []);
+        var set = new HashSet<CardModel>();
         if (cards != null)
         {
-            rec.Candidates.UnionWith(cards);
+            set.UnionWith(cards);
         }
+        list.Add(set);
     }
 
     /// <summary>
     /// 卡置入手牌时调用（AddGeneratedCardToCombat 前缀）：
-    /// 若该卡属于进行中的发现候选，记录一次"发现完成"，返回 true。
+    /// 若该卡属于某个进行中的发现候选（按最近的候选集合优先匹配），
+    /// 记录一次"发现完成"并入队，返回 true。
     /// </summary>
     public static bool OnCardAddedToHand(Player player, CardModel card)
     {
@@ -66,25 +71,40 @@ public static class DiscoverTracker
         {
             return false;
         }
-        if (!Active.TryGetValue(player, out var rec) || !rec.Candidates.Remove(card))
+        if (!Active.TryGetValue(player, out var list))
         {
             return false;
         }
-        Pending.Remove(player);
-        Pending.Add(player, new PendingDiscover
+        for (int i = list.Count - 1; i >= 0; i--)
         {
-            Selected = card,
-            Others = rec.Candidates.ToList(),
-            Seq = Interlocked.Increment(ref _seq)
-        });
-        return true;
+            var set = list[i];
+            if (!set.Remove(card))
+            {
+                continue;
+            }
+            // 匹配到：从候选集合中移除（该集合中其余卡即"其余选项"）
+            var queue = Pending.GetValue(player, _ => []);
+            queue.Add(new PendingDiscover
+            {
+                Selected = card,
+                Others = set.ToList(),
+                Seq = Interlocked.Increment(ref _seq)
+            });
+            return true;
+        }
+        return false;
     }
 
     /// <summary>
-    /// 取玩家最新一次发现完成记录（无则 null）
+    /// 取玩家队列中第一条 Seq 大于 afterSeq 的发现记录（无则 null）。
+    /// 消费方维护自己的 _lastSeq，可逐个消费全部未处理记录。
     /// </summary>
-    public static PendingDiscover? TryGetPending(Player player)
+    public static PendingDiscover? TryGetPending(Player player, long afterSeq)
     {
-        return Pending.TryGetValue(player, out var pending) ? pending : null;
+        if (!Pending.TryGetValue(player, out var queue))
+        {
+            return null;
+        }
+        return queue.FirstOrDefault(p => p.Seq > afterSeq);
     }
 }

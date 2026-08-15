@@ -66,31 +66,31 @@ public sealed class ForbiddenSequencePower : PowerModel, IModPowerAssetOverrides
 
     private async Task ConsumePendingDiscover(PlayerChoiceContext choiceContext, Player player)
     {
-        var pending = DiscoverTracker.TryGetPending(player);
-        if (pending == null || pending.Seq <= _lastSeq)
+        // 循环消费所有未处理发现（广阔智慧一次发现两张 → 两次计数）
+        while (DiscoverTracker.TryGetPending(player, _lastSeq) is { } pending)
         {
+            _lastSeq = pending.Seq;
+            _count++;
+            if (_count < Threshold)
+            {
+                continue;
+            }
+            // 达到阈值：奖励 = 源生之石直接置入手牌
+            var canonical = ModelDb.GetByIdOrNull<CardModel>(ModelDb.GetId(typeof(jaina.Scripts.Character.Cards.ForbiddenStoneCard)));
+            if (canonical == null)
+            {
+                return;
+            }
+            if (jaina.Scripts.Character.JainaHandHelper.IsHandFull(player))
+            {
+                return;
+            }
+            var combatState = player.Creature.CombatState;
+            var stone = combatState.CreateCard(canonical, player);
+            jaina.Scripts.Character.JainaCastTracker.MarkGenerated(stone);
+            await CardPileCmd.AddGeneratedCardToCombat(stone, PileType.Hand, player);
+            await PowerCmd.Remove(this);
             return;
         }
-        _lastSeq = pending.Seq;
-        _count++;
-        if (_count < Threshold)
-        {
-            return;
-        }
-        // 达到阈值：奖励 = 源生之石直接置入手牌
-        var canonical = ModelDb.GetByIdOrNull<CardModel>(ModelDb.GetId(typeof(jaina.Scripts.Character.Cards.ForbiddenStoneCard)));
-        if (canonical == null)
-        {
-            return;
-        }
-        if (jaina.Scripts.Character.JainaHandHelper.IsHandFull(player))
-        {
-            return;
-        }
-        var combatState = player.Creature.CombatState;
-        var stone = combatState.CreateCard(canonical, player);
-        jaina.Scripts.Character.JainaCastTracker.MarkGenerated(stone);
-        await CardPileCmd.AddGeneratedCardToCombat(stone, PileType.Hand, player);
-        await PowerCmd.Remove(this);
     }
 }

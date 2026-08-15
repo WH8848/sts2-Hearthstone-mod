@@ -62,40 +62,40 @@ public sealed class ForbiddenStonePower : PowerModel, IModPowerAssetOverrides
 
     private async Task ConsumePendingDiscover(PlayerChoiceContext choiceContext, Player player)
     {
-        var pending = DiscoverTracker.TryGetPending(player);
-        if (pending == null || pending.Seq <= _lastSeq)
+        // 循环消费所有未处理发现（广阔智慧一次发现两张 → 触发两次，每次自动使用其余选项并失去1点耐久）
+        while (DiscoverTracker.TryGetPending(player, _lastSeq) is { } pending)
         {
-            return;
-        }
-        _lastSeq = pending.Seq;
+            _lastSeq = pending.Seq;
 
-        var combatState = player.Creature.CombatState;
-        // 自动使用其余选项：免费自动打出（随机目标），与罗曼斯重放同一语义
-        foreach (var other in pending.Others)
-        {
-            Creature? target = null;
-            if (other.TargetType == TargetType.AnyEnemy || other.TargetType == TargetType.AnyPlayer ||
-                other.TargetType == TargetType.AnyAlly ||
-                (CustomTargetTypeManager.TryGetCustomTargetType(other.TargetType, out var customType) &&
-                 customType.IsSingleTarget))
+            var combatState = player.Creature.CombatState;
+            // 自动使用其余选项：免费自动打出（随机目标），与罗曼斯重放同一语义
+            foreach (var other in pending.Others)
             {
-                var pool = combatState.Creatures
-                    .Where(c => c != null && c.IsAlive && other.IsValidTarget(c))
-                    .ToList();
-                target = pool.Count > 0 ? player.RunState.Rng.CombatTargets.NextItem(pool) : null;
-                if (target == null)
+                Creature? target = null;
+                if (other.TargetType == TargetType.AnyEnemy || other.TargetType == TargetType.AnyPlayer ||
+                    other.TargetType == TargetType.AnyAlly ||
+                    (CustomTargetTypeManager.TryGetCustomTargetType(other.TargetType, out var customType) &&
+                     customType.IsSingleTarget))
                 {
-                    continue;
+                    var pool = combatState.Creatures
+                        .Where(c => c != null && c.IsAlive && other.IsValidTarget(c))
+                        .ToList();
+                    target = pool.Count > 0 ? player.RunState.Rng.CombatTargets.NextItem(pool) : null;
+                    if (target == null)
+                    {
+                        continue;
+                    }
                 }
+                await CardCmd.AutoPlay(choiceContext, other, target);
             }
-            await CardCmd.AutoPlay(choiceContext, other, target);
-        }
 
-        // 失去 1 点耐久度；耐久为 0 时能力消失
-        await PowerCmd.Decrement(this);
-        if (Amount <= 0)
-        {
-            await PowerCmd.Remove(this);
+            // 失去 1 点耐久度；耐久为 0 时能力消失
+            await PowerCmd.Decrement(this);
+            if (Amount <= 0)
+            {
+                await PowerCmd.Remove(this);
+                return;
+            }
         }
     }
 }
