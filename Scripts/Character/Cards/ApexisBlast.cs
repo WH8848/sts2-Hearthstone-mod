@@ -109,7 +109,8 @@ public sealed class ApexisBlast : JainaSpellCardTemplate
         // 升级为火焰之地传送门：伤害 5 -> 6，费用保持 1 费（按用户要求不升级加费）。
         // 火焰派系关键词需显式加入：LocalKeywords 懒初始化只算一次，
         // 升级前缓存的 Keywords 不含 Fire，悬停提示（原版 HoverTips 遍历 Keywords）不会出现火焰解释。
-        base.DynamicVars.Damage.BaseValue = 6m;
+        // UpgradeValueBy 设置 WasJustUpgraded，升级预览数值绿色高亮。
+        base.DynamicVars.Damage.UpgradeValueBy(1m);
         AddKeyword(jaina.Scripts.Character.Keywords.JainaKeywords.Fire);
     }
 }

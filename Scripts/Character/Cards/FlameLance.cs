@@ -113,6 +113,7 @@ public sealed class FlameLance : JainaSpellCardTemplate
     protected override void OnUpgrade()
     {
         // 升级为陨石术：主伤害 25 -> 15（另含随机 2 次 × 4 点）
-        base.DynamicVars.Damage.BaseValue = 15m;
+        // （UpgradeValueBy 设置 WasJustUpgraded，升级预览数值绿色高亮）
+        base.DynamicVars.Damage.UpgradeValueBy(-10m);
     }
 }

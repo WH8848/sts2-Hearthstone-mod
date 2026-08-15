@@ -76,7 +76,7 @@ public sealed class Fireball : JainaSpellCardTemplate
 
     protected override void OnUpgrade()
     {
-        // 伤害 6 -> 10
-        base.DynamicVars.Damage.BaseValue = 10m;
+        // 伤害 6 -> 10（UpgradeValueBy 设置 WasJustUpgraded，升级预览数值绿色高亮）
+        base.DynamicVars.Damage.UpgradeValueBy(4m);
     }
 }

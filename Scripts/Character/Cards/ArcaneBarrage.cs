@@ -106,6 +106,7 @@ public sealed class ArcaneBarrage : JainaSpellCardTemplate
     protected override void OnUpgrade()
     {
         // 升级为奥术涌流：主伤害 3 -> 4（随机次数 2 -> 4 由 HitCount 处理）
-        base.DynamicVars.Damage.BaseValue = 4m;
+        // （UpgradeValueBy 设置 WasJustUpgraded，升级预览数值绿色高亮）
+        base.DynamicVars.Damage.UpgradeValueBy(1m);
     }
 }

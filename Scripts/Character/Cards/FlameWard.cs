@@ -105,8 +105,8 @@ public sealed class FlameWard : JainaSpellCardTemplate
     protected override void OnUpgrade()
     {
         // 升级为烈焰风暴：伤害 3 -> 5，费用 1 -> 2
-        // （原版机制 CardEnergyCost.UpgradeBy 修改 _base，任何界面显示一致，升级预览绿色高亮）
-        base.DynamicVars.Damage.BaseValue = 5m;
+        // （原版机制：UpgradeValueBy/UpgradeBy 设置 WasJustUpgraded，升级预览绿色高亮）
+        base.DynamicVars.Damage.UpgradeValueBy(2m);
         EnergyCost.UpgradeBy(1);
     }
 }

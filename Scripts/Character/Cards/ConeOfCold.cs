@@ -97,7 +97,7 @@ public sealed class ConeOfCold : JainaSpellCardTemplate
     {
         // 升级为暴风雪：伤害 1 -> 2（次数 3 -> 7 由 HitCount 处理）；费用 1 -> 2
         // （原版 CardEnergyCost.UpgradeBy 修改 _base，任何界面显示一致，升级预览绿色高亮）
-        base.DynamicVars.Damage.BaseValue = 2m;
+        base.DynamicVars.Damage.UpgradeValueBy(1m);
         EnergyCost.UpgradeBy(1);
     }
 }
