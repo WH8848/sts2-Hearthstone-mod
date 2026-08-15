@@ -37,6 +37,13 @@ public static class JainaCastTracker
         public readonly HashSet<Type> GeneratedAttackSkills = [];
 
         /// <summary>
+        /// 玩家手打的"牌库之外"攻击/技能牌次数（按类型计数，罗曼斯重放用）。
+        /// 只计玩家手打（排除罗曼斯重放等自动打出），与打开时空之门"只计手打"语义一致；
+        /// 罗曼斯按此计数重放每种类型多次（炉石：每次施放都重放）。
+        /// </summary>
+        public readonly Dictionary<Type, int> PlayerCastOutsideDeckCounts = [];
+
+        /// <summary>
         /// 施放过的牌的最高升级级别（倒带复制时恢复升级状态，如清凉的泉水）
         /// </summary>
         public readonly Dictionary<Type, int> PlayedUpgradeLevels = [];
@@ -122,6 +129,13 @@ public static class JainaCastTracker
             (!rec.PlayedUpgradeLevels.TryGetValue(type, out var prev) || card.CurrentUpgradeLevel > prev))
         {
             rec.PlayedUpgradeLevels[type] = card.CurrentUpgradeLevel;
+        }
+        // 罗曼斯重放计数：只计"玩家手打的牌库之外法术"。
+        // 排除罗曼斯重放等自动打出（AutoPlayMarkPatch 已标记），避免重放自身导致计数膨胀。
+        if (IsOutsideDeckCard(card) && !jaina.Scripts.Character.Powers.RommathReplayTracker.IsMarked(card))
+        {
+            rec.PlayerCastOutsideDeckCounts.TryGetValue(type, out var n);
+            rec.PlayerCastOutsideDeckCounts[type] = n + 1;
         }
         if (SchoolByCardType.TryGetValue(type, out var school))
         {

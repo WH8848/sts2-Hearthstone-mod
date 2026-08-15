@@ -30,7 +30,8 @@ public sealed class RommathMinion : JainaMinionBase
     protected override string MinionVisualsPath => "res://assets/card_art/archmage_rommath.png";
 
     /// <summary>
-    /// 战吼：重放本局施放过的每张牌库之外的攻击/技能牌（免费自动打出，随机目标）。
+    /// 战吼：重放本局玩家手打的每张牌库之外的攻击/技能牌（免费自动打出，随机目标）。
+    /// 按"玩家手打的次数"重放（炉石：每次施放都重放）——打出 N 张衍生火球术就重放 N 次。
     /// 仅手牌打出时触发，随机召唤不触发。
     /// </summary>
     public override async Task OnBattlecry(PlayerChoiceContext choiceContext)
@@ -43,41 +44,44 @@ public sealed class RommathMinion : JainaMinionBase
         }
         var rec = jaina.Scripts.Character.JainaCastTracker.For(combatState);
         // 快照遍历，避免重放触发的新记录影响本循环
-        var types = rec.GeneratedAttackSkills.ToList();
-        foreach (var type in types)
+        var counts = rec.PlayerCastOutsideDeckCounts.ToList();
+        foreach (var (type, count) in counts)
         {
-            rec.GeneratedUpgradeLevels.TryGetValue(type, out var upgradeLevel);
-            var card = jaina.Scripts.Character.JainaCastTracker.CreateCardWithUpgrade(
-                combatState, owner, type, upgradeLevel);
-            if (card == null)
+            for (int i = 0; i < count; i++)
             {
-                continue;
-            }
-
-            // 需要目标时（单目标卡：原生 AnyEnemy/AnyPlayer 或自定义单目标类型），
-            // 按卡的目标校验从场上活物中随机选一个合法目标
-            // （涵盖敌人与己方随从——如 EnemyOrOwnMinion 这类自定义目标类型）。
-            Creature? target = null;
-            if (card.TargetType == TargetType.AnyEnemy || card.TargetType == TargetType.AnyPlayer ||
-                card.TargetType == TargetType.AnyAlly ||
-                (MinionLib.Targeting.CustomTargetTypeManager.TryGetCustomTargetType(card.TargetType, out var customType) &&
-                 customType.IsSingleTarget))
-            {
-                var pool = combatState.Creatures
-                    .Where(c => c != null && c.IsAlive && card.IsValidTarget(c))
-                    .ToList();
-                target = pool.Count > 0 ? owner.RunState.Rng.CombatTargets.NextItem(pool) : null;
-                if (target == null)
+                rec.GeneratedUpgradeLevels.TryGetValue(type, out var upgradeLevel);
+                var card = jaina.Scripts.Character.JainaCastTracker.CreateCardWithUpgrade(
+                    combatState, owner, type, upgradeLevel);
+                if (card == null)
                 {
                     continue;
                 }
+
+                // 需要目标时（单目标卡：原生 AnyEnemy/AnyPlayer 或自定义单目标类型），
+                // 按卡的目标校验从场上活物中随机选一个合法目标
+                // （涵盖敌人与己方随从——如 EnemyOrOwnMinion 这类自定义目标类型）。
+                Creature? target = null;
+                if (card.TargetType == TargetType.AnyEnemy || card.TargetType == TargetType.AnyPlayer ||
+                    card.TargetType == TargetType.AnyAlly ||
+                    (MinionLib.Targeting.CustomTargetTypeManager.TryGetCustomTargetType(card.TargetType, out var customType) &&
+                     customType.IsSingleTarget))
+                {
+                    var pool = combatState.Creatures
+                        .Where(c => c != null && c.IsAlive && card.IsValidTarget(c))
+                        .ToList();
+                    target = pool.Count > 0 ? owner.RunState.Rng.CombatTargets.NextItem(pool) : null;
+                    if (target == null)
+                    {
+                        continue;
+                    }
+                }
+                // AutoPlay：免费自动打出（不消耗能量），随机目标语义已由上方处理。
+                // 标记为"罗曼斯重放卡"：其对自己造成的伤害不触发随从军势挡伤；
+                // 同时标记为牌库之外（打开时空之门等计数"牌库外的法术"施放）。
+                jaina.Scripts.Character.Powers.RommathReplayTracker.Mark(card);
+                jaina.Scripts.Character.JainaCastTracker.MarkGenerated(card);
+                await CardCmd.AutoPlay(choiceContext, card, target);
             }
-            // AutoPlay：免费自动打出（不消耗能量），随机目标语义已由上方处理。
-            // 标记为"罗曼斯重放卡"：其对自己造成的伤害不触发随从军势挡伤；
-            // 同时标记为牌库之外（打开时空之门等计数"牌库外的法术"施放）。
-            jaina.Scripts.Character.Powers.RommathReplayTracker.Mark(card);
-            jaina.Scripts.Character.JainaCastTracker.MarkGenerated(card);
-            await CardCmd.AutoPlay(choiceContext, card, target);
         }
     }
 }
