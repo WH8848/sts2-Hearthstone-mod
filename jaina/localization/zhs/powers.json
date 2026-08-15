@@ -31,5 +31,14 @@
   "JAINA_POWER_EMPOWER_POWER.smartDescription": "每层灌注：英雄技能伤害 +1，额外召唤一个 1/1 的小精灵。",
   "JAINA_POWER_UNFAIR_GAME_POWER.title": "非公平游戏",
   "JAINA_POWER_UNFAIR_GAME_POWER.description": "若挂载期间玩家未受到任何伤害，则在下个回合开始时抽三张牌，然后移除。",
-  "JAINA_POWER_UNFAIR_GAME_POWER.smartDescription": "若本回合未受到任何伤害，下回合开始抽三张牌。"
+  "JAINA_POWER_UNFAIR_GAME_POWER.smartDescription": "若本回合未受到任何伤害，下回合开始抽三张牌。",
+  "JAINA_POWER_OPEN_TIME_GATE_POWER.title": "打开时空之门（任务）",
+  "JAINA_POWER_OPEN_TIME_GATE_POWER.description": "施放8个你的牌库之外的法术牌后获得奖励：时空扭曲。只能由玩家手打计数，随从自动打出的不计。",
+  "JAINA_POWER_OPEN_TIME_GATE_POWER.smartDescription": "任务进行中：施放牌库之外的法术牌（手打）后获得奖励。",
+  "JAINA_POWER_FORBIDDEN_SEQUENCE_POWER.title": "禁忌序列（任务）",
+  "JAINA_POWER_FORBIDDEN_SEQUENCE_POWER.description": "每发现一张牌计数，发现8张（升级后7张）后获得奖励：源生之石。",
+  "JAINA_POWER_FORBIDDEN_SEQUENCE_POWER.smartDescription": "任务进行中：发现牌后获得奖励。",
+  "JAINA_POWER_FORBIDDEN_STONE_POWER.title": "源生之石",
+  "JAINA_POWER_FORBIDDEN_STONE_POWER.description": "每当你发现一张牌后，会自动使用其余选项并失去1点耐久度。耐久度8，归0时能力消失。",
+  "JAINA_POWER_FORBIDDEN_STONE_POWER.smartDescription": "发现后自动使用其余选项，耐久度递减。"
 }

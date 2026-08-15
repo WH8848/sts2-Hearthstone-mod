@@ -31,5 +31,14 @@
   "JAINA_POWER_EMPOWER_POWER.smartDescription": "Each stack: Hero Power damage +1 and summon an extra 1/1 Imp.",
   "JAINA_POWER_UNFAIR_GAME_POWER.title": "Unfair Game",
   "JAINA_POWER_UNFAIR_GAME_POWER.description": "If you take no damage while this is active, draw 3 cards at the start of your next turn, then remove this.",
-  "JAINA_POWER_UNFAIR_GAME_POWER.smartDescription": "If you take no damage this turn, draw 3 cards at the start of your next turn."
+  "JAINA_POWER_UNFAIR_GAME_POWER.smartDescription": "If you take no damage this turn, draw 3 cards at the start of your next turn.",
+  "JAINA_POWER_OPEN_TIME_GATE_POWER.title": "Open the Time Gate (Quest)",
+  "JAINA_POWER_OPEN_TIME_GATE_POWER.description": "After you cast 8 Spell cards from outside your deck, gain a reward: Time Warp. Only manually played spells count; auto-played ones do not.",
+  "JAINA_POWER_OPEN_TIME_GATE_POWER.smartDescription": "Quest in progress: cast Spells from outside your deck (played by hand) to gain a reward.",
+  "JAINA_POWER_FORBIDDEN_SEQUENCE_POWER.title": "Forbidden Sequence (Quest)",
+  "JAINA_POWER_FORBIDDEN_SEQUENCE_POWER.description": "Each time you Discover a card, count it. After Discovering 8 cards (7 when upgraded), gain a reward: Forbidden Stone.",
+  "JAINA_POWER_FORBIDDEN_SEQUENCE_POWER.smartDescription": "Quest in progress: Discover cards to gain a reward.",
+  "JAINA_POWER_FORBIDDEN_STONE_POWER.title": "Forbidden Stone",
+  "JAINA_POWER_FORBIDDEN_STONE_POWER.description": "After you Discover a card, automatically play the other options and lose 1 Durability. Durability 8; when it reaches 0, this ability is lost.",
+  "JAINA_POWER_FORBIDDEN_STONE_POWER.smartDescription": "After Discovering, auto-play the other options; Durability decreases."
 }
