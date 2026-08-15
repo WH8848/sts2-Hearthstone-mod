@@ -31,10 +31,10 @@ public sealed class FireblastAncient : JainaSpellCardTemplate
     public override int MaxUpgradeLevel => int.MaxValue;
 
     /// <summary>
-    /// 英雄技能 + 重放（悬停解释）
+    /// 法术牌 + 英雄技能 + 重放（悬停解释）
     /// </summary>
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
-        [JainaKeywords.HeroPower, JainaKeywords.Replay];
+        [JainaKeywords.Spell, JainaKeywords.HeroPower, JainaKeywords.Replay];
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
@@ -81,6 +81,13 @@ public sealed class FireblastAncient : JainaSpellCardTemplate
             var empowerStacks = empower?.EmpowerStacks ?? 0;
             var totalDamage = (int)(base.DynamicVars.Damage.BaseValue + empowerStacks);
 
+            // 灌注：每一层灌注额外召唤一个 1/1 的小精灵（先召唤，再造成伤害）
+            for (int i = 0; i < empowerStacks; i++)
+            {
+                await jaina.Scripts.Character.Minions.JainaMinionPool.SummonMinion<jaina.Scripts.Character.Minions.ImpMinion>(
+                    choiceContext, base.Owner, maxHp: 1m, attack: 1m);
+            }
+
             if (empowerStacks <= 0)
             {
                 // 无灌注：单段总伤害
@@ -101,13 +108,6 @@ public sealed class FireblastAncient : JainaSpellCardTemplate
                         .WithHitFx("vfx/vfx_attack_blunt", null, "blunt_attack.mp3")
                         .Execute(choiceContext);
                 }
-            }
-
-            // 灌注：每一层灌注额外召唤一个 1/1 的小精灵
-            for (int i = 0; i < empowerStacks; i++)
-            {
-                await jaina.Scripts.Character.Minions.JainaMinionPool.SummonMinion<jaina.Scripts.Character.Minions.ImpMinion>(
-                    choiceContext, base.Owner, maxHp: 1m, attack: 1m);
             }
         }
     }

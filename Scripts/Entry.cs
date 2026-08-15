@@ -31,11 +31,41 @@ public class Entry
         // 自动注册内容
         ModTypeDiscoveryHub.RegisterModAssembly(ModId, assembly);
 
+        // 法术牌手牌发光标记（金色）：所有吉安娜法术/技能/英雄技能牌（含幸运币）
+        RegisterSpellHandGlow(assembly);
+
         // 注册吉安娜随从布局：将随从摆放在玩家（充能球区域）周围
         MinionLayoutManager.Register(new OrbStyleMinionLayout(), priority: 100);
 
         // 【临时诊断】游戏就绪后打印 JainaCardPool 实际内容（排查寒冰箭不在商店候选问题）
         RegisterMerchantDiag();
+    }
+
+    private static void RegisterSpellHandGlow(Assembly assembly)
+    {
+        try
+        {
+            // 注册金色手牌发光规则（额外法术发光标记）：Spell 关键词卡在手牌中金色发光。
+            // 必须在内容注册冻结（ModContentRegistry.IsFrozen）前注册。
+            var rules = STS2RitsuLib.Scaffolding.Cards.HandGlow.ModCardHandGlowRules.Gold(_ => true);
+            var spellBase = typeof(jaina.Scripts.Character.Cards.JainaSpellCardTemplate);
+            foreach (var type in assembly.GetTypes())
+            {
+                if (type.IsAbstract || type.IsInterface || type.ContainsGenericParameters)
+                {
+                    continue;
+                }
+                if (spellBase.IsAssignableFrom(type))
+                {
+                    STS2RitsuLib.Scaffolding.Cards.HandGlow.ModCardHandGlowRegistry.Register(type, rules);
+                }
+            }
+            Logger.Info("[JainaDiag] spell hand-glow registered");
+        }
+        catch (System.Exception ex)
+        {
+            Logger.Info($"[JainaDiag] spell glow register failed: {ex}");
+        }
     }
 
     private static void RegisterMerchantDiag()

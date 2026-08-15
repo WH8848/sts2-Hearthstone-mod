@@ -28,13 +28,14 @@ public sealed class Fireblast : JainaSpellCardTemplate
     /// </summary>
     public override int MaxUpgradeLevel => int.MaxValue;
 
-    // 英雄技能：不挂"法术牌"关键词，不被任何衍生发现；挂"英雄技能"关键词用于悬停解释
+    // 英雄技能：也视为法术牌（法术牌关键词，可被法术相关效果/关键词追踪）；
+    // 挂"英雄技能"关键词用于悬停解释
 
     /// <summary>
-    /// 英雄技能关键词（悬停显示解释；不注入卡面描述）
+    /// 法术牌 + 英雄技能关键词（悬停显示解释；不注入卡面描述）
     /// </summary>
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
-        [jaina.Scripts.Character.Keywords.JainaKeywords.HeroPower];
+        [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.HeroPower];
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
@@ -78,6 +79,13 @@ public sealed class Fireblast : JainaSpellCardTemplate
         var empowerStacks = empower?.EmpowerStacks ?? 0;
         var totalDamage = (int)(base.DynamicVars.Damage.BaseValue + empowerStacks);
 
+        // 灌注：每一层灌注额外召唤一个 1/1 的小精灵（先召唤，再造成伤害）
+        for (int i = 0; i < empowerStacks; i++)
+        {
+            await jaina.Scripts.Character.Minions.JainaMinionPool.SummonMinion<jaina.Scripts.Character.Minions.ImpMinion>(
+                choiceContext, base.Owner, maxHp: 1m, attack: 1m);
+        }
+
         if (empowerStacks <= 0)
         {
             // 无灌注：单段总伤害
@@ -98,13 +106,6 @@ public sealed class Fireblast : JainaSpellCardTemplate
                     .WithHitFx("vfx/vfx_attack_blunt", null, "blunt_attack.mp3")
                     .Execute(choiceContext);
             }
-        }
-
-        // 灌注：每一层灌注额外召唤一个 1/1 的小精灵
-        for (int i = 0; i < empowerStacks; i++)
-        {
-            await jaina.Scripts.Character.Minions.JainaMinionPool.SummonMinion<jaina.Scripts.Character.Minions.ImpMinion>(
-                choiceContext, base.Owner, maxHp: 1m, attack: 1m);
         }
     }
 

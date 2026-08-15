@@ -331,6 +331,12 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
     public override bool IsHealthBarVisible => false;
 
     /// <summary>
+    /// 血条视觉缩短一半：MinionLib 强制随从可交互使血条显示，
+    /// 默认血条宽度 = Bounds(250) + 24，这里缩减 137 使血条约为原来一半。
+    /// </summary>
+    public override float HpBarSizeReduction => 137f;
+
+    /// <summary>
     /// 随从不显示在怪物图鉴中
     /// </summary>
     public override bool ShouldShowInCompendium => false;
@@ -375,7 +381,8 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
             {
                 var target = targets.FirstOrDefault();
                 if (target == null || !Creature.IsAlive) return;
-                await CreatureCmd.Damage(new ThrowingPlayerChoiceContext(), [target], BaseAttackValue, ValueProp.Unpowered, Creature);
+                // Move 标记：触发荆棘反伤与振翅（Flutter）层数减少（IsPoweredAttack）
+                await CreatureCmd.Damage(new ThrowingPlayerChoiceContext(), [target], BaseAttackValue, ValueProp.Move, Creature);
             },
             intent)
         {
@@ -651,7 +658,8 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
         {
             return;
         }
-        await CreatureCmd.Damage(choiceContext, [target], BaseAttackValue, ValueProp.Unpowered, Creature);
+        // Move 标记：触发荆棘反伤与振翅（Flutter）层数减少（IsPoweredAttack）
+        await CreatureCmd.Damage(choiceContext, [target], BaseAttackValue, ValueProp.Move, Creature);
 
         // 已攻击：意图消失（下回合开始恢复显示）
         _hasAttackedThisTurn = true;

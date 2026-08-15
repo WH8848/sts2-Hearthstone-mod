@@ -17,10 +17,12 @@ namespace jaina.Scripts.Character.Cards;
 public sealed class LuckyCoin : JainaSpellCardTemplate
 {
     /// <summary>
+    /// 法术牌（攻击牌和技能牌都视为法术牌）+ 保留 + 消耗：
     /// 保留：回合结束时留在手牌（游戏原生关键词，自动生效并注入卡面描述文本）；
     /// 消耗：打出后从本场战斗移除（游戏原生关键词）。
     /// </summary>
-    public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Retain, CardKeyword.Exhaust];
+    public override IEnumerable<CardKeyword> CanonicalKeywords =>
+        [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, CardKeyword.Retain, CardKeyword.Exhaust];
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [];
 

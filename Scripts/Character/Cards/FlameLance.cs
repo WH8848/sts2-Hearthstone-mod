@@ -94,7 +94,8 @@ public sealed class FlameLance : JainaSpellCardTemplate
                 {
                     break;
                 }
-                await CreatureCmd.Damage(choiceContext, [randomTarget], 4m, ValueProp.Unpowered, base.Owner.Creature);
+                // Move 标记：每段伤害都触发振翅（Flutter）层数减少（IsPoweredAttack）
+                await CreatureCmd.Damage(choiceContext, [randomTarget], 4m, ValueProp.Move, base.Owner.Creature);
             }
         }
         else

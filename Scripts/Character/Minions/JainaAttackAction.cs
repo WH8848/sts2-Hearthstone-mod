@@ -67,8 +67,9 @@ public sealed class JainaAttackAction : ActionModel, IModPowerAssetOverrides
         }
 
         var actor = Owner;
+        // Move 标记：触发荆棘反伤与振翅（Flutter）层数减少（IsPoweredAttack）
         await MinionAnimCmd.PlayBumpAttackAsync(actor, target,
-            () => CreatureCmd.Damage(choiceContext, [target], attack, ValueProp.Unpowered, actor));
+            () => CreatureCmd.Damage(choiceContext, [target], attack, ValueProp.Move, actor));
 
         // 行动次数由 MinionLib 框架在 OnAct 之后自动递减（DecrementAfterAct → PowerCmd.Decrement），
         // 递减会触发意图刷新；此处再主动刷新一次意图显示保证即时隐藏（幂等）。
