@@ -129,5 +129,8 @@
   "JAINA_CARD_INCANTERS_FLOW_CARD.titleUpgraded": "Luna's Pocket Galaxy",
   "JAINA_CARD_INCANTERS_FLOW_CARD.description": "[gold]Arcane[/gold].\n{IfUpgraded:show:Change the Cost of all minion cards in your draw pile to 0. Exhaust.|Reduce the Cost of all Spell cards in your draw pile by 1. Exhaust.}",
   "JAINA_CARD_FLAMEWAKER_CARD.title": "Flamewaker",
-  "JAINA_CARD_FLAMEWAKER_CARD.description": "Summon a [blue]2/4[/blue] [red]Flamewaker[/red]. After you cast a spell, deal 2 instances of 1 damage, split randomly among all enemies."
+  "JAINA_CARD_FLAMEWAKER_CARD.description": "Summon a [blue]2/4[/blue] [red]Flamewaker[/red]. After you cast a spell, deal 2 instances of 1 damage, split randomly among all enemies.",
+  "JAINA_CARD_MASK_OF_CTHUN_CARD.title": "Mask of C'Thun",
+  "JAINA_CARD_MASK_OF_CTHUN_CARD.titleUpgraded": "Sunset Volley",
+  "JAINA_CARD_MASK_OF_CTHUN_CARD.description": "{IfUpgraded:show:[gold]Fire[/gold].\nDeal 10 damage randomly split among all enemies. Summon a random minion that costs 3.|[gold]Shadow[/gold].\nDeal 10 damage randomly split among all enemies.}"
 }
