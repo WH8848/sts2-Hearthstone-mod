@@ -109,9 +109,8 @@ public static class JainaDiscoverHelper
 
     /// <summary>
     /// 从吉安娜全卡池中发现一张"费用消耗精确等于指定值"的卡牌（拾荒清道夫战吼用）。
-    /// 池：JainaCardPool 全部卡（法术/随从/地标）+ 幸运币（中立衍生池特例加入），
-    /// 每种按可升级级别展开；
-    /// 排除英雄技能卡（火焰冲击等）、英雄卡（魔导师晨拥）与任务线卡（不可被发现）。
+    /// 池：JainaCardPool 全部卡（法术/随从/地标），每种按可升级级别展开；
+    /// 排除英雄技能卡（火焰冲击等）、英雄卡（魔导师晨拥）、任务线卡与 X 费卡（不可被发现）。
     /// </summary>
     public static async Task<CardModel?> DiscoverCardOfCostAndAddToHand(
         PlayerChoiceContext choiceContext, Player player, int cost)
@@ -164,8 +163,6 @@ public static class JainaDiscoverHelper
                 AddCandidates(canonical.GetType());
             }
         }
-        // 幸运币（中立衍生池，特例：拾荒清道夫可发现）
-        AddCandidates(typeof(LuckyCoin));
 
         if (pool.Count == 0)
         {
