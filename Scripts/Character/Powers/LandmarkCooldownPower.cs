@@ -11,7 +11,9 @@ namespace jaina.Scripts.Character.Powers;
 /// 地标冷却（挂在<b>地标实体</b>上）。
 /// - Amount = 剩余冷却回合数：玩家回合开始时 -1，归零时能力消失（地标恢复可用）。
 /// - 每次使用地标后挂 2 层（每两个回合可点击使用一次：使用回合后的下一回合不可用，再下一回合恢复）。
-/// - 打出地标当回合即可使用（不挂冷却，见 <see cref="Minions.JainaLandmarkBase.OnSummon"/>）。
+/// - 打出地标当回合即可使用（不挂冷却，见 <see cref="Minions.JainaLandmarkBase.OnSummon"/>）；
+/// - 重新开启效果（小玩物小屋/潮汐之池）通过 <see cref="Minions.JainaLandmarkBase.Reactivate"/>
+///   立即移除本冷却并恢复可用（当回合即可再次使用）。
 /// 冷却期间不授予使用行动点（<see cref="Minions.JainaLandmarkBase"/> 处理）。
 /// </summary>
 [RegisterPower]

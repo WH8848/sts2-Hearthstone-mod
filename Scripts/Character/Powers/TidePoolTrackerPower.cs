@@ -11,7 +11,7 @@ namespace jaina.Scripts.Character.Powers;
 /// <summary>
 /// 潮汐之池的"施放法术后重新开启"追踪（挂在<b>地标实体</b>上）。
 /// 你（地标主人）每施放一张法术牌（攻击/技能牌或挂"法术牌"关键词的卡，不含英雄技能），
-/// 重新开启本地标：移除冷却，下一回合仍可使用。
+/// 重新开启本地标：移除冷却并立即重新授予行动点——当回合即可再次点击使用。
 /// </summary>
 [RegisterPower]
 public sealed class TidePoolTrackerPower : PowerModel
@@ -26,7 +26,8 @@ public sealed class TidePoolTrackerPower : PowerModel
     protected override bool IsVisibleInternal => false;
 
     /// <summary>
-    /// 玩家打出卡后：若为地标主人施放的法术牌，重新开启地标（移除冷却）。
+    /// 玩家打出卡后：若为地标主人施放的法术牌，重新开启地标
+    /// （移除冷却并立即重新授予使用行动点——当回合即可再次点击使用）。
     /// </summary>
     public override async Task AfterCardPlayed(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
@@ -52,16 +53,9 @@ public sealed class TidePoolTrackerPower : PowerModel
         {
             return;
         }
-
-        // 重新开启：移除冷却（下一回合仍可使用）
-        var cooldown = owner.GetPower<LandmarkCooldownPower>();
-        if (cooldown != null)
-        {
-            await PowerCmd.Remove(cooldown);
-        }
         if (owner.Monster is Minions.JainaLandmarkBase landmark)
         {
-            landmark.RefreshIntentDisplay();
+            await landmark.Reactivate(choiceContext);
         }
     }
 }

@@ -18,7 +18,8 @@ namespace jaina.Scripts.Character.Minions;
 ///   打出当回合即可使用（召唤时立即授予行动点）；
 /// - 拥有耐久度（<see cref="LandmarkDurabilityPower"/>）：每次使用 -1，归零时地标被摧毁（离开战场）；
 /// - 冷却（<see cref="LandmarkCooldownPower"/>）：每次使用后挂 2 层，玩家回合开始递减，
-///   归零恢复（使用回合后的下一回合不可用，再下一回合恢复）。
+///   归零恢复（使用回合后的下一回合不可用，再下一回合恢复）；
+/// - 重新开启（<see cref="Reactivate"/>）：移除冷却并立即重新授予行动点，当回合即可再次点击使用。
 /// </summary>
 public abstract class JainaLandmarkBase : JainaMinionBase
 {
@@ -127,6 +128,30 @@ public abstract class JainaLandmarkBase : JainaMinionBase
         // 冷却 2 层：每两个回合可点击使用一次（使用回合后的下一回合不可用，再下一回合恢复）
         var applier = Creature.PetOwner?.Creature ?? Creature;
         await PowerCmd.Apply<LandmarkCooldownPower>(choiceContext, Creature, 2m, applier, null);
+        RefreshIntentDisplay();
+    }
+
+    /// <summary>
+    /// 重新开启地标（"施放法术后重新开启"等效果用）：
+    /// 移除冷却，并立即重新授予使用行动点——开启后当回合即可再次点击使用，无需等到下回合。
+    /// 若地标当前已有可用行动点（未使用过），不重复授予。
+    /// </summary>
+    public async Task Reactivate(PlayerChoiceContext choiceContext)
+    {
+        if (!Creature.IsAlive)
+        {
+            return;
+        }
+        var cooldown = Creature.GetPower<LandmarkCooldownPower>();
+        if (cooldown != null)
+        {
+            await PowerCmd.Remove(cooldown);
+        }
+        if (Creature.GetPower<JainaLandmarkUseAction>() == null)
+        {
+            var applier = Creature.PetOwner?.Creature ?? Creature;
+            await PowerCmd.Apply<JainaLandmarkUseAction>(choiceContext, Creature, 1m, applier, null);
+        }
         RefreshIntentDisplay();
     }
 
