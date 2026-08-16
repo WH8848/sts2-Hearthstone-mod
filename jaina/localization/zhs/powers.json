@@ -45,5 +45,8 @@
   "JAINA_POWER_JAINA_WEAPON_POWER.description": "攻击力{Attack}。耐久度{Amount}。每回合可点击角色攻击一次，每次攻击消耗1点耐久度，归0时能力消失。",
   "JAINA_POWER_JAINA_WEAPON_ATTACK_ACTION.title": "武器攻击",
   "JAINA_POWER_JAINA_WEAPON_ATTACK_ACTION.description": "[gold]行动[/gold]：选择 1 名敌人。造成等同于武器攻击力的伤害。消耗 1 点。",
-  "JAINA_POWER_JAINA_WEAPON_ATTACK_ACTION.smartDescription": "[gold]行动[/gold]：选择 1 名敌人。造成等同于武器攻击力的伤害。消耗 1 点。"
+  "JAINA_POWER_JAINA_WEAPON_ATTACK_ACTION.smartDescription": "[gold]行动[/gold]：选择 1 名敌人。造成等同于武器攻击力的伤害。消耗 1 点。",
+  "JAINA_POWER_MAGE_QUESTLINE_POWER.title": "法师任务线",
+  "JAINA_POWER_MAGE_QUESTLINE_POWER.description": "任务：施放火焰、冰霜和奥术法术各一个。完成后获得奖励并升级下一阶段。",
+  "JAINA_POWER_MAGE_QUESTLINE_POWER.smartDescription": "任务进行中：施放火焰、冰霜和奥术法术各一个后获得奖励。"
 }
