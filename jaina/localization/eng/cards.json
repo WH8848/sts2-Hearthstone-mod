@@ -164,5 +164,7 @@
   "JAINA_CARD_TEAR_REALITY_CARD.titleUpgraded": "Time Control",
   "JAINA_CARD_TEAR_REALITY_CARD.description": "{IfUpgraded:show:[gold]Arcane[/gold].\nDiscover two [blue]Arcane spells[/blue] from the past. They cost 1 less.|[gold]Arcane[/gold].\nAdd 2 random [blue]Arcane spells[/blue] from the past to your hand. They cost 1 less.}",
   "JAINA_CARD_DECK_OF_WONDERS_CARD.title": "Deck of Wonders",
-  "JAINA_CARD_DECK_OF_WONDERS_CARD.description": "{IfUpgraded:show:Transform all spells in your Draw Pile and Discard Pile into spells that cost 1 more, upgraded. (They keep their original Cost.)|Transform all spells in your Draw Pile and Discard Pile into spells that cost 1 more. (They keep their original Cost.)}"
+  "JAINA_CARD_DECK_OF_WONDERS_CARD.description": "{IfUpgraded:show:Transform all spells in your Draw Pile and Discard Pile into spells that cost 1 more, upgraded. (They keep their original Cost.)|Transform all spells in your Draw Pile and Discard Pile into spells that cost 1 more. (They keep their original Cost.)}",
+  "JAINA_CARD_EVOCATION_CARD.title": "Evocation",
+  "JAINA_CARD_EVOCATION_CARD.description": "{IfUpgraded:show:Fill your hand with random upgraded [blue]Mage spells[/blue]. They are [gold]Ethereal[/gold].|Fill your hand with random [blue]Mage spells[/blue]. They are [gold]Ethereal[/gold].}"
 }
