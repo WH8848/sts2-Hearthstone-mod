@@ -109,8 +109,7 @@ public static class JainaCastTracker
         [typeof(Trick)] = JainaSpellSchool.Arcane,
         [typeof(Awaken)] = JainaSpellSchool.Arcane,
         [typeof(NorgannonWisdom)] = JainaSpellSchool.Arcane,
-        [typeof(Objection)] = JainaSpellSchool.Arcane,
-        [typeof(YoggBoxCard)] = JainaSpellSchool.Shadow
+        [typeof(Objection)] = JainaSpellSchool.Arcane
     };
 
     /// <summary>
