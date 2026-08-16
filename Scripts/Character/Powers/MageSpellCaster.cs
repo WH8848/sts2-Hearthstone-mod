@@ -61,6 +61,7 @@ public static class MageSpellCaster
     /// <summary>
     /// 随机施放一个有用的法师法术（魔法智慧之球固定六张池：
     /// 免费自动打出，随机目标；单目标法术优先选敌人）。
+    /// 火焰冲击等英雄技能卡不是法术牌，绝不会被施放（池内无 + 实例过滤兜底）。
     /// </summary>
     public static async Task CastRandomMageSpell(PlayerChoiceContext choiceContext, Player player, bool preferEnemies = true)
     {
@@ -81,6 +82,11 @@ public static class MageSpellCaster
         {
             return;
         }
+        // 英雄技能卡不是法术牌：实例过滤兜底（火焰冲击等绝不施放）
+        if (HeroPowerHandHelper.IsHeroPowerCard(card))
+        {
+            return;
+        }
         jaina.Scripts.Character.JainaCastTracker.MarkGenerated(card);
 
         await AutoPlayRandomly(choiceContext, player, card, preferEnemies);
@@ -89,6 +95,7 @@ public static class MageSpellCaster
     /// <summary>
     /// 随机施放一个法师法术（终极索兰莉安用：从吉安娜全部法术牌池
     /// 按可升级级别展开，未升级与升级形态都可能被施放）。
+    /// 火焰冲击等英雄技能卡不是法术牌，绝不会被施放（池内无 + 实例过滤兜底）。
     /// </summary>
     public static async Task CastRandomMageSpellFromAll(PlayerChoiceContext choiceContext, Player player, bool preferEnemies = true)
     {
@@ -106,6 +113,11 @@ public static class MageSpellCaster
         var canonical = MegaCrit.Sts2.Core.Models.ModelDb.GetByIdOrNull<MegaCrit.Sts2.Core.Models.CardModel>(
             MegaCrit.Sts2.Core.Models.ModelDb.GetId(type));
         if (canonical == null)
+        {
+            return;
+        }
+        // 英雄技能卡不是法术牌：池内过滤兜底
+        if (HeroPowerHandHelper.IsHeroPowerCard(canonical))
         {
             return;
         }
