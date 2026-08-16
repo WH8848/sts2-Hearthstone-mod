@@ -128,6 +128,7 @@ public static class JainaMinionPool
             nameof(SanctumCandlesellerMinion) => await SummonMinion<SanctumCandlesellerMinion>(choiceContext, player, maxHp, attack, position, source),
             nameof(EnergyShaperMinion) => await SummonMinion<EnergyShaperMinion>(choiceContext, player, maxHp, attack, position, source),
             nameof(KhadgarMinion) => await SummonMinion<KhadgarMinion>(choiceContext, player, maxHp, attack, position, source),
+            nameof(CommanderSivaraMinion) => await SummonMinion<CommanderSivaraMinion>(choiceContext, player, maxHp, attack, position, source),
             _ => null!,
         };
     }

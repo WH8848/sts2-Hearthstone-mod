@@ -151,5 +151,7 @@
   "JAINA_CARD_KHADGAR_CARD.title": "益智大师卡德加",
   "JAINA_CARD_KHADGAR_CARD.description": "召唤一个[blue]5/5[/blue]的[red]益智大师卡德加[/red]。[gold]战吼[/gold]：装备一个会施放有用的法师法术的[blue]0/6[/blue]的[red]魔法智慧之球[/red]！",
   "JAINA_CARD_WONDROUS_WISDOMBALL_CARD.title": "魔法智慧之球",
-  "JAINA_CARD_WONDROUS_WISDOMBALL_CARD.description": "在你的回合结束时，随机施放一个有用的法师法术。失去1点耐久度。"
+  "JAINA_CARD_WONDROUS_WISDOMBALL_CARD.description": "在你的回合结束时，随机施放一个有用的法师法术。失去1点耐久度。",
+  "JAINA_CARD_COMMANDER_SIVARA_CARD.title": "指挥官西瓦拉",
+  "JAINA_CARD_COMMANDER_SIVARA_CARD.description": "召唤一个[blue]3/5[/blue]的[red]指挥官西瓦拉[/red]。[gold]战吼[/gold]：如果你在此牌在你手中时施放过三个法术，则将那些法术的复制置回你的手牌。"
 }

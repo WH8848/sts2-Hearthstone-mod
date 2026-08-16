@@ -151,5 +151,7 @@
   "JAINA_CARD_KHADGAR_CARD.title": "Khadgar",
   "JAINA_CARD_KHADGAR_CARD.description": "Summon a [blue]5/5[/blue] [red]Khadgar[/red]. [gold]Battlecry[/gold]: Equip a [blue]0/6[/blue] [red]Wondrous Wisdomball[/red] that casts useful Mage spells!",
   "JAINA_CARD_WONDROUS_WISDOMBALL_CARD.title": "Wondrous Wisdomball",
-  "JAINA_CARD_WONDROUS_WISDOMBALL_CARD.description": "At the end of your turn, cast a random useful Mage spell. Lose 1 Durability."
+  "JAINA_CARD_WONDROUS_WISDOMBALL_CARD.description": "At the end of your turn, cast a random useful Mage spell. Lose 1 Durability.",
+  "JAINA_CARD_COMMANDER_SIVARA_CARD.title": "Commander Sivara",
+  "JAINA_CARD_COMMANDER_SIVARA_CARD.description": "Summon a [blue]3/5[/blue] [red]Commander Sivara[/red]. [gold]Battlecry[/gold]: If you've cast three spells while holding this, add those spells back to your hand."
 }
