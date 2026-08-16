@@ -42,6 +42,13 @@ public sealed class DeepFreezeCard : JainaSpellCardTemplate
     {
     }
 
+    /// <summary>
+    /// 目标：深度冻结指向一名敌人（冻结目标）；升级后的海啸不指向目标
+    /// （召唤的水元素随机攻击敌人）。
+    /// </summary>
+    public override TargetType TargetType =>
+        IsUpgraded ? TargetType.None : TargetType.AnyEnemy;
+
     public override string Title
     {
         get
