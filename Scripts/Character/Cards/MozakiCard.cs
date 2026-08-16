@@ -25,7 +25,7 @@ public sealed class MozakiCard : JainaMinionCardTemplate
     protected override int MinionHealth => 8;
 
     public MozakiCard()
-        : base(1, CardRarity.Rare)
+        : base(2, CardRarity.Rare)
     {
     }
 }

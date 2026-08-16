@@ -25,7 +25,7 @@ public sealed class AegwynnCard : JainaMinionCardTemplate
     protected override int MinionHealth => 5;
 
     public AegwynnCard()
-        : base(1, CardRarity.Rare)
+        : base(2, CardRarity.Rare)
     {
     }
 }

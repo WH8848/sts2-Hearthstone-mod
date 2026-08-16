@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -12,8 +13,10 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
-/// 非公平游戏 (Unfair Game) - 1费：如果你这个回合没有受到任何伤害，下个回合抽三张牌。
-/// 升级后变为加大音量 (Turn Up Volume)：抽三张攻击牌或技能牌。压轴：从中发现一张复制。
+/// 加工失误 (Manufacturing Error) - 1费技能牌（罕见）。
+/// 抽三张牌。如果你的抽牌堆里没有随从牌，这三张牌的费用消耗减少1点。
+/// 升级后变为加大音量 (Turn Up Volume)：抽三张法术牌。
+/// 压轴：如果刚好消耗完能量，从抽到的三张法术牌中发现一张复制。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
 public sealed class UnfairGame : JainaSpellCardTemplate
@@ -29,7 +32,7 @@ public sealed class UnfairGame : JainaSpellCardTemplate
     protected override IEnumerable<DynamicVar> CanonicalVars => [];
 
     public override string CustomPortraitPath =>
-        IsUpgraded ? "res://assets/card_art/volume_up.png" : "res://assets/card_art/unfair_game.png";
+        IsUpgraded ? "res://assets/card_art/volume_up.png" : "res://assets/card_art/manufacturing_error.png";
 
     public UnfairGame()
         : base(1, CardType.Skill, CardRarity.Uncommon, TargetType.None, true)
@@ -66,39 +69,28 @@ public sealed class UnfairGame : JainaSpellCardTemplate
 
         if (IsUpgraded)
         {
-            // 加大音量：抽三张攻击牌或技能牌
-            var drawn = await CardPileCmd.Draw(choiceContext, 3, base.Owner);
-            // 压轴：如果刚好消耗完能量，从中发现一张复制
+            // 加大音量：抽三张牌
+            var drawn = (await CardPileCmd.Draw(choiceContext, 3, base.Owner)).ToList();
+            // 压轴：如果刚好消耗完能量，从抽到的三张法术牌（攻击/技能牌）中发现一张复制
             if (base.Owner.PlayerCombatState is { Energy: <= 0 })
             {
-                var hand = base.Owner.PlayerCombatState?.Hand.Cards;
-                if (hand != null && hand.Count > 0)
+                var spells = drawn.Where(c => c.Type == CardType.Attack || c.Type == CardType.Skill).ToList();
+                if (spells.Count > 0)
                 {
-                    // 压轴：从手牌中的法术牌里随机取最多 3 张候选（发现界面要求 ≤3）
-                    var candidates = new List<CardModel>();
-                    var pool = hand.Where(c => c.Type == CardType.Attack || c.Type == CardType.Skill).ToList();
-                    var rng = base.Owner.RunState.Rng.CombatTargets;
-                    while (candidates.Count < 3 && pool.Count > 0)
+                    // 发现界面要求最多 3 张候选；抽到的法术牌超过 3 张时随机取 3 张
+                    var candidates = spells.Select(c => c.CreateClone()).ToList();
+                    if (candidates.Count > 3)
                     {
-                        var c = rng.NextItem(pool);
-                        if (c == null)
-                        {
-                            break;
-                        }
-                        pool.Remove(c);
-                        // CreateClone 保留 Owner（MutableClone 的卡无 Owner 会导致入牌堆 NRE）
-                        candidates.Add(c.CreateClone());
+                        var rng = base.Owner.RunState.Rng.CombatTargets;
+                        candidates = candidates.OrderBy(_ => rng.NextInt(1 << 30)).Take(3).ToList();
                     }
-                    if (candidates.Count > 0)
+                    var chosen = await CardSelectCmd.FromChooseACardScreen(choiceContext, candidates.AsReadOnly(), base.Owner, canSkip: true);
+                    if (chosen != null)
                     {
-                        var chosen = await MegaCrit.Sts2.Core.Commands.CardSelectCmd.FromChooseACardScreen(choiceContext, candidates.AsReadOnly(), base.Owner, canSkip: true);
-                        if (chosen != null)
+                        jaina.Scripts.Character.JainaCastTracker.MarkGenerated(chosen);
+                        if (!jaina.Scripts.Character.JainaHandHelper.IsHandFull(base.Owner))
                         {
-                            jaina.Scripts.Character.JainaCastTracker.MarkGenerated(chosen);
-                            if (!jaina.Scripts.Character.JainaHandHelper.IsHandFull(base.Owner))
-                            {
-                                await CardPileCmd.AddGeneratedCardToCombat(chosen, PileType.Hand, base.Owner);
-                            }
+                            await CardPileCmd.AddGeneratedCardToCombat(chosen, PileType.Hand, base.Owner);
                         }
                     }
                 }
@@ -106,9 +98,18 @@ public sealed class UnfairGame : JainaSpellCardTemplate
         }
         else
         {
-            // 非公平游戏：挂上监听，若本回合未受伤，下回合开始抽三张
-            await MegaCrit.Sts2.Core.Commands.PowerCmd.Apply<jaina.Scripts.Character.Powers.UnfairGamePower>(
-                choiceContext, [base.Owner.Creature], 1m, base.Owner.Creature, this);
+            // 加工失误：抽三张牌；抽牌堆无随从牌则这三张牌费用减 1
+            var hasMinionInDrawPile = base.Owner.PlayerCombatState?.DrawPile.Cards.Any(
+                c => c.Type == JainaCardTypes.Minion) ?? false;
+            var drawn = await CardPileCmd.Draw(choiceContext, 3, base.Owner);
+            if (!hasMinionInDrawPile)
+            {
+                foreach (var card in drawn)
+                {
+                    // 减费直到打出（SetUntilPlayed：只在打出前显示减费，打出后恢复）
+                    card.EnergyCost.SetUntilPlayed(card.EnergyCost.GetResolved() - 1);
+                }
+            }
         }
     }
 }
