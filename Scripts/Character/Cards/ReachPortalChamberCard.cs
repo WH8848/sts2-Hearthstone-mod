@@ -29,13 +29,14 @@ public sealed class ReachPortalChamberCard : ModCardTemplate
     public override string CustomPortraitPath => "res://assets/card_art/reach_portal_room.png";
 
     /// <summary>
-    /// 悬停提示：显示奖励随从（奥术师晨拥），左侧从上到下排列
+    /// 悬停提示：显示奖励随从（奥术师晨拥），左侧从上到下排列。
+    /// 升级版（抵达传送大厅+）悬停显示升级衍生物（奥术师晨拥+）。
     /// </summary>
     protected override IEnumerable<IHoverTip> AdditionalHoverTips
     {
         get
         {
-            yield return new CardHoverTip(ModelDb.Card<DawngraspCard>());
+            yield return new CardHoverTip(MageQuestlinePower.GetQuestlineHoverCard<DawngraspCard>(IsUpgraded));
         }
     }
 

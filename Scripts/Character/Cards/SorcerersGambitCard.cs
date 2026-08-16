@@ -30,14 +30,15 @@ public sealed class SorcerersGambitCard : ModCardTemplate
     /// <summary>
     /// 悬停提示：显示整条任务线的后续衍生卡（拖延时间 → 抵达传送大厅 → 奥术师晨拥），
     /// 左侧从上到下排列（NHoverTipCardContainer 按添加顺序垂直布局）。
+    /// 升级版（巫师的计策+）悬停显示升级衍生物（拖延时间+ → 抵达传送大厅+ → 奥术师晨拥+）。
     /// </summary>
     protected override IEnumerable<IHoverTip> AdditionalHoverTips
     {
         get
         {
-            yield return new CardHoverTip(ModelDb.Card<StallingCard>());
-            yield return new CardHoverTip(ModelDb.Card<ReachPortalChamberCard>());
-            yield return new CardHoverTip(ModelDb.Card<DawngraspCard>());
+            yield return new CardHoverTip(MageQuestlinePower.GetQuestlineHoverCard<StallingCard>(IsUpgraded));
+            yield return new CardHoverTip(MageQuestlinePower.GetQuestlineHoverCard<ReachPortalChamberCard>(IsUpgraded));
+            yield return new CardHoverTip(MageQuestlinePower.GetQuestlineHoverCard<DawngraspCard>(IsUpgraded));
         }
     }
 

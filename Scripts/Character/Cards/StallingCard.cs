@@ -29,14 +29,15 @@ public sealed class StallingCard : ModCardTemplate
     public override string CustomPortraitPath => "res://assets/card_art/stall_for_time.png";
 
     /// <summary>
-    /// 悬停提示：显示后续衍生卡（抵达传送大厅 → 奥术师晨拥），左侧从上到下排列
+    /// 悬停提示：显示后续衍生卡（抵达传送大厅 → 奥术师晨拥），左侧从上到下排列。
+    /// 升级版（拖延时间+）悬停显示升级衍生物（抵达传送大厅+ → 奥术师晨拥+）。
     /// </summary>
     protected override IEnumerable<IHoverTip> AdditionalHoverTips
     {
         get
         {
-            yield return new CardHoverTip(ModelDb.Card<ReachPortalChamberCard>());
-            yield return new CardHoverTip(ModelDb.Card<DawngraspCard>());
+            yield return new CardHoverTip(MageQuestlinePower.GetQuestlineHoverCard<ReachPortalChamberCard>(IsUpgraded));
+            yield return new CardHoverTip(MageQuestlinePower.GetQuestlineHoverCard<DawngraspCard>(IsUpgraded));
         }
     }
 

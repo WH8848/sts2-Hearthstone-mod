@@ -110,6 +110,22 @@ public sealed class MageQuestlinePower : PowerModel, IModPowerAssetOverrides
     }
 
     /// <summary>
+    /// 获取任务线悬停提示用卡：升级的任务卡（+）悬停时显示升级版衍生卡（+）。
+    /// 未升级返回 canonical 实例；升级返回 MutableClone + UpgradeInternal 的克隆。
+    /// </summary>
+    public static CardModel GetQuestlineHoverCard<T>(bool upgraded) where T : CardModel
+    {
+        var canonical = ModelDb.Card<T>();
+        if (!upgraded)
+        {
+            return canonical;
+        }
+        var clone = (CardModel)canonical.MutableClone();
+        clone.UpgradeInternal();
+        return clone;
+    }
+
+    /// <summary>
     /// 抽一张法术牌：从抽牌堆中找第一张攻击/技能牌置入手牌；抽牌堆中没有则普通抽一张。
     /// </summary>
     private static async Task GrantDrawSpell(PlayerChoiceContext choiceContext, Player player)
