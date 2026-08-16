@@ -50,19 +50,25 @@ public sealed class VolatileSkeleton : JainaMinionBase
     /// </summary>
     public override async Task OnDeathrattle(PlayerChoiceContext choiceContext)
     {
-        if (Creature.CombatState == null)
+        // 容错：死亡流程中 Creature.CombatState 可能已被清空，回退到主人的战斗状态
+        var state = Creature.CombatState ?? Creature.PetOwner?.Creature.CombatState;
+        if (state == null)
         {
+            MegaCrit.Sts2.Core.Logging.Log.Warn(
+                $"[JainaDeathrattle] VolatileSkeleton: no combat state at death (creatureStateNull={Creature.CombatState == null})");
             return;
         }
-        var opponents = Creature.CombatState
+        var opponents = state
             .GetOpponentsOf(Creature)
             .Where(e => e != null && e.IsAlive && e.IsHittable)
             .ToList();
+        MegaCrit.Sts2.Core.Logging.Log.Info(
+            $"[JainaDeathrattle] VolatileSkeleton opponents={opponents.Count} stateNull={Creature.CombatState == null}");
         if (opponents.Count == 0)
         {
             return;
         }
-        var target = CombatState.RunState.Rng.CombatTargets.NextItem(opponents);
+        var target = state.RunState.Rng.CombatTargets.NextItem(opponents);
         if (target == null)
         {
             return;

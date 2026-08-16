@@ -688,15 +688,19 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
         {
             return;
         }
+        MegaCrit.Sts2.Core.Logging.Log.Info(
+            $"[JainaDeathrattle] AfterDeath: monster={GetType().Name} hasRattle={HasDeathrattle} " +
+            $"combatStateNull={Creature.CombatState == null} wasRemovalPrevented={wasRemovalPrevented}");
         if (HasDeathrattle)
         {
             try
             {
                 await OnDeathrattle(choiceContext);
             }
-            catch
+            catch (System.Exception ex)
             {
-                // 亡语失败不影响战斗
+                // 亡语失败记录日志（不吞异常，便于排查）
+                MegaCrit.Sts2.Core.Logging.Log.Warn($"[JainaDeathrattle] error on {GetType().Name}: {ex}");
             }
         }
     }
