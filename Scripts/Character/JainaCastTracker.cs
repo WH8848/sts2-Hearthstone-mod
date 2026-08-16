@@ -104,6 +104,7 @@ public static class JainaCastTracker
         [typeof(IceBarrier)] = JainaSpellSchool.Frost,
         [typeof(DeepFreezeCard)] = JainaSpellSchool.Frost,
         [typeof(ArcaneIntellect)] = JainaSpellSchool.Arcane,
+        [typeof(IncantersFlowCard)] = JainaSpellSchool.Arcane,
         [typeof(JainasGiftCard)] = JainaSpellSchool.Arcane,
         [typeof(Trick)] = JainaSpellSchool.Arcane,
         [typeof(Awaken)] = JainaSpellSchool.Arcane,

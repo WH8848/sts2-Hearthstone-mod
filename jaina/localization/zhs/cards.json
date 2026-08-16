@@ -124,5 +124,8 @@
   "JAINA_CARD_YOGG_BOX_CARD.titleUpgraded": "尤格-萨隆的谜之匣",
   "JAINA_CARD_YOGG_BOX_CARD.description": "[gold]暗影[/gold]。\n{IfUpgraded:show:随机施放10个法术（目标随机，联机可打队友）。|随机施放5个法术。如果你的抽牌堆里没有随从牌，则这些法术的费用消耗大于或等于2点。（目标随机，联机可打队友）}",
   "JAINA_CARD_ALUNETH_CARD.title": "艾露尼斯",
-  "JAINA_CARD_ALUNETH_CARD.description": "每回合开始时，抽三张牌。\n攻击力0。耐久度3。"
+  "JAINA_CARD_ALUNETH_CARD.description": "每回合开始时，抽三张牌。\n攻击力0。耐久度3。",
+  "JAINA_CARD_INCANTERS_FLOW_CARD.title": "咒术洪流",
+  "JAINA_CARD_INCANTERS_FLOW_CARD.titleUpgraded": "露娜的口袋银河",
+  "JAINA_CARD_INCANTERS_FLOW_CARD.description": "[gold]奥术[/gold]。\n{IfUpgraded:show:使你抽牌堆中所有随从牌的费用变为0点。消耗。|使你抽牌堆中所有法术牌的费用减少1点。消耗。}"
 }
