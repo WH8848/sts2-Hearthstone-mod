@@ -109,5 +109,10 @@
   "JAINA_CARD_REACH_PORTAL_CHAMBER_CARD.description": "[gold]Quest[/gold]: Cast a Fire, Frost, and Arcane spell.\n[gold]Reward: Arcanist Dawngrasp[/gold].",
   "JAINA_CARD_DAWNGRASP_CARD.title": "Arcanist Dawngrasp",
   "JAINA_CARD_DAWNGRASP_CARD.titleUpgraded": "Arcanist Dawngrasp+",
-  "JAINA_CARD_DAWNGRASP_CARD.description": "Summon a [blue]8/8[/blue] [red]Arcanist Dawngrasp[/red]. [gold]Battlecry[/gold]: Gain {IfUpgraded:show:+3|+2} Strength."
+  "JAINA_CARD_DAWNGRASP_CARD.description": "Summon a [blue]8/8[/blue] [red]Arcanist Dawngrasp[/red]. [gold]Battlecry[/gold]: Gain {IfUpgraded:show:+3|+2} Strength.",
+  "JAINA_CARD_DEEP_FREEZE_CARD.title": "Deep Freeze",
+  "JAINA_CARD_DEEP_FREEZE_CARD.titleUpgraded": "Tsunami",
+  "JAINA_CARD_DEEP_FREEZE_CARD.description": "[gold]Frost[/gold].\n{IfUpgraded:show:Summon three 3/6 Water Elementals that Freeze their attack targets, and they attack random enemies.|Freeze an enemy and summon two 3/6 Water Elementals.}",
+  "JAINA_CARD_WATER_ELEMENTAL_CARD.title": "Water Elemental",
+  "JAINA_CARD_WATER_ELEMENTAL_CARD.description": "Summon a [blue]3/6[/blue] [red]Water Elemental[/red]. Any character damaged by this minion gains 1 [gold]Freeze[/gold]."
 }

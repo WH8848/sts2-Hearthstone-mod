@@ -109,5 +109,10 @@
   "JAINA_CARD_REACH_PORTAL_CHAMBER_CARD.description": "[gold]任务[/gold]：施放火焰、冰霜和奥术法术各一个。\n[gold]奖励：奥术师晨拥[/gold]。",
   "JAINA_CARD_DAWNGRASP_CARD.title": "奥术师晨拥",
   "JAINA_CARD_DAWNGRASP_CARD.titleUpgraded": "奥术师晨拥+",
-  "JAINA_CARD_DAWNGRASP_CARD.description": "召唤一个[blue]8/8[/blue]的[red]奥术师晨拥[/red]。[gold]战吼[/gold]：力量{IfUpgraded:show:+3|+2}。"
+  "JAINA_CARD_DAWNGRASP_CARD.description": "召唤一个[blue]8/8[/blue]的[red]奥术师晨拥[/red]。[gold]战吼[/gold]：力量{IfUpgraded:show:+3|+2}。",
+  "JAINA_CARD_DEEP_FREEZE_CARD.title": "深度冻结",
+  "JAINA_CARD_DEEP_FREEZE_CARD.titleUpgraded": "海啸",
+  "JAINA_CARD_DEEP_FREEZE_CARD.description": "[gold]冰霜[/gold]。\n{IfUpgraded:show:召唤三个3/6的可以冻结攻击目标的水元素，并使其随机攻击敌人。|给一个敌人1层[gold]冻结[/gold]，召唤两个3/6的水元素。}",
+  "JAINA_CARD_WATER_ELEMENTAL_CARD.title": "水元素",
+  "JAINA_CARD_WATER_ELEMENTAL_CARD.description": "召唤一个[blue]3/6[/blue]的[red]水元素[/red]。任何受到本随从伤害的角色获得1层[gold]冻结[/gold]。"
 }
