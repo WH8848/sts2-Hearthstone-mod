@@ -75,6 +75,9 @@ public sealed class VolatileSkeleton : JainaMinionBase
         {
             return;
         }
-        await CreatureCmd.Damage(choiceContext, [target], DeathrattleDamage, ValueProp.Unpowered, Creature);
+        // 注意：CreatureCmd.Damage 对"已死亡的 dealer"直接返回空结果（不造成伤害），
+        // 亡语触发时骷髅已死，因此伤害来源用主人（吉安娜）。
+        await CreatureCmd.Damage(choiceContext, [target], DeathrattleDamage, ValueProp.Unpowered,
+            Creature.PetOwner?.Creature ?? Creature);
     }
 }

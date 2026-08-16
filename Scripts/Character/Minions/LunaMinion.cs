@@ -49,16 +49,17 @@ public sealed class LunaMinion : JainaMinionBase
     }
 
     /// <summary>
-    /// 玩家回合开始：重建共享快照
+    /// 玩家回合开始：先调用基类（授予手动模式的点击攻击行动点），再重建共享快照
     /// </summary>
-    public override Task BeforeSideTurnStart(PlayerChoiceContext choiceContext, CombatSide side,
+    public override async Task BeforeSideTurnStart(PlayerChoiceContext choiceContext, CombatSide side,
         IReadOnlyList<Creature> participants, ICombatState combatState)
     {
+        // 基类：手动模式授予本回合攻击行动点（不调用则露娜永远无法点击攻击）
+        await base.BeforeSideTurnStart(choiceContext, side, participants, combatState);
         if (side == Creature.Side && Creature.PetOwner != null)
         {
             JainaHandOrderTracker.Rebuild(Creature.PetOwner, Creature.PetOwner.PlayerCombatState?.Hand?.Cards);
         }
-        return Task.CompletedTask;
     }
 
     /// <summary>
