@@ -31,7 +31,9 @@ public sealed class FlameWardPower : PowerModel
     {
         // target 是自己，或是自己的随从（随从受击伤害转入主人护甲）
         bool isOwnerOrPet = target == Owner || target.PetOwner?.Creature == Owner;
-        if (!isOwnerOrPet || amount <= 0 || Amount <= 0)
+        // 只有敌方造成的伤害才算"受到攻击"：吉安娜自己/己方效果对随从造成的伤害不触发
+        bool isEnemyDamage = dealer != null && dealer.Side != Owner.Side;
+        if (!isOwnerOrPet || !isEnemyDamage || amount <= 0 || Amount <= 0)
         {
             return;
         }

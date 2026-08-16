@@ -40,12 +40,16 @@ public sealed class IceBarrierPower : PowerModel, IModPowerAssetOverrides
     /// 吃敏捷加成，与卡面 {Block:diff()} 显示一致），然后本 Power 消失。
     /// 随从受击的伤害会转移到主人的护甲（DamageCmd 内 PetOwner 转移），
     /// 因此随从被攻击时同样触发。
+    /// 仅"敌人造成的伤害"算受到攻击：吉安娜自己/己方效果对随从造成的伤害（死亡凋零、
+    /// 火球打自己随从等）不触发。
     /// </summary>
     public override async Task BeforeDamageReceived(PlayerChoiceContext choiceContext, Creature target, decimal amount, ValueProp props, Creature? dealer, CardModel? cardSource)
     {
         // target 是自己，或是自己的随从（随从受击伤害转入主人护甲）
         bool isOwnerOrPet = target == Owner || target.PetOwner?.Creature == Owner;
-        if (isOwnerOrPet && amount > 0 && Amount > 0)
+        // 只有敌方造成的伤害才算"受到攻击"（炉石寒冰护盾语义）
+        bool isEnemyDamage = dealer != null && dealer.Side != Owner.Side;
+        if (isOwnerOrPet && isEnemyDamage && amount > 0 && Amount > 0)
         {
             await CreatureCmd.GainBlock(Owner, new BlockVar(Amount, ValueProp.Move), null);
             await PowerCmd.Remove(this);
