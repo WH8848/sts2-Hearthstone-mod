@@ -24,7 +24,12 @@ public static class JainaMinionCardMap
         [typeof(MozakiMinion)] = typeof(MozakiCard),
         [typeof(LunaMinion)] = typeof(LunaCard),
         [typeof(KalecgosMinion)] = typeof(KalecgosCard),
-        [typeof(AegwynnMinion)] = typeof(AegwynnCard)
+        [typeof(AegwynnMinion)] = typeof(AegwynnCard),
+        [typeof(DawngraspMinion)] = typeof(DawngraspCard),
+        [typeof(WaterElementalMinion)] = typeof(WaterElementalCard),
+        [typeof(GreySageParrotMinion)] = typeof(GreySageParrotCard),
+        [typeof(FlamewakerMinion)] = typeof(FlamewakerCard),
+        [typeof(SanctumCandlesellerMinion)] = typeof(SanctumCandlesellerCard)
     };
 
     /// <summary>
