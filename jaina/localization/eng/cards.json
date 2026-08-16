@@ -50,8 +50,6 @@
   "JAINA_CARD_KALECGOS_CARD.description": "Summon a [blue]4/12[/blue] [red]Kalecgos[/red]. The first [blue]Spell card[/blue] you play each turn costs 0. [gold]Battlecry[/gold]: Discover a [blue]Spell card[/blue].",
   "JAINA_CARD_AEGWYNN_CARD.title": "Aegwynn the Guardian",
   "JAINA_CARD_AEGWYNN_CARD.description": "Summon a [blue]5/5[/blue] [red]Aegwynn the Guardian[/red]. +2 Strength. [gold]Deathrattle[/gold]: The next minion card you draw inherits this effect.",
-  "JAINA_CARD_REWIND.title": "Rewind",
-  "JAINA_CARD_REWIND.description": "[gold]Arcane[/gold].\nDiscover a copy of another [blue]Spell card[/blue] you have cast this combat.",
   "JAINA_CARD_TRICK.title": "Trick",
   "JAINA_CARD_TRICK.titleUpgraded": "Broad Wisdom",
   "JAINA_CARD_TRICK.description": "[gold]Arcane[/gold].\nDiscover {IfUpgraded:show:two [blue]Spell cards[/blue]|a [blue]Spell card[/blue]} that cost{IfUpgraded:show:|s} 1 or less.{IfUpgraded:show: Swap their costs.|}",

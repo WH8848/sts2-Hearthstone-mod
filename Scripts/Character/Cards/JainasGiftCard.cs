@@ -119,7 +119,7 @@ public sealed class JainasGiftCard : JainaSpellCardTemplate
         }
         var rec = jaina.Scripts.Character.JainaCastTracker.For(combatState);
         var playedTypes = rec.PlayedAttackSkills
-            .Where(t => t != typeof(JainasGiftCard) && t != typeof(Rewind) && t != typeof(Fireblast))
+            .Where(t => t != typeof(JainasGiftCard) && t != typeof(Fireblast))
             .ToList();
         if (playedTypes.Count == 0)
         {
