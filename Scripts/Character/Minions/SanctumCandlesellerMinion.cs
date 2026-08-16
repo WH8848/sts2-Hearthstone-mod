@@ -23,10 +23,11 @@ public sealed class SanctumCandlesellerMinion : JainaMinionBase
 
     public override int MaxInitialHp => 5;
 
-    protected override string MinionVisualsPath => "res://assets/card_art/sanctum_candle_seller.png";
+    protected override string MinionVisualsPath => "res://assets/card_art/sanctum_chandler.png";
 
     /// <summary>
-    /// 施放火焰法术后：抽一张法术牌（从抽牌堆中找一张攻击/技能牌入手；没有则普通抽一张）
+    /// 施放火焰法术后：抽一张法术牌——优先从抽牌堆找攻击/技能牌入手，
+    /// 抽牌堆没有则从弃牌堆找，都没有则普通抽一张。
     /// </summary>
     public override async Task AfterCardPlayed(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
@@ -45,20 +46,35 @@ public sealed class SanctumCandlesellerMinion : JainaMinionBase
             return;
         }
 
-        // 抽一张法术牌：优先从抽牌堆找攻击/技能牌入手，否则普通抽一张
         var player = Creature.PetOwner;
-        var drawPile = player.PlayerCombatState?.DrawPile;
-        var spell = drawPile?.Cards.FirstOrDefault(c =>
-            c != null && (c.Type == CardType.Attack || c.Type == CardType.Skill));
-        if (spell == null)
-        {
-            await CardPileCmd.Draw(choiceContext, 1, player);
-            return;
-        }
         if (jaina.Scripts.Character.JainaHandHelper.IsHandFull(player))
         {
             return;
         }
-        await CardPileCmd.Add(spell, PileType.Hand);
+        var combatState = player.PlayerCombatState;
+        if (combatState == null)
+        {
+            return;
+        }
+        // 优先抽牌堆
+        var drawPile = combatState.DrawPile;
+        var spell = drawPile.Cards.FirstOrDefault(c =>
+            c != null && (c.Type == CardType.Attack || c.Type == CardType.Skill));
+        if (spell != null)
+        {
+            await CardPileCmd.Add(spell, PileType.Hand);
+            return;
+        }
+        // 抽牌堆没有：从弃牌堆找
+        var discardPile = combatState.DiscardPile;
+        var discarded = discardPile.Cards.FirstOrDefault(c =>
+            c != null && (c.Type == CardType.Attack || c.Type == CardType.Skill));
+        if (discarded != null)
+        {
+            await CardPileCmd.Add(discarded, PileType.Hand);
+            return;
+        }
+        // 都没有：普通抽一张
+        await CardPileCmd.Draw(choiceContext, 1, player);
     }
 }

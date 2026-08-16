@@ -19,7 +19,7 @@ public sealed class SanctumCandlesellerCard : JainaMinionCardTemplate
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
         [CardKeyword.Exhaust];
 
-    public override string CustomPortraitPath => "res://assets/card_art/sanctum_candle_seller.png";
+    public override string CustomPortraitPath => "res://assets/card_art/sanctum_chandler.png";
     protected override Type MinionType => typeof(SanctumCandlesellerMinion);
 
     protected override int MinionAttack => 4;
