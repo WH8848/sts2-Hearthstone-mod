@@ -24,9 +24,9 @@ namespace jaina.Scripts.Character.Cards;
 public sealed class FrostLichJainaCard : JainaHeroCardTemplate
 {
     /// <summary>
-    /// 不获得护甲值（炉石原版无护甲）
+    /// 获得 5 点护甲值
     /// </summary>
-    protected override int HeroArmor => 0;
+    protected override int HeroArmor => 5;
 
     /// <summary>
     /// 替换英雄技能为冰冷触摸
