@@ -99,11 +99,11 @@
   "JAINA_CARD_TIME_WARP_CARD.titleUpgraded": "Time Warp+",
   "JAINA_CARD_TIME_WARP_CARD.description": "Take an extra turn.{IfUpgraded:show:| (Once per combat)}",
   "JAINA_CARD_SORCERERS_GAMBIT_CARD.title": "Sorcerer's Gambit",
-  "JAINA_CARD_SORCERERS_GAMBIT_CARD.description": "[gold]Quest[/gold]: Cast a Fire, Frost, and Arcane spell.\n[gold]Reward: Draw a spell.[/gold]",
+  "JAINA_CARD_SORCERERS_GAMBIT_CARD.description": "[gold]Quest[/gold]: Cast a Fire, Frost, and Arcane spell.\n[gold]Reward: Draw a spell[/gold].",
   "JAINA_CARD_STALLING_CARD.title": "Stall for Time",
-  "JAINA_CARD_STALLING_CARD.description": "[gold]Quest[/gold]: Cast a Fire, Frost, and Arcane spell.\n[gold]Reward: Discover a Fire, Frost, or Arcane spell.[/gold]",
+  "JAINA_CARD_STALLING_CARD.description": "[gold]Quest[/gold]: Cast a Fire, Frost, and Arcane spell.\n[gold]Reward: Discover a Fire, Frost, or Arcane spell[/gold].",
   "JAINA_CARD_REACH_PORTAL_CHAMBER_CARD.title": "Reach the Portal Chamber",
-  "JAINA_CARD_REACH_PORTAL_CHAMBER_CARD.description": "[gold]Quest[/gold]: Cast a Fire, Frost, and Arcane spell.\n[gold]Reward: Arcanist Dawngrasp.[/gold]",
+  "JAINA_CARD_REACH_PORTAL_CHAMBER_CARD.description": "[gold]Quest[/gold]: Cast a Fire, Frost, and Arcane spell.\n[gold]Reward: Arcanist Dawngrasp[/gold].",
   "JAINA_CARD_DAWNGRASP_CARD.title": "Arcanist Dawngrasp",
   "JAINA_CARD_DAWNGRASP_CARD.description": "Summon a [blue]8/8[/blue] [red]Arcanist Dawngrasp[/red]. [gold]Battlecry[/gold]: Gain +3 Strength."
 }
