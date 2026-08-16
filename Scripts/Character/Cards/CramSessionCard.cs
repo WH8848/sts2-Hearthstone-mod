@@ -83,16 +83,12 @@ public sealed class CramSessionCard : JainaSpellCardTemplate
     /// <summary>
     /// 观星效果：从抽牌堆中找一张"不同的"奥术法术牌（非本卡）置入手牌，
     /// 并给该牌挂"本回合重放1"（StargazingReplayPower：该牌打出时施放两次）。
-    /// 抽牌堆没有奥术法术牌时普通抽一张。
+    /// 抽牌堆没有奥术法术牌时，从弃牌堆找一张奥术派系的法术牌。
     /// </summary>
     private async Task PlayAsStargazing(PlayerChoiceContext choiceContext)
     {
-        var drawPile = base.Owner.PlayerCombatState?.DrawPile;
-        var arcaneSpell = drawPile?.Cards.FirstOrDefault(c =>
-            c != null &&
-            c.GetType() != typeof(CramSessionCard) &&
-            (c.Type == CardType.Attack || c.Type == CardType.Skill) &&
-            c.Keywords.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Arcane));
+        var arcaneSpell = FindArcaneSpell(PileType.Draw)
+            ?? FindArcaneSpell(PileType.Discard);
         if (arcaneSpell == null)
         {
             await CardPileCmd.Draw(choiceContext, 1, base.Owner);
@@ -111,5 +107,18 @@ public sealed class CramSessionCard : JainaSpellCardTemplate
         {
             replay.Target = arcaneSpell;
         }
+    }
+
+    /// <summary>
+    /// 在指定牌堆中找第一张"不同的"奥术法术牌（奥术派系攻击/技能牌，非本卡）
+    /// </summary>
+    private CardModel? FindArcaneSpell(PileType pileType)
+    {
+        var pile = pileType.GetPile(base.Owner);
+        return pile?.Cards.FirstOrDefault(c =>
+            c != null &&
+            c.GetType() != typeof(CramSessionCard) &&
+            (c.Type == CardType.Attack || c.Type == CardType.Skill) &&
+            c.Keywords.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Arcane));
     }
 }
