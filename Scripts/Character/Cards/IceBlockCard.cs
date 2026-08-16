@@ -24,10 +24,11 @@ public sealed class IceBlockCard : ModCardTemplate
     public override int MaxUpgradeLevel => 0;
 
     /// <summary>
-    /// 冰霜派系（悬停解释）
+    /// 冰霜派系 + 免疫（悬停解释）
     /// </summary>
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
-        [jaina.Scripts.Character.Keywords.JainaKeywords.Frost];
+        [jaina.Scripts.Character.Keywords.JainaKeywords.Frost,
+         jaina.Scripts.Character.Keywords.JainaKeywords.Immune];
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [];
 

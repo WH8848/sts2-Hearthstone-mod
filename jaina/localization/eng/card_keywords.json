@@ -48,5 +48,7 @@
   "JAINA_KEYWORD_LIFESTEAL.title": "Lifesteal",
   "JAINA_KEYWORD_LIFESTEAL.description": "Lifesteal: Heal for the amount of damage dealt.",
   "JAINA_KEYWORD_DISCOVER.title": "Discover",
-  "JAINA_KEYWORD_DISCOVER.description": "Discover: Choose one of three random cards to add to your hand."
+  "JAINA_KEYWORD_DISCOVER.description": "Discover: Choose one of three random cards to add to your hand.",
+  "JAINA_KEYWORD_IMMUNE.title": "Immune",
+  "JAINA_KEYWORD_IMMUNE.description": "Immune: Cannot take damage."
 }

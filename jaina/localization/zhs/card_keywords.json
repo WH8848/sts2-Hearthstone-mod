@@ -48,5 +48,7 @@
   "JAINA_KEYWORD_LIFESTEAL.title": "吸血",
   "JAINA_KEYWORD_LIFESTEAL.description": "吸血：造成多少伤害回复多少生命。",
   "JAINA_KEYWORD_DISCOVER.title": "发现",
-  "JAINA_KEYWORD_DISCOVER.description": "发现：从三张随机卡牌中选择一张置入你的手牌。"
+  "JAINA_KEYWORD_DISCOVER.description": "发现：从三张随机卡牌中选择一张置入你的手牌。",
+  "JAINA_KEYWORD_IMMUNE.title": "免疫",
+  "JAINA_KEYWORD_IMMUNE.description": "免疫：不会受到任何伤害。"
 }

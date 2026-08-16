@@ -46,6 +46,8 @@ namespace jaina.Scripts.Character.Keywords;
 [RegisterOwnedKeyword(nameof(Lifesteal), IconPath = "res://icon.svg")]
 // 发现：从若干张随机卡牌中选择一张置入手牌
 [RegisterOwnedKeyword(nameof(Discover), IconPath = "res://icon.svg")]
+// 免疫：不会受到任何伤害
+[RegisterOwnedKeyword(nameof(Immune), IconPath = "res://icon.svg")]
 public class JainaKeywords
 {
     /// <summary>
@@ -172,4 +174,9 @@ public class JainaKeywords
     /// 发现：从若干张随机卡牌中选择一张置入手牌
     /// </summary>
     public static readonly CardKeyword Discover = ModContentRegistry.GetQualifiedKeywordId(Entry.ModId, nameof(Discover)).GetModCardKeyword();
+
+    /// <summary>
+    /// 免疫：不会受到任何伤害
+    /// </summary>
+    public static readonly CardKeyword Immune = ModContentRegistry.GetQualifiedKeywordId(Entry.ModId, nameof(Immune)).GetModCardKeyword();
 }
