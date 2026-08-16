@@ -44,6 +44,14 @@ public abstract class JainaHeroCardTemplate : ModCardTemplate
     public override CardType Type => JainaCardTypes.Hero;
 
     /// <summary>
+    /// 关键词：战吼（打出英雄卡触发英雄战吼）。
+    /// 挂 Battlecry 关键词后，悬停英雄卡时右侧显示"战吼"词条注释
+    /// （游戏原版 CardModel.HoverTips 对卡上 Keywords 自动生成悬停解释）。
+    /// </summary>
+    public override IEnumerable<CardKeyword> CanonicalKeywords =>
+        [jaina.Scripts.Character.Keywords.JainaKeywords.Battlecry];
+
+    /// <summary>
     /// 悬停提示：显示本英雄卡的英雄技能卡（炉石式：英雄卡悬停展示其英雄技能）。
     /// 未指定英雄技能（HeroPowerType == null）的英雄卡无此提示。
     /// </summary>
@@ -128,7 +136,10 @@ public abstract class JainaHeroCardTemplate : ModCardTemplate
             }
             if (oldHeroPowers.Count > 0)
             {
-                await CardPileCmd.RemoveFromCombat(oldHeroPowers, skipVisuals: true);
+                // 注意：不能用 skipVisuals=true——RemoveFromCombat 在 skipVisuals 时会跳过
+                // NCard 手牌节点的查找与移除（list 为空 → UI 移除逻辑整体跳过），
+                // 导致卡模型已移除但手牌 UI 上旧英雄技能卡仍然显示
+                await CardPileCmd.RemoveFromCombat(oldHeroPowers, skipVisuals: false);
             }
 
             rec.CurrentHeroPowerType = HeroPowerType;
