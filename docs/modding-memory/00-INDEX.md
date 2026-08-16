@@ -59,6 +59,9 @@
 - `m3-targeting.md`：自定义目标类型体系（CustomTargetTypeManager/AnyCreature/Union 等）
 - `m4-component-layout.md`：卡牌组件系统（Component 37 文件）/布局/右键菜单
 
+### 04-jaina/（本项目专属记忆）
+- `jaina-memory.md`：**会话压缩恢复用**——项目意图/技术概念/文件地图/已修 bug 教训/数值确认/环境路径。上下文丢失先读它 + `git log --oneline`。
+
 ## 本项目（Jaina）已确认的关键事实
 - 游戏版本 0.111.0；RitsuLib NuGet 0.5.11（含 RegisterTouchOfOrobasRefinementMapping 等全部先古 API）
 - 随从为玩家侧宠物（Side=Player, IsPet=true, Monster: MinionModel）；指向法术需自定义目标类型（见 JainaTargetTypes.cs）

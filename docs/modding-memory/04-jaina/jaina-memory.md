@@ -1,0 +1,60 @@
+# Jaina MOD 项目记忆（会话压缩恢复用）
+
+> 本文档是**会话压缩后的恢复依据**：丢失上下文时先读这里 + `git log --oneline`（每次改动都有详细提交信息）。
+> 仓库：`E:\MOD\sts2\godot_project\jaina`，GitHub: WH8848/sts2-Hearthstone-mod（main）。
+
+## 1. 项目主请求与意图
+- 开发《杀戮尖塔2》(STS2 v0.111.1) MOD "Jaina"（Godot 4.5.1 + C#/.NET 10）：把炉石传说吉安娜/法师体系搬进 STS2（随从系统、法术派系、炉石关键词、任务线、武器位）。
+- 用户迭代式报 bug/提需求，逐条修复；每次回答完自动 `git add -A && git commit && git push origin main`（push 失败重试 4 次）。
+- 中文环境；卡图用 hearthstonejson orig 或 wiki.gg 英文炉石 wiki 下载后 **cover 居中裁剪为 250x190**（保持原画比例不拉伸，System.Drawing）；本地化修改后必须重新 `dotnet build`（否则 pck 不更新）。
+- 用户偏好：官方原画优先（wiki.gg full.jpg），无原画程序绘制占位；卡名是真实炉石卡（多次纠正找原版卡：圣殿蜡烛商→Sanctum Chandler SW_111、灯光表演→Lightshow ETC_528、加工失误→Manufacturing Error TOY_371、咒术洪流→Incanter's Flow BT_002）；描述数字前后不加空格（zhs）；关键词金色 `[gold]`；"牌库之外"= 本局生成过的攻击/技能牌类型；任务线后阶段卡进中性池（不出现在奖励与图鉴）。
+
+## 2. 关键技术概念
+- **RitsuLib 0.5.12**：`[RegisterCard]`/`[RegisterMonster]`/`[RegisterPower]`/`[RegisterOwnedKeyword(nameof(X), IconPath="res://icon.svg")]`（本地化键 `JAINA_KEYWORD_X`，驼峰转大写）；`ModContentRegistry.GetQualifiedKeywordId(Entry.ModId, nameof(X)).GetModCardKeyword()`；`IModPowerAssetOverrides`（Power 图标，using `STS2RitsuLib.Scaffolding.Content.Patches`）；`Harmony("jaina").PatchAll` 自动应用所有 `[HarmonyPatch]`；`[HarmonyPatch]` 无参 + `TargetMethod()`/`TargetMethods()` 定位状态机（async 方法必须 patch `<X>d__N::MoveNext`，用字段探测定位，不能直接 patch 声明方法）。
+- **MinionLib 0.6.2**：`JainaMinionPool.SummonMinion<T>/SummonMinionByType`（switch 按类名）、`JainaMinionCardMap`（随从→卡牌映射，悬停卡面用）、`MinionCmd.AddMinion`、`CardCmd.AutoPlay`（自动打出）、`MinionPosition.FrontUpper`、`JainaMinionBase`（BehaviorMode Manual/Auto、OnSummon/OnBattlecry/AfterDeath/AfterCardPlayed/AfterDamageGiven、HasDeathrattle）。
+- **游戏核心**：`ShowIfUpgradedFormatter` UpgradePreview 模式整个 show 分支包 `[green]`（→ 公共文本移出 show）；`CreatureCmd.Damage(choiceContext, targets, amount, props, dealer, cardSource, cardPlay)`（cardSource 必须传）；`CardEnergyCost.SetCustomBaseCost/SetUntilPlayed/GetResolved/UpgradeBy/Canonical`；`CardModel.MaxUpgradeLevel`（0 = 不可升级，IsUpgradable=false）；`CardCmd.ApplyKeyword(card, CardKeyword.Ethereal)`（虚无）；`NCard.UpdateEnergyCostColor`（减费绿/加费蓝，EnergyCostColorPatch）；`JainaCastTracker`（RecordPlayed、Schools 派系映射 SchoolByCardType、LastCastSpellCost2Plus、LightshowCasts、CreateCardWithUpgrade、MarkGenerated、IsGeneratedCard、IsOutsideDeckCard）；`DiscoverTracker`（Active 候选列表 + Pending 队列，TryGetPending(player, afterSeq) 循环消费）。
+- **手牌规则**：英雄技能卡（HeroPower 关键词）不占手牌位——`HeroPowerHandSlotPatch` Transpiler 改 `CardPileCmd.Add` 满手判定（`HeroPowerHandHelper.IsFullHandAdd`：英雄技能卡永不视为满手、计数排除）、`DrawInternal` 抽牌空间、`CheckIfDrawIsPossibleAndShowThoughtBubbleIfNot` Prefix；`JainaHandHelper.IsHandFull` 排除英雄技能卡。
+- **武器系统**：`JainaWeaponCardTemplate`（WeaponAttack/WeaponDurability 抽象、CanonicalKeywords=[Weapon,Durability]、IntVar Attack/Durability 注入）、`JainaWeaponSlot.Equip`（顶替旧武器）、`JainaWeaponPower`（Amount=耐久、Attack=攻击力）、`JainaWeaponAttackAction`；武器能力牌 `MaxUpgradeLevel=0` 不可升级。
+- **悬停卡面**：`JainaMinionBase.ShowMinionCard`（HoverArea MouseEntered + NCreature.Hitbox 连接），`JainaMinionCardMap.GetCardType` 决定显示哪张卡；`CardHoverTip`（`NHoverTipCardContainer` 按添加顺序 `Vector2.Down` 垂直排列，天然从上到下）；升级形态悬停用 `MageQuestlinePower.GetQuestlineHoverCard<T>(IsUpgraded)`（MutableClone+UpgradeInternal）。
+- **商店**：`MerchantRarityOnlySlotPatch` Prefix 替换 `PopulateCharacterCardEntries`——5 角色卡槽只按稀有度（掷 Shop 稀有度，卡被其他槽选走时回退下一稀有度），无色槽保留。
+
+## 3. 文件与代码地图
+- `Scripts/Character/Keywords/JainaKeywords.cs`：注册全部关键词（战吼/亡语/冲锋/冻结/双生法术/灌注/压轴/重放/英雄技能/法术牌/火/冰/奥/暗影/任务/耐久度/武器/元素/野兽/龙/亡灵/恶魔/德莱尼/吸血）+ static 字段。
+- `jaina/localization/{zhs,eng}/`：cards.json / card_keywords.json / powers.json / monsters.json / gameplay_ui.json。
+- `Scripts/Character/Cards/`：55+ 张卡（含 ArcaneBurstCard/MagisterDawngraspCard 英雄系统、FlamewakerCard、SanctumCandlesellerCard、MaskOfCthunCard、IncantersFlowCard、IgniteCard、JainasGiftCard(升级=倒带)、YoggBoxCard、GreySageParrotCard、DeepFreezeCard、WaterElementalCard、DawngraspCard、FrostLichJainaCard、IcyTouchCard）。
+- `Scripts/Character/Minions/`：17+ 个随从（含 FlamewakerMinion、SanctumCandlesellerMinion、GreySageParrotMinion、WaterElementalMinion、DawngraspMinion）+ `JainaMinionCardMap.cs`（补全新随从映射）、`JainaMinionPool.cs`。
+- `Scripts/Character/Powers/`：21+ 个（MageQuestlinePower、AegwynnLegacyPower/AegwynnInheritedPower、HeroPowerHandSlotPatch、PetDamageRedirectPatch、DiscoverTracker/DiscoverPatch、ForbiddenSequencePower/ForbiddenStonePower、MinionSquadPower、RommathReplayTracker、FrostLichJainaPower 等）。
+- `Scripts/Character/Weapons/`：AlunethCard(2费, MaxUpgradeLevel=0)、AlunethPower、JainaWeaponCardTemplate、JainaWeaponSlot/JainaWeaponPower/JainaWeaponAttackAction。
+- 卡图（wiki.gg full.jpg cover 250x190）：sorcerers_gambit/stall_for_time/reach_portal_room/arcanist_dawngrasp/manufacturing_error/ignite/jainas_gift/rewind/deep_freeze/tsunami/water_elemental/grey_sage_parrot/yogg_in_the_box/puzzle_box_yogg/aluneth/incanters_flow/lunas_pocket_galaxy/flamewaker/mask_of_cthun/sunset_volley/sanctum_chandler/lightshow/frost_lich_jaina/icy_touch。
+
+## 4. 已修复的错误与教训（按时间）
+- 升级预览整段变绿：ShowIfUpgradedFormatter UpgradePreview 包整分支 → 公共文本移出 show，只留变化片段（15 张卡 zhs/eng 重构）。
+- 连续多次发现只触发一次：DiscoverTracker Active/Pending 单条覆盖 → 候选集合列表（倒序匹配）+ Pending 队列 + `TryGetPending(player, afterSeq)` 循环消费。
+- 随从护甲挡伤补丁从未生效：直接 patch async 声明方法（只有包装代码）→ 改 `TargetMethod()` 按 `<originalTarget>5__8` 字段探测 `<Damage>d__*::MoveNext`。
+- Jaina 初始化失效：`GetNonHeroPowerCardCount` 两个重载致 `AccessTools.Method` AmbiguousMatchException → 改名 `GetNonHeroPowerCardCountFromPile/FromCards`。
+- 潦草急就只抽到 10 张：用 `MaxCardsInHand - 手牌总数` → `HeroPowerHandFullDrawCardPatch` 多目标 Transpiler 按非英雄技能卡计数（模式 A get_Cards+get_Count → FromPile；模式 B GetCards+Enumerable.Count → FromCards）。
+- 卡图比例不对：512x512 方图直接拉伸 250x190 变形 → wiki.gg full.jpg 按 250:190 cover 居中裁剪；抵达传送大厅原用 SW_450t2.png（带卡框）→ 换 Reach_the_Portal_Room_full.jpg 真原画。
+- JainaSpellSchool 枚举无 Shadow → YoggBoxCard 不加入派系映射。
+- 构建错误 CS0136/CS0246/CS0103/CS0721/CS0117：补 using（ICombatState、ValueProp、CardModel、DynamicVar、LocString、Player、MinionLib.Minion、Localization.DynamicVars）、局部变量改名、`CardPileCmd` 静态类不能作参数。
+- Power 静态构造反射歧义（AmbiguousMatchException）曾致 PatchAll 整体失败 → 重载改名消除。
+- 满手 Add 静默改道弃牌堆（原版 isFullHandAdd）→ HeroPowerHandSlotPatch Transpiler + Fireblast/FireblastAncient 无条件入手。
+- **禁忌序列升级后悬停消失**：`CurrentUpgradeLevel` setter 有上限保护（`value > MaxUpgradeLevel` 抛 InvalidOperationException）；对 `MaxUpgradeLevel=0` 的卡（源生之石）调 `MutableClone+UpgradeInternal` 会抛异常中断整个悬停枚举 → 升级前后统一直接显示原版（不可升级卡不要 UpgradeInternal）。
+- **倒带卡图不对**：吉安娜的礼物升级为倒带后卡图仍是礼物 → `CustomPortraitPath` 按 `IsUpgraded` 切换（`"res://assets/card_art/rewind.png"`），同奥术弹幕→灯光表演做法。
+- **随从种族关键词位置**：随从种族词条与法术派系关键词同款：`[gold]种族[/gold]。\n` 独占描述第一行（8 张随从卡 zhs/eng）。
+- **小精灵种族**：炉石 Imp 为亡灵（不是恶魔）→ CanonicalKeywords Undead + 描述同步。
+- **打出英雄卡替换英雄技能**：`JainaHeroCardTemplate.OnPlay` 先从所有战斗牌堆（Hand/Draw/Discard/Exhaust/Play）移除旧英雄技能卡（含 HeroPower 关键词），再置入新技能；FireblastAncient.BeforeHandDraw 补替换检查。
+- **⚠ RemoveFromCombat 视觉坑**：`RemoveFromCombat(cards, skipVisuals: true)` 会跳过 NCard 手牌节点的查找与移除（模型移除但 UI 仍显示）→ 必须用默认视觉移除。
+- **英雄卡悬停关键词**：英雄卡挂 `Battlecry` 关键词 → 悬停右侧显示战吼词条注释。
+- 其他环境噪音（非本项目问题）：`[MPL] Error`、`card_hover_tip.tscn Asset not cached`、`Missing epoch 'JAINA_CHARACTER_JAINA2_EPOCH'`、CardReplaceMod1/MonsterPredictorLite 第三方 mod 日志。
+
+## 5. 用户确认过的卡牌数值（炉石原版→Mod）
+- 炎枪术 5→2费、深度冻结 7→2、匣中古神 7→3、咒术洪流 4→2、克苏恩面具 7→2、夕阳漫射 9→2、艾露尼斯 6→2、水元素 4→1、灰贤鹦鹉 6→2、奥术师晨拥 5→2；源生之石升级前后都 1 费。
+- 冰霜女巫吉安娜：3费英雄卡（稀有），战吼：召唤一个 3/6 水元素 + 本局对战所有元素吸血，英雄技能替换为冰冷触摸（0费攻击衍生：造成 1 点伤害 + 召唤一个 3/6 水元素）。
+- 吸血定义：造成多少伤害回复多少生命（元素随从伤害 → 回复主人等量生命，JainaMinionBase.AfterDamageGiven 基类钩子 + 卡映射查 Elemental 关键词）。
+- 源生之石是武器能力卡（不可升级 MaxUpgradeLevel=0）；禁忌序列升级 8→7（Threshold=IsUpgraded?7:8）；艾格文亡语链式（力量+2 与亡语传给下一张随从，AegwynnInheritedPower 可见带图标）；随从卡/武器卡默认不可升级（DawngraspCard 覆写 MaxUpgradeLevel=1 保持可升级）；商店角色卡槽只按稀有度。
+
+## 6. 环境与工具路径
+- 日志：`C:\Users\虹不舞\AppData\Roaming\SlayTheSpire2\logs\godot.log`；bug 截图在 `E:\MOD\sts2\bug日志`（模型不能读图，用 Windows OCR `Windows.Media.Ocr` AsTask 模式提取文字）。
+- 反编译：`C:\Users\虹不舞\.dotnet\tools\ilspycmd.exe`；游戏 dll 在 `E:\SteamLibrary\steamapps\common\Slay the Spire 2\data_sts2_windows_x86_64\sts2.dll`；注意 `ilspycmd -t` 是 `--type`（指定类型），`-m` 是 `--member`（两参数互斥）；**反编译输出不要写进项目目录**（会被 csproj 编译报错，如 `.tmp_cardmodel.cs`）。
+- 部署：`dotnet build -c Debug` 自动部署 dll/pck 到 `E:\SteamLibrary\steamapps\common\Slay the Spire 2\mods\Jaina\`（pck 每次 build 刷新）。
+- PowerShell 脚本注意：无 BOM UTF-8 脚本用 Windows PowerShell 5.1（GBK）跑时中文注释可能吞换行（→ 工具脚本注释用英文，如 gen-power-icons.ps1 的 Draw-FrostLichJaina）。
