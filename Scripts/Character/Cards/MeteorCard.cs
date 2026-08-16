@@ -39,7 +39,7 @@ public sealed class MeteorCard : JainaSpellCardTemplate
         IsUpgraded ? "res://assets/card_art/star_power.png" : "res://assets/card_art/meteor.png";
 
     public MeteorCard()
-        : base(2, CardType.Attack, CardRarity.Rare, TargetType.AnyEnemy, true)
+        : base(2, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy, true)
     {
     }
 
