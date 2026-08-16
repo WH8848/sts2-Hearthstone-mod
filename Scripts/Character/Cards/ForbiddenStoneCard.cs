@@ -12,9 +12,9 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
-/// 源生之石 (Forbidden Stone) - 2费能力牌（衍生卡，稀有）。
+/// 源生之石 (Forbidden Stone) - 1费能力牌（衍生卡，稀有）。
 /// 在你发现一张牌后，会自动使用其余选项并失去1点耐久度。耐久度8。耐久度0时能力消失。
-/// 升级后费用 2 -> 1。
+/// 升级前后费用均为 1。
 /// 由禁忌序列作为奖励直接置入手牌。
 /// </summary>
 [RegisterCard(typeof(JainaNeutralCardPool))]
@@ -27,12 +27,12 @@ public sealed class ForbiddenStoneCard : ModCardTemplate
     public override string CustomPortraitPath => "res://assets/card_art/forbidden_stone.png";
 
     public ForbiddenStoneCard()
-        : base(2, CardType.Power, CardRarity.Token, TargetType.Self, true)
+        : base(1, CardType.Power, CardRarity.Token, TargetType.Self, true)
     {
     }
 
     /// <summary>
-    /// 升级后卡牌名称不变，费用 2 -> 1
+    /// 升级后卡牌名称不变
     /// </summary>
     public override string Title
     {
@@ -51,11 +51,5 @@ public sealed class ForbiddenStoneCard : ModCardTemplate
         // 挂光环：每发现一张牌后自动使用其余选项并失去 1 点耐久度（耐久 8，0 时消失）
         await PowerCmd.Apply<ForbiddenStonePower>(
             choiceContext, [base.Owner.Creature], 8m, base.Owner.Creature, this);
-    }
-
-    protected override void OnUpgrade()
-    {
-        // 费用 2 -> 1（原版 UpgradeBy 机制，所有界面显示一致）
-        EnergyCost.UpgradeBy(-1);
     }
 }
