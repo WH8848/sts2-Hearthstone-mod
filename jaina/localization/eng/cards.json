@@ -55,7 +55,7 @@
   "JAINA_CARD_TRICK.description": "[gold]Arcane[/gold].\nDiscover {IfUpgraded:show:two [blue]Spell cards[/blue]|a [blue]Spell card[/blue]} that cost{IfUpgraded:show:|s} 1 or less.{IfUpgraded:show: Swap their costs.|}",
   "JAINA_CARD_UNFAIR_GAME.title": "Manufacturing Error",
   "JAINA_CARD_UNFAIR_GAME.titleUpgraded": "Turn Up Volume",
-  "JAINA_CARD_UNFAIR_GAME.description": "{IfUpgraded:show:Draw three [blue]Spell cards[/blue]. [gold]Finisher[/gold]: Discover a copy from among the three spells drawn.|Draw 3 cards. If your draw pile has no minion cards, they cost 1 less.}",
+  "JAINA_CARD_UNFAIR_GAME.description": "{IfUpgraded:show:[gold]Arcane[/gold].\nDraw three [blue]Spell cards[/blue]. [gold]Finisher[/gold]: Discover a copy from among the three spells drawn.|Draw 3 cards. If your draw pile has no minion cards, they cost 1 less.}",
   "JAINA_CARD_NORGANNON_WISDOM.title": "Norgannon's Wisdom",
   "JAINA_CARD_NORGANNON_WISDOM.titleUpgraded": "Cooling Spring",
   "JAINA_CARD_NORGANNON_WISDOM.description": "[gold]Arcane[/gold].\nDraw 2 cards. {IfUpgraded:show:Gain 1 energy for each [blue]Spell card[/blue] drawn.|If you have cast a [blue]Spell card[/blue] from the Fire, Arcane and Frost schools this combat, this card costs 0.}",

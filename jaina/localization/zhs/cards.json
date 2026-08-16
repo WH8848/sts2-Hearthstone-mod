@@ -55,7 +55,7 @@
   "JAINA_CARD_TRICK.description": "[gold]奥术[/gold]。\n发现{IfUpgraded:show:两张|一张}费用小于或等于1点的[blue]法术牌[/blue]{IfUpgraded:show:。交换其费用消耗。|。}",
   "JAINA_CARD_UNFAIR_GAME.title": "加工失误",
   "JAINA_CARD_UNFAIR_GAME.titleUpgraded": "加大音量",
-  "JAINA_CARD_UNFAIR_GAME.description": "{IfUpgraded:show:抽三张[blue]法术牌[/blue]。[gold]压轴[/gold]：从抽到的三张法术牌中发现一张复制。|抽三张牌。如果你的抽牌堆里没有随从牌，这三张牌的费用消耗减少1点。}",
+  "JAINA_CARD_UNFAIR_GAME.description": "{IfUpgraded:show:[gold]奥术[/gold]。\n抽三张[blue]法术牌[/blue]。[gold]压轴[/gold]：从抽到的三张法术牌中发现一张复制。|抽三张牌。如果你的抽牌堆里没有随从牌，这三张牌的费用消耗减少1点。}",
   "JAINA_CARD_NORGANNON_WISDOM.title": "诺甘农的智慧",
   "JAINA_CARD_NORGANNON_WISDOM.titleUpgraded": "清凉的泉水",
   "JAINA_CARD_NORGANNON_WISDOM.description": "[gold]奥术[/gold]。\n抽{IfUpgraded:show:2|两}张牌。{IfUpgraded:show:每抽到一张[blue]法术牌[/blue]回一费。|在本局对战中，如果你释放了火焰奥术冰霜三个派系的[blue]法术牌[/blue]各一张，本牌的费用降为0。}",
