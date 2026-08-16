@@ -29,7 +29,8 @@ public static class JainaMinionCardMap
         [typeof(WaterElementalMinion)] = typeof(WaterElementalCard),
         [typeof(GreySageParrotMinion)] = typeof(GreySageParrotCard),
         [typeof(FlamewakerMinion)] = typeof(FlamewakerCard),
-        [typeof(SanctumCandlesellerMinion)] = typeof(SanctumCandlesellerCard)
+        [typeof(SanctumCandlesellerMinion)] = typeof(SanctumCandlesellerCard),
+        [typeof(EnergyShaperMinion)] = typeof(EnergyShaperCard)
     };
 
     /// <summary>

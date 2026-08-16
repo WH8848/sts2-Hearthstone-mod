@@ -135,6 +135,8 @@
   "JAINA_CARD_MASK_OF_CTHUN_CARD.description": "{IfUpgraded:show:[gold]火焰[/gold]。\n造成10点伤害，随机分配到所有敌人身上。随机召唤一个费用消耗为3的随从。|[gold]暗影[/gold]。\n造成10点伤害，随机分配到所有敌人身上。}",
   "JAINA_CARD_SANCTUM_CANDLESELLER_CARD.title": "圣殿蜡烛商",
   "JAINA_CARD_SANCTUM_CANDLESELLER_CARD.description": "[gold]元素[/gold]。\n召唤一个[blue]4/5[/blue]的[red]圣殿蜡烛商[/red]。在你施放一个[gold]火焰[/gold]法术后，抽一张法术牌。",
+  "JAINA_CARD_ENERGY_SHAPER_CARD.title": "能量塑形师",
+  "JAINA_CARD_ENERGY_SHAPER_CARD.description": "召唤一个[blue]3/4[/blue]的[red]能量塑形师[/red]。[gold]战吼[/gold]：将你手牌中的所有法术牌变形成为费用增加1点的法术牌。（保留其原始费用。）",
   "JAINA_CARD_MAGISTER_DAWNGRASP_CARD.title": "魔导师晨拥",
   "JAINA_CARD_MAGISTER_DAWNGRASP_CARD.description": "[gold]战吼[/gold]：再次施放你在本局对战中施放过的每个法术派系的一个法术。\n获得5点护甲值。你的英雄技能变为[gold]奥术爆裂[/gold]。",
   "JAINA_CARD_ARCANE_BURST_CARD.title": "奥术爆裂",
