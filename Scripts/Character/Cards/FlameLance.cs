@@ -38,7 +38,7 @@ public sealed class FlameLance : JainaSpellCardTemplate
         IsUpgraded ? "res://assets/card_art/meteor.png" : "res://assets/card_art/flame_lance.png";
 
     public FlameLance()
-        : base(2, CardType.Attack, CardRarity.Common, JainaTargetTypes.AnyTargetable, true)
+        : base(2, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy, true)
     {
     }
 

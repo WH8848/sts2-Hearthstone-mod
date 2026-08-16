@@ -38,7 +38,7 @@ public sealed class ArcaneBarrage : JainaSpellCardTemplate
         IsUpgraded ? "res://assets/card_art/arcane_surge.png" : "res://assets/card_art/arcane_barrage.png";
 
     public ArcaneBarrage()
-        : base(1, CardType.Attack, CardRarity.Common, JainaTargetTypes.AnyTargetable, true)
+        : base(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy, true)
     {
     }
 

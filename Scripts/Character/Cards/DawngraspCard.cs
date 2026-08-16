@@ -9,8 +9,9 @@ namespace jaina.Scripts.Character.Cards;
 /// <summary>
 /// 奥术师晨拥 (Arcanist Dawngrasp) - 吉安娜随从卡。召唤 8/8 的 DawngraspMinion。
 /// 战吼：力量+2（升级版"奥术师晨拥+"为力量+3）。由"抵达传送大厅"任务奖励入手（稀有）。
+/// 衍生卡：不进入吉安娜卡池，不出现在卡牌奖励与图鉴中（仅由任务奖励入手）。
 /// </summary>
-[RegisterCard(typeof(JainaCardPool))]
+[RegisterCard(typeof(JainaNeutralCardPool))]
 public sealed class DawngraspCard : JainaMinionCardTemplate
 {
     /// <summary>
