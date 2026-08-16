@@ -15,9 +15,10 @@ namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
 /// 撕裂现实 (Tear Reality) - 1费技能牌（罕见，奥术派系）。
-/// 随机将 2 张奥术法术牌置入你的手牌，其费用消耗减少 1 点。
+/// 随机将 2 张法师法术牌置入你的手牌，其费用消耗减少 1 点。
 /// 升级后变为"操控时间 (Time Control)"：发现两张奥术法术牌，其费用消耗减少 1 点。
-/// "来自过去"仅为卡牌描述风味——实际检索吉安娜的全部奥术法术牌（攻击/技能牌）。
+/// "来自过去"仅为卡牌描述风味——撕裂现实检索吉安娜的全部法术牌，
+/// 操控时间检索吉安娜的全部奥术法术牌（攻击/技能牌）。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
 public sealed class TearRealityCard : JainaSpellCardTemplate
@@ -59,7 +60,30 @@ public sealed class TearRealityCard : JainaSpellCardTemplate
     }
 
     /// <summary>
-    /// 吉安娜全部奥术法术牌池（攻击/技能牌中挂奥术派系关键词的，排除英雄技能卡）。
+    /// 吉安娜全部法术牌池（攻击/技能牌，排除自身与英雄技能卡）。
+    /// 与匣中古神随机施放池保持一致（YoggBoxCard.SpellTypes）。
+    /// </summary>
+    private static readonly System.Type[] AllSpellTypes =
+    [
+        typeof(Fireball),
+        typeof(Frostbolt),
+        typeof(ArcaneIntellect),
+        typeof(FreezingPotion),
+        typeof(IceBarrier),
+        typeof(Trick),
+        typeof(Awaken),
+        typeof(NorgannonWisdom),
+        typeof(DeepFreezeCard),
+        typeof(FlameWard),
+        typeof(DeathborneCard),
+        typeof(FrostNova),
+        typeof(ArcaneBarrage),
+        typeof(ApexisBlast),
+        typeof(IgniteCard)
+    ];
+
+    /// <summary>
+    /// 吉安娜全部奥术法术牌池（攻击/技能牌中挂奥术派系关键词的）。
     /// </summary>
     private static readonly System.Type[] AllArcaneSpellTypes =
     [
@@ -90,9 +114,9 @@ public sealed class TearRealityCard : JainaSpellCardTemplate
             return;
         }
 
-        // 撕裂现实：随机将 2 张奥术法术牌置入手牌，费用减少 1 点
+        // 撕裂现实：从所有吉安娜法术牌中随机将 2 张置入手牌，费用减少 1 点
         var rng = base.Owner.RunState.Rng.CombatCardSelection;
-        var pool = new List<System.Type>(AllArcaneSpellTypes);
+        var pool = new List<System.Type>(AllSpellTypes);
         for (int i = 0; i < 2; i++)
         {
             if (pool.Count == 0)
