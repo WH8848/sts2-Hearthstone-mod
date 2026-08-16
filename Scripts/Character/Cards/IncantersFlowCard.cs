@@ -14,18 +14,17 @@ namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
 /// 咒术洪流 (Incanter's Flow) - 2费技能牌（稀有，奥术派系）。
-/// 使你抽牌堆中所有法术牌的费用减少1点。消耗。
-/// 升级后变为露娜的口袋银河 (Luna's Pocket Galaxy)：使你抽牌堆中所有随从牌的费用变为0点。消耗。
+/// 使你抽牌堆中所有法术牌的费用减少1点。
+/// 升级后变为露娜的口袋银河 (Luna's Pocket Galaxy)：使你抽牌堆中所有随从牌的费用变为0点。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
 public sealed class IncantersFlowCard : JainaSpellCardTemplate
 {
     /// <summary>
-    /// 法术牌 + 奥术派系
+    /// 法术牌 + 奥术派系（原版无消耗，不挂 Exhaust）
     /// </summary>
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
-        [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Arcane,
-         CardKeyword.Exhaust];
+        [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Arcane];
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [];
 

@@ -124,7 +124,7 @@
   "JAINA_CARD_ALUNETH_CARD.description": "每回合开始时，抽三张牌。\n攻击力0。耐久度3。",
   "JAINA_CARD_INCANTERS_FLOW_CARD.title": "咒术洪流",
   "JAINA_CARD_INCANTERS_FLOW_CARD.titleUpgraded": "露娜的口袋银河",
-  "JAINA_CARD_INCANTERS_FLOW_CARD.description": "[gold]奥术[/gold]。\n{IfUpgraded:show:使你抽牌堆中所有随从牌的费用变为0点。消耗。|使你抽牌堆中所有法术牌的费用减少1点。消耗。}",
+  "JAINA_CARD_INCANTERS_FLOW_CARD.description": "[gold]奥术[/gold]。\n{IfUpgraded:show:使你抽牌堆中所有随从牌的费用变为0点。|使你抽牌堆中所有法术牌的费用减少1点。}",
   "JAINA_CARD_FLAMEWAKER_CARD.title": "火妖",
   "JAINA_CARD_FLAMEWAKER_CARD.description": "召唤一个[blue]2/4[/blue]的[red]火妖[/red]。在你施放一个法术后，造成2次1点伤害，随机分配到所有敌人身上。",
   "JAINA_CARD_MASK_OF_CTHUN_CARD.title": "克苏恩面具",
