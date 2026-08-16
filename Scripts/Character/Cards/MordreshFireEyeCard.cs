@@ -7,7 +7,7 @@ using STS2RitsuLib.Interop.AutoRegistration;
 namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
-/// 火眼莫德雷斯 (Mordresh Fire Eye) - 3费随从卡（稀有）。
+/// 火眼莫德雷斯 (Mordresh Fire Eye) - 3费随从卡（稀有，亡灵种族）。
 /// 战吼：在本局对战中，如果你用你的英雄技能累计造成了10点伤害，
 /// 则对所有敌人造成4次10点伤害。属性 8/8。
 /// </summary>
@@ -26,10 +26,11 @@ public sealed class MordreshFireEyeCard : JainaMinionCardTemplate
     protected override int MinionHealth => 8;
 
     /// <summary>
-    /// 战吼（悬停解释）+ 消耗（随从卡打出后消耗，模板默认）
+    /// 亡灵种族 + 战吼（悬停解释）+ 消耗（随从卡打出后消耗，模板默认）
     /// </summary>
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
-        [jaina.Scripts.Character.Keywords.JainaKeywords.Battlecry, CardKeyword.Exhaust];
+        [jaina.Scripts.Character.Keywords.JainaKeywords.Undead,
+         jaina.Scripts.Character.Keywords.JainaKeywords.Battlecry, CardKeyword.Exhaust];
 
     public MordreshFireEyeCard()
         : base(3, CardRarity.Rare)
