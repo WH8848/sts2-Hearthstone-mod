@@ -46,13 +46,34 @@ public sealed class SorcerersGambitCard : ModCardTemplate
     {
     }
 
+    /// <summary>
+    /// 升级后卡牌名称变为"巫师的计策+"
+    /// </summary>
+    public override string Title
+    {
+        get
+        {
+            var title = new MegaCrit.Sts2.Core.Localization.LocString("cards", base.Id.Entry + ".title");
+            if (!IsUpgraded)
+            {
+                return title.GetFormattedText();
+            }
+            var upgraded = MegaCrit.Sts2.Core.Localization.LocString.GetIfExists("cards", base.Id.Entry + ".titleUpgraded");
+            return upgraded?.GetFormattedText() ?? title.GetFormattedText() + "+";
+        }
+    }
+
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
         // 记录施放（倒带/罗曼斯/三派系追踪）
         jaina.Scripts.Character.JainaCastTracker.RecordPlayed(this);
 
-        // 挂任务线光环：阶段 1
-        await PowerCmd.Apply<MageQuestlinePower>(
+        // 挂任务线光环：阶段 1（升级后的任务卡完成任务奖励拖延时间+）
+        var applied = await PowerCmd.Apply<MageQuestlinePower>(
             choiceContext, [base.Owner.Creature], 1m, base.Owner.Creature, this);
+        if (applied is { Count: > 0 } && applied[0] is MageQuestlinePower quest)
+        {
+            quest.RewardUpgraded = IsUpgraded;
+        }
     }
 }

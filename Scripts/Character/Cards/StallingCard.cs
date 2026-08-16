@@ -45,17 +45,35 @@ public sealed class StallingCard : ModCardTemplate
     {
     }
 
+    /// <summary>
+    /// 升级后卡牌名称变为"拖延时间+"
+    /// </summary>
+    public override string Title
+    {
+        get
+        {
+            var title = new MegaCrit.Sts2.Core.Localization.LocString("cards", base.Id.Entry + ".title");
+            if (!IsUpgraded)
+            {
+                return title.GetFormattedText();
+            }
+            var upgraded = MegaCrit.Sts2.Core.Localization.LocString.GetIfExists("cards", base.Id.Entry + ".titleUpgraded");
+            return upgraded?.GetFormattedText() ?? title.GetFormattedText() + "+";
+        }
+    }
+
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
         // 记录施放（倒带/罗曼斯/三派系追踪）
         jaina.Scripts.Character.JainaCastTracker.RecordPlayed(this);
 
-        // 挂任务线光环：阶段 2
+        // 挂任务线光环：阶段 2（升级后的任务卡完成任务奖励抵达传送大厅+）
         var applied = await PowerCmd.Apply<MageQuestlinePower>(
             choiceContext, [base.Owner.Creature], 1m, base.Owner.Creature, this);
         if (applied is { Count: > 0 } && applied[0] is MageQuestlinePower quest)
         {
             quest.Stage = 2;
+            quest.RewardUpgraded = IsUpgraded;
         }
     }
 }

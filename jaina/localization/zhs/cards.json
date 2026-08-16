@@ -99,11 +99,15 @@
   "JAINA_CARD_TIME_WARP_CARD.titleUpgraded": "时空扭曲+",
   "JAINA_CARD_TIME_WARP_CARD.description": "获得一个额外回合。{IfUpgraded:show:|（每局对战限一次）}",
   "JAINA_CARD_SORCERERS_GAMBIT_CARD.title": "巫师的计策",
+  "JAINA_CARD_SORCERERS_GAMBIT_CARD.titleUpgraded": "巫师的计策+",
   "JAINA_CARD_SORCERERS_GAMBIT_CARD.description": "[gold]任务[/gold]：施放火焰、冰霜和奥术法术各一个。\n[gold]奖励：抽一张法术牌[/gold]。",
   "JAINA_CARD_STALLING_CARD.title": "拖延时间",
+  "JAINA_CARD_STALLING_CARD.titleUpgraded": "拖延时间+",
   "JAINA_CARD_STALLING_CARD.description": "[gold]任务[/gold]：施放火焰、冰霜和奥术法术各一个。\n[gold]奖励：发现一张火焰、冰霜或奥术法术牌[/gold]。",
   "JAINA_CARD_REACH_PORTAL_CHAMBER_CARD.title": "抵达传送大厅",
+  "JAINA_CARD_REACH_PORTAL_CHAMBER_CARD.titleUpgraded": "抵达传送大厅+",
   "JAINA_CARD_REACH_PORTAL_CHAMBER_CARD.description": "[gold]任务[/gold]：施放火焰、冰霜和奥术法术各一个。\n[gold]奖励：奥术师晨拥[/gold]。",
   "JAINA_CARD_DAWNGRASP_CARD.title": "奥术师晨拥",
-  "JAINA_CARD_DAWNGRASP_CARD.description": "召唤一个[blue]8/8[/blue]的[red]奥术师晨拥[/red]。[gold]战吼[/gold]：力量+3。"
+  "JAINA_CARD_DAWNGRASP_CARD.titleUpgraded": "奥术师晨拥+",
+  "JAINA_CARD_DAWNGRASP_CARD.description": "召唤一个[blue]8/8[/blue]的[red]奥术师晨拥[/red]。[gold]战吼[/gold]：力量{IfUpgraded:show:+3|+2}。"
 }

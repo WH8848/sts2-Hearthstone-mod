@@ -40,6 +40,12 @@ public sealed class MageQuestlinePower : PowerModel, IModPowerAssetOverrides
     /// <summary>任务阶段：1=巫师的计策，2=拖延时间，3=抵达传送大厅</summary>
     public int Stage { get; set; } = 1;
 
+    /// <summary>
+    /// 本任务卡是否升级（+）：升级后的任务卡完成任务时，
+    /// 奖励的是下一阶段的升级版（拖延时间+ / 抵达传送大厅+ / 奥术师晨拥+）。
+    /// </summary>
+    public bool RewardUpgraded { get; set; }
+
     private readonly HashSet<JainaSpellSchool> _schools = [];
 
     public override PowerType Type => PowerType.Buff;
@@ -75,27 +81,28 @@ public sealed class MageQuestlinePower : PowerModel, IModPowerAssetOverrides
         {
             _schools.Add(JainaSpellSchool.Arcane);
         }
-        MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaDebug] MageQuestline stage={Stage} schools={_schools.Count}/3 card={card.Id.Entry}");
+        MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaDebug] MageQuestline stage={Stage} upgraded={RewardUpgraded} schools={_schools.Count}/3 card={card.Id.Entry}");
         if (_schools.Count < 3)
         {
             return;
         }
         // 三派系集齐：完成任务
+        int upgradeLevel = RewardUpgraded ? 1 : 0;
         switch (Stage)
         {
             case 1:
                 // 奖励：抽一张法术牌（从抽牌堆中找一张攻击/技能牌入手；没有则普通抽一张）
                 await GrantDrawSpell(choiceContext, player);
-                await GrantCardToHand(choiceContext, player, typeof(StallingCard), markGenerated: true);
+                await GrantCardToHand(choiceContext, player, typeof(StallingCard), upgradeLevel, markGenerated: true);
                 break;
             case 2:
                 // 奖励：发现上述派系中的一张法术牌
                 await jaina.Scripts.Character.Cards.JainaDiscoverHelper.DiscoverAndAddToHand(choiceContext, player);
-                await GrantCardToHand(choiceContext, player, typeof(ReachPortalChamberCard), markGenerated: true);
+                await GrantCardToHand(choiceContext, player, typeof(ReachPortalChamberCard), upgradeLevel, markGenerated: true);
                 break;
             case 3:
-                // 奖励：奥术师晨拥
-                await GrantCardToHand(choiceContext, player, typeof(DawngraspCard), markGenerated: true);
+                // 奖励：奥术师晨拥（升级任务卡奖励晨拥+）
+                await GrantCardToHand(choiceContext, player, typeof(DawngraspCard), upgradeLevel, markGenerated: true);
                 break;
         }
         MegaCrit.Sts2.Core.Logging.Log.Info("[JainaDebug] MageQuestline reward granted");
@@ -123,9 +130,10 @@ public sealed class MageQuestlinePower : PowerModel, IModPowerAssetOverrides
     }
 
     /// <summary>
-    /// 将指定类型卡的实例置入手牌（下一阶段任务卡 / 奥术师晨拥）
+    /// 将指定类型卡的实例置入手牌（下一阶段任务卡 / 奥术师晨拥），
+    /// 按 upgradeLevel 恢复升级形态（1 = 升级版 +）。
     /// </summary>
-    private static async Task GrantCardToHand(PlayerChoiceContext choiceContext, Player player, System.Type cardType, bool markGenerated)
+    private static async Task GrantCardToHand(PlayerChoiceContext choiceContext, Player player, System.Type cardType, int upgradeLevel, bool markGenerated)
     {
         var canonical = ModelDb.GetByIdOrNull<CardModel>(ModelDb.GetId(cardType));
         if (canonical == null)
@@ -137,7 +145,12 @@ public sealed class MageQuestlinePower : PowerModel, IModPowerAssetOverrides
             return;
         }
         var combatState = player.Creature.CombatState;
-        var card = combatState.CreateCard(canonical, player);
+        var card = jaina.Scripts.Character.JainaCastTracker.CreateCardWithUpgrade(
+            combatState, player, cardType, upgradeLevel);
+        if (card == null)
+        {
+            return;
+        }
         if (markGenerated)
         {
             jaina.Scripts.Character.JainaCastTracker.MarkGenerated(card);
