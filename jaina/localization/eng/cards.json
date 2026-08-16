@@ -193,5 +193,5 @@
   "JAINA_CARD_SCRAPPY_SCAVENGER_CARD.title": "Scrappy Scavenger",
   "JAINA_CARD_SCRAPPY_SCAVENGER_CARD.description": "Summon a [blue]1/1[/blue] [red]Scrappy Scavenger[/red]. [gold]Battlecry[/gold]: Discover a card that costs the same as your remaining Energy.",
   "JAINA_CARD_KEL_THUZAD_CARD.title": "Kel'Thuzad, the Inevitable",
-  "JAINA_CARD_KEL_THUZAD_CARD.description": "Summon a [blue]6/8[/blue] [red]Kel'Thuzad, the Inevitable[/red]. [gold]Battlecry[/gold]: Resurrect your Unstable Skeletons. Any that don't fit the battlefield explode."
+  "JAINA_CARD_KEL_THUZAD_CARD.description": "[gold]Undead[/gold].\nSummon a [blue]6/8[/blue] [red]Kel'Thuzad, the Inevitable[/red]. [gold]Battlecry[/gold]: Resurrect your Unstable Skeletons. Any that don't fit the battlefield explode."
 }
