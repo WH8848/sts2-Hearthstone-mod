@@ -32,5 +32,17 @@
   "JAINA_KEYWORD_DURABILITY.title": "耐久度",
   "JAINA_KEYWORD_DURABILITY.description": "耐久度：耐久度为0时卡牌被消耗。",
   "JAINA_KEYWORD_WEAPON.title": "武器",
-  "JAINA_KEYWORD_WEAPON.description": "武器：武器只可装备1把，装备第2把会爆掉第1把。"
+  "JAINA_KEYWORD_WEAPON.description": "武器：武器只可装备1把，装备第2把会爆掉第1把。",
+  "JAINA_KEYWORD_ELEMENTAL.title": "元素",
+  "JAINA_KEYWORD_ELEMENTAL.description": "元素：随从种族。",
+  "JAINA_KEYWORD_BEAST.title": "野兽",
+  "JAINA_KEYWORD_BEAST.description": "野兽：随从种族。",
+  "JAINA_KEYWORD_DRAGON.title": "龙",
+  "JAINA_KEYWORD_DRAGON.description": "龙：随从种族。",
+  "JAINA_KEYWORD_UNDEAD.title": "亡灵",
+  "JAINA_KEYWORD_UNDEAD.description": "亡灵：随从种族。",
+  "JAINA_KEYWORD_DEMON.title": "恶魔",
+  "JAINA_KEYWORD_DEMON.description": "恶魔：随从种族。",
+  "JAINA_KEYWORD_DRAENEI.title": "德莱尼",
+  "JAINA_KEYWORD_DRAENEI.description": "德莱尼：随从种族。"
 }

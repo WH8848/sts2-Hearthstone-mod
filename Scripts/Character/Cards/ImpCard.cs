@@ -25,9 +25,10 @@ public sealed class ImpCard : JainaMinionCardTemplate
     protected override int MinionHealth => 1;
 
     /// <summary>
-    /// 小精灵无亡语无冲锋
+    /// 恶魔种族；小精灵无亡语无冲锋
     /// </summary>
-    public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Exhaust];
+    public override IEnumerable<CardKeyword> CanonicalKeywords =>
+        [jaina.Scripts.Character.Keywords.JainaKeywords.Demon, CardKeyword.Exhaust];
 
     public ImpCard()
         : base(0, CardRarity.Token)

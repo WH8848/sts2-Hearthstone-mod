@@ -14,10 +14,11 @@ namespace jaina.Scripts.Character.Cards;
 public sealed class WaterElementalCard : JainaMinionCardTemplate
 {
     /// <summary>
-    /// 冻结（悬停解释）
+    /// 元素种族 + 冻结（悬停解释）
     /// </summary>
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
-        [jaina.Scripts.Character.Keywords.JainaKeywords.Freeze, CardKeyword.Exhaust];
+        [jaina.Scripts.Character.Keywords.JainaKeywords.Elemental, jaina.Scripts.Character.Keywords.JainaKeywords.Freeze,
+         CardKeyword.Exhaust];
 
     public override string CustomPortraitPath => "res://assets/card_art/water_elemental.png";
     protected override Type MinionType => typeof(WaterElementalMinion);

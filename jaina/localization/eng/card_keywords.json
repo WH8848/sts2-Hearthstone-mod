@@ -32,5 +32,17 @@
   "JAINA_KEYWORD_DURABILITY.title": "Durability",
   "JAINA_KEYWORD_DURABILITY.description": "Durability: When Durability reaches 0, this card is consumed.",
   "JAINA_KEYWORD_WEAPON.title": "Weapon",
-  "JAINA_KEYWORD_WEAPON.description": "Weapon: You can only equip 1 weapon. Equipping a second one destroys the first."
+  "JAINA_KEYWORD_WEAPON.description": "Weapon: You can only equip 1 weapon. Equipping a second one destroys the first.",
+  "JAINA_KEYWORD_ELEMENTAL.title": "Elemental",
+  "JAINA_KEYWORD_ELEMENTAL.description": "Elemental: Minion race.",
+  "JAINA_KEYWORD_BEAST.title": "Beast",
+  "JAINA_KEYWORD_BEAST.description": "Beast: Minion race.",
+  "JAINA_KEYWORD_DRAGON.title": "Dragon",
+  "JAINA_KEYWORD_DRAGON.description": "Dragon: Minion race.",
+  "JAINA_KEYWORD_UNDEAD.title": "Undead",
+  "JAINA_KEYWORD_UNDEAD.description": "Undead: Minion race.",
+  "JAINA_KEYWORD_DEMON.title": "Demon",
+  "JAINA_KEYWORD_DEMON.description": "Demon: Minion race.",
+  "JAINA_KEYWORD_DRAENEI.title": "Draenei",
+  "JAINA_KEYWORD_DRAENEI.description": "Draenei: Minion race."
 }

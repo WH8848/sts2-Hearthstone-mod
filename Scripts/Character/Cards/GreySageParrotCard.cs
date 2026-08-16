@@ -14,10 +14,11 @@ namespace jaina.Scripts.Character.Cards;
 public sealed class GreySageParrotCard : JainaMinionCardTemplate
 {
     /// <summary>
-    /// 战吼（悬停解释）
+    /// 野兽种族 + 战吼（悬停解释）
     /// </summary>
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
-        [jaina.Scripts.Character.Keywords.JainaKeywords.Battlecry, CardKeyword.Exhaust];
+        [jaina.Scripts.Character.Keywords.JainaKeywords.Beast, jaina.Scripts.Character.Keywords.JainaKeywords.Battlecry,
+         CardKeyword.Exhaust];
 
     public override string CustomPortraitPath => "res://assets/card_art/grey_sage_parrot.png";
     protected override Type MinionType => typeof(GreySageParrotMinion);

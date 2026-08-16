@@ -11,6 +11,12 @@ namespace jaina.Scripts.Character.Cards;
 [RegisterCard(typeof(JainaCardPool))]
 public sealed class LunaCard : JainaMinionCardTemplate
 {
+    /// <summary>
+    /// 德莱尼种族（炉石 Stargazer Luna 为德莱尼）
+    /// </summary>
+    public override IEnumerable<CardKeyword> CanonicalKeywords =>
+        [jaina.Scripts.Character.Keywords.JainaKeywords.Draenei, CardKeyword.Exhaust];
+
     public override string CustomPortraitPath => "res://assets/card_art/stargazer_luna.png";
     protected override Type MinionType => typeof(LunaMinion);
 

@@ -35,6 +35,13 @@ namespace jaina.Scripts.Character.Keywords;
 [RegisterOwnedKeyword(nameof(Durability), IconPath = "res://icon.svg")]
 // 武器：武器只可装备1把，装备第2把会爆掉第1把（不注入卡面描述，仅提供悬停解释）
 [RegisterOwnedKeyword(nameof(Weapon), IconPath = "res://icon.svg")]
+// 种族：随从种族（不注入卡面描述，描述文本中以金色词条样式出现，悬停显示解释）
+[RegisterOwnedKeyword(nameof(Elemental), IconPath = "res://icon.svg")]
+[RegisterOwnedKeyword(nameof(Beast), IconPath = "res://icon.svg")]
+[RegisterOwnedKeyword(nameof(Dragon), IconPath = "res://icon.svg")]
+[RegisterOwnedKeyword(nameof(Undead), IconPath = "res://icon.svg")]
+[RegisterOwnedKeyword(nameof(Demon), IconPath = "res://icon.svg")]
+[RegisterOwnedKeyword(nameof(Draenei), IconPath = "res://icon.svg")]
 public class JainaKeywords
 {
     /// <summary>
@@ -121,4 +128,34 @@ public class JainaKeywords
     /// 武器：武器只可装备1把，装备第2把会爆掉第1把
     /// </summary>
     public static readonly CardKeyword Weapon = ModContentRegistry.GetQualifiedKeywordId(Entry.ModId, nameof(Weapon)).GetModCardKeyword();
+
+    /// <summary>
+    /// 元素：随从种族
+    /// </summary>
+    public static readonly CardKeyword Elemental = ModContentRegistry.GetQualifiedKeywordId(Entry.ModId, nameof(Elemental)).GetModCardKeyword();
+
+    /// <summary>
+    /// 野兽：随从种族
+    /// </summary>
+    public static readonly CardKeyword Beast = ModContentRegistry.GetQualifiedKeywordId(Entry.ModId, nameof(Beast)).GetModCardKeyword();
+
+    /// <summary>
+    /// 龙：随从种族
+    /// </summary>
+    public static readonly CardKeyword Dragon = ModContentRegistry.GetQualifiedKeywordId(Entry.ModId, nameof(Dragon)).GetModCardKeyword();
+
+    /// <summary>
+    /// 亡灵：随从种族
+    /// </summary>
+    public static readonly CardKeyword Undead = ModContentRegistry.GetQualifiedKeywordId(Entry.ModId, nameof(Undead)).GetModCardKeyword();
+
+    /// <summary>
+    /// 恶魔：随从种族
+    /// </summary>
+    public static readonly CardKeyword Demon = ModContentRegistry.GetQualifiedKeywordId(Entry.ModId, nameof(Demon)).GetModCardKeyword();
+
+    /// <summary>
+    /// 德莱尼：随从种族
+    /// </summary>
+    public static readonly CardKeyword Draenei = ModContentRegistry.GetQualifiedKeywordId(Entry.ModId, nameof(Draenei)).GetModCardKeyword();
 }

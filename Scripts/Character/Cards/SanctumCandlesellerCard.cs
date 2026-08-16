@@ -14,10 +14,10 @@ namespace jaina.Scripts.Character.Cards;
 public sealed class SanctumCandlesellerCard : JainaMinionCardTemplate
 {
     /// <summary>
-    /// 无特殊关键词（效果为施放火焰法术触发，不需词条）
+    /// 元素种族（炉石 Sanctum Chandler 为元素）；无其他特殊词条
     /// </summary>
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
-        [CardKeyword.Exhaust];
+        [jaina.Scripts.Character.Keywords.JainaKeywords.Elemental, CardKeyword.Exhaust];
 
     public override string CustomPortraitPath => "res://assets/card_art/sanctum_chandler.png";
     protected override Type MinionType => typeof(SanctumCandlesellerMinion);

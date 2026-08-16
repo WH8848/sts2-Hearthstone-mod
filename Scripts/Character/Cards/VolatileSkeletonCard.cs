@@ -19,10 +19,11 @@ namespace jaina.Scripts.Character.Cards;
 public sealed class VolatileSkeletonCard : JainaMinionCardTemplate
 {
     /// <summary>
-    /// 亡语：随机对一个敌人造成 2 点伤害（随从死亡时触发）
+    /// 亡灵种族 + 亡语：随机对一个敌人造成 2 点伤害（随从死亡时触发）
     /// </summary>
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
     [
+        JainaKeywords.Undead,
         JainaKeywords.Deathrattle
     , CardKeyword.Exhaust];
 
