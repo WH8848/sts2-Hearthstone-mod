@@ -92,6 +92,7 @@ public static class JainaCastTracker
     private static readonly Dictionary<Type, JainaSpellSchool> SchoolByCardType = new()
     {
         [typeof(Fireball)] = JainaSpellSchool.Fire,
+        [typeof(IgniteCard)] = JainaSpellSchool.Fire,
         [typeof(Frostbolt)] = JainaSpellSchool.Frost,
         [typeof(FreezingPotion)] = JainaSpellSchool.Frost,
         [typeof(IceBarrier)] = JainaSpellSchool.Frost,
