@@ -77,25 +77,29 @@ public sealed class DeckOfWondersCard : JainaSpellCardTemplate
             }
             // 原牌原始费用
             int originalCost = spell.EnergyCost.Canonical;
-            // 目标池：所有法术牌（攻击/技能牌）中原始费用 = 原费用 + 1 的牌
-            var candidates = ModelDb.AllCards
+            // 目标池：所有法术牌（攻击/技能牌）中原始费用 = 原费用 + 1 的牌，
+            // 每种按可升级级别展开（未升级形态与升级形态（+）都可作为变形目标）
+            var candidateTypes = ModelDb.AllCards
                 .Where(c => c != null &&
                             (c.Type == CardType.Attack || c.Type == CardType.Skill) &&
                             c.EnergyCost.Canonical == originalCost + 1 &&
                             !HeroPowerHandHelper.IsHeroPowerCard(c))
                 .ToList();
-            if (candidates.Count == 0)
+            if (candidateTypes.Count == 0)
             {
                 continue;
             }
-            var chosen = rng.NextItem(candidates);
-            if (chosen == null)
+            var chosenType = rng.NextItem(candidateTypes);
+            if (chosenType == null)
             {
                 continue;
             }
+            int maxLevel = Math.Min(chosenType.MaxUpgradeLevel, 2);
+            int upgradeLevel = rng.NextInt(0, maxLevel + 1);
 
             // 生成带 Owner 的变形目标实例（Transform 要求 replacement.Owner == original.Owner）
-            var replacement = combatState.CreateCard(chosen, base.Owner);
+            var replacement = jaina.Scripts.Character.JainaCastTracker.CreateCardWithUpgrade(
+                combatState, base.Owner, chosenType.GetType(), upgradeLevel);
             if (replacement == null)
             {
                 continue;
