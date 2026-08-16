@@ -62,6 +62,7 @@ public sealed class TearRealityCard : JainaSpellCardTemplate
     /// <summary>
     /// 吉安娜全部法术牌池（攻击/技能牌，排除自身与英雄技能卡）。
     /// 与匣中古神随机施放池保持一致（YoggBoxCard.SpellTypes）。
+    /// 每种法术牌的升级形态（+）也作为独立候选（升级后的法术牌可被检索）。
     /// </summary>
     private static readonly System.Type[] AllSpellTypes =
     [
@@ -96,6 +97,29 @@ public sealed class TearRealityCard : JainaSpellCardTemplate
         typeof(IgniteCard)
     ];
 
+    /// <summary>
+    /// 展开候选池：每种法术牌按其可升级级别生成 (类型, 升级级别) 候选
+    /// （未升级 + 全部升级形态，升级后的法术牌同样可被检索）。
+    /// </summary>
+    private static List<(System.Type Type, int UpgradeLevel)> ExpandPool(System.Type[] types)
+    {
+        var result = new List<(System.Type, int)>();
+        foreach (var t in types)
+        {
+            result.Add((t, 0));
+            var canonical = ModelDb.GetByIdOrNull<CardModel>(ModelDb.GetId(t));
+            if (canonical == null)
+            {
+                continue;
+            }
+            for (int level = 1; level <= canonical.MaxUpgradeLevel; level++)
+            {
+                result.Add((t, level));
+            }
+        }
+        return result;
+    }
+
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
         // 记录施放（倒带/罗曼斯/三派系追踪）
@@ -114,22 +138,22 @@ public sealed class TearRealityCard : JainaSpellCardTemplate
             return;
         }
 
-        // 撕裂现实：从所有吉安娜法术牌中随机将 2 张置入手牌，费用减少 1 点
+        // 撕裂现实：从所有吉安娜法术牌（含升级形态）中随机将 2 张置入手牌，费用减少 1 点
         var rng = base.Owner.RunState.Rng.CombatCardSelection;
-        var pool = new List<System.Type>(AllSpellTypes);
+        var pool = ExpandPool(AllSpellTypes);
         for (int i = 0; i < 2; i++)
         {
             if (pool.Count == 0)
             {
                 break;
             }
-            var type = rng.NextItem(pool);
-            if (type == null)
+            var entry = rng.NextItem(pool);
+            if (entry.Type == null)
             {
                 break;
             }
-            pool.Remove(type);
-            await GrantDiscountedCard(choiceContext, type, 0);
+            pool.Remove(entry);
+            await GrantDiscountedCard(choiceContext, entry.Type, entry.UpgradeLevel);
         }
     }
 
@@ -159,7 +183,8 @@ public sealed class TearRealityCard : JainaSpellCardTemplate
     }
 
     /// <summary>
-    /// 操控时间：从吉安娜全部奥术法术牌中随机取，两次三选一发现，选中的费用减少 1 点置入手牌。
+    /// 操控时间：从吉安娜全部奥术法术牌（含升级形态）中随机取，两次三选一发现，
+    /// 选中的费用减少 1 点置入手牌。
     /// </summary>
     private async Task DiscoverTwoArcane(PlayerChoiceContext choiceContext)
     {
@@ -171,20 +196,20 @@ public sealed class TearRealityCard : JainaSpellCardTemplate
         var rng = base.Owner.RunState.Rng.CombatCardSelection;
         for (int i = 0; i < 2; i++)
         {
-            // 随机取最多 3 个候选（不重复）
-            var pool = new List<System.Type>(AllArcaneSpellTypes);
+            // 随机取最多 3 个候选（不重复，含升级形态）
+            var pool = ExpandPool(AllArcaneSpellTypes);
             var candidates = new List<CardModel>();
             while (candidates.Count < 3 && pool.Count > 0)
             {
-                var type = rng.NextItem(pool);
-                if (type == null)
+                var entry = rng.NextItem(pool);
+                if (entry.Type == null)
                 {
                     break;
                 }
-                pool.Remove(type);
+                pool.Remove(entry);
                 var combatState = base.Owner.Creature.CombatState;
                 var card = jaina.Scripts.Character.JainaCastTracker.CreateCardWithUpgrade(
-                    combatState, base.Owner, type, 0);
+                    combatState, base.Owner, entry.Type, entry.UpgradeLevel);
                 if (card != null)
                 {
                     candidates.Add(card);
