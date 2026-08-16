@@ -28,7 +28,11 @@ public sealed class JainasGiftCard : JainaSpellCardTemplate
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [];
 
-    public override string CustomPortraitPath => "res://assets/card_art/jainas_gift.png";
+    /// <summary>
+    /// 卡牌原画：吉安娜的礼物 / 升级后（倒带 Rewind）切换原画
+    /// </summary>
+    public override string CustomPortraitPath =>
+        IsUpgraded ? "res://assets/card_art/rewind.png" : "res://assets/card_art/jainas_gift.png";
 
     public JainasGiftCard()
         : base(0, CardType.Skill, CardRarity.Uncommon, TargetType.None, true)
