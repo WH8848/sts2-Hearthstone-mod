@@ -31,7 +31,9 @@ public sealed class RecklessApprenticeMinion : JainaMinionBase
     protected override string MinionVisualsPath => "res://assets/card_art/reckless_apprentice.png";
 
     /// <summary>
-    /// 战吼：向随机敌人发射 8 次你的英雄技能。仅手牌打出时触发。
+    /// 战吼：向随机敌人发射 8 次你的英雄技能。
+    /// 每次免费自动打出当前英雄技能（默认火焰冲击或英雄卡替换后的技能），
+    /// 随机合法敌人目标；此种方式打出的英雄技能会在打出后立刻回手。仅手牌打出时触发。
     /// </summary>
     public override async Task OnBattlecry(PlayerChoiceContext choiceContext)
     {
@@ -57,8 +59,7 @@ public sealed class RecklessApprenticeMinion : JainaMinionBase
             {
                 continue;
             }
-            // 发射出的英雄技能卡消耗（不回收）
-            jaina.Scripts.Character.JainaCastTracker.MarkGenerated(heroPower);
+            // 不标记衍生/消耗：此种方式打出的英雄技能打出后立刻回手
 
             // 单目标英雄技能：随机选合法敌人目标
             Creature? target = null;
@@ -78,6 +79,12 @@ public sealed class RecklessApprenticeMinion : JainaMinionBase
                 }
             }
             await CardCmd.AutoPlay(choiceContext, heroPower, target);
+
+            // 打出后立刻回手（英雄技能卡回到手牌）
+            if (heroPower.Pile != null)
+            {
+                await CardPileCmd.Add(heroPower, PileType.Hand);
+            }
         }
     }
 }
