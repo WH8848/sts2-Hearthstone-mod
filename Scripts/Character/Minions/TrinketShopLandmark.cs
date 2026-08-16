@@ -13,7 +13,7 @@ using STS2RitsuLib.Interop.AutoRegistration;
 namespace jaina.Scripts.Character.Minions;
 
 /// <summary>
-/// 小玩物小屋 (Trinket Tracker) - 吉安娜地标。
+/// 小玩物小屋 (Knickknack Shack) - 吉安娜地标。
 /// 使用效果：抽一张牌。如果你在本回合中使用抽到的这张牌，重新开启本地标。
 /// 耐久度 4（每次使用 -1，归零时地标被摧毁）。
 /// </summary>
@@ -23,7 +23,7 @@ public sealed class TrinketShopLandmark : JainaLandmarkBase
     /// <summary>
     /// 战斗视觉：小玩物小屋卡图原画场景
     /// </summary>
-    protected override string MinionVisualsPath => "res://assets/card_art/trinket_tracker.png";
+    protected override string MinionVisualsPath => "res://assets/card_art/knickknack_shack.png";
 
     /// <summary>
     /// 耐久度 4
