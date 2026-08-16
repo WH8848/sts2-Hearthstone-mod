@@ -12,7 +12,7 @@ using STS2RitsuLib.Interop.AutoRegistration;
 namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
-/// 指挥官西瓦拉 (Commander Sivara) - 1费随从卡（稀有）。
+/// 指挥官西瓦拉 (Commander Sivara) - 1费随从卡（稀有，纳迦种族）。
 /// 战吼：如果你在此牌在你手中时施放过三个法术，则将那些法术的复制置回你的手牌。
 /// 属性 3/5。
 /// 追踪：本卡在手牌期间，玩家每施放一张法术牌（攻击/技能牌，不含英雄技能卡）
@@ -38,10 +38,11 @@ public sealed class CommanderSivaraCard : JainaMinionCardTemplate
     protected override int MinionHealth => 5;
 
     /// <summary>
-    /// 战吼（悬停解释）+ 消耗（随从卡打出后消耗，模板默认）
+    /// 纳迦种族 + 战吼（悬停解释）+ 消耗（随从卡打出后消耗，模板默认）
     /// </summary>
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
-        [jaina.Scripts.Character.Keywords.JainaKeywords.Battlecry, CardKeyword.Exhaust];
+        [jaina.Scripts.Character.Keywords.JainaKeywords.Naga,
+         jaina.Scripts.Character.Keywords.JainaKeywords.Battlecry, CardKeyword.Exhaust];
 
     public CommanderSivaraCard()
         : base(1, CardRarity.Rare)
