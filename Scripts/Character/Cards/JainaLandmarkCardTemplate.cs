@@ -74,7 +74,7 @@ public abstract class JainaLandmarkCardTemplate : ModCardTemplate
 
     /// <summary>
     /// 打出：召唤地标单位站场（占据一个随从槽位）。
-    /// 地标生命值仅作兜底（999，不可被攻击/不受伤害影响），耐久度由地标单位自身管理。
+    /// 生命值 = 耐久度（地标生命值视觉显示耐久度；地标免疫伤害，耐久只在使用时消耗）。
     /// </summary>
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
@@ -82,7 +82,7 @@ public abstract class JainaLandmarkCardTemplate : ModCardTemplate
             choiceContext,
             base.Owner,
             LandmarkType,
-            maxHp: 999,
+            maxHp: LandmarkDurability,
             position: MinionPosition.FrontUpper);
     }
 }

@@ -29,11 +29,18 @@ public abstract class JainaLandmarkBase : JainaMinionBase
     public abstract int LandmarkDurability { get; }
 
     /// <summary>
-    /// 地标不可被攻击/不受伤害影响（生命值仅作兜底，不显示血条）
+    /// 生命值 = 耐久度（地标生命值视觉显示耐久度：血条数值即剩余耐久；
+    /// 地标免疫伤害，生命值只在使用地标时同步减少）。
+    /// MinInitialHp/MaxInitialHp 仅作模型默认值，召唤时由 OnSummon 按耐久度覆盖。
     /// </summary>
     public override int MinInitialHp => 999;
 
     public override int MaxInitialHp => 999;
+
+    /// <summary>
+    /// 显示血条（数值 = 生命值 = 剩余耐久度）
+    /// </summary>
+    public override bool IsHealthBarVisible => true;
 
     /// <summary>
     /// 被召唤时初始化：设置高生命兜底、挂耐久度，并立即授予本回合的使用行动点
@@ -123,6 +130,8 @@ public abstract class JainaLandmarkBase : JainaMinionBase
                 return;
             }
             await PowerCmd.Decrement(durability);
+            // 生命值视觉同步：HP = 剩余耐久度（血条显示耐久）
+            await CreatureCmd.SetMaxAndCurrentHp(Creature, durability.Amount);
         }
 
         // 冷却 2 层：每两个回合可点击使用一次（使用回合后的下一回合不可用，再下一回合恢复）
