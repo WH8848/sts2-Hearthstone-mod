@@ -42,6 +42,8 @@ namespace jaina.Scripts.Character.Keywords;
 [RegisterOwnedKeyword(nameof(Undead), IconPath = "res://icon.svg")]
 [RegisterOwnedKeyword(nameof(Demon), IconPath = "res://icon.svg")]
 [RegisterOwnedKeyword(nameof(Draenei), IconPath = "res://icon.svg")]
+// 吸血：造成伤害时回复等量生命（冰霜女巫吉安娜光环，元素随从拥有）
+[RegisterOwnedKeyword(nameof(Lifesteal), IconPath = "res://icon.svg")]
 public class JainaKeywords
 {
     /// <summary>
@@ -158,4 +160,9 @@ public class JainaKeywords
     /// 德莱尼：随从种族
     /// </summary>
     public static readonly CardKeyword Draenei = ModContentRegistry.GetQualifiedKeywordId(Entry.ModId, nameof(Draenei)).GetModCardKeyword();
+
+    /// <summary>
+    /// 吸血：造成伤害时回复等量生命
+    /// </summary>
+    public static readonly CardKeyword Lifesteal = ModContentRegistry.GetQualifiedKeywordId(Entry.ModId, nameof(Lifesteal)).GetModCardKeyword();
 }

@@ -54,5 +54,8 @@
   "JAINA_POWER_MAGE_QUESTLINE_POWER.smartDescription": "Quest in progress: Cast a Fire, Frost, and Arcane spell to gain the reward.",
   "JAINA_POWER_ALUNETH_POWER.title": "Aluneth",
   "JAINA_POWER_ALUNETH_POWER.description": "At the start of each turn, draw 3 cards.",
-  "JAINA_POWER_ALUNETH_POWER.smartDescription": "At the start of each turn, draw 3 cards."
+  "JAINA_POWER_ALUNETH_POWER.smartDescription": "At the start of each turn, draw 3 cards.",
+  "JAINA_POWER_FROST_LICH_JAINA_POWER.title": "Elemental Lifesteal",
+  "JAINA_POWER_FROST_LICH_JAINA_POWER.description": "For the rest of the combat, your Elemental minions have [gold]Lifesteal[/gold]: Heal for the amount of damage dealt.",
+  "JAINA_POWER_FROST_LICH_JAINA_POWER.smartDescription": "Your Elemental minions have [gold]Lifesteal[/gold]."
 }

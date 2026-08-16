@@ -200,6 +200,26 @@ function Draw-JainaWeaponAttackAction {
     $pen.Dispose(); $pen2.Dispose()
 }
 
+function Draw-FrostLichJaina {
+    param($g)
+    New-IconBase $g
+    # Snowflake + blood drop (Frost Lich Jaina: elemental lifesteal aura)
+    $pen = [System.Drawing.Pen]::new($iceBlue, 5)
+    $g.DrawLine($pen, 64, 26, 64, 66)
+    $g.DrawLine($pen, 44, 40, 84, 40)
+    $g.DrawLine($pen, 48, 28, 80, 52)
+    $g.DrawLine($pen, 80, 28, 48, 52)
+    $redPen = [System.Drawing.Pen]::new($red, 6)
+    $pts = @()
+    $pts += New-Object System.Drawing.PointF(64, 108)
+    $pts += New-Object System.Drawing.PointF(86, 82)
+    $pts += New-Object System.Drawing.PointF(86, 92)
+    $pts += New-Object System.Drawing.PointF(42, 92)
+    $pts += New-Object System.Drawing.PointF(42, 82)
+    $g.DrawPolygon($redPen, $pts)               # 吸血水滴
+    $pen.Dispose(); $redPen.Dispose()
+}
+
 function Save-Icon {
     param($name, $drawFunc)
     $bmp = New-Object System.Drawing.Bitmap(128, 128)
@@ -224,5 +244,6 @@ Save-Icon 'jaina_power_empower_power'         (Get-Command Draw-Empower)
 Save-Icon 'jaina_power_unfair_game_power'     (Get-Command Draw-UnfairGame)
 Save-Icon 'jaina_power_jaina_weapon_power'        (Get-Command Draw-JainaWeaponPower)
 Save-Icon 'jaina_power_jaina_weapon_attack_action' (Get-Command Draw-JainaWeaponAttackAction)
+Save-Icon 'jaina_power_frost_lich_jaina_power'     (Get-Command Draw-FrostLichJaina)
 
 Write-Host "完成: 7 个力量图标 -> $outDir"

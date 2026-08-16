@@ -710,4 +710,43 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
     /// 亡语效果：随从死亡时触发。子类重写以实现具体效果。
     /// </summary>
     public virtual Task OnDeathrattle(PlayerChoiceContext choiceContext) => Task.CompletedTask;
+
+    /// <summary>
+    /// 造成伤害后（基类钩子）：
+    /// 冰霜女巫吉安娜光环下，元素随从造成伤害回复主人等量生命（吸血）。
+    /// 子类覆写本方法时需调用 base（如水元素在冻结逻辑前调用）。
+    /// </summary>
+    public override async Task AfterDamageGiven(PlayerChoiceContext choiceContext, Creature? dealer, DamageResult result,
+        ValueProp props, Creature target, CardModel? cardSource)
+    {
+        if (dealer != Creature || result.TotalDamage <= 0)
+        {
+            return;
+        }
+        var owner = Creature.PetOwner;
+        if (owner == null)
+        {
+            return;
+        }
+        // 主人有冰霜女巫吉安娜光环（元素吸血），且本随从是元素 → 回复主人等量生命
+        if (owner.Creature.Powers.Any(p => p is Powers.FrostLichJainaPower) && IsElementalMinion())
+        {
+            await CreatureCmd.Heal(owner.Creature, result.TotalDamage);
+        }
+    }
+
+    /// <summary>
+    /// 本随从是否为元素种族（通过随从卡映射查卡的种族关键词，含以后新增的元素随从）
+    /// </summary>
+    public bool IsElementalMinion()
+    {
+        var cardType = JainaMinionCardMap.GetCardType(GetType());
+        if (cardType == null)
+        {
+            return false;
+        }
+        var canonical = MegaCrit.Sts2.Core.Models.ModelDb.GetByIdOrNull<MegaCrit.Sts2.Core.Models.CardModel>(
+            MegaCrit.Sts2.Core.Models.ModelDb.GetId(cardType));
+        return canonical?.CanonicalKeywords?.Contains(Keywords.JainaKeywords.Elemental) ?? false;
+    }
 }

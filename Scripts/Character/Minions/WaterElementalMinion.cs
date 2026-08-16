@@ -27,24 +27,27 @@ public sealed class WaterElementalMinion : JainaMinionBase
     protected override string MinionVisualsPath => "res://assets/card_art/water_elemental.png";
 
     /// <summary>
-    /// 造成伤害后：给受伤角色 1 层冻结（手动点击攻击与自动攻击都走 CreatureCmd.Damage → AfterDamageGiven）
+    /// 造成伤害后：先走基类吸血钩子（冰霜女巫吉安娜光环下元素吸血），
+    /// 再给受伤角色 1 层冻结（手动点击攻击与自动攻击都走 CreatureCmd.Damage → AfterDamageGiven）
     /// </summary>
-    public override Task AfterDamageGiven(PlayerChoiceContext choiceContext, Creature? dealer, DamageResult result,
+    public override async Task AfterDamageGiven(PlayerChoiceContext choiceContext, Creature? dealer, DamageResult result,
         ValueProp props, Creature target, CardModel? cardSource)
     {
         if (dealer != Creature)
         {
-            return Task.CompletedTask;
+            return;
         }
+        // 基类吸血：冰霜女巫吉安娜光环下，元素随从造成伤害回复主人等量生命
+        await base.AfterDamageGiven(choiceContext, dealer, result, props, target, cardSource);
         if (!target.IsAlive)
         {
-            return Task.CompletedTask;
+            return;
         }
         var owner = Creature.PetOwner;
         if (owner == null)
         {
-            return Task.CompletedTask;
+            return;
         }
-        return PowerCmd.Apply<FreezePower>(choiceContext, [target], 1m, owner.Creature, cardSource);
+        await PowerCmd.Apply<FreezePower>(choiceContext, [target], 1m, owner.Creature, cardSource);
     }
 }

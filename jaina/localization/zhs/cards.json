@@ -138,5 +138,9 @@
   "JAINA_CARD_MAGISTER_DAWNGRASP_CARD.title": "魔导师晨拥",
   "JAINA_CARD_MAGISTER_DAWNGRASP_CARD.description": "[gold]战吼[/gold]：再次施放你在本局对战中施放过的每个法术派系的一个法术。\n获得5点护甲值。你的英雄技能变为[blue]奥术爆裂[/blue]。",
   "JAINA_CARD_ARCANE_BURST_CARD.title": "奥术爆裂",
-  "JAINA_CARD_ARCANE_BURST_CARD.description": "造成2点伤害。每次打出获得+2伤害。每回合开始自动加入手牌。"
+  "JAINA_CARD_ARCANE_BURST_CARD.description": "造成2点伤害。每次打出获得+2伤害。每回合开始自动加入手牌。",
+  "JAINA_CARD_FROST_LICH_JAINA_CARD.title": "冰霜女巫吉安娜",
+  "JAINA_CARD_FROST_LICH_JAINA_CARD.description": "[gold]战吼[/gold]：召唤一个[blue]3/6[/blue]的[red]水元素[/red]。在本局对战中，你的所有元素拥有[gold]吸血[/gold]。你的英雄技能变为[blue]冰冷触摸[/blue]。",
+  "JAINA_CARD_ICY_TOUCH_CARD.title": "冰冷触摸",
+  "JAINA_CARD_ICY_TOUCH_CARD.description": "造成1点伤害，召唤一个[blue]3/6[/blue]的[red]水元素[/red]。每回合开始自动加入手牌。"
 }
