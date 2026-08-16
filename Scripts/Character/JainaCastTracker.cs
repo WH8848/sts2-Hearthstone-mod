@@ -60,6 +60,11 @@ public static class JainaCastTracker
         /// 记录 (类型, 施放时的升级级别, 是否本局衍生)。
         /// </summary>
         public (Type Type, int UpgradeLevel, bool IsGenerated)? LastCastSpellCost2Plus;
+
+        /// <summary>
+        /// 本局施放过的"灯光表演"（升级版奥术弹幕）次数（灯光表演的光束数递增用）
+        /// </summary>
+        public int LightshowCasts;
     }
 
     private static readonly ConditionalWeakTable<ICombatState, CombatRecord> Records = new();
