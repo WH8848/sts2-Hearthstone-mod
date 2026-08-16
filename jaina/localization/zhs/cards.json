@@ -121,5 +121,8 @@
   "JAINA_CARD_JAINAS_GIFT_CARD.titleUpgraded": "倒带",
   "JAINA_CARD_JAINAS_GIFT_CARD.description": "[gold]奥术[/gold]。\n{IfUpgraded:show:发现一张你在本局对战中施放过的其他[blue]法术牌[/blue]的一张复制。|发现一张带有[gold]虚无[/gold]的寒冰箭、奥术智慧或火球术。}",
   "JAINA_CARD_GREY_SAGE_PARROT_CARD.title": "灰贤鹦鹉",
-  "JAINA_CARD_GREY_SAGE_PARROT_CARD.description": "召唤一个[blue]4/5[/blue]的[red]灰贤鹦鹉[/red]。[gold]战吼[/gold]：重复你施放的上一个费用消耗大于等于2点的法术。"
+  "JAINA_CARD_GREY_SAGE_PARROT_CARD.description": "召唤一个[blue]4/5[/blue]的[red]灰贤鹦鹉[/red]。[gold]战吼[/gold]：重复你施放的上一个费用消耗大于等于2点的法术。",
+  "JAINA_CARD_YOGG_BOX_CARD.title": "匣中古神",
+  "JAINA_CARD_YOGG_BOX_CARD.titleUpgraded": "尤格-萨隆的谜之匣",
+  "JAINA_CARD_YOGG_BOX_CARD.description": "[gold]暗影[/gold]。\n{IfUpgraded:show:随机施放10个法术（目标随机，联机可打队友）。|随机施放5个法术。如果你的抽牌堆里没有随从牌，则这些法术的费用消耗大于或等于2点。（目标随机，联机可打队友）}"
 }

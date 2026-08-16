@@ -121,5 +121,8 @@
   "JAINA_CARD_JAINAS_GIFT_CARD.titleUpgraded": "Rewind",
   "JAINA_CARD_JAINAS_GIFT_CARD.description": "[gold]Arcane[/gold].\n{IfUpgraded:show:Discover a copy of another [blue]Spell card[/blue] you have cast this combat.|Discover a Frostbolt, Arcane Intellect, or Fireball with [gold]Ethereal[/gold].}",
   "JAINA_CARD_GREY_SAGE_PARROT_CARD.title": "Grey Sage Parrot",
-  "JAINA_CARD_GREY_SAGE_PARROT_CARD.description": "Summon a [blue]4/5[/blue] [red]Grey Sage Parrot[/red]. [gold]Battlecry[/gold]: Repeat the last Spell you cast that costs 2 or more."
+  "JAINA_CARD_GREY_SAGE_PARROT_CARD.description": "Summon a [blue]4/5[/blue] [red]Grey Sage Parrot[/red]. [gold]Battlecry[/gold]: Repeat the last Spell you cast that costs 2 or more.",
+  "JAINA_CARD_YOGG_BOX_CARD.title": "Yogg in the Box",
+  "JAINA_CARD_YOGG_BOX_CARD.titleUpgraded": "Puzzle Box of Yogg-Saron",
+  "JAINA_CARD_YOGG_BOX_CARD.description": "[gold]Shadow[/gold].\n{IfUpgraded:show:Cast 10 random spells (targets chosen randomly, can hit allies in multiplayer).|Cast 5 random spells. If your draw pile has no minions, the spells cast cost 2 or more. (Targets chosen randomly, can hit allies in multiplayer).}"
 }
