@@ -37,7 +37,8 @@ public static class JainaMinionCardMap
         [typeof(AstromancerSolarianMinion)] = typeof(AstromancerSolarianCard),
         [typeof(SolarianPrimeMinion)] = typeof(SolarianPrimeCard),
         [typeof(ImpWranglerMinion)] = typeof(ImpWranglerCard),
-        [typeof(RecklessApprenticeMinion)] = typeof(RecklessApprenticeCard)
+        [typeof(RecklessApprenticeMinion)] = typeof(RecklessApprenticeCard),
+        [typeof(IceWalkerMinion)] = typeof(IceWalkerCard)
     };
 
     /// <summary>

@@ -167,5 +167,7 @@
   "JAINA_CARD_IMP_WRANGLER_CARD.title": "小精灵驾驭者",
   "JAINA_CARD_IMP_WRANGLER_CARD.description": "召唤一个[blue]4/4[/blue]的[red]小精灵驾驭者[/red]。[gold]战吼[/gold]：[gold]灌注[/gold]并触发你的英雄技能。",
   "JAINA_CARD_RECKLESS_APPRENTICE_CARD.title": "鲁莽的学徒",
-  "JAINA_CARD_RECKLESS_APPRENTICE_CARD.description": "召唤一个[blue]3/5[/blue]的[red]鲁莽的学徒[/red]。[gold]战吼[/gold]：向随机敌人发射8次你的英雄技能。"
+  "JAINA_CARD_RECKLESS_APPRENTICE_CARD.description": "召唤一个[blue]3/5[/blue]的[red]鲁莽的学徒[/red]。[gold]战吼[/gold]：向随机敌人发射8次你的英雄技能。",
+  "JAINA_CARD_ICE_WALKER_CARD.title": "寒冰行者",
+  "JAINA_CARD_ICE_WALKER_CARD.description": "[gold]元素[/gold]。\n召唤一个[blue]1/3[/blue]的[red]寒冰行者[/red]。你的英雄技能还会给与目标1层[gold]冻结[/gold]。"
 }
