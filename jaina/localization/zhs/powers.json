@@ -51,5 +51,8 @@
   "JAINA_POWER_JAINA_WEAPON_ATTACK_ACTION.smartDescription": "[gold]行动[/gold]：选择 1 名敌人。造成等同于武器攻击力的伤害。消耗 1 点。",
   "JAINA_POWER_MAGE_QUESTLINE_POWER.title": "法师任务线",
   "JAINA_POWER_MAGE_QUESTLINE_POWER.description": "任务：施放火焰、冰霜和奥术法术各一个。完成后获得奖励并升级下一阶段。",
-  "JAINA_POWER_MAGE_QUESTLINE_POWER.smartDescription": "任务进行中：施放火焰、冰霜和奥术法术各一个后获得奖励。"
+  "JAINA_POWER_MAGE_QUESTLINE_POWER.smartDescription": "任务进行中：施放火焰、冰霜和奥术法术各一个后获得奖励。",
+  "JAINA_POWER_ALUNETH_POWER.title": "艾露尼斯",
+  "JAINA_POWER_ALUNETH_POWER.description": "每回合开始时，抽三张牌。",
+  "JAINA_POWER_ALUNETH_POWER.smartDescription": "每回合开始时抽三张牌。"
 }

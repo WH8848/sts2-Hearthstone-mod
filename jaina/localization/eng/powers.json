@@ -51,5 +51,8 @@
   "JAINA_POWER_JAINA_WEAPON_ATTACK_ACTION.smartDescription": "[gold]Action[/gold]: Choose 1 enemy. Deal damage equal to your weapon's Attack. Costs 1.",
   "JAINA_POWER_MAGE_QUESTLINE_POWER.title": "Mage Questline",
   "JAINA_POWER_MAGE_QUESTLINE_POWER.description": "Quest: Cast a Fire, Frost, and Arcane spell. Gain the reward and advance to the next stage.",
-  "JAINA_POWER_MAGE_QUESTLINE_POWER.smartDescription": "Quest in progress: Cast a Fire, Frost, and Arcane spell to gain the reward."
+  "JAINA_POWER_MAGE_QUESTLINE_POWER.smartDescription": "Quest in progress: Cast a Fire, Frost, and Arcane spell to gain the reward.",
+  "JAINA_POWER_ALUNETH_POWER.title": "Aluneth",
+  "JAINA_POWER_ALUNETH_POWER.description": "At the start of each turn, draw 3 cards.",
+  "JAINA_POWER_ALUNETH_POWER.smartDescription": "At the start of each turn, draw 3 cards."
 }

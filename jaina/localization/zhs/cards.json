@@ -122,5 +122,7 @@
   "JAINA_CARD_GREY_SAGE_PARROT_CARD.description": "召唤一个[blue]4/5[/blue]的[red]灰贤鹦鹉[/red]。[gold]战吼[/gold]：重复你施放的上一个费用消耗大于等于2点的法术。",
   "JAINA_CARD_YOGG_BOX_CARD.title": "匣中古神",
   "JAINA_CARD_YOGG_BOX_CARD.titleUpgraded": "尤格-萨隆的谜之匣",
-  "JAINA_CARD_YOGG_BOX_CARD.description": "[gold]暗影[/gold]。\n{IfUpgraded:show:随机施放10个法术（目标随机，联机可打队友）。|随机施放5个法术。如果你的抽牌堆里没有随从牌，则这些法术的费用消耗大于或等于2点。（目标随机，联机可打队友）}"
+  "JAINA_CARD_YOGG_BOX_CARD.description": "[gold]暗影[/gold]。\n{IfUpgraded:show:随机施放10个法术（目标随机，联机可打队友）。|随机施放5个法术。如果你的抽牌堆里没有随从牌，则这些法术的费用消耗大于或等于2点。（目标随机，联机可打队友）}",
+  "JAINA_CARD_ALUNETH_CARD.title": "艾露尼斯",
+  "JAINA_CARD_ALUNETH_CARD.description": "每回合开始时，抽三张牌。\n攻击力0。耐久度3。"
 }
