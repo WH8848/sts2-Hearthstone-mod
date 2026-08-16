@@ -34,8 +34,9 @@ public sealed class ImpWranglerMinion : JainaMinionBase
 
     /// <summary>
     /// 战吼：灌注（+1 层）并触发你的英雄技能。
-    /// 触发方式：免费自动对随机敌人打出当前英雄技能，
-    /// 此种方式打出的英雄技能会在打出后立刻回手。仅手牌打出时触发。
+    /// 触发方式：免费自动对随机敌人打出当前英雄技能的副本——
+    /// 副本从手牌中同类型的英雄技能卡取升级等级，打出后即移出牌堆：
+    /// 手牌中的英雄技能卡不受影响，不会额外生成/堆叠英雄技能卡。仅手牌打出时触发。
     /// </summary>
     public override async Task OnBattlecry(PlayerChoiceContext choiceContext)
     {
@@ -48,7 +49,7 @@ public sealed class ImpWranglerMinion : JainaMinionBase
         // 1) 灌注：英雄技能伤害 +1（与灵体采集者同款）
         await PowerCmd.Apply<EmpowerPower>(choiceContext, [owner.Creature], 1m, Creature, null);
 
-        // 2) 触发你的英雄技能：免费自动对随机敌人打出当前英雄技能
+        // 2) 触发你的英雄技能：免费自动对随机敌人打出当前英雄技能的副本
         var combatState = owner.Creature.CombatState;
         if (combatState == null)
         {
@@ -57,13 +58,13 @@ public sealed class ImpWranglerMinion : JainaMinionBase
         var rec = jaina.Scripts.Character.JainaCastTracker.For(combatState);
         // 当前英雄技能类型（null = 默认火焰冲击）
         var heroPowerType = rec.CurrentHeroPowerType ?? typeof(Cards.Fireblast);
-        var heroPower = jaina.Scripts.Character.JainaCastTracker.CreateCardWithUpgrade(
-            combatState, owner, heroPowerType, 0);
+        // 副本：与手牌中的英雄技能同一张（同类型同升级等级），不标记衍生/消耗
+        var heroPower = jaina.Scripts.Character.JainaCastTracker.CreateHeroPowerCopy(
+            combatState, owner, heroPowerType);
         if (heroPower == null)
         {
             return;
         }
-        // 不标记衍生/消耗：此种方式打出的英雄技能打出后立刻回手
 
         // 单目标英雄技能：随机选合法目标（尽可能以敌人为目标）
         Creature? target = null;
@@ -84,10 +85,10 @@ public sealed class ImpWranglerMinion : JainaMinionBase
         }
         await CardCmd.AutoPlay(choiceContext, heroPower, target);
 
-        // 3) 打出后立刻回手（英雄技能卡回到手牌）
+        // 3) 副本打出后从牌堆移除：不回到手牌、不产生额外英雄技能卡
         if (heroPower.Pile != null)
         {
-            await CardPileCmd.Add(heroPower, PileType.Hand);
+            heroPower.RemoveFromCurrentPile(silent: true);
         }
     }
 }

@@ -314,6 +314,32 @@ public static class JainaCastTracker
     }
 
     /// <summary>
+    /// 创建当前英雄技能的副本（鲁莽的学徒/小精灵驾驭者战吼自动打出用）：
+    /// 从手牌中同类型的英雄技能卡取升级等级（手牌没有则 0 级），创建副本。
+    /// 副本打出后由调用方移出牌堆——手牌中的英雄技能卡不受影响，
+    /// 不会额外生成英雄技能卡（打出的是与手牌同一张卡的副本）。
+    /// </summary>
+    public static MegaCrit.Sts2.Core.Models.CardModel? CreateHeroPowerCopy(
+        ICombatState combatState, Player owner, Type heroPowerType)
+    {
+        int upgradeLevel = 0;
+        var hand = owner.PlayerCombatState?.Hand;
+        if (hand != null)
+        {
+            foreach (var c in hand.Cards)
+            {
+                if (c != null && c.GetType() == heroPowerType &&
+                    Powers.HeroPowerHandHelper.IsHeroPowerCard(c))
+                {
+                    upgradeLevel = c.CurrentUpgradeLevel;
+                    break;
+                }
+            }
+        }
+        return CreateCardWithUpgrade(combatState, owner, heroPowerType, upgradeLevel);
+    }
+
+    /// <summary>
     /// 火焰/奥术/冰霜三派系是否都已施放过
     /// </summary>
     public static bool HasAllThreeSchools(ICombatState combatState)

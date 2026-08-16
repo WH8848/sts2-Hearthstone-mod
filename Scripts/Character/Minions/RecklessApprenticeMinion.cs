@@ -32,8 +32,9 @@ public sealed class RecklessApprenticeMinion : JainaMinionBase
 
     /// <summary>
     /// 战吼：向随机敌人发射 8 次你的英雄技能。
-    /// 每次免费自动打出当前英雄技能（默认火焰冲击或英雄卡替换后的技能），
-    /// 随机合法敌人目标；此种方式打出的英雄技能会在打出后立刻回手。仅手牌打出时触发。
+    /// 每次免费自动打出当前英雄技能（默认火焰冲击或英雄卡替换后的技能）的副本——
+    /// 副本从手牌中同类型的英雄技能卡取升级等级，打出后即移出牌堆：
+    /// 手牌中的英雄技能卡不受影响，不会额外生成/堆叠英雄技能卡。仅手牌打出时触发。
     /// </summary>
     public override async Task OnBattlecry(PlayerChoiceContext choiceContext)
     {
@@ -53,13 +54,13 @@ public sealed class RecklessApprenticeMinion : JainaMinionBase
 
         for (int i = 0; i < 8; i++)
         {
-            var heroPower = jaina.Scripts.Character.JainaCastTracker.CreateCardWithUpgrade(
-                combatState, owner, heroPowerType, 0);
+            // 副本：与手牌中的英雄技能同一张（同类型同升级等级），不标记衍生/消耗
+            var heroPower = jaina.Scripts.Character.JainaCastTracker.CreateHeroPowerCopy(
+                combatState, owner, heroPowerType);
             if (heroPower == null)
             {
                 continue;
             }
-            // 不标记衍生/消耗：此种方式打出的英雄技能打出后立刻回手
 
             // 单目标英雄技能：随机选合法敌人目标
             Creature? target = null;
@@ -80,10 +81,10 @@ public sealed class RecklessApprenticeMinion : JainaMinionBase
             }
             await CardCmd.AutoPlay(choiceContext, heroPower, target);
 
-            // 打出后立刻回手（英雄技能卡回到手牌）
+            // 副本打出后从牌堆移除：不回到手牌、不产生额外英雄技能卡
             if (heroPower.Pile != null)
             {
-                await CardPileCmd.Add(heroPower, PileType.Hand);
+                heroPower.RemoveFromCurrentPile(silent: true);
             }
         }
     }
