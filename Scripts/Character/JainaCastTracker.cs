@@ -88,6 +88,12 @@ public static class JainaCastTracker
         /// 火焰冲击/二级火焰冲击/奥术爆裂/冰冷触摸造成伤害后累计。
         /// </summary>
         public int HeroPowerDamageDealt;
+
+        /// <summary>
+        /// 本局对战中死亡过的不稳定的骷髅数量（天定之灾克尔苏加德战吼"复活你的不稳定的骷髅"用）。
+        /// 骷髅死亡时在 <see cref="jaina.Scripts.Character.Minions.VolatileSkeleton.OnDeathrattle"/> 记录。
+        /// </summary>
+        public int SkeletonDeaths;
     }
 
     private static readonly ConditionalWeakTable<ICombatState, CombatRecord> Records = new();
