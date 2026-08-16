@@ -688,9 +688,17 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
         {
             return;
         }
+        // 炉石亡语语义：死亡被阻止（随从被救活）时不触发亡语——随从并没有死。
+        // 游戏在死亡被阻止时也会调用 AfterDeath（wasRemovalPrevented=true）。
+        if (wasRemovalPrevented)
+        {
+            MegaCrit.Sts2.Core.Logging.Log.Info(
+                $"[JainaDeathrattle] AfterDeath prevented (no rattle): monster={GetType().Name}");
+            return;
+        }
         MegaCrit.Sts2.Core.Logging.Log.Info(
             $"[JainaDeathrattle] AfterDeath: monster={GetType().Name} hasRattle={HasDeathrattle} " +
-            $"combatStateNull={Creature.CombatState == null} wasRemovalPrevented={wasRemovalPrevented}");
+            $"combatStateNull={Creature.CombatState == null}");
         if (HasDeathrattle)
         {
             try
