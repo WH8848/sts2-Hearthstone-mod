@@ -75,9 +75,16 @@ public sealed class VolatileSkeleton : JainaMinionBase
         {
             return;
         }
-        // 注意：CreatureCmd.Damage 对"已死亡的 dealer"直接返回空结果（不造成伤害），
-        // 亡语触发时骷髅已死，因此伤害来源用主人（吉安娜）。
-        await CreatureCmd.Damage(choiceContext, [target], DeathrattleDamage, ValueProp.Unpowered,
-            Creature.PetOwner?.Creature ?? Creature);
+        // 炉石亡语语义：伤害来源是死掉的随从本身，效果不因随从死亡而失效。
+        // 引擎对"已死 dealer"默认返回空伤害，由 JainaDeathrattleDamagePatch 在亡语结算期间放行。
+        JainaDeathrattleHelper.IsResolvingDeathrattle = true;
+        try
+        {
+            await CreatureCmd.Damage(choiceContext, [target], DeathrattleDamage, ValueProp.Unpowered, Creature);
+        }
+        finally
+        {
+            JainaDeathrattleHelper.IsResolvingDeathrattle = false;
+        }
     }
 }
