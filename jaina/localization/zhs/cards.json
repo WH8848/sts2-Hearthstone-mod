@@ -147,5 +147,9 @@
   "JAINA_CARD_ICY_TOUCH_CARD.description": "造成1点伤害，召唤一个[blue]3/6[/blue]的[red]水元素[/red]。每回合开始自动加入手牌。",
   "JAINA_CARD_CRAM_SESSION_CARD.title": "考前刷夜",
   "JAINA_CARD_CRAM_SESSION_CARD.titleUpgraded": "观星",
-  "JAINA_CARD_CRAM_SESSION_CARD.description": "{IfUpgraded:show:[gold]奥术[/gold]。\n抽一张不同的[blue]奥术法术牌[/blue]。这张奥术法术牌本回合内具有[gold]重放1[/gold]。|[gold]奥术[/gold]。\n抽1张牌，每有1点力量多抽1张。}"
+  "JAINA_CARD_CRAM_SESSION_CARD.description": "{IfUpgraded:show:[gold]奥术[/gold]。\n抽一张不同的[blue]奥术法术牌[/blue]。这张奥术法术牌本回合内具有[gold]重放1[/gold]。|[gold]奥术[/gold]。\n抽1张牌，每有1点力量多抽1张。}",
+  "JAINA_CARD_KHADGAR_CARD.title": "益智大师卡德加",
+  "JAINA_CARD_KHADGAR_CARD.description": "召唤一个[blue]5/5[/blue]的[red]益智大师卡德加[/red]。[gold]战吼[/gold]：装备一个会施放有用的法师法术的[blue]0/6[/blue]的[red]魔法智慧之球[/red]！",
+  "JAINA_CARD_WONDROUS_WISDOMBALL_CARD.title": "魔法智慧之球",
+  "JAINA_CARD_WONDROUS_WISDOMBALL_CARD.description": "在你的回合结束时，随机施放一个有用的法师法术。失去1点耐久度。"
 }

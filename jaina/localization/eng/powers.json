@@ -60,5 +60,8 @@
   "JAINA_POWER_FROST_LICH_JAINA_POWER.smartDescription": "Your Elemental minions have [gold]Lifesteal[/gold].",
   "JAINA_POWER_STARGAZING_REPLAY_POWER.title": "Replay 1",
   "JAINA_POWER_STARGAZING_REPLAY_POWER.description": "That spell card has [gold]Replay 1[/gold] this turn: it is cast a second time after being played.",
-  "JAINA_POWER_STARGAZING_REPLAY_POWER.smartDescription": "That spell card has [gold]Replay 1[/gold] this turn."
+  "JAINA_POWER_STARGAZING_REPLAY_POWER.smartDescription": "That spell card has [gold]Replay 1[/gold] this turn.",
+  "JAINA_POWER_KHADGAR_ORB_POWER.title": "Wondrous Wisdomball",
+  "JAINA_POWER_KHADGAR_ORB_POWER.description": "At the end of your turn, cast a random useful Mage spell. Lose 1 Durability.",
+  "JAINA_POWER_KHADGAR_ORB_POWER.smartDescription": "At the end of your turn, cast a random useful Mage spell."
 }

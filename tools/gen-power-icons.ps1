@@ -234,6 +234,24 @@ function Draw-StargazingReplay {
     $pen.Dispose(); $arrow.Dispose()
 }
 
+function Draw-KhadgarOrb {
+    param($g)
+    New-IconBase $g
+    # 水晶球（魔法智慧之球：回合结束施放法师法术）
+    $ball = [System.Drawing.SolidBrush]::new([System.Drawing.Color]::FromArgb(90, 140, 220, 255))
+    $g.FillEllipse($ball, 34, 30, 60, 60)
+    $ball.Dispose()
+    $pen = [System.Drawing.Pen]::new($white, 4)
+    $g.DrawEllipse($pen, 34, 30, 60, 60)
+    $spark = [System.Drawing.Pen]::new($gold, 4)
+    $g.DrawLine($spark, 50, 42, 60, 54)
+    $g.DrawLine($spark, 60, 54, 74, 46)
+    $star = [System.Drawing.Pen]::new($gold, 4)
+    $g.DrawLine($star, 48, 78, 80, 78)
+    $g.DrawLine($star, 64, 66, 64, 90)
+    $pen.Dispose(); $spark.Dispose(); $star.Dispose()
+}
+
 function Save-Icon {
     param($name, $drawFunc)
     $bmp = New-Object System.Drawing.Bitmap(128, 128)
@@ -260,5 +278,6 @@ Save-Icon 'jaina_power_jaina_weapon_power'        (Get-Command Draw-JainaWeaponP
 Save-Icon 'jaina_power_jaina_weapon_attack_action' (Get-Command Draw-JainaWeaponAttackAction)
 Save-Icon 'jaina_power_frost_lich_jaina_power'     (Get-Command Draw-FrostLichJaina)
 Save-Icon 'jaina_power_stargazing_replay_power'    (Get-Command Draw-StargazingReplay)
+Save-Icon 'jaina_power_khadgar_orb_power'          (Get-Command Draw-KhadgarOrb)
 
 Write-Host "完成: 7 个力量图标 -> $outDir"

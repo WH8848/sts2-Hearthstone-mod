@@ -147,5 +147,9 @@
   "JAINA_CARD_ICY_TOUCH_CARD.description": "Deal 1 damage. Summon a [blue]3/6[/blue] [red]Water Elemental[/red]. Automatically added to your hand at the start of each turn.",
   "JAINA_CARD_CRAM_SESSION_CARD.title": "Cram Session",
   "JAINA_CARD_CRAM_SESSION_CARD.titleUpgraded": "Stargazing",
-  "JAINA_CARD_CRAM_SESSION_CARD.description": "{IfUpgraded:show:[gold]Arcane[/gold].\nDraw a different [blue]Arcane spell card[/blue]. That [blue]Arcane spell card[/blue] has [gold]Replay 1[/gold] this turn.|[gold]Arcane[/gold].\nDraw 1 card, plus 1 for each Strength.}"
+  "JAINA_CARD_CRAM_SESSION_CARD.description": "{IfUpgraded:show:[gold]Arcane[/gold].\nDraw a different [blue]Arcane spell card[/blue]. That [blue]Arcane spell card[/blue] has [gold]Replay 1[/gold] this turn.|[gold]Arcane[/gold].\nDraw 1 card, plus 1 for each Strength.}",
+  "JAINA_CARD_KHADGAR_CARD.title": "Khadgar",
+  "JAINA_CARD_KHADGAR_CARD.description": "Summon a [blue]5/5[/blue] [red]Khadgar[/red]. [gold]Battlecry[/gold]: Equip a [blue]0/6[/blue] [red]Wondrous Wisdomball[/red] that casts useful Mage spells!",
+  "JAINA_CARD_WONDROUS_WISDOMBALL_CARD.title": "Wondrous Wisdomball",
+  "JAINA_CARD_WONDROUS_WISDOMBALL_CARD.description": "At the end of your turn, cast a random useful Mage spell. Lose 1 Durability."
 }

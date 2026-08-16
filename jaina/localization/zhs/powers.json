@@ -60,5 +60,8 @@
   "JAINA_POWER_FROST_LICH_JAINA_POWER.smartDescription": "你的所有元素随从拥有[gold]吸血[/gold]。",
   "JAINA_POWER_STARGAZING_REPLAY_POWER.title": "重放1",
   "JAINA_POWER_STARGAZING_REPLAY_POWER.description": "该法术牌本回合内具有[gold]重放1[/gold]：打出后自动重放一次。",
-  "JAINA_POWER_STARGAZING_REPLAY_POWER.smartDescription": "该法术牌本回合内[gold]重放1[/gold]。"
+  "JAINA_POWER_STARGAZING_REPLAY_POWER.smartDescription": "该法术牌本回合内[gold]重放1[/gold]。",
+  "JAINA_POWER_KHADGAR_ORB_POWER.title": "魔法智慧之球",
+  "JAINA_POWER_KHADGAR_ORB_POWER.description": "在你的回合结束时，随机施放一个有用的法师法术。失去1点耐久度。",
+  "JAINA_POWER_KHADGAR_ORB_POWER.smartDescription": "回合结束时随机施放一个有用的法师法术。"
 }

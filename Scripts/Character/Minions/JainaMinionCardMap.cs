@@ -30,7 +30,8 @@ public static class JainaMinionCardMap
         [typeof(GreySageParrotMinion)] = typeof(GreySageParrotCard),
         [typeof(FlamewakerMinion)] = typeof(FlamewakerCard),
         [typeof(SanctumCandlesellerMinion)] = typeof(SanctumCandlesellerCard),
-        [typeof(EnergyShaperMinion)] = typeof(EnergyShaperCard)
+        [typeof(EnergyShaperMinion)] = typeof(EnergyShaperCard),
+        [typeof(KhadgarMinion)] = typeof(KhadgarCard)
     };
 
     /// <summary>
