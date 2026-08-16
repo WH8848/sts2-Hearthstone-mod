@@ -41,7 +41,8 @@ public static class JainaMinionCardMap
         [typeof(IceWalkerMinion)] = typeof(IceWalkerCard),
         // 地标（悬停显示地标卡；不进入 MinionTypes 随机召唤池）
         [typeof(NightcloakSanctumLandmark)] = typeof(NightcloakSanctumCard),
-        [typeof(TrinketShopLandmark)] = typeof(TrinketShopCard)
+        [typeof(TrinketShopLandmark)] = typeof(TrinketShopCard),
+        [typeof(TidePoolLandmark)] = typeof(TidePoolCard)
     };
 
     /// <summary>

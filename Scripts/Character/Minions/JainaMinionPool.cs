@@ -138,6 +138,7 @@ public static class JainaMinionPool
             // 地标（占随从槽，不进入随机召唤池 _minionTypes）
             nameof(NightcloakSanctumLandmark) => await SummonMinion<NightcloakSanctumLandmark>(choiceContext, player, maxHp, attack, position, source),
             nameof(TrinketShopLandmark) => await SummonMinion<TrinketShopLandmark>(choiceContext, player, maxHp, attack, position, source),
+            nameof(TidePoolLandmark) => await SummonMinion<TidePoolLandmark>(choiceContext, player, maxHp, attack, position, source),
             _ => null!,
         };
     }
