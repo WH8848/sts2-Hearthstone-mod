@@ -16,7 +16,7 @@ namespace jaina.Scripts.Character.Cards;
 /// 1费造成6点伤害，升级后变为炎爆术 (Pyroblast)，造成10点伤害。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
-[RegisterCharacterStarterCard(typeof(Jaina), 5)]
+[RegisterCharacterStarterCard(typeof(Jaina), 4)]
 public sealed class Fireball : JainaSpellCardTemplate
 {
     protected override HashSet<CardTag> CanonicalTags => new HashSet<CardTag> { CardTag.Strike };
