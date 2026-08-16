@@ -15,8 +15,9 @@ namespace jaina.Scripts.Character.Cards;
 /// 抵达传送大厅 (Reach the Portal Chamber) - 0费能力牌（稀有）。
 /// 任务：施放火焰、冰霜和奥术法术各一个。奖励：奥术师晨拥。
 /// 任务线第三阶段（由拖延时间升级而来）。
+/// 衍生卡：不进入吉安娜卡池，不出现在卡牌奖励与图鉴中（仅由任务奖励入手）。
 /// </summary>
-[RegisterCard(typeof(JainaCardPool))]
+[RegisterCard(typeof(JainaNeutralCardPool))]
 public sealed class ReachPortalChamberCard : ModCardTemplate
 {
     /// <summary>

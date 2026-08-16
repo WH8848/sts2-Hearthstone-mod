@@ -15,8 +15,9 @@ namespace jaina.Scripts.Character.Cards;
 /// 拖延时间 (Stall for Time) - 0费能力牌（稀有）。
 /// 任务：施放火焰、冰霜和奥术法术各一个。奖励：发现一张火焰/冰霜/奥术派系法术牌。
 /// 并升级为"抵达传送大厅"。任务线第二阶段（由巫师的计策升级而来）。
+/// 衍生卡：不进入吉安娜卡池，不出现在卡牌奖励与图鉴中（仅由任务奖励入手）。
 /// </summary>
-[RegisterCard(typeof(JainaCardPool))]
+[RegisterCard(typeof(JainaNeutralCardPool))]
 public sealed class StallingCard : ModCardTemplate
 {
     /// <summary>
