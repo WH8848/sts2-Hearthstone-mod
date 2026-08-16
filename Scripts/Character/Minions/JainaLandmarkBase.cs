@@ -82,20 +82,21 @@ public abstract class JainaLandmarkBase : JainaMinionBase
         var cooldown = Creature.GetPower<LandmarkCooldownPower>();
         if (cooldown != null)
         {
-            // 冷却中：递减，归零移除
             if (cooldown.Amount <= 1)
             {
+                // 冷却归零：本回合恢复可用（继续走下面的授予逻辑）
                 await PowerCmd.Remove(cooldown);
             }
             else
             {
+                // 仍在冷却中：递减，本回合不可用
                 await PowerCmd.Decrement(cooldown);
+                RefreshIntentDisplay();
+                return;
             }
-            RefreshIntentDisplay();
-            return;
         }
 
-        // 冷却结束：授予本回合的使用行动点
+        // 冷却结束（或无冷却）：授予本回合的使用行动点
         var applier = Creature.PetOwner?.Creature ?? Creature;
         await PowerCmd.Apply<JainaLandmarkUseAction>(choiceContext, Creature, 1m, applier, null);
         RefreshIntentDisplay();
