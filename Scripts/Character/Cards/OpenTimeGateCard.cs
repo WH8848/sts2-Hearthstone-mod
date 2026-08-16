@@ -22,10 +22,13 @@ namespace jaina.Scripts.Character.Cards;
 public sealed class OpenTimeGateCard : ModCardTemplate
 {
     /// <summary>
-    /// 任务（悬停解释）+ 固有：战斗开始时该牌在手牌中
+    /// 法术牌 + 任务（悬停解释）+ 固有：战斗开始时该牌在手牌中。
+    /// 视为法术牌（可被复制），但任务线卡不可被发现（不在任何发现池中）。
     /// </summary>
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
-        [jaina.Scripts.Character.Keywords.JainaKeywords.Quest, CardKeyword.Innate];
+        [jaina.Scripts.Character.Keywords.JainaKeywords.Spell,
+         jaina.Scripts.Character.Keywords.JainaKeywords.Quest,
+         CardKeyword.Innate];
 
     public override string CustomPortraitPath => "res://assets/card_art/open_time_gate.png";
 

@@ -146,7 +146,9 @@ public static class JainaCastTracker
     public static CombatRecord For(ICombatState combatState) => Records.GetValue(combatState, _ => new CombatRecord());
 
     /// <summary>
-    /// 卡牌打出时记录（各攻击/技能牌 OnPlay 首行调用）
+    /// 卡牌打出时记录（各攻击/技能牌 OnPlay 首行调用）。
+    /// 法术牌 = 攻击牌/技能牌，或挂"法术牌"关键词的卡（任务线卡、寒冰屏障等能力卡视为法术牌，
+    /// 可被倒带/西瓦拉复制）。
     /// </summary>
     public static void RecordPlayed(CardModel card)
     {
@@ -155,7 +157,8 @@ public static class JainaCastTracker
         {
             return;
         }
-        if (card.Type != CardType.Attack && card.Type != CardType.Skill)
+        if (card.Type != CardType.Attack && card.Type != CardType.Skill &&
+            !card.Keywords.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Spell))
         {
             return;
         }

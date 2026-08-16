@@ -65,8 +65,10 @@ public sealed class CommanderSivaraCard : JainaMinionCardTemplate
             return;
         }
         var played = cardPlay.Card;
-        // 法术牌 = 攻击牌/技能牌；英雄技能卡（火焰冲击等）不算法术
-        if (played.Type != CardType.Attack && played.Type != CardType.Skill)
+        // 法术牌 = 攻击牌/技能牌，或挂"法术牌"关键词的卡（任务线卡等视为法术牌，可被复制）；
+        // 英雄技能卡（火焰冲击等）不算法术
+        if (played.Type != CardType.Attack && played.Type != CardType.Skill &&
+            !played.Keywords.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Spell))
         {
             return;
         }
