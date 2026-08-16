@@ -1,7 +1,10 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.ValueProps;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -38,6 +41,26 @@ public abstract class JainaHeroCardTemplate : ModCardTemplate
     /// 卡牌类型：动态注册的"英雄"类型
     /// </summary>
     public override CardType Type => JainaCardTypes.Hero;
+
+    /// <summary>
+    /// 悬停提示：显示本英雄卡的英雄技能卡（炉石式：英雄卡悬停展示其英雄技能）。
+    /// 未指定英雄技能（HeroPowerType == null）的英雄卡无此提示。
+    /// </summary>
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips
+    {
+        get
+        {
+            if (HeroPowerType == null)
+            {
+                yield break;
+            }
+            var heroPower = ModelDb.GetByIdOrNull<CardModel>(ModelDb.GetId(HeroPowerType));
+            if (heroPower != null)
+            {
+                yield return new CardHoverTip(heroPower);
+            }
+        }
+    }
 
     /// <summary>
     /// 英雄卡默认不可升级（MaxUpgradeLevel=0 → IsUpgradable=false，
