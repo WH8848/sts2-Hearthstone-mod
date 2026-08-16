@@ -252,6 +252,24 @@ function Draw-KhadgarOrb {
     $pen.Dispose(); $spark.Dispose(); $star.Dispose()
 }
 
+function Draw-Wildfire {
+    param($g)
+    New-IconBase $g
+    # 火焰 + 上箭头（野火：英雄技能伤害永久增加）
+    $pen = [System.Drawing.Pen]::new($flame, 6)
+    $pts = @()
+    $pts += New-Object System.Drawing.PointF(64, 30)
+    $pts += New-Object System.Drawing.PointF(92, 76)
+    $pts += New-Object System.Drawing.PointF(64, 62)
+    $pts += New-Object System.Drawing.PointF(36, 76)
+    $g.DrawPolygon($pen, $pts)              # 火焰
+    $arrow = [System.Drawing.Pen]::new($gold, 5)
+    $g.DrawLine($arrow, 64, 86, 64, 106)
+    $g.DrawLine($arrow, 64, 106, 52, 94)
+    $g.DrawLine($arrow, 64, 106, 76, 94)
+    $pen.Dispose(); $arrow.Dispose()
+}
+
 function Save-Icon {
     param($name, $drawFunc)
     $bmp = New-Object System.Drawing.Bitmap(128, 128)
@@ -279,5 +297,6 @@ Save-Icon 'jaina_power_jaina_weapon_attack_action' (Get-Command Draw-JainaWeapon
 Save-Icon 'jaina_power_frost_lich_jaina_power'     (Get-Command Draw-FrostLichJaina)
 Save-Icon 'jaina_power_stargazing_replay_power'    (Get-Command Draw-StargazingReplay)
 Save-Icon 'jaina_power_khadgar_orb_power'          (Get-Command Draw-KhadgarOrb)
+Save-Icon 'jaina_power_wildfire_power'              (Get-Command Draw-Wildfire)
 
 Write-Host "完成: 7 个力量图标 -> $outDir"

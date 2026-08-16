@@ -78,7 +78,10 @@ public sealed class Fireblast : JainaSpellCardTemplate
         // 变为 1*n（1 伤多段），段数 = 总伤害
         var empower = base.Owner.Creature.GetPower<jaina.Scripts.Character.Powers.EmpowerPower>();
         var empowerStacks = empower?.EmpowerStacks ?? 0;
-        var totalDamage = (int)(base.DynamicVars.Damage.BaseValue + empowerStacks);
+        // 野火：英雄技能伤害永久加成（可叠加，本局对战）
+        var wildfire = base.Owner.Creature.GetPower<jaina.Scripts.Character.Powers.WildfirePower>();
+        var wildfireStacks = wildfire?.WildfireStacks ?? 0;
+        var totalDamage = (int)(base.DynamicVars.Damage.BaseValue + empowerStacks + wildfireStacks);
 
         // 灌注：每一层灌注额外召唤一个 1/1 的小精灵（先召唤，再造成伤害）
         for (int i = 0; i < empowerStacks; i++)

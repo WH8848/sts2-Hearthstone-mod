@@ -60,17 +60,19 @@ public sealed class IcyTouchCard : JainaSpellCardTemplate
         // 记录施放（倒带/罗曼斯/三派系追踪）
         jaina.Scripts.Character.JainaCastTracker.RecordPlayed(this);
 
-        // 造成 1 点伤害
+        // 造成 1 点伤害（+野火英雄技能伤害加成）
         if (cardPlay.Target is { IsAlive: true } target)
         {
-            await DamageCmd.Attack(1m)
+            var wildfire = base.Owner.Creature.GetPower<jaina.Scripts.Character.Powers.WildfirePower>();
+            var wildfireStacks = wildfire?.WildfireStacks ?? 0;
+            await DamageCmd.Attack(1m + wildfireStacks)
                 .FromCard(this, cardPlay)
                 .Targeting(target)
                 .WithHitFx("vfx/vfx_attack_blunt")
                 .Execute(choiceContext);
 
             // 记录英雄技能伤害（火眼莫德雷斯战吼条件用）
-            jaina.Scripts.Character.JainaCastTracker.RecordHeroPowerDamage(this, 1);
+            jaina.Scripts.Character.JainaCastTracker.RecordHeroPowerDamage(this, 1 + wildfireStacks);
         }
 
         // 召唤一个水元素（3/6）

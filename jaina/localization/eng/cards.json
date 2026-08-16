@@ -169,5 +169,7 @@
   "JAINA_CARD_RECKLESS_APPRENTICE_CARD.title": "Reckless Apprentice",
   "JAINA_CARD_RECKLESS_APPRENTICE_CARD.description": "Summon a [blue]3/5[/blue] [red]Reckless Apprentice[/red]. [gold]Battlecry[/gold]: Fire your Hero Power at random enemies 8 times.",
   "JAINA_CARD_ICE_WALKER_CARD.title": "Ice Walker",
-  "JAINA_CARD_ICE_WALKER_CARD.description": "[gold]Elemental[/gold].\nSummon a [blue]1/3[/blue] [red]Ice Walker[/red]. Your Hero Power also gives the target 1 [gold]Freeze[/gold]."
+  "JAINA_CARD_ICE_WALKER_CARD.description": "[gold]Elemental[/gold].\nSummon a [blue]1/3[/blue] [red]Ice Walker[/red]. Your Hero Power also gives the target 1 [gold]Freeze[/gold].",
+  "JAINA_CARD_WILDFIRE_CARD.title": "Wildfire",
+  "JAINA_CARD_WILDFIRE_CARD.description": "[gold]Fire[/gold].\nYour Hero Power deals 1 more damage. Can be upgraded indefinitely."
 }

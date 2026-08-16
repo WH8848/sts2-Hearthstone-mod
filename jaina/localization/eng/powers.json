@@ -63,5 +63,8 @@
   "JAINA_POWER_STARGAZING_REPLAY_POWER.smartDescription": "That spell card has [gold]Replay 1[/gold] this turn.",
   "JAINA_POWER_KHADGAR_ORB_POWER.title": "Wondrous Wisdomball",
   "JAINA_POWER_KHADGAR_ORB_POWER.description": "At the end of your turn, cast a random useful Mage spell. Lose 1 Durability.",
-  "JAINA_POWER_KHADGAR_ORB_POWER.smartDescription": "At the end of your turn, cast a random useful Mage spell."
+  "JAINA_POWER_KHADGAR_ORB_POWER.smartDescription": "At the end of your turn, cast a random useful Mage spell.",
+  "JAINA_POWER_WILDFIRE_POWER.title": "Wildfire",
+  "JAINA_POWER_WILDFIRE_POWER.description": "Your Hero Power deals {Amount} more damage for the rest of this battle. Stacks.",
+  "JAINA_POWER_WILDFIRE_POWER.smartDescription": "Hero Power deals {Amount} more damage."
 }

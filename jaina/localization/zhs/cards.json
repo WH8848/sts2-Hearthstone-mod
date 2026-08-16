@@ -169,5 +169,7 @@
   "JAINA_CARD_RECKLESS_APPRENTICE_CARD.title": "鲁莽的学徒",
   "JAINA_CARD_RECKLESS_APPRENTICE_CARD.description": "召唤一个[blue]3/5[/blue]的[red]鲁莽的学徒[/red]。[gold]战吼[/gold]：向随机敌人发射8次你的英雄技能。",
   "JAINA_CARD_ICE_WALKER_CARD.title": "寒冰行者",
-  "JAINA_CARD_ICE_WALKER_CARD.description": "[gold]元素[/gold]。\n召唤一个[blue]1/3[/blue]的[red]寒冰行者[/red]。你的英雄技能还会给与目标1层[gold]冻结[/gold]。"
+  "JAINA_CARD_ICE_WALKER_CARD.description": "[gold]元素[/gold]。\n召唤一个[blue]1/3[/blue]的[red]寒冰行者[/red]。你的英雄技能还会给与目标1层[gold]冻结[/gold]。",
+  "JAINA_CARD_WILDFIRE_CARD.title": "野火",
+  "JAINA_CARD_WILDFIRE_CARD.description": "[gold]火焰[/gold]。\n你的英雄技能造成的伤害增加1点。可无限升级。"
 }

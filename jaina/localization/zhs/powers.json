@@ -63,5 +63,8 @@
   "JAINA_POWER_STARGAZING_REPLAY_POWER.smartDescription": "该法术牌本回合内[gold]重放1[/gold]。",
   "JAINA_POWER_KHADGAR_ORB_POWER.title": "魔法智慧之球",
   "JAINA_POWER_KHADGAR_ORB_POWER.description": "在你的回合结束时，随机施放一个有用的法师法术。失去1点耐久度。",
-  "JAINA_POWER_KHADGAR_ORB_POWER.smartDescription": "回合结束时随机施放一个有用的法师法术。"
+  "JAINA_POWER_KHADGAR_ORB_POWER.smartDescription": "回合结束时随机施放一个有用的法师法术。",
+  "JAINA_POWER_WILDFIRE_POWER.title": "野火",
+  "JAINA_POWER_WILDFIRE_POWER.description": "你的英雄技能造成的伤害增加{Amount}点（本局对战永久，可叠加）。",
+  "JAINA_POWER_WILDFIRE_POWER.smartDescription": "英雄技能伤害+{Amount}。"
 }

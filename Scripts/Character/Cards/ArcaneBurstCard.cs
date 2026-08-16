@@ -66,7 +66,10 @@ public sealed class ArcaneBurstCard : JainaSpellCardTemplate
         }
         // 每次打出获得 +2 伤害（本局内递增，第 1 次 2 点、第 2 次 4 点……）
         var rec = jaina.Scripts.Character.JainaCastTracker.For(combatState);
-        int damage = 2 + rec.ArcaneBurstCasts * 2;
+        // 野火：英雄技能伤害永久加成（可叠加，本局对战）
+        var wildfire = base.Owner.Creature.GetPower<jaina.Scripts.Character.Powers.WildfirePower>();
+        var wildfireStacks = wildfire?.WildfireStacks ?? 0;
+        int damage = 2 + rec.ArcaneBurstCasts * 2 + wildfireStacks;
         rec.ArcaneBurstCasts++;
 
         if (cardPlay.Target is { IsAlive: true } target)
