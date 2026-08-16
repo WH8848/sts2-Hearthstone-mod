@@ -13,7 +13,7 @@ namespace jaina.Scripts.Character.Cards;
 /// <summary>
 /// 唤醒 (Evocation) - 0费技能牌（稀有，奥术派系）。
 /// 用随机法师法术牌填满你的手牌。这些牌具有虚无。
-/// 升级后（唤醒+）：用随机升级过的法师法术牌填满你的手牌。这些牌具有虚无。
+/// 不可升级。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
 public sealed class EvocationCard : JainaSpellCardTemplate
@@ -26,27 +26,16 @@ public sealed class EvocationCard : JainaSpellCardTemplate
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [];
 
+    /// <summary>
+    /// 不可升级
+    /// </summary>
+    public override int MaxUpgradeLevel => 0;
+
     public override string CustomPortraitPath => "res://assets/card_art/evocation.png";
 
     public EvocationCard()
         : base(0, CardType.Skill, CardRarity.Rare, TargetType.None, true)
     {
-    }
-
-    /// <summary>
-    /// 升级后卡牌名称变为"唤醒+"
-    /// </summary>
-    public override string Title
-    {
-        get
-        {
-            var title = new LocString("cards", base.Id.Entry + ".title");
-            if (!IsUpgraded)
-            {
-                return title.GetFormattedText();
-            }
-            return title.GetFormattedText() + "+";
-        }
     }
 
     /// <summary>
@@ -91,10 +80,8 @@ public sealed class EvocationCard : JainaSpellCardTemplate
             {
                 break;
             }
-            // 升级后（唤醒+）：生成升级过的法术牌（+）
-            int upgradeLevel = IsUpgraded ? 1 : 0;
             var card = jaina.Scripts.Character.JainaCastTracker.CreateCardWithUpgrade(
-                combatState, base.Owner, type, upgradeLevel);
+                combatState, base.Owner, type, 0);
             if (card == null)
             {
                 continue;

@@ -16,7 +16,7 @@ namespace jaina.Scripts.Character.Cards;
 /// <summary>
 /// 愚人套牌 (Deck of Wonders) - 0费技能牌（稀有，奥术派系）。
 /// 将你抽牌堆和弃牌堆中的法术牌变形成为费用消耗增加1点的法术牌。（保留其原始费用消耗。）
-/// 升级后（愚人套牌+）：变形成为费用消耗增加1点的升级过法术牌。（保留其原始费用消耗。）
+/// 不可升级。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
 public sealed class DeckOfWondersCard : JainaSpellCardTemplate
@@ -29,23 +29,16 @@ public sealed class DeckOfWondersCard : JainaSpellCardTemplate
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [];
 
+    /// <summary>
+    /// 不可升级
+    /// </summary>
+    public override int MaxUpgradeLevel => 0;
+
     public override string CustomPortraitPath => "res://assets/card_art/deck_of_wonders.png";
 
     public DeckOfWondersCard()
         : base(0, CardType.Skill, CardRarity.Rare, TargetType.None, true)
     {
-    }
-
-    /// <summary>
-    /// 卡名不变（升级形态通过标题 "+" 表示）
-    /// </summary>
-    public override string Title
-    {
-        get
-        {
-            var title = new LocString("cards", base.Id.Entry + ".title");
-            return title.GetFormattedText();
-        }
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
@@ -106,11 +99,6 @@ public sealed class DeckOfWondersCard : JainaSpellCardTemplate
             if (replacement == null)
             {
                 continue;
-            }
-            // 升级后：变形为升级过的法术牌（+）
-            if (IsUpgraded && replacement.IsUpgradable)
-            {
-                replacement.UpgradeInternal();
             }
             // 保留原始费用：变形后的牌仍显示原牌费用
             replacement.EnergyCost.SetCustomBaseCost(originalCost);

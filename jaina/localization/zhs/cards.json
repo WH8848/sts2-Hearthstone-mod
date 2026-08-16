@@ -161,7 +161,7 @@
   "JAINA_CARD_TEAR_REALITY_CARD.titleUpgraded": "操控时间",
   "JAINA_CARD_TEAR_REALITY_CARD.description": "{IfUpgraded:show:[gold]奥术[/gold]。\n发现两张来自过去的[blue]奥术法术牌[/blue]，其费用消耗减少1点。|[gold]奥术[/gold]。\n随机将2张来自过去的[blue]法师法术牌[/blue]置入你的手牌，其费用消耗减少1点。}",
   "JAINA_CARD_DECK_OF_WONDERS_CARD.title": "愚人套牌",
-  "JAINA_CARD_DECK_OF_WONDERS_CARD.description": "{IfUpgraded:show:将你抽牌堆和弃牌堆中的法术牌变形成为费用消耗增加1点的升级过法术牌。（保留其原始费用消耗。）|将你抽牌堆和弃牌堆中的法术牌变形成为费用消耗增加1点的法术牌。（保留其原始费用消耗。）}",
+  "JAINA_CARD_DECK_OF_WONDERS_CARD.description": "将你抽牌堆和弃牌堆中的法术牌变形成为费用消耗增加1点的法术牌。（保留其原始费用消耗。）",
   "JAINA_CARD_EVOCATION_CARD.title": "唤醒",
-  "JAINA_CARD_EVOCATION_CARD.description": "{IfUpgraded:show:用随机升级过的[blue]法师法术牌[/blue]填满你的手牌。这些牌具有[gold]虚无[/gold]。|用随机[blue]法师法术牌[/blue]填满你的手牌。这些牌具有[gold]虚无[/gold]。}"
+  "JAINA_CARD_EVOCATION_CARD.description": "用随机[blue]法师法术牌[/blue]填满你的手牌。这些牌具有[gold]虚无[/gold]。"
 }
