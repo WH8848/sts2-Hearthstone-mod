@@ -42,20 +42,6 @@ public sealed class KhadgarOrbPower : PowerModel, IModPowerAssetOverrides
     protected override bool IsVisibleInternal => true;
 
     /// <summary>
-    /// 有用的法师法术池（均为吉安娜已注册的法术牌；烈焰风暴/暴风雪/法术反制
-    /// 分别为火焰护盾/冰冷吐息/异议的升级形态）
-    /// </summary>
-    private static readonly (System.Type Type, int UpgradeLevel)[] UsefulMageSpells =
-    [
-        (typeof(Fireball), 0),
-        (typeof(Frostbolt), 0),
-        (typeof(FlameWard), 1),   // 烈焰风暴
-        (typeof(ConeOfCold), 1),  // 暴风雪
-        (typeof(Objection), 1),   // 法术反制
-        (typeof(IceBarrier), 0),
-    ];
-
-    /// <summary>
     /// 玩家回合结束时：随机施放一个有用的法师法术（免费自动打出，随机目标），
     /// 然后失去 1 点耐久度（0 时武器能力消失，球效果移除）。
     /// </summary>

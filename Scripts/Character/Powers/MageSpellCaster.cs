@@ -27,7 +27,7 @@ public static class MageSpellCaster
         (typeof(Fireball), 0),
         (typeof(Frostbolt), 0),
         (typeof(FlameWard), 1),   // 烈焰风暴
-        (typeof(ConeOfCold), 1),  // 暴风雪
+        (typeof(DeathborneCard), 1), // 暴风雪
         (typeof(Objection), 1),   // 法术反制
         (typeof(IceBarrier), 0),
     ];

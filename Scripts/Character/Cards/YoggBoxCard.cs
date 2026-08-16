@@ -174,7 +174,7 @@ public sealed class YoggBoxCard : JainaSpellCardTemplate
         typeof(NorgannonWisdom),
         typeof(DeepFreezeCard),
         typeof(FlameWard),
-        typeof(ConeOfCold),
+        typeof(DeathborneCard),
         typeof(FlameLance),
         typeof(FrostNova),
         typeof(ArcaneBarrage),
