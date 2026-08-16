@@ -137,6 +137,12 @@ public static class JainaDiscoverHelper
             {
                 return;
             }
+            // X 费卡（CostsX）费用不定（基础费用恒为 0，打出时消耗全部剩余能量），
+            // 不参与"费用消耗等同于剩余费用"的精确匹配发现
+            if (canonical.EnergyCost.CostsX)
+            {
+                return;
+            }
             // 展开升级形态（未升级 + 允许的升级级别）
             int maxLevel = jaina.Scripts.Character.JainaCastTracker.GetDiscoverPoolMaxUpgradeLevel(cardType);
             for (int level = 0; level <= maxLevel; level++)
