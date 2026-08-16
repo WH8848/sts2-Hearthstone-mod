@@ -110,7 +110,8 @@ public static class JainaDiscoverHelper
     /// <summary>
     /// 从吉安娜全卡池中发现一张"费用消耗精确等于指定值"的卡牌（拾荒清道夫战吼用）。
     /// 池：JainaCardPool 全部卡（法术/随从/地标），每种按可升级级别展开；
-    /// 排除英雄技能卡（火焰冲击等）、英雄卡（魔导师晨拥）、任务线卡与 X 费卡（不可被发现）。
+    /// 排除英雄技能卡（火焰冲击等）、英雄卡（魔导师晨拥）与任务线卡（不可被发现）；
+    /// X 费卡（禁忌烈焰/禁忌神龛）费用不定，不管剩余费用多少总是作为候选。
     /// </summary>
     public static async Task<CardModel?> DiscoverCardOfCostAndAddToHand(
         PlayerChoiceContext choiceContext, Player player, int cost)
@@ -136,19 +137,15 @@ public static class JainaDiscoverHelper
             {
                 return;
             }
-            // X 费卡（CostsX）费用不定（基础费用恒为 0，打出时消耗全部剩余能量），
-            // 不参与"费用消耗等同于剩余费用"的精确匹配发现
-            if (canonical.EnergyCost.CostsX)
-            {
-                return;
-            }
+            // X 费卡（CostsX）费用不定：不管剩余费用多少，总是作为候选出现在发现池里
+            bool isXCost = canonical.EnergyCost.CostsX;
             // 展开升级形态（未升级 + 允许的升级级别）
             int maxLevel = jaina.Scripts.Character.JainaCastTracker.GetDiscoverPoolMaxUpgradeLevel(cardType);
             for (int level = 0; level <= maxLevel; level++)
             {
                 var card = jaina.Scripts.Character.JainaCastTracker.CreateCardWithUpgrade(
                     combatState, player, cardType, level);
-                if (card != null && card.EnergyCost.Canonical == cost)
+                if (card != null && (isXCost || card.EnergyCost.Canonical == cost))
                 {
                     pool.Add(card);
                 }
