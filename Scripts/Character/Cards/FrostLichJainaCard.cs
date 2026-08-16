@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
@@ -32,6 +33,14 @@ public sealed class FrostLichJainaCard : JainaHeroCardTemplate
     /// </summary>
     protected override System.Type? HeroPowerType => typeof(IcyTouchCard);
 
+    /// <summary>
+    /// 关键词：战吼 + 吸血（冰霜女巫的招牌：所有元素拥有吸血）。
+    /// 悬停英雄卡时右侧显示战吼/吸血词条注释。
+    /// </summary>
+    public override IEnumerable<CardKeyword> CanonicalKeywords =>
+        [jaina.Scripts.Character.Keywords.JainaKeywords.Battlecry,
+         jaina.Scripts.Character.Keywords.JainaKeywords.Lifesteal];
+
     protected override IEnumerable<DynamicVar> CanonicalVars => [];
 
     public override string CustomPortraitPath => "res://assets/card_art/frost_lich_jaina.png";
@@ -39,6 +48,28 @@ public sealed class FrostLichJainaCard : JainaHeroCardTemplate
     public FrostLichJainaCard()
         : base(3, CardRarity.Rare)
     {
+    }
+
+    /// <summary>
+    /// 悬停提示：左侧显示战吼召唤的水元素卡（参考灵体采集者显示小精灵的做法），
+    /// 再显示替换后的英雄技能卡（冰冷触摸）。
+    /// </summary>
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips
+    {
+        get
+        {
+            // 战吼召唤的 3/6 水元素衍生物卡
+            yield return new CardHoverTip(ModelDb.Card<WaterElementalCard>());
+            // 替换后的英雄技能卡（冰冷触摸）
+            if (HeroPowerType != null)
+            {
+                var heroPower = ModelDb.GetByIdOrNull<CardModel>(ModelDb.GetId(HeroPowerType));
+                if (heroPower != null)
+                {
+                    yield return new CardHoverTip(heroPower);
+                }
+            }
+        }
     }
 
     /// <summary>
