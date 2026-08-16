@@ -51,15 +51,13 @@ public sealed class FrostLichJainaCard : JainaHeroCardTemplate
     }
 
     /// <summary>
-    /// 悬停提示：左侧显示战吼召唤的水元素卡（参考灵体采集者显示小精灵的做法），
-    /// 再显示替换后的英雄技能卡（冰冷触摸）。
+    /// 悬停提示：先显示替换后的英雄技能卡（冰冷触摸），再显示战吼召唤的水元素卡
+    /// （参考灵体采集者显示小精灵的做法）。
     /// </summary>
     protected override IEnumerable<IHoverTip> AdditionalHoverTips
     {
         get
         {
-            // 战吼召唤的 3/6 水元素衍生物卡
-            yield return new CardHoverTip(ModelDb.Card<WaterElementalCard>());
             // 替换后的英雄技能卡（冰冷触摸）
             if (HeroPowerType != null)
             {
@@ -69,6 +67,8 @@ public sealed class FrostLichJainaCard : JainaHeroCardTemplate
                     yield return new CardHoverTip(heroPower);
                 }
             }
+            // 战吼召唤的 3/6 水元素衍生物卡
+            yield return new CardHoverTip(ModelDb.Card<WaterElementalCard>());
         }
     }
 
