@@ -83,6 +83,8 @@
   "JAINA_CARD_EXONERATION_CARD.description": "[gold]Frost[/gold].\nGain 1 [gold]Intangible[/gold].",
   "JAINA_CARD_ICE_BLOCK_CARD.title": "Ice Block",
   "JAINA_CARD_ICE_BLOCK_CARD.description": "[gold]Frost[/gold].\nWhen you would take fatal damage, prevent it and become [gold]Immune[/gold] this turn.",
+  "JAINA_CARD_FORBIDDEN_FLAME_CARD.title": "Forbidden Flame",
+  "JAINA_CARD_FORBIDDEN_FLAME_CARD.description": "[gold]Fire[/gold].\nDeal {IfUpgraded:show:12x|10x} damage to a character (x = Energy spent).",
   "JAINA_CARD_ARCANE_BARRAGE.title": "Arcane Barrage",
   "JAINA_CARD_ARCANE_BARRAGE.titleUpgraded": "Lightshow",
   "JAINA_CARD_ARCANE_BARRAGE.description": "[gold]Arcane[/gold].\n{IfUpgraded:show:Deal 2 instances of 2 damage to random enemies. Each time you cast this card, it shoots one more beam.|Deal {Damage:diff()} damage to an enemy, then deal 2 instances of [blue]2[/blue] damage to random enemies.}",
