@@ -1,4 +1,4 @@
-﻿{
+{
   "JAINA_CARD_FIREBALL.title": "火球术",
   "JAINA_CARD_FIREBALL.titleUpgraded": "炎爆术",
   "JAINA_CARD_FIREBALL.description": "[gold]火焰[/gold]。\n造成{Damage:diff()}点伤害。",
@@ -27,7 +27,7 @@
   "JAINA_CARD_FREEZING_POTION.titleUpgraded": "霜冻射线",
   "JAINA_CARD_FREEZING_POTION.description": "[gold]冰霜[/gold]。\n{IfUpgraded:show:[gold]双生法术[/gold]。|}[gold]冻结[/gold]一个角色。",
   "JAINA_CARD_IMP_CARD.title": "小精灵",
-  "JAINA_CARD_IMP_CARD.description": "召唤一个[blue]1/1[/blue]的[red]小精灵[/red]。[gold]恶魔[/gold]。",
+  "JAINA_CARD_IMP_CARD.description": "召唤一个[blue]1/1[/blue]的[red]小精灵[/red]。[gold]亡灵[/gold]。",
   "JAINA_CARD_SPIRIT_COLLECTOR_CARD.title": "灵体采集者",
   "JAINA_CARD_SPIRIT_COLLECTOR_CARD.description": "召唤一个[blue]2/1[/blue]的[red]灵体采集者[/red]。[gold]战吼[/gold]：获取一张[blue]0费1/1[/blue]的[red]小精灵[/red]。[gold]灌注[/gold]你的英雄技能。",
   "JAINA_CARD_RENATHAL_CARD.title": "雷纳索尔王子",
