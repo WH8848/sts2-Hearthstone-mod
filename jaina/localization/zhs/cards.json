@@ -49,7 +49,7 @@
   "JAINA_CARD_KALECGOS_CARD.title": "卡雷苟斯",
   "JAINA_CARD_KALECGOS_CARD.description": "召唤一个[blue]4/12[/blue]的[red]卡雷苟斯[/red]。你每个回合使用的第一张[blue]法术牌[/blue]的费用为0点。[gold]战吼[/gold]：发现一张[blue]法术牌[/blue]。",
   "JAINA_CARD_AEGWYNN_CARD.title": "守护者艾格文",
-  "JAINA_CARD_AEGWYNN_CARD.description": "召唤一个[blue]5/5[/blue]的[red]守护者艾格文[/red]。力量+2，[gold]亡语[/gold]：你抽到的下一张随从牌会继承此能力。",
+  "JAINA_CARD_AEGWYNN_CARD.description": "召唤一个[blue]5/5[/blue]的[red]守护者艾格文[/red]。力量+2，[gold]亡语[/gold]：你抽到的下一张随从牌会继承此效果。",
   "JAINA_CARD_REWIND.title": "倒带",
   "JAINA_CARD_REWIND.description": "[gold]奥术[/gold]。\n发现一张你在本局对战中施放过的其他[blue]法术牌[/blue]的一张复制。",
   "JAINA_CARD_TRICK.title": "魔术戏法",

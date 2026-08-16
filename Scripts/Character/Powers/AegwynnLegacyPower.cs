@@ -13,9 +13,11 @@ using STS2RitsuLib.Scaffolding.Content.Patches;
 namespace jaina.Scripts.Character.Powers;
 
 /// <summary>
-/// 守护者艾格文的亡语：你抽到的下一张随从牌会继承"力量+2"。
+/// 守护者艾格文的亡语：你抽到的下一张随从牌会继承此效果（力量+2 与亡语）。
 /// 挂在玩家身上：抽到随从牌（JainaMinionCardTemplate）时记录该卡实例；
-/// 该卡打出并召唤随从后，给玩家施加 2 层力量，本 Power 移除。
+/// 该卡打出并召唤随从后，给玩家施加 2 层力量，并给召唤出的随从挂
+/// <see cref="AegwynnInheritedPower"/>（该随从死亡时移除 +2 力量并继续传递
+/// 给下一张随从，链式继承），随后本 Power 移除。
 /// </summary>
 [RegisterPower]
 public sealed class AegwynnLegacyPower : PowerModel, IModPowerAssetOverrides
@@ -51,7 +53,8 @@ public sealed class AegwynnLegacyPower : PowerModel, IModPowerAssetOverrides
     }
 
     /// <summary>
-    /// 被标记的随从牌打出并召唤随从后：玩家获得力量+2（继承艾格文的能力），本 Power 移除
+    /// 被标记的随从牌打出并召唤随从后：
+    /// 玩家获得力量+2，召唤出的随从挂继承效果（死亡后继续传递），本 Power 移除。
     /// </summary>
     public override async Task AfterCardPlayed(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
@@ -65,6 +68,8 @@ public sealed class AegwynnLegacyPower : PowerModel, IModPowerAssetOverrides
         if (cardPlay.Card is JainaMinionCardTemplate { LastSummonedMinion: { IsAlive: true } minion })
         {
             await PowerCmd.Apply<StrengthPower>(choiceContext, [Owner], 2m, Owner, null);
+            // 链式传递：该随从死亡时移除 +2 力量并把继承效果传给下一张随从
+            await PowerCmd.Apply<AegwynnInheritedPower>(choiceContext, [minion], 1m, minion, null);
         }
         await PowerCmd.Remove(this);
     }
