@@ -87,6 +87,13 @@ public abstract class JainaMinionCardTemplate : ModCardTemplate,
     public override CardType Type => JainaCardTypes.Minion;
 
     /// <summary>
+    /// 随从卡默认不可升级（MaxUpgradeLevel=0 → IsUpgradable=false，
+    /// 升级界面/升级遗物不会把随从卡列为可升级候选）。
+    /// 有升级形态的随从卡（如奥术师晨拥+）子类覆写 MaxUpgradeLevel 恢复可升级。
+    /// </summary>
+    public override int MaxUpgradeLevel => 0;
+
+    /// <summary>
     /// 关键词：默认无（子类按需声明亡语/冲锋等）。
     /// 通过 CanonicalKeywords 声明（而非构造函数 AddKeyword），
     /// 避免修改游戏创建的 canonical 不可变实例导致 CanonicalModelException。

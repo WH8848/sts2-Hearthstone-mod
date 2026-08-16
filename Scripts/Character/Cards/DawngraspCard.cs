@@ -23,6 +23,11 @@ public sealed class DawngraspCard : JainaMinionCardTemplate
     public override string CustomPortraitPath => "res://assets/card_art/arcanist_dawngrasp.png";
     protected override Type MinionType => typeof(DawngraspMinion);
 
+    /// <summary>
+    /// 奥术师晨拥有升级形态（晨拥+ 战吼力量+3），保持可升级
+    /// </summary>
+    public override int MaxUpgradeLevel => 1;
+
     protected override int MinionAttack => 8;
 
     protected override int MinionHealth => 8;
