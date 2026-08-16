@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.ValueProps;
@@ -56,6 +57,18 @@ public sealed class DeathborneCard : JainaSpellCardTemplate
             }
             LocString? upgraded = LocString.GetIfExists("cards", base.Id.Entry + ".titleUpgraded");
             return upgraded?.GetFormattedText() ?? title.GetFormattedText() + "+";
+        }
+    }
+
+    /// <summary>
+    /// 悬停提示：显示每消灭一个角色召唤的衍生物"不稳定的骷髅"卡
+    /// （参考灵体采集者显示小精灵/冰霜女巫吉安娜显示水元素的做法）
+    /// </summary>
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips
+    {
+        get
+        {
+            yield return new CardHoverTip(MegaCrit.Sts2.Core.Models.ModelDb.Card<VolatileSkeletonCard>());
         }
     }
 
