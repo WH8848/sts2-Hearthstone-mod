@@ -33,7 +33,9 @@ public sealed class ImpWranglerMinion : JainaMinionBase
     protected override string MinionVisualsPath => "res://assets/card_art/imp_wrangler.png";
 
     /// <summary>
-    /// 战吼：灌注（+1 层）并触发你的英雄技能。仅手牌打出时触发。
+    /// 战吼：灌注（+1 层）并触发你的英雄技能。
+    /// 触发方式：免费自动对随机敌人打出当前英雄技能，
+    /// 此种方式打出的英雄技能会在打出后立刻回手。仅手牌打出时触发。
     /// </summary>
     public override async Task OnBattlecry(PlayerChoiceContext choiceContext)
     {
@@ -46,7 +48,7 @@ public sealed class ImpWranglerMinion : JainaMinionBase
         // 1) 灌注：英雄技能伤害 +1（与灵体采集者同款）
         await PowerCmd.Apply<EmpowerPower>(choiceContext, [owner.Creature], 1m, Creature, null);
 
-        // 2) 触发你的英雄技能：创建当前英雄技能卡并免费自动打出（随机目标）
+        // 2) 触发你的英雄技能：免费自动对随机敌人打出当前英雄技能
         var combatState = owner.Creature.CombatState;
         if (combatState == null)
         {
@@ -61,10 +63,9 @@ public sealed class ImpWranglerMinion : JainaMinionBase
         {
             return;
         }
-        // 英雄技能卡打出后消耗（与局内生成卡一致：MarkGenerated 自动附加 Exhaust）
-        jaina.Scripts.Character.JainaCastTracker.MarkGenerated(heroPower);
+        // 不标记衍生/消耗：此种方式打出的英雄技能打出后立刻回手
 
-        // 单目标英雄技能：随机选合法目标
+        // 单目标英雄技能：随机选合法目标（尽可能以敌人为目标）
         Creature? target = null;
         if (heroPower.TargetType == TargetType.AnyEnemy || heroPower.TargetType == TargetType.AnyPlayer ||
             heroPower.TargetType == TargetType.AnyAlly ||
@@ -72,7 +73,8 @@ public sealed class ImpWranglerMinion : JainaMinionBase
              customType.IsSingleTarget))
         {
             var pool = combatState.Creatures
-                .Where(c => c != null && c.IsAlive && heroPower.IsValidTarget(c))
+                .Where(c => c != null && c.IsAlive && heroPower.IsValidTarget(c) &&
+                            c.Side != owner.Creature.Side)
                 .ToList();
             target = pool.Count > 0 ? owner.RunState.Rng.CombatTargets.NextItem(pool) : null;
             if (target == null)
@@ -81,5 +83,11 @@ public sealed class ImpWranglerMinion : JainaMinionBase
             }
         }
         await CardCmd.AutoPlay(choiceContext, heroPower, target);
+
+        // 3) 打出后立刻回手（英雄技能卡回到手牌）
+        if (heroPower.Pile != null)
+        {
+            await CardPileCmd.Add(heroPower, PileType.Hand);
+        }
     }
 }
