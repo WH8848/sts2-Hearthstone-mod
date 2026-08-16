@@ -159,5 +159,8 @@
   "JAINA_CARD_ASTROMANCER_SOLARIAN_CARD.title": "星术师索兰莉安",
   "JAINA_CARD_ASTROMANCER_SOLARIAN_CARD.description": "召唤一个[blue]3/2[/blue]的[red]星术师索兰莉安[/red]。力量+1。[gold]亡语[/gold]：将[blue]终极索兰莉安[/blue]洗入你的牌库。",
   "JAINA_CARD_SOLARIAN_PRIME_CARD.title": "终极索兰莉安",
-  "JAINA_CARD_SOLARIAN_PRIME_CARD.description": "召唤一个[blue]7/7[/blue]的[red]终极索兰莉安[/red]。力量+1。[gold]战吼[/gold]：随机施放五个法师法术（尽可能以敌人为目标）。"
+  "JAINA_CARD_SOLARIAN_PRIME_CARD.description": "召唤一个[blue]7/7[/blue]的[red]终极索兰莉安[/red]。力量+1。[gold]战吼[/gold]：随机施放五个法师法术（尽可能以敌人为目标）。",
+  "JAINA_CARD_TEAR_REALITY_CARD.title": "撕裂现实",
+  "JAINA_CARD_TEAR_REALITY_CARD.titleUpgraded": "操控时间",
+  "JAINA_CARD_TEAR_REALITY_CARD.description": "{IfUpgraded:show:[gold]奥术[/gold]。\n发现两张来自过去的[blue]奥术法术牌[/blue]，其费用消耗减少1点。|[gold]奥术[/gold]。\n随机将2张来自过去的[blue]法师法术牌[/blue]置入你的手牌，其费用消耗减少1点。}"
 }

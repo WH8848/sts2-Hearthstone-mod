@@ -159,5 +159,8 @@
   "JAINA_CARD_ASTROMANCER_SOLARIAN_CARD.title": "Astromancer Solarian",
   "JAINA_CARD_ASTROMANCER_SOLARIAN_CARD.description": "Summon a [blue]3/2[/blue] [red]Astromancer Solarian[/red]. +1 Strength. [gold]Deathrattle[/gold]: Shuffle [blue]Solarian Prime[/blue] into your deck.",
   "JAINA_CARD_SOLARIAN_PRIME_CARD.title": "Solarian Prime",
-  "JAINA_CARD_SOLARIAN_PRIME_CARD.description": "Summon a [blue]7/7[/blue] [red]Solarian Prime[/red]. +1 Strength. [gold]Battlecry[/gold]: Cast 5 random Mage spells (targets enemies if possible)."
+  "JAINA_CARD_SOLARIAN_PRIME_CARD.description": "Summon a [blue]7/7[/blue] [red]Solarian Prime[/red]. +1 Strength. [gold]Battlecry[/gold]: Cast 5 random Mage spells (targets enemies if possible).",
+  "JAINA_CARD_TEAR_REALITY_CARD.title": "Tear Reality",
+  "JAINA_CARD_TEAR_REALITY_CARD.titleUpgraded": "Time Control",
+  "JAINA_CARD_TEAR_REALITY_CARD.description": "{IfUpgraded:show:[gold]Arcane[/gold].\nDiscover two [blue]Arcane spells[/blue] from the past. They cost 1 less.|[gold]Arcane[/gold].\nAdd 2 random [blue]Mage spells[/blue] from the past to your hand. They cost 1 less.}"
 }
