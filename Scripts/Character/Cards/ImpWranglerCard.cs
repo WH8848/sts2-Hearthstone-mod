@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using MegaCrit.Sts2.Core.Entities.Cards;
 using jaina.Scripts.Character.Minions;
 using STS2RitsuLib.Interop.AutoRegistration;
 
