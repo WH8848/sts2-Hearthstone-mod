@@ -121,7 +121,7 @@ public static class MageSpellCaster
         {
             return;
         }
-        int maxLevel = Math.Min(canonical.MaxUpgradeLevel, 2);
+        int maxLevel = jaina.Scripts.Character.JainaCastTracker.GetDiscoverPoolMaxUpgradeLevel(type);
         int upgradeLevel = rng.NextInt(0, maxLevel + 1);
         var card = jaina.Scripts.Character.JainaCastTracker.CreateCardWithUpgrade(
             combatState, player, type, upgradeLevel);

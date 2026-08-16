@@ -150,7 +150,7 @@ public sealed class YoggBoxCard : JainaSpellCardTemplate
             {
                 continue;
             }
-            int maxLevel = Math.Min(canonical.MaxUpgradeLevel, 2);
+            int maxLevel = jaina.Scripts.Character.JainaCastTracker.GetDiscoverPoolMaxUpgradeLevel(type);
             for (int level = 0; level <= maxLevel; level++)
             {
                 var card = jaina.Scripts.Character.JainaCastTracker.CreateCardWithUpgrade(

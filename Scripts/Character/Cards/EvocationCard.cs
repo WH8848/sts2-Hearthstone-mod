@@ -84,7 +84,7 @@ public sealed class EvocationCard : JainaSpellCardTemplate
             {
                 continue;
             }
-            int maxLevel = Math.Min(canonical.MaxUpgradeLevel, 2);
+            int maxLevel = jaina.Scripts.Character.JainaCastTracker.GetDiscoverPoolMaxUpgradeLevel(t);
             for (int level = 0; level <= maxLevel; level++)
             {
                 pool.Add((t, level));

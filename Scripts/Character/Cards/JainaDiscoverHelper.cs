@@ -45,8 +45,8 @@ public static class JainaDiscoverHelper
             {
                 continue;
             }
-            // 展开升级形态：未升级 + 全部升级级别（升级后的法术牌同样可被发现）
-            int maxLevel = Math.Min(canonical.MaxUpgradeLevel, 2);
+            // 展开升级形态：未升级 + 允许的升级级别（点燃只能未升级形态）
+            int maxLevel = jaina.Scripts.Character.JainaCastTracker.GetDiscoverPoolMaxUpgradeLevel(t);
             for (int level = 0; level <= maxLevel; level++)
             {
                 var card = jaina.Scripts.Character.JainaCastTracker.CreateCardWithUpgrade(

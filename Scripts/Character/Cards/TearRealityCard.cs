@@ -98,8 +98,8 @@ public sealed class TearRealityCard : JainaSpellCardTemplate
     ];
 
     /// <summary>
-    /// 展开候选池：每种法术牌按其可升级级别生成 (类型, 升级级别) 候选
-    /// （未升级 + 全部升级形态，升级后的法术牌同样可被检索）。
+    /// 展开候选池：每种法术牌按其允许的升级级别生成 (类型, 升级级别) 候选
+    /// （未升级 + 升级形态，升级后的法术牌同样可被检索；点燃只能未升级形态）。
     /// </summary>
     private static List<(System.Type Type, int UpgradeLevel)> ExpandPool(System.Type[] types)
     {
@@ -112,7 +112,8 @@ public sealed class TearRealityCard : JainaSpellCardTemplate
             {
                 continue;
             }
-            for (int level = 1; level <= canonical.MaxUpgradeLevel; level++)
+            int maxLevel = jaina.Scripts.Character.JainaCastTracker.GetDiscoverPoolMaxUpgradeLevel(t);
+            for (int level = 1; level <= maxLevel; level++)
             {
                 result.Add((t, level));
             }

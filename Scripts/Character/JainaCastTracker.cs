@@ -312,4 +312,24 @@ public static class JainaCastTracker
         var rec = Records.TryGetValue(combatState, out var r) ? r : null;
         return rec != null && rec.Schools.Count >= 3;
     }
+
+    /// <summary>
+    /// 发现/随机生成池中该法术牌允许出现的最高升级级别：
+    /// 未升级形态与升级形态（+）都可能被检索，但升级级别上限 2 级。
+    /// 点燃（Ignite）可无限升级，但发现/随机生成只能获得未升级形态（0 级）——
+    /// 只有倒带/西瓦拉这类"复制具体施放过的牌"的效果才保留其实际升级层数。
+    /// </summary>
+    public static int GetDiscoverPoolMaxUpgradeLevel(Type cardType)
+    {
+        if (cardType == typeof(IgniteCard))
+        {
+            return 0;
+        }
+        var canonical = ModelDb.GetByIdOrNull<CardModel>(ModelDb.GetId(cardType));
+        if (canonical == null)
+        {
+            return 0;
+        }
+        return Math.Min(canonical.MaxUpgradeLevel, 2);
+    }
 }
