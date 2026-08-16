@@ -16,13 +16,23 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- 排除反编译产生的临时目录 -->
+    <!-- 排除反编译产生的临时目录（含 _decomp：避免反编译源码遮蔽游戏同名类型导致 patch 失效） -->
     <Compile Remove="ritsu_decomp/**" />
     <Compile Remove="game_decomp/**" />
+    <Compile Remove="_decomp/**" />
+    <Compile Remove="_decomp*/**" />
     <Content Remove="ritsu_decomp/**" />
     <Content Remove="game_decomp/**" />
+    <Content Remove="_decomp/**" />
+    <Content Remove="_decomp*/**" />
     <None Remove="ritsu_decomp/**" />
     <None Remove="game_decomp/**" />
+    <None Remove="_decomp/**" />
+    <None Remove="_decomp*/**" />
+    <!-- 反编译输出文本（_decomp_*.txt）同样排除 -->
+    <Compile Remove="_decomp_*.txt" />
+    <Content Remove="_decomp_*.txt" />
+    <None Remove="_decomp_*.txt" />
 
     <Reference Include="sts2">
       <HintPath>$(Sts2DataDir)/sts2.dll</HintPath>

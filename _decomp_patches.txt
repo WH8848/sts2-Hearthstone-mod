@@ -1,0 +1,127 @@
+﻿using HarmonyLib;
+using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Helpers;
+using MegaCrit.Sts2.Core.Localization;
+using MegaCrit.Sts2.Core.Models;
+
+namespace jaina.Scripts.Character.Cards;
+
+public static class JainaCardTypePatches
+{
+	[HarmonyPatch(typeof(CardTypeExtensions), "ToLocString")]
+	private static class MinionLocStringPatch
+	{
+		private static bool Prefix(CardType cardType, ref LocString __result)
+		{
+			//IL_0000: Unknown result type (might be due to invalid IL or missing references)
+			//IL_0001: Unknown result type (might be due to invalid IL or missing references)
+			//IL_0013: Unknown result type (might be due to invalid IL or missing references)
+			//IL_0019: Expected O, but got Unknown
+			if (cardType == JainaCardTypes.Minion)
+			{
+				__result = new LocString("gameplay_ui", "CARD_TYPE.MINION");
+				return false;
+			}
+			return true;
+		}
+	}
+
+	[HarmonyPatch(/*Could not decode attribute arguments.*/)]
+	private static class MinionFramePathPatch
+	{
+		private static bool Prefix(CardModel __instance, ref string __result)
+		{
+			//IL_0001: Unknown result type (might be due to invalid IL or missing references)
+			//IL_0006: Unknown result type (might be due to invalid IL or missing references)
+			if (__instance.Type == JainaCardTypes.Minion)
+			{
+				__result = ImageHelper.GetImagePath("atlases/ui_atlas.sprites/card/card_frame_skill_s.tres");
+				return false;
+			}
+			return true;
+		}
+	}
+
+	[HarmonyPatch(/*Could not decode attribute arguments.*/)]
+	private static class MinionPortraitBorderPathPatch
+	{
+		private static bool Prefix(CardModel __instance, ref string __result)
+		{
+			//IL_0001: Unknown result type (might be due to invalid IL or missing references)
+			//IL_0006: Unknown result type (might be due to invalid IL or missing references)
+			if (__instance.Type == JainaCardTypes.Minion)
+			{
+				__result = ImageHelper.GetImagePath("atlases/ui_atlas.sprites/card/card_portrait_border_skill_s.tres");
+				return false;
+			}
+			return true;
+		}
+	}
+
+	[HarmonyPatch(/*Could not decode attribute arguments.*/)]
+	private static class MinionAncientTextBgPathPatch
+	{
+		private static bool Prefix(CardModel __instance, ref string __result)
+		{
+			//IL_0001: Unknown result type (might be due to invalid IL or missing references)
+			//IL_0006: Unknown result type (might be due to invalid IL or missing references)
+			if (__instance.Type == JainaCardTypes.Minion)
+			{
+				__result = ImageHelper.GetImagePath("atlases/compressed_atlas.sprites/ancient_text_bg_skill.png.tres");
+				return false;
+			}
+			return true;
+		}
+	}
+
+	[HarmonyPatch(typeof(CardTypeExtensions), "ToLocString")]
+	private static class HeroLocStringPatch
+	{
+		private static bool Prefix(CardType cardType, ref LocString __result)
+		{
+			//IL_0000: Unknown result type (might be due to invalid IL or missing references)
+			//IL_0001: Unknown result type (might be due to invalid IL or missing references)
+			//IL_0013: Unknown result type (might be due to invalid IL or missing references)
+			//IL_0019: Expected O, but got Unknown
+			if (cardType == JainaCardTypes.Hero)
+			{
+				__result = new LocString("gameplay_ui", "CARD_TYPE.HERO");
+				return false;
+			}
+			return true;
+		}
+	}
+
+	[HarmonyPatch(/*Could not decode attribute arguments.*/)]
+	private static class HeroFramePathPatch
+	{
+		private static bool Prefix(CardModel __instance, ref string __result)
+		{
+			//IL_0001: Unknown result type (might be due to invalid IL or missing references)
+			//IL_0006: Unknown result type (might be due to invalid IL or missing references)
+			if (__instance.Type == JainaCardTypes.Hero)
+			{
+				__result = ImageHelper.GetImagePath("atlases/ui_atlas.sprites/card/card_frame_power_s.tres");
+				return false;
+			}
+			return true;
+		}
+	}
+
+	[HarmonyPatch(/*Could not decode attribute arguments.*/)]
+	private static class HeroPortraitBorderPathPatch
+	{
+		private static bool Prefix(CardModel __instance, ref string __result)
+		{
+			//IL_0001: Unknown result type (might be due to invalid IL or missing references)
+			//IL_0006: Unknown result type (might be due to invalid IL or missing references)
+			if (__instance.Type == JainaCardTypes.Hero)
+			{
+				__result = ImageHelper.GetImagePath("atlases/ui_atlas.sprites/card/card_portrait_border_power_s.tres");
+				return false;
+			}
+			return true;
+		}
+	}
+}
+

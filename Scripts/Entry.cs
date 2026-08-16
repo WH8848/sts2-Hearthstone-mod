@@ -30,6 +30,24 @@ public class Entry
         var harmony = new Harmony("jaina");
         harmony.PatchAll(assembly);
 
+        // 【临时诊断】PatchAll 后检查 ToLocString 的 patch 是否应用（排查图鉴 SwitchExpressionException）
+        try
+        {
+            var toLoc = System.Reflection.MethodBase.GetMethodFromHandle(
+                typeof(MegaCrit.Sts2.Core.Entities.Cards.CardTypeExtensions).GetMethod(
+                    nameof(MegaCrit.Sts2.Core.Entities.Cards.CardTypeExtensions.ToLocString))!.MethodHandle);
+            var info = Harmony.GetPatchInfo(toLoc);
+            var prefixOwners = info?.Prefixes.Select(p => p.owner).ToList() ?? [];
+            Logger.Info($"[JainaDiag] ToLocString patch info: prefixes={info?.Prefixes.Count ?? 0} " +
+                        $"owners=[{string.Join(",", prefixOwners)}] " +
+                        $"Minion={jaina.Scripts.Character.Cards.JainaCardTypes.Minion} " +
+                        $"Hero={jaina.Scripts.Character.Cards.JainaCardTypes.Hero}");
+        }
+        catch (System.Exception ex)
+        {
+            Logger.Info($"[JainaDiag] ToLocString patch info failed: {ex}");
+        }
+
         RitsuLibFramework.EnsureGodotScriptsRegistered(assembly, Logger);
         // 自动注册内容
         ModTypeDiscoveryHub.RegisterModAssembly(ModId, assembly);
