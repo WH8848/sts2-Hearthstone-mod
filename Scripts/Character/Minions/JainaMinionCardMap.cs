@@ -39,6 +39,7 @@ public static class JainaMinionCardMap
         [typeof(ImpWranglerMinion)] = typeof(ImpWranglerCard),
         [typeof(RecklessApprenticeMinion)] = typeof(RecklessApprenticeCard),
         [typeof(IceWalkerMinion)] = typeof(IceWalkerCard),
+        [typeof(ScrappyScavengerMinion)] = typeof(ScrappyScavengerCard),
         // 地标（悬停显示地标卡；不进入 MinionTypes 随机召唤池）
         [typeof(NightcloakSanctumLandmark)] = typeof(NightcloakSanctumCard),
         [typeof(TrinketShopLandmark)] = typeof(TrinketShopCard),

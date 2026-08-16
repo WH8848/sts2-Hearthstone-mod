@@ -106,4 +106,71 @@ public static class JainaDiscoverHelper
         }
         return await CardSelectCmd.FromChooseACardScreen(choiceContext, candidates, player, canSkip: true);
     }
+
+    /// <summary>
+    /// 从吉安娜全卡池中发现一张"费用消耗精确等于指定值"的卡牌（拾荒清道夫战吼用）。
+    /// 池：JainaCardPool 全部卡（法术/随从/地标），每种按可升级级别展开；
+    /// 排除英雄技能卡（火焰冲击等）与任务线卡（不可被发现）。
+    /// </summary>
+    public static async Task<CardModel?> DiscoverCardOfCostAndAddToHand(
+        PlayerChoiceContext choiceContext, Player player, int cost)
+    {
+        if (player?.Creature?.CombatState == null)
+        {
+            return null;
+        }
+        var combatState = player.Creature.CombatState;
+        var pool = new List<CardModel>();
+        foreach (var canonical in ModelDb.CardPool<JainaCardPool>().AllCards)
+        {
+            if (canonical == null)
+            {
+                continue;
+            }
+            // 英雄技能卡与任务线卡不可被发现
+            if (canonical.CanonicalKeywords?.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.HeroPower) == true ||
+                canonical.CanonicalKeywords?.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Quest) == true)
+            {
+                continue;
+            }
+            // 展开升级形态（未升级 + 允许的升级级别）
+            int maxLevel = jaina.Scripts.Character.JainaCastTracker.GetDiscoverPoolMaxUpgradeLevel(canonical.GetType());
+            for (int level = 0; level <= maxLevel; level++)
+            {
+                var card = jaina.Scripts.Character.JainaCastTracker.CreateCardWithUpgrade(
+                    combatState, player, canonical.GetType(), level);
+                if (card != null && card.EnergyCost.Canonical == cost)
+                {
+                    pool.Add(card);
+                }
+            }
+        }
+        if (pool.Count == 0)
+        {
+            return null;
+        }
+        // 随机三选一（不足 3 张时全给）
+        var picked = new List<CardModel>();
+        while (picked.Count < 3 && pool.Count > 0)
+        {
+            var card = player.RunState.Rng.CombatTargets.NextItem(pool);
+            if (card == null)
+            {
+                break;
+            }
+            picked.Add(card);
+            pool.Remove(card);
+        }
+        var chosen = await CardSelectCmd.FromChooseACardScreen(choiceContext, picked, player, canSkip: true);
+        if (chosen != null)
+        {
+            if (jaina.Scripts.Character.JainaHandHelper.IsHandFull(player))
+            {
+                return null;
+            }
+            jaina.Scripts.Character.JainaCastTracker.MarkGenerated(chosen);
+            await CardPileCmd.AddGeneratedCardToCombat(chosen, PileType.Hand, player);
+        }
+        return chosen;
+    }
 }

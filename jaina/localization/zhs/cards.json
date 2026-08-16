@@ -189,5 +189,7 @@
   "JAINA_CARD_TRINKET_SHOP_CARD.title": "小玩物小屋",
   "JAINA_CARD_TRINKET_SHOP_CARD.description": "[gold]地标[/gold]。\n抽一张牌。如果你在本回合中使用抽到的这张牌，重新开启本地标。\n[gold]耐久度[/gold]：{Durability}。",
   "JAINA_CARD_TIDE_POOL_CARD.title": "潮汐之池",
-  "JAINA_CARD_TIDE_POOL_CARD.description": "[gold]地标[/gold]。\n发现一张费用消耗小于或等于1点的[blue]法术牌[/blue]。在你施放一个法术后，重新开启本地标。\n[gold]耐久度[/gold]：{Durability}。"
+  "JAINA_CARD_TIDE_POOL_CARD.description": "[gold]地标[/gold]。\n发现一张费用消耗小于或等于1点的[blue]法术牌[/blue]。在你施放一个法术后，重新开启本地标。\n[gold]耐久度[/gold]：{Durability}。",
+  "JAINA_CARD_SCRAPPY_SCAVENGER_CARD.title": "拾荒清道夫",
+  "JAINA_CARD_SCRAPPY_SCAVENGER_CARD.description": "召唤一个[blue]1/1[/blue]的[red]拾荒清道夫[/red]。[gold]战吼[/gold]：发现一张费用消耗等同于你剩余费用的卡牌。"
 }

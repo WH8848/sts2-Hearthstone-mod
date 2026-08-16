@@ -189,5 +189,7 @@
   "JAINA_CARD_TRINKET_SHOP_CARD.title": "Trinket Tracker",
   "JAINA_CARD_TRINKET_SHOP_CARD.description": "[gold]Landmark[/gold].\nDraw a card. If you play it this turn, reactivate this.\n[gold]Durability[/gold]: {Durability}.",
   "JAINA_CARD_TIDE_POOL_CARD.title": "Tide Pools",
-  "JAINA_CARD_TIDE_POOL_CARD.description": "[gold]Landmark[/gold].\nDiscover a [blue]spell[/blue] that costs 1 or less. After you cast a spell, reactivate this.\n[gold]Durability[/gold]: {Durability}."
+  "JAINA_CARD_TIDE_POOL_CARD.description": "[gold]Landmark[/gold].\nDiscover a [blue]spell[/blue] that costs 1 or less. After you cast a spell, reactivate this.\n[gold]Durability[/gold]: {Durability}.",
+  "JAINA_CARD_SCRAPPY_SCAVENGER_CARD.title": "Scrappy Scavenger",
+  "JAINA_CARD_SCRAPPY_SCAVENGER_CARD.description": "Summon a [blue]1/1[/blue] [red]Scrappy Scavenger[/red]. [gold]Battlecry[/gold]: Discover a card that costs the same as your remaining Energy."
 }
