@@ -1,0 +1,121 @@
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Localization;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
+using MegaCrit.Sts2.Core.Models;
+using jaina.Scripts.Character.Powers;
+using STS2RitsuLib.Interop.AutoRegistration;
+using STS2RitsuLib.Scaffolding.Content;
+
+namespace jaina.Scripts.Character.Cards;
+
+/// <summary>
+/// 愚人套牌 (Deck of Wonders) - 0费技能牌（稀有，奥术派系）。
+/// 将你抽牌堆和弃牌堆中的法术牌变形成为费用消耗增加1点的法术牌。（保留其原始费用消耗。）
+/// 升级后（愚人套牌+）：变形成为费用消耗增加1点的升级过法术牌。（保留其原始费用消耗。）
+/// </summary>
+[RegisterCard(typeof(JainaCardPool))]
+public sealed class DeckOfWondersCard : JainaSpellCardTemplate
+{
+    /// <summary>
+    /// 法术牌 + 奥术派系
+    /// </summary>
+    public override IEnumerable<CardKeyword> CanonicalKeywords =>
+        [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Arcane];
+
+    protected override IEnumerable<DynamicVar> CanonicalVars => [];
+
+    public override string CustomPortraitPath => "res://assets/card_art/deck_of_wonders.png";
+
+    public DeckOfWondersCard()
+        : base(0, CardType.Skill, CardRarity.Rare, TargetType.None, true)
+    {
+    }
+
+    /// <summary>
+    /// 卡名不变（升级形态通过标题 "+" 表示）
+    /// </summary>
+    public override string Title
+    {
+        get
+        {
+            var title = new LocString("cards", base.Id.Entry + ".title");
+            return title.GetFormattedText();
+        }
+    }
+
+    protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
+    {
+        // 记录施放（倒带/罗曼斯/三派系追踪）
+        jaina.Scripts.Character.JainaCastTracker.RecordPlayed(this);
+
+        var combatState = base.Owner.Creature.CombatState;
+        if (combatState == null)
+        {
+            return;
+        }
+        var rng = base.Owner.RunState.Rng.CombatCardSelection;
+
+        // 快照抽牌堆 + 弃牌堆中的法术牌（攻击/技能牌，不含英雄技能卡）
+        var spells = new List<CardModel>();
+        foreach (var pileType in new[] { PileType.Draw, PileType.Discard })
+        {
+            var pile = pileType.GetPile(base.Owner);
+            if (pile == null)
+            {
+                continue;
+            }
+            spells.AddRange(pile.Cards.Where(c =>
+                c != null &&
+                (c.Type == CardType.Attack || c.Type == CardType.Skill) &&
+                !HeroPowerHandHelper.IsHeroPowerCard(c) &&
+                c.IsTransformable));
+        }
+
+        foreach (var spell in spells)
+        {
+            if (spell == null || spell.Pile == null)
+            {
+                continue;
+            }
+            // 原牌原始费用
+            int originalCost = spell.EnergyCost.Canonical;
+            // 目标池：所有法术牌（攻击/技能牌）中原始费用 = 原费用 + 1 的牌
+            var candidates = ModelDb.AllCards
+                .Where(c => c != null &&
+                            (c.Type == CardType.Attack || c.Type == CardType.Skill) &&
+                            c.EnergyCost.Canonical == originalCost + 1 &&
+                            !HeroPowerHandHelper.IsHeroPowerCard(c))
+                .ToList();
+            if (candidates.Count == 0)
+            {
+                continue;
+            }
+            var chosen = rng.NextItem(candidates);
+            if (chosen == null)
+            {
+                continue;
+            }
+
+            // 生成带 Owner 的变形目标实例（Transform 要求 replacement.Owner == original.Owner）
+            var replacement = combatState.CreateCard(chosen, base.Owner);
+            if (replacement == null)
+            {
+                continue;
+            }
+            // 升级后：变形为升级过的法术牌（+）
+            if (IsUpgraded && replacement.IsUpgradable)
+            {
+                replacement.UpgradeInternal();
+            }
+            // 保留原始费用：变形后的牌仍显示原牌费用
+            replacement.EnergyCost.SetCustomBaseCost(originalCost);
+
+            await CardCmd.Transform(spell, replacement);
+        }
+    }
+}

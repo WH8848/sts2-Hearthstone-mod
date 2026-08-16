@@ -162,5 +162,7 @@
   "JAINA_CARD_SOLARIAN_PRIME_CARD.description": "召唤一个[blue]7/7[/blue]的[red]终极索兰莉安[/red]。力量+1。[gold]战吼[/gold]：随机施放五个法师法术（尽可能以敌人为目标）。",
   "JAINA_CARD_TEAR_REALITY_CARD.title": "撕裂现实",
   "JAINA_CARD_TEAR_REALITY_CARD.titleUpgraded": "操控时间",
-  "JAINA_CARD_TEAR_REALITY_CARD.description": "{IfUpgraded:show:[gold]奥术[/gold]。\n发现两张来自过去的[blue]奥术法术牌[/blue]，其费用消耗减少1点。|[gold]奥术[/gold]。\n随机将2张来自过去的[blue]法师法术牌[/blue]置入你的手牌，其费用消耗减少1点。}"
+  "JAINA_CARD_TEAR_REALITY_CARD.description": "{IfUpgraded:show:[gold]奥术[/gold]。\n发现两张来自过去的[blue]奥术法术牌[/blue]，其费用消耗减少1点。|[gold]奥术[/gold]。\n随机将2张来自过去的[blue]法师法术牌[/blue]置入你的手牌，其费用消耗减少1点。}",
+  "JAINA_CARD_DECK_OF_WONDERS_CARD.title": "愚人套牌",
+  "JAINA_CARD_DECK_OF_WONDERS_CARD.description": "{IfUpgraded:show:将你抽牌堆和弃牌堆中的法术牌变形成为费用消耗增加1点的升级过法术牌。（保留其原始费用消耗。）|将你抽牌堆和弃牌堆中的法术牌变形成为费用消耗增加1点的法术牌。（保留其原始费用消耗。）}"
 }
