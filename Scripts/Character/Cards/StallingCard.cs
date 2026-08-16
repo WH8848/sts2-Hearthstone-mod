@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Models;
 using jaina.Scripts.Character.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -24,6 +26,18 @@ public sealed class StallingCard : ModCardTemplate
         [jaina.Scripts.Character.Keywords.JainaKeywords.Quest];
 
     public override string CustomPortraitPath => "res://assets/card_art/stall_for_time.png";
+
+    /// <summary>
+    /// 悬停提示：显示后续衍生卡（抵达传送大厅 → 奥术师晨拥），左侧从上到下排列
+    /// </summary>
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips
+    {
+        get
+        {
+            yield return new CardHoverTip(ModelDb.Card<ReachPortalChamberCard>());
+            yield return new CardHoverTip(ModelDb.Card<DawngraspCard>());
+        }
+    }
 
     public StallingCard()
         : base(0, CardType.Power, CardRarity.Rare, TargetType.Self, true)

@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Models;
 using jaina.Scripts.Character.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -24,6 +26,20 @@ public sealed class SorcerersGambitCard : ModCardTemplate
         [jaina.Scripts.Character.Keywords.JainaKeywords.Quest, CardKeyword.Innate];
 
     public override string CustomPortraitPath => "res://assets/card_art/sorcerers_gambit.png";
+
+    /// <summary>
+    /// 悬停提示：显示整条任务线的后续衍生卡（拖延时间 → 抵达传送大厅 → 奥术师晨拥），
+    /// 左侧从上到下排列（NHoverTipCardContainer 按添加顺序垂直布局）。
+    /// </summary>
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips
+    {
+        get
+        {
+            yield return new CardHoverTip(ModelDb.Card<StallingCard>());
+            yield return new CardHoverTip(ModelDb.Card<ReachPortalChamberCard>());
+            yield return new CardHoverTip(ModelDb.Card<DawngraspCard>());
+        }
+    }
 
     public SorcerersGambitCard()
         : base(0, CardType.Power, CardRarity.Rare, TargetType.Self, true)
