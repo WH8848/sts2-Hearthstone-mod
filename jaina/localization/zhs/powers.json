@@ -69,5 +69,8 @@
   "JAINA_POWER_WILDFIRE_POWER.smartDescription": "英雄技能伤害+{Amount}。",
   "JAINA_POWER_HEARTHSTONE_FORM_POWER.title": "炉石形态",
   "JAINA_POWER_HEARTHSTONE_FORM_POWER.description": "你的全部卡牌获得[gold]保留[/gold]和[gold]消耗[/gold]，当你抽到状态卡时额外抽一张。此后每回合你获得十点能量，每回合只能抽一张卡。",
-  "JAINA_POWER_HEARTHSTONE_FORM_POWER.smartDescription": "全卡保留+消耗；抽到状态卡额外抽一张；每回合10点能量，限抽1张。"
+  "JAINA_POWER_HEARTHSTONE_FORM_POWER.smartDescription": "全卡保留+消耗；抽到状态卡额外抽一张；每回合10点能量，限抽1张。",
+  "JAINA_POWER_ICE_BLOCK_POWER.title": "寒冰屏障",
+  "JAINA_POWER_ICE_BLOCK_POWER.description": "当你将要承受致命伤害时，防止这些伤害，并在本回合中免疫。",
+  "JAINA_POWER_ICE_BLOCK_POWER.smartDescription": "致命伤害防护 + 本回合免疫。"
 }

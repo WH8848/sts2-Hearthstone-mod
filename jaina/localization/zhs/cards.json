@@ -81,6 +81,8 @@
   "JAINA_CARD_FROST_NOVA.description": "[gold]冰霜[/gold]。\n给予敌方全体4层[gold]冻结[/gold]。",
   "JAINA_CARD_EXONERATION_CARD.title": "脱罪力证",
   "JAINA_CARD_EXONERATION_CARD.description": "[gold]冰霜[/gold]。\n获得1层[gold]无实体[/gold]。",
+  "JAINA_CARD_ICE_BLOCK_CARD.title": "寒冰屏障",
+  "JAINA_CARD_ICE_BLOCK_CARD.description": "[gold]冰霜[/gold]。\n当你将要承受致命伤害时，防止这些伤害，并在本回合中免疫。",
   "JAINA_CARD_ARCANE_BARRAGE.title": "奥术弹幕",
   "JAINA_CARD_ARCANE_BARRAGE.titleUpgraded": "灯光表演",
   "JAINA_CARD_ARCANE_BARRAGE.description": "[gold]奥术[/gold]。\n{IfUpgraded:show:对随机敌人造成2次2点伤害，同名牌每释放1次次数+1。|对一个敌人造成{Damage:diff()}点伤害，再随机对所有敌人造成2次[blue]2[/blue]点伤害。}",

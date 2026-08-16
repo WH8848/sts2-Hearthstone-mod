@@ -286,6 +286,25 @@ function Draw-HearthstoneForm {
     $pen.Dispose(); $pen2.Dispose(); $star.Dispose()
 }
 
+function Draw-IceBlock {
+    param($g)
+    New-IconBase $g
+    # 冰晶盾牌（寒冰屏障：致命伤害防护 + 免疫）
+    $pen = [System.Drawing.Pen]::new($iceBlue, 6)
+    $pts = @()
+    $pts += New-Object System.Drawing.PointF(64, 22)
+    $pts += New-Object System.Drawing.PointF(102, 44)
+    $pts += New-Object System.Drawing.PointF(102, 78)
+    $pts += New-Object System.Drawing.PointF(64, 106)
+    $pts += New-Object System.Drawing.PointF(26, 78)
+    $pts += New-Object System.Drawing.PointF(26, 44)
+    $g.DrawPolygon($pen, $pts)              # 冰盾
+    $cross = [System.Drawing.Pen]::new($white, 4)
+    $g.DrawLine($cross, 64, 42, 64, 88)
+    $g.DrawLine($cross, 44, 58, 84, 58)
+    $pen.Dispose(); $cross.Dispose()
+}
+
 function Save-Icon {
     param($name, $drawFunc)
     $bmp = New-Object System.Drawing.Bitmap(128, 128)
@@ -315,5 +334,6 @@ Save-Icon 'jaina_power_stargazing_replay_power'    (Get-Command Draw-StargazingR
 Save-Icon 'jaina_power_khadgar_orb_power'          (Get-Command Draw-KhadgarOrb)
 Save-Icon 'jaina_power_wildfire_power'              (Get-Command Draw-Wildfire)
 Save-Icon 'jaina_power_hearthstone_form_power'      (Get-Command Draw-HearthstoneForm)
+Save-Icon 'jaina_power_ice_block_power'              (Get-Command Draw-IceBlock)
 
 Write-Host "完成: 7 个力量图标 -> $outDir"

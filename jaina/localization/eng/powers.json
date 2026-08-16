@@ -69,5 +69,8 @@
   "JAINA_POWER_WILDFIRE_POWER.smartDescription": "Hero Power deals {Amount} more damage.",
   "JAINA_POWER_HEARTHSTONE_FORM_POWER.title": "Hearthstone Form",
   "JAINA_POWER_HEARTHSTONE_FORM_POWER.description": "All your cards have [gold]Retain[/gold] and [gold]Exhaust[/gold]. When you draw a Status card, draw an extra card. Each turn, gain 10 Energy and draw only 1 card.",
-  "JAINA_POWER_HEARTHSTONE_FORM_POWER.smartDescription": "All cards Retain + Exhaust; Status draws trigger extra draws; 10 Energy per turn, draw only 1 card."
+  "JAINA_POWER_HEARTHSTONE_FORM_POWER.smartDescription": "All cards Retain + Exhaust; Status draws trigger extra draws; 10 Energy per turn, draw only 1 card.",
+  "JAINA_POWER_ICE_BLOCK_POWER.title": "Ice Block",
+  "JAINA_POWER_ICE_BLOCK_POWER.description": "When you would take fatal damage, prevent it and become Immune this turn.",
+  "JAINA_POWER_ICE_BLOCK_POWER.smartDescription": "Prevent fatal damage and become Immune this turn."
 }
