@@ -68,6 +68,9 @@ public sealed class IcyTouchCard : JainaSpellCardTemplate
                 .Targeting(target)
                 .WithHitFx("vfx/vfx_attack_blunt")
                 .Execute(choiceContext);
+
+            // 记录英雄技能伤害（火眼莫德雷斯战吼条件用）
+            jaina.Scripts.Character.JainaCastTracker.RecordHeroPowerDamage(this, 1);
         }
 
         // 召唤一个水元素（3/6）

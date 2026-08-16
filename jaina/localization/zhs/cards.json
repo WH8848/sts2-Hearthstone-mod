@@ -153,5 +153,7 @@
   "JAINA_CARD_WONDROUS_WISDOMBALL_CARD.title": "魔法智慧之球",
   "JAINA_CARD_WONDROUS_WISDOMBALL_CARD.description": "在你的回合结束时，随机施放一个有用的法师法术。失去1点耐久度。",
   "JAINA_CARD_COMMANDER_SIVARA_CARD.title": "指挥官西瓦拉",
-  "JAINA_CARD_COMMANDER_SIVARA_CARD.description": "召唤一个[blue]3/5[/blue]的[red]指挥官西瓦拉[/red]。[gold]战吼[/gold]：如果你在此牌在你手中时施放过三个法术，则将那些法术的复制置回你的手牌。"
+  "JAINA_CARD_COMMANDER_SIVARA_CARD.description": "召唤一个[blue]3/5[/blue]的[red]指挥官西瓦拉[/red]。[gold]战吼[/gold]：如果你在此牌在你手中时施放过三个法术，则将那些法术的复制置回你的手牌。",
+  "JAINA_CARD_MORDRESH_FIRE_EYE_CARD.title": "火眼莫德雷斯",
+  "JAINA_CARD_MORDRESH_FIRE_EYE_CARD.description": "召唤一个[blue]8/8[/blue]的[red]火眼莫德雷斯[/red]。[gold]战吼[/gold]：在本局对战中，如果你用你的英雄技能累计造成了10点伤害，则对所有敌人造成4次10点伤害。"
 }

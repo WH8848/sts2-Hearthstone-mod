@@ -82,6 +82,12 @@ public static class JainaCastTracker
         /// 魔导师晨拥打出后置为 typeof(ArcaneBurstCard)。
         /// </summary>
         public System.Type? CurrentHeroPowerType;
+
+        /// <summary>
+        /// 本局对战中英雄技能累计造成的伤害（火眼莫德雷斯战吼条件用）。
+        /// 火焰冲击/二级火焰冲击/奥术爆裂/冰冷触摸造成伤害后累计。
+        /// </summary>
+        public int HeroPowerDamageDealt;
     }
 
     private static readonly ConditionalWeakTable<ICombatState, CombatRecord> Records = new();
@@ -210,6 +216,24 @@ public static class JainaCastTracker
         {
             rec.GeneratedUpgradeLevels[type] = card.CurrentUpgradeLevel;
         }
+    }
+
+    /// <summary>
+    /// 记录英雄技能造成的伤害（火眼莫德雷斯战吼条件用）。
+    /// 火焰冲击/二级火焰冲击/奥术爆裂/冰冷触摸造成伤害后调用。
+    /// </summary>
+    public static void RecordHeroPowerDamage(CardModel card, int damage)
+    {
+        if (damage <= 0)
+        {
+            return;
+        }
+        var state = card.CombatState ?? card.Owner?.Creature.CombatState;
+        if (state == null)
+        {
+            return;
+        }
+        For(state).HeroPowerDamageDealt += damage;
     }
 
     /// <summary>

@@ -110,6 +110,9 @@ public sealed class FireblastAncient : JainaSpellCardTemplate
                         .Execute(choiceContext);
                 }
             }
+
+            // 记录英雄技能伤害（火眼莫德雷斯战吼条件用；重放两次都计）
+            jaina.Scripts.Character.JainaCastTracker.RecordHeroPowerDamage(this, totalDamage);
         }
     }
 
