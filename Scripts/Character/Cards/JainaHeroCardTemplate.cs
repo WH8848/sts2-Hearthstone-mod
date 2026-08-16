@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -105,6 +106,31 @@ public abstract class JainaHeroCardTemplate : ModCardTemplate
             {
                 return;
             }
+
+            // 立刻替换：先从所有战斗牌堆移除旧英雄技能卡（火焰冲击/二级火焰冲击/
+            // 上一张英雄卡的技能——弃牌堆/抽牌堆里的旧技能卡也要清掉，否则洗牌后会被抽到），
+            // 再置入新英雄技能（避免新旧英雄技能同时存在）
+            var oldHeroPowers = new List<CardModel>();
+            foreach (var pileType in new[] { PileType.Hand, PileType.Draw, PileType.Discard, PileType.Exhaust, PileType.Play })
+            {
+                var pile = pileType.GetPile(base.Owner);
+                if (pile == null)
+                {
+                    continue;
+                }
+                foreach (var card in pile.Cards)
+                {
+                    if (card != null && card.CanonicalKeywords?.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.HeroPower) == true)
+                    {
+                        oldHeroPowers.Add(card);
+                    }
+                }
+            }
+            if (oldHeroPowers.Count > 0)
+            {
+                await CardPileCmd.RemoveFromCombat(oldHeroPowers, skipVisuals: true);
+            }
+
             rec.CurrentHeroPowerType = HeroPowerType;
 
             // 创建新英雄技能卡实例并加入手牌（英雄技能卡不占手牌位）。

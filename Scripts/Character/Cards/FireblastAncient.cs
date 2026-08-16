@@ -116,11 +116,18 @@ public sealed class FireblastAncient : JainaSpellCardTemplate
     /// <summary>
     /// 每回合开始自动加入手牌。英雄技能卡不占手牌位：
     /// 满手（10 张普通卡）时也直接入手（CardPileCmd.Add 满手判定已豁免英雄技能卡）。
+    /// 打出英雄卡（魔导师晨拥/冰霜女巫吉安娜）替换英雄技能后，本卡不再自动入手（由新英雄技能接手）。
     /// </summary>
     public override async Task BeforeHandDraw(Player player, PlayerChoiceContext choiceContext, ICombatState combatState)
     {
         if (player == base.Owner)
         {
+            // 英雄技能已被英雄卡替换：不再入手二级火焰冲击
+            var rec = jaina.Scripts.Character.JainaCastTracker.For(combatState);
+            if (rec.CurrentHeroPowerType != null && rec.CurrentHeroPowerType != typeof(FireblastAncient))
+            {
+                return;
+            }
             CardPile? pile = base.Pile;
             if (pile == null || pile.Type != PileType.Hand)
             {
