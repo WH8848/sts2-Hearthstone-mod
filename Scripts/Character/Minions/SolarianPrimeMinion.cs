@@ -53,7 +53,8 @@ public sealed class SolarianPrimeMinion : JainaMinionBase
     }
 
     /// <summary>
-    /// 战吼：随机施放五个法师法术（尽可能以敌人为目标）。仅手牌打出时触发。
+    /// 战吼：随机施放五个法师法术（尽可能以敌人为目标；从吉安娜全部法术牌池
+    /// 按可升级级别展开，未升级与升级形态都可能被施放）。仅手牌打出时触发。
     /// </summary>
     public override async Task OnBattlecry(PlayerChoiceContext choiceContext)
     {
@@ -64,7 +65,7 @@ public sealed class SolarianPrimeMinion : JainaMinionBase
         }
         for (int i = 0; i < 5; i++)
         {
-            await MageSpellCaster.CastRandomMageSpell(choiceContext, owner, preferEnemies: true);
+            await MageSpellCaster.CastRandomMageSpellFromAll(choiceContext, owner, preferEnemies: true);
         }
     }
 }

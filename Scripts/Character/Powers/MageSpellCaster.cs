@@ -14,13 +14,15 @@ namespace jaina.Scripts.Character.Powers;
 
 /// <summary>
 /// 随机施放法师法术工具（魔法智慧之球 / 终极索兰莉安共用）。
-/// 有用法师法术池：火球术/寒冰箭/烈焰风暴/暴风雪/法术反制/寒冰护盾
-/// （烈焰风暴/暴风雪/法术反制为升级形态）。
+/// 魔法智慧之球：固定六张有用法师法术（火球术/寒冰箭/烈焰风暴/暴风雪/法术反制/寒冰护盾，
+/// 卡面具体写明这六张，不展开升级形态）。
+/// 终极索兰莉安：从吉安娜全部法术牌池（含升级形态）随机施放。
 /// </summary>
 public static class MageSpellCaster
 {
     /// <summary>
-    /// 有用法师法术池（类型 + 升级级别）
+    /// 魔法智慧之球固定池（类型 + 升级级别；
+    /// 烈焰风暴/暴风雪/法术反制分别为火焰结界/死神之躯/异议的升级形态）
     /// </summary>
     public static readonly (Type Type, int UpgradeLevel)[] UsefulMageSpells =
     [
@@ -33,7 +35,31 @@ public static class MageSpellCaster
     ];
 
     /// <summary>
-    /// 随机施放一个有用的法师法术（免费自动打出，随机目标；单目标法术优先选敌人）。
+    /// 吉安娜全部法术牌池（与匣中古神随机施放池一致；终极索兰莉安用，
+    /// 按可升级级别展开——未升级与升级形态都可能被施放）
+    /// </summary>
+    private static readonly Type[] AllMageSpellTypes =
+    [
+        typeof(Fireball),
+        typeof(Frostbolt),
+        typeof(ArcaneIntellect),
+        typeof(FreezingPotion),
+        typeof(IceBarrier),
+        typeof(Trick),
+        typeof(Awaken),
+        typeof(NorgannonWisdom),
+        typeof(DeepFreezeCard),
+        typeof(FlameWard),
+        typeof(DeathborneCard),
+        typeof(FrostNova),
+        typeof(ArcaneBarrage),
+        typeof(ApexisBlast),
+        typeof(IgniteCard)
+    ];
+
+    /// <summary>
+    /// 随机施放一个有用的法师法术（魔法智慧之球固定六张池：
+    /// 免费自动打出，随机目标；单目标法术优先选敌人）。
     /// </summary>
     public static async Task CastRandomMageSpell(PlayerChoiceContext choiceContext, Player player, bool preferEnemies = true)
     {
@@ -56,7 +82,51 @@ public static class MageSpellCaster
         }
         jaina.Scripts.Character.JainaCastTracker.MarkGenerated(card);
 
-        // 单目标法术：随机选合法目标（preferEnemies 时优先敌人）
+        await AutoPlayRandomly(choiceContext, player, card, preferEnemies);
+    }
+
+    /// <summary>
+    /// 随机施放一个法师法术（终极索兰莉安用：从吉安娜全部法术牌池
+    /// 按可升级级别展开，未升级与升级形态都可能被施放）。
+    /// </summary>
+    public static async Task CastRandomMageSpellFromAll(PlayerChoiceContext choiceContext, Player player, bool preferEnemies = true)
+    {
+        var combatState = player.Creature.CombatState;
+        if (combatState == null)
+        {
+            return;
+        }
+        var rng = player.RunState.Rng.CombatCardSelection;
+        var type = rng.NextItem(AllMageSpellTypes);
+        if (type == null)
+        {
+            return;
+        }
+        var canonical = MegaCrit.Sts2.Core.Models.ModelDb.GetByIdOrNull<MegaCrit.Sts2.Core.Models.CardModel>(
+            MegaCrit.Sts2.Core.Models.ModelDb.GetId(type));
+        if (canonical == null)
+        {
+            return;
+        }
+        int maxLevel = Math.Min(canonical.MaxUpgradeLevel, 2);
+        int upgradeLevel = rng.NextInt(0, maxLevel + 1);
+        var card = jaina.Scripts.Character.JainaCastTracker.CreateCardWithUpgrade(
+            combatState, player, type, upgradeLevel);
+        if (card == null)
+        {
+            return;
+        }
+        jaina.Scripts.Character.JainaCastTracker.MarkGenerated(card);
+
+        await AutoPlayRandomly(choiceContext, player, card, preferEnemies);
+    }
+
+    /// <summary>
+    /// 免费自动打出（随机目标；preferEnemies 时单目标法术优先选敌人）
+    /// </summary>
+    private static async Task AutoPlayRandomly(PlayerChoiceContext choiceContext, Player player, CardModel card, bool preferEnemies)
+    {
+        var combatState = player.Creature.CombatState;
         Creature? target = null;
         if (card.TargetType == TargetType.AnyEnemy || card.TargetType == TargetType.AnyPlayer ||
             card.TargetType == TargetType.AnyAlly ||
