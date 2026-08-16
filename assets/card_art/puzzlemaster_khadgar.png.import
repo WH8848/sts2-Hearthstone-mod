@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b58pi71rcb8hf"
-path="res://.godot/imported/khadgar.png-235dc76fc074eae264ff859e2b822934.ctex"
+uid="uid://cs2l5c3mnxgqg"
+path="res://.godot/imported/puzzlemaster_khadgar.png-136195e93927ba7304557321f565a18f.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/card_art/khadgar.png"
-dest_files=["res://.godot/imported/khadgar.png-235dc76fc074eae264ff859e2b822934.ctex"]
+source_file="res://assets/card_art/puzzlemaster_khadgar.png"
+dest_files=["res://.godot/imported/puzzlemaster_khadgar.png-136195e93927ba7304557321f565a18f.ctex"]
 
 [params]
 

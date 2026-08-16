@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dppn5je16evuk"
-path="res://.godot/imported/wondrous_wisdomball.png-ede9f62bab748cd6475194436ece77cd.ctex"
+uid="uid://dsq6763etrhk1"
+path="res://.godot/imported/magic_wisdomball.png-5ae9d1629db7defe0343efaa242dfbb8.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/card_art/wondrous_wisdomball.png"
-dest_files=["res://.godot/imported/wondrous_wisdomball.png-ede9f62bab748cd6475194436ece77cd.ctex"]
+source_file="res://assets/card_art/magic_wisdomball.png"
+dest_files=["res://.godot/imported/magic_wisdomball.png-5ae9d1629db7defe0343efaa242dfbb8.ctex"]
 
 [params]
 

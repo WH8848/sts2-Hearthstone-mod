@@ -18,9 +18,9 @@ namespace jaina.Scripts.Character.Cards;
 public sealed class KhadgarCard : JainaMinionCardTemplate
 {
     /// <summary>
-    /// 卡牌原画：炉石传说"卡德加"（Khadgar, EX1_583）官方原画
+    /// 卡牌原画：炉石传说"益智大师卡德加"（Puzzlemaster Khadgar, TOY_373）官方原画
     /// </summary>
-    public override string CustomPortraitPath => "res://assets/card_art/khadgar.png";
+    public override string CustomPortraitPath => "res://assets/card_art/puzzlemaster_khadgar.png";
 
     protected override Type MinionType => typeof(KhadgarMinion);
 

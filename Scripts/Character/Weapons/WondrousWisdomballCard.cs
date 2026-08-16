@@ -27,7 +27,7 @@ public sealed class WondrousWisdomballCard : JainaWeaponCardTemplate
 
     public override int WeaponDurability => 6;
 
-    public override string CustomPortraitPath => "res://assets/card_art/wondrous_wisdomball.png";
+    public override string CustomPortraitPath => "res://assets/card_art/magic_wisdomball.png";
 
     public WondrousWisdomballCard()
         : base(1, CardRarity.Token)
