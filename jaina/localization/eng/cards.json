@@ -181,7 +181,7 @@
   "JAINA_CARD_ICE_WALKER_CARD.title": "Ice Walker",
   "JAINA_CARD_ICE_WALKER_CARD.description": "[gold]Elemental[/gold].\nSummon a [blue]1/3[/blue] [red]Ice Walker[/red]. Your Hero Power also gives the target 1 [gold]Freeze[/gold].",
   "JAINA_CARD_WILDFIRE_CARD.title": "Wildfire",
-  "JAINA_CARD_WILDFIRE_CARD.description": "[gold]Fire[/gold].\nYour Hero Power deals 1 more damage. Can be upgraded indefinitely.",
+  "JAINA_CARD_WILDFIRE_CARD.description": "[gold]Fire[/gold].\nYour Hero Power deals {Damage:diff()} more damage. Can be upgraded indefinitely.",
   "JAINA_CARD_HEARTHSTONE_FORM_CARD.title": "Hearthstone Form",
   "JAINA_CARD_HEARTHSTONE_FORM_CARD.description": "{IfUpgraded:show:All your cards have [gold]Retain[/gold] and [gold]Exhaust[/gold]. When you draw a Status card, draw an extra card. Each turn, gain 10 Energy and draw only 1 card. [gold]Retain[/gold].|All your cards have [gold]Retain[/gold] and [gold]Exhaust[/gold]. When you draw a Status card, draw an extra card. Each turn, gain 10 Energy and draw only 1 card.}"
 }

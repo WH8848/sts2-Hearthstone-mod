@@ -29,7 +29,13 @@ public sealed class WildfireCard : JainaSpellCardTemplate
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
         [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Fire];
 
-    protected override IEnumerable<DynamicVar> CanonicalVars => [];
+    /// <summary>
+    /// 英雄技能伤害加成值（升级预览时显示数值递增，绿色高亮）
+    /// </summary>
+    protected override IEnumerable<DynamicVar> CanonicalVars =>
+    [
+        new DamageVar(1m, ValueProp.Move)
+    ];
 
     public override string CustomPortraitPath => "res://assets/card_art/wildfire.png";
 
@@ -55,9 +61,15 @@ public sealed class WildfireCard : JainaSpellCardTemplate
         // 记录施放（倒带/罗曼斯/三派系追踪）
         jaina.Scripts.Character.JainaCastTracker.RecordPlayed(this);
 
-        // 英雄技能伤害 +（1 + 当前升级级别），本局永久可叠加
-        int bonus = 1 + CurrentUpgradeLevel;
+        // 英雄技能伤害 + 加成值（本局永久可叠加）
+        int bonus = (int)base.DynamicVars.Damage.BaseValue;
         await PowerCmd.Apply<WildfirePower>(
             choiceContext, [base.Owner.Creature], bonus, base.Owner.Creature, this);
+    }
+
+    protected override void OnUpgrade()
+    {
+        // 每次升级加成 +1（UpgradeValueBy 设置 WasJustUpgraded，升级预览数值绿色高亮）
+        base.DynamicVars.Damage.UpgradeValueBy(1m);
     }
 }
