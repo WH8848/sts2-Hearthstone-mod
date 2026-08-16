@@ -192,12 +192,28 @@ public static class JainaCastTracker
     /// 标记一张"牌库之外"生成的卡（AddGeneratedCardToCombat 前调用，罗曼斯重放用）。
     /// 实例级标记（法术/随从卡蓝光用）对所有衍生卡生效；
     /// 类型级记录（罗曼斯重放）仅对攻击/技能牌生效。
+    /// 吉安娜局内衍生出来的卡全部附加"消耗"（Exhaust）关键词：
+    /// 打出后进入消耗堆而不是弃牌堆（炉石语义：衍生物打出即消失）。
     /// </summary>
     public static void MarkGenerated(CardModel card)
     {
         // 实例级标记：本局对战内衍生出来的卡（蓝光判定用，含随从卡）
         GeneratedCardInstances.Remove(card);
         GeneratedCardInstances.Add(card, null!);
+
+        // 吉安娜局内衍生卡自动附加消耗（打出后消耗，不回弃牌堆）。
+        // 仅对可变的战斗实例生效（canonical 模板不可修改，且无需标记）。
+        if (card.IsMutable)
+        {
+            try
+            {
+                MegaCrit.Sts2.Core.Commands.CardCmd.ApplyKeyword(card, CardKeyword.Exhaust);
+            }
+            catch
+            {
+                // 附加消耗失败不影响生成流程（罕见：不可变模板/已移除卡）
+            }
+        }
 
         if (card.Type != CardType.Attack && card.Type != CardType.Skill)
         {
