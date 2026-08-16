@@ -56,6 +56,25 @@ public sealed class JainasGiftCard : JainaSpellCardTemplate
         }
     }
 
+    /// <summary>
+    /// 悬停提示：显示未升级时发现候选的三张卡（寒冰箭/奥术智慧/火球术，
+    /// 都带虚无），参考灵体采集者显示小精灵的做法。
+    /// 升级后（倒带）不显示候选卡。
+    /// </summary>
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips
+    {
+        get
+        {
+            if (IsUpgraded)
+            {
+                yield break;
+            }
+            yield return new CardHoverTip(ModelDb.Card<Frostbolt>());
+            yield return new CardHoverTip(ModelDb.Card<ArcaneIntellect>());
+            yield return new CardHoverTip(ModelDb.Card<Fireball>());
+        }
+    }
+
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
         // 记录施放（倒带/罗曼斯/三派系追踪）
