@@ -86,7 +86,7 @@
   "JAINA_CARD_FORBIDDEN_FLAME_CARD.title": "禁忌烈焰",
   "JAINA_CARD_FORBIDDEN_FLAME_CARD.description": "[gold]火焰[/gold]。\n对一个角色造成{IfUpgraded:show:12x|10x}点伤害（x = 消耗的能量）。",
   "JAINA_CARD_FORBIDDEN_SHRINE_CARD.title": "禁忌神龛",
-  "JAINA_CARD_FORBIDDEN_SHRINE_CARD.description": "[gold]火焰[/gold]。\n随机施放一个{IfUpgraded:show:x+1|x}费法术（上限3费）。",
+  "JAINA_CARD_FORBIDDEN_SHRINE_CARD.description": "随机施放一个{IfUpgraded:show:x+1|x}费法术（上限3费）。",
   "JAINA_CARD_METEOR_CARD.title": "陨石术",
   "JAINA_CARD_METEOR_CARD.titleUpgraded": "星辰能量",
   "JAINA_CARD_METEOR_CARD.description": "{IfUpgraded:show:[gold]奥术[/gold]。\n随机对一个敌方造成5点伤害。重复此效果，每次伤害减少1点。|[gold]火焰[/gold]。\n对一个敌人造成[blue]15[/blue]点伤害，再随机造成2次[blue]4[/blue]点伤害。}",

@@ -16,7 +16,7 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
-/// 禁忌神龛 (Forbidden Shrine) - X费技能牌（罕见，火焰派系）。
+/// 禁忌神龛 (Forbidden Shrine) - X费技能牌（罕见）。
 /// 随机施放一个 x 费法术（x = 消耗的能量，上限 3 费）。
 /// 升级后（禁忌神龛+）：随机施放一个 x+1 费法术（上限 3 费）。
 /// </summary>
@@ -29,10 +29,10 @@ public sealed class ForbiddenShrineCard : JainaSpellCardTemplate
     protected override bool HasEnergyCostX => true;
 
     /// <summary>
-    /// 法术牌 + 火焰派系
+    /// 法术牌
     /// </summary>
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
-        [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Fire];
+        [jaina.Scripts.Character.Keywords.JainaKeywords.Spell];
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [];
 
