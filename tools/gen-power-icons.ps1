@@ -270,6 +270,22 @@ function Draw-Wildfire {
     $pen.Dispose(); $arrow.Dispose()
 }
 
+function Draw-HearthstoneForm {
+    param($g)
+    New-IconBase $g
+    # 卡牌 + 能量圆环（炉石形态：保留+消耗+十点能量）
+    $pen = [System.Drawing.Pen]::new($white, 4)
+    $g.DrawRectangle($pen, 40, 26, 48, 66)  # 卡牌
+    $pen2 = [System.Drawing.Pen]::new($gold, 5)
+    $g.DrawEllipse($pen2, 78, 34, 40, 40)   # 能量环
+    $g.DrawLine($pen2, 98, 42, 98, 56)
+    $g.DrawLine($pen2, 90, 49, 106, 49)
+    $star = [System.Drawing.Pen]::new($iceBlue, 4)
+    $g.DrawLine($star, 58, 62, 58, 74)
+    $g.DrawLine($star, 52, 68, 64, 68)
+    $pen.Dispose(); $pen2.Dispose(); $star.Dispose()
+}
+
 function Save-Icon {
     param($name, $drawFunc)
     $bmp = New-Object System.Drawing.Bitmap(128, 128)
@@ -298,5 +314,6 @@ Save-Icon 'jaina_power_frost_lich_jaina_power'     (Get-Command Draw-FrostLichJa
 Save-Icon 'jaina_power_stargazing_replay_power'    (Get-Command Draw-StargazingReplay)
 Save-Icon 'jaina_power_khadgar_orb_power'          (Get-Command Draw-KhadgarOrb)
 Save-Icon 'jaina_power_wildfire_power'              (Get-Command Draw-Wildfire)
+Save-Icon 'jaina_power_hearthstone_form_power'      (Get-Command Draw-HearthstoneForm)
 
 Write-Host "完成: 7 个力量图标 -> $outDir"

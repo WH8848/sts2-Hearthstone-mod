@@ -66,5 +66,8 @@
   "JAINA_POWER_KHADGAR_ORB_POWER.smartDescription": "回合结束时随机施放一个有用的法师法术。",
   "JAINA_POWER_WILDFIRE_POWER.title": "野火",
   "JAINA_POWER_WILDFIRE_POWER.description": "你的英雄技能造成的伤害增加{Amount}点（本局对战永久，可叠加）。",
-  "JAINA_POWER_WILDFIRE_POWER.smartDescription": "英雄技能伤害+{Amount}。"
+  "JAINA_POWER_WILDFIRE_POWER.smartDescription": "英雄技能伤害+{Amount}。",
+  "JAINA_POWER_HEARTHSTONE_FORM_POWER.title": "炉石形态",
+  "JAINA_POWER_HEARTHSTONE_FORM_POWER.description": "你的全部卡牌获得[gold]保留[/gold]和[gold]消耗[/gold]，当你抽到状态卡时额外抽一张。此后每回合你获得十点能量，每回合只能抽一张卡。",
+  "JAINA_POWER_HEARTHSTONE_FORM_POWER.smartDescription": "全卡保留+消耗；抽到状态卡额外抽一张；每回合10点能量，限抽1张。"
 }

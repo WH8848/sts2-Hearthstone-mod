@@ -171,5 +171,7 @@
   "JAINA_CARD_ICE_WALKER_CARD.title": "寒冰行者",
   "JAINA_CARD_ICE_WALKER_CARD.description": "[gold]元素[/gold]。\n召唤一个[blue]1/3[/blue]的[red]寒冰行者[/red]。你的英雄技能还会给与目标1层[gold]冻结[/gold]。",
   "JAINA_CARD_WILDFIRE_CARD.title": "野火",
-  "JAINA_CARD_WILDFIRE_CARD.description": "[gold]火焰[/gold]。\n你的英雄技能造成的伤害增加1点。可无限升级。"
+  "JAINA_CARD_WILDFIRE_CARD.description": "[gold]火焰[/gold]。\n你的英雄技能造成的伤害增加1点。可无限升级。",
+  "JAINA_CARD_HEARTHSTONE_FORM_CARD.title": "炉石形态",
+  "JAINA_CARD_HEARTHSTONE_FORM_CARD.description": "{IfUpgraded:show:[gold]保留[/gold]。\n|你的全部卡牌获得[gold]保留[/gold]和[gold]消耗[/gold]，当你抽到状态卡时额外抽一张。此后每回合你获得十点能量，每回合只能抽一张卡。}"
 }
