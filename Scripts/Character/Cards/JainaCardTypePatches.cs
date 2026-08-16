@@ -80,4 +80,55 @@ public static class JainaCardTypePatches
             return true;
         }
     }
+
+    /// <summary>
+    /// 动态"英雄"类型标签显示：CARD_TYPE.POWER 本地化文本（英雄卡显示"能力"字样）
+    /// </summary>
+    [HarmonyPatch(typeof(CardTypeExtensions), "ToLocString")]
+    private static class HeroLocStringPatch
+    {
+        private static bool Prefix(CardType cardType, ref LocString __result)
+        {
+            if (cardType == JainaCardTypes.Hero)
+            {
+                __result = new LocString("gameplay_ui", "CARD_TYPE.POWER");
+                return false;
+            }
+            return true;
+        }
+    }
+
+    /// <summary>
+    /// 卡框材质：动态英雄类型映射为能力卡框（Prefix 跳过原 switch）
+    /// </summary>
+    [HarmonyPatch(typeof(CardModel), "FramePath", MethodType.Getter)]
+    private static class HeroFramePathPatch
+    {
+        private static bool Prefix(CardModel __instance, ref string __result)
+        {
+            if (__instance.Type == JainaCardTypes.Hero)
+            {
+                __result = ImageHelper.GetImagePath("atlases/ui_atlas.sprites/card/card_frame_power_s.tres");
+                return false;
+            }
+            return true;
+        }
+    }
+
+    /// <summary>
+    /// 卡牌边框：动态英雄类型映射为能力边框
+    /// </summary>
+    [HarmonyPatch(typeof(CardModel), "PortraitBorderPath", MethodType.Getter)]
+    private static class HeroPortraitBorderPathPatch
+    {
+        private static bool Prefix(CardModel __instance, ref string __result)
+        {
+            if (__instance.Type == JainaCardTypes.Hero)
+            {
+                __result = ImageHelper.GetImagePath("atlases/ui_atlas.sprites/card/card_portrait_border_power_s.tres");
+                return false;
+            }
+            return true;
+        }
+    }
 }

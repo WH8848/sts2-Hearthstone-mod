@@ -65,6 +65,23 @@ public static class JainaCastTracker
         /// 本局施放过的"灯光表演"（升级版奥术弹幕）次数（灯光表演的光束数递增用）
         /// </summary>
         public int LightshowCasts;
+
+        /// <summary>
+        /// 各法术派系最近施放过的法术（魔导师晨拥战吼重放用）。
+        /// 记录 (类型, 施放时的升级级别, 是否本局衍生)。
+        /// </summary>
+        public readonly Dictionary<JainaSpellSchool, (Type Type, int UpgradeLevel, bool IsGenerated)> LastCastBySchool = [];
+
+        /// <summary>
+        /// 奥术爆裂（英雄技能）本局已打出次数（每次打出 +2 伤害）
+        /// </summary>
+        public int ArcaneBurstCasts;
+
+        /// <summary>
+        /// 当前英雄技能类型（打出英雄卡后替换；null = 默认火焰冲击）。
+        /// 魔导师晨拥打出后置为 typeof(ArcaneBurstCard)。
+        /// </summary>
+        public System.Type? CurrentHeroPowerType;
     }
 
     private static readonly ConditionalWeakTable<ICombatState, CombatRecord> Records = new();
@@ -154,6 +171,8 @@ public static class JainaCastTracker
         if (SchoolByCardType.TryGetValue(type, out var school))
         {
             rec.Schools.Add(school);
+            // 记录该派系最近施放的法术（魔导师晨拥战吼重放用）
+            rec.LastCastBySchool[school] = (type, card.CurrentUpgradeLevel, IsGeneratedCard(card));
         }
         // 灰贤鹦鹉：记录最近施放的"费用消耗 ≥ 2"的法术牌（按施放时的升级级别与本局衍生状态）
         // 用 Canonical（基础费用，含升级调整）判定——临时减费（巫师学徒等）不改变"≥2"语义的稳定性
