@@ -46,5 +46,7 @@
   "JAINA_KEYWORD_DRAENEI.title": "Draenei",
   "JAINA_KEYWORD_DRAENEI.description": "Draenei: Minion race.",
   "JAINA_KEYWORD_LIFESTEAL.title": "Lifesteal",
-  "JAINA_KEYWORD_LIFESTEAL.description": "Lifesteal: Heal for the amount of damage dealt."
+  "JAINA_KEYWORD_LIFESTEAL.description": "Lifesteal: Heal for the amount of damage dealt.",
+  "JAINA_KEYWORD_DISCOVER.title": "Discover",
+  "JAINA_KEYWORD_DISCOVER.description": "Discover: Choose one of three random cards to add to your hand."
 }

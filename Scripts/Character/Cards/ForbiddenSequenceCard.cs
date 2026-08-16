@@ -22,10 +22,12 @@ namespace jaina.Scripts.Character.Cards;
 public sealed class ForbiddenSequenceCard : ModCardTemplate
 {
     /// <summary>
-    /// 任务（悬停解释）+ 固有：战斗开始时该牌在手牌中
+    /// 任务（悬停解释）+ 发现（悬停解释）+ 固有：战斗开始时该牌在手牌中
     /// </summary>
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
-        [jaina.Scripts.Character.Keywords.JainaKeywords.Quest, CardKeyword.Innate];
+        [jaina.Scripts.Character.Keywords.JainaKeywords.Quest,
+         jaina.Scripts.Character.Keywords.JainaKeywords.Discover,
+         CardKeyword.Innate];
 
     public override string CustomPortraitPath => "res://assets/card_art/forbidden_sequence.png";
 
