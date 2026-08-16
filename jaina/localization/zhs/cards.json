@@ -142,5 +142,8 @@
   "JAINA_CARD_FROST_LICH_JAINA_CARD.title": "冰霜女巫吉安娜",
   "JAINA_CARD_FROST_LICH_JAINA_CARD.description": "[gold]战吼[/gold]：召唤一个[blue]3/6[/blue]的[red]水元素[/red]。在本局对战中，你的所有元素拥有[gold]吸血[/gold]。\n获得5点护甲值。你的英雄技能变为[gold]冰冷触摸[/gold]。",
   "JAINA_CARD_ICY_TOUCH_CARD.title": "冰冷触摸",
-  "JAINA_CARD_ICY_TOUCH_CARD.description": "造成1点伤害，召唤一个[blue]3/6[/blue]的[red]水元素[/red]。每回合开始自动加入手牌。"
+  "JAINA_CARD_ICY_TOUCH_CARD.description": "造成1点伤害，召唤一个[blue]3/6[/blue]的[red]水元素[/red]。每回合开始自动加入手牌。",
+  "JAINA_CARD_CRAM_SESSION_CARD.title": "考前刷夜",
+  "JAINA_CARD_CRAM_SESSION_CARD.titleUpgraded": "观星",
+  "JAINA_CARD_CRAM_SESSION_CARD.description": "{IfUpgraded:show:[gold]奥术[/gold]。\n抽一张不同的[blue]奥术法术牌[/blue]。这张奥术法术牌本回合内具有[gold]重放1[/gold]。|[gold]奥术[/gold]。\n抽1张牌，每有1点力量多抽1张。}"
 }

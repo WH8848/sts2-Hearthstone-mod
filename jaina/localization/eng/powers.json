@@ -57,5 +57,8 @@
   "JAINA_POWER_ALUNETH_POWER.smartDescription": "At the start of each turn, draw 3 cards.",
   "JAINA_POWER_FROST_LICH_JAINA_POWER.title": "Elemental Lifesteal",
   "JAINA_POWER_FROST_LICH_JAINA_POWER.description": "For the rest of the combat, your Elemental minions have [gold]Lifesteal[/gold]: Heal for the amount of damage dealt.",
-  "JAINA_POWER_FROST_LICH_JAINA_POWER.smartDescription": "Your Elemental minions have [gold]Lifesteal[/gold]."
+  "JAINA_POWER_FROST_LICH_JAINA_POWER.smartDescription": "Your Elemental minions have [gold]Lifesteal[/gold].",
+  "JAINA_POWER_STARGAZING_REPLAY_POWER.title": "Replay 1",
+  "JAINA_POWER_STARGAZING_REPLAY_POWER.description": "That spell card has [gold]Replay 1[/gold] this turn: it is cast a second time after being played.",
+  "JAINA_POWER_STARGAZING_REPLAY_POWER.smartDescription": "That spell card has [gold]Replay 1[/gold] this turn."
 }

@@ -220,6 +220,20 @@ function Draw-FrostLichJaina {
     $pen.Dispose(); $redPen.Dispose()
 }
 
+function Draw-StargazingReplay {
+    param($g)
+    New-IconBase $g
+    # 双箭头回环（重放：打出后自动重放一次）
+    $pen = [System.Drawing.Pen]::new($iceBlue, 5)
+    $g.DrawArc($pen, 30, 40, 68, 48, 200, 140)  # 回环上半
+    $g.DrawArc($pen, 30, 40, 68, 48, 20, 140)   # 回环下半
+    $arrow = [System.Drawing.Pen]::new($white, 5)
+    $g.DrawLine($arrow, 86, 40, 96, 40)
+    $g.DrawLine($arrow, 96, 40, 88, 32)
+    $g.DrawLine($arrow, 96, 40, 88, 48)
+    $pen.Dispose(); $arrow.Dispose()
+}
+
 function Save-Icon {
     param($name, $drawFunc)
     $bmp = New-Object System.Drawing.Bitmap(128, 128)
@@ -245,5 +259,6 @@ Save-Icon 'jaina_power_unfair_game_power'     (Get-Command Draw-UnfairGame)
 Save-Icon 'jaina_power_jaina_weapon_power'        (Get-Command Draw-JainaWeaponPower)
 Save-Icon 'jaina_power_jaina_weapon_attack_action' (Get-Command Draw-JainaWeaponAttackAction)
 Save-Icon 'jaina_power_frost_lich_jaina_power'     (Get-Command Draw-FrostLichJaina)
+Save-Icon 'jaina_power_stargazing_replay_power'    (Get-Command Draw-StargazingReplay)
 
 Write-Host "完成: 7 个力量图标 -> $outDir"

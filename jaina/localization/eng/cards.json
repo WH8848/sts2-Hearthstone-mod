@@ -142,5 +142,8 @@
   "JAINA_CARD_FROST_LICH_JAINA_CARD.title": "Frost Lich Jaina",
   "JAINA_CARD_FROST_LICH_JAINA_CARD.description": "[gold]Battlecry[/gold]: Summon a [blue]3/6[/blue] [red]Water Elemental[/red]. For the rest of the combat, your Elementals have [gold]Lifesteal[/gold].\nGain 5 Armor. Your Hero Power becomes [gold]Icy Touch[/gold].",
   "JAINA_CARD_ICY_TOUCH_CARD.title": "Icy Touch",
-  "JAINA_CARD_ICY_TOUCH_CARD.description": "Deal 1 damage. Summon a [blue]3/6[/blue] [red]Water Elemental[/red]. Automatically added to your hand at the start of each turn."
+  "JAINA_CARD_ICY_TOUCH_CARD.description": "Deal 1 damage. Summon a [blue]3/6[/blue] [red]Water Elemental[/red]. Automatically added to your hand at the start of each turn.",
+  "JAINA_CARD_CRAM_SESSION_CARD.title": "Cram Session",
+  "JAINA_CARD_CRAM_SESSION_CARD.titleUpgraded": "Stargazing",
+  "JAINA_CARD_CRAM_SESSION_CARD.description": "{IfUpgraded:show:[gold]Arcane[/gold].\nDraw a different [blue]Arcane spell card[/blue]. That [blue]Arcane spell card[/blue] has [gold]Replay 1[/gold] this turn.|[gold]Arcane[/gold].\nDraw 1 card, plus 1 for each Strength.}"
 }
