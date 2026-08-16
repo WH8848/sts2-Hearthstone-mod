@@ -83,7 +83,8 @@ public sealed class CramSessionCard : JainaSpellCardTemplate
     /// <summary>
     /// 观星效果：从抽牌堆中找一张"不同的"奥术法术牌（非本卡）置入手牌，
     /// 并给该牌挂"本回合重放1"（StargazingReplayPower：该牌打出时施放两次）。
-    /// 抽牌堆没有奥术法术牌时，从弃牌堆找一张奥术派系的法术牌。
+    /// 抽牌堆没有奥术法术牌时，从弃牌堆找一张奥术派系的法术牌；
+    /// 两处都没有则不生效（不抽牌）。
     /// </summary>
     private async Task PlayAsStargazing(PlayerChoiceContext choiceContext)
     {
@@ -91,7 +92,7 @@ public sealed class CramSessionCard : JainaSpellCardTemplate
             ?? FindArcaneSpell(PileType.Discard);
         if (arcaneSpell == null)
         {
-            await CardPileCmd.Draw(choiceContext, 1, base.Owner);
+            // 抽牌堆与弃牌堆都没有奥术法术牌：不生效
             return;
         }
         if (jaina.Scripts.Character.JainaHandHelper.IsHandFull(base.Owner))
