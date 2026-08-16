@@ -88,8 +88,7 @@ public sealed class JainasGiftCard : JainaSpellCardTemplate
         }
         else
         {
-            // 发现一张带有虚无的寒冰箭、奥术智慧或火球术
-            // （每种按可升级级别展开：未升级形态与升级形态（+）都可被发现）
+            // 发现一张带有虚无的寒冰箭、奥术智慧或火球术（描述明确写三张卡名，不含升级形态）
             var combatState = base.Owner.Creature.CombatState;
             if (combatState == null)
             {
@@ -98,11 +97,8 @@ public sealed class JainasGiftCard : JainaSpellCardTemplate
             var pool = new List<CardModel>
             {
                 CreateGiftCard(combatState, typeof(Frostbolt), 0),
-                CreateGiftCard(combatState, typeof(Frostbolt), 1),
                 CreateGiftCard(combatState, typeof(ArcaneIntellect), 0),
-                CreateGiftCard(combatState, typeof(ArcaneIntellect), 1),
-                CreateGiftCard(combatState, typeof(Fireball), 0),
-                CreateGiftCard(combatState, typeof(Fireball), 1)
+                CreateGiftCard(combatState, typeof(Fireball), 0)
             };
             pool.RemoveAll(c => c == null);
 
