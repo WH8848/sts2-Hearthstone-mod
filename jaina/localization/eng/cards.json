@@ -127,5 +127,7 @@
   "JAINA_CARD_ALUNETH_CARD.description": "At the start of each turn, draw 3 cards.\nAttack 0. Durability 3.",
   "JAINA_CARD_INCANTERS_FLOW_CARD.title": "Incanter's Flow",
   "JAINA_CARD_INCANTERS_FLOW_CARD.titleUpgraded": "Luna's Pocket Galaxy",
-  "JAINA_CARD_INCANTERS_FLOW_CARD.description": "[gold]Arcane[/gold].\n{IfUpgraded:show:Change the Cost of all minion cards in your draw pile to 0. Exhaust.|Reduce the Cost of all Spell cards in your draw pile by 1. Exhaust.}"
+  "JAINA_CARD_INCANTERS_FLOW_CARD.description": "[gold]Arcane[/gold].\n{IfUpgraded:show:Change the Cost of all minion cards in your draw pile to 0. Exhaust.|Reduce the Cost of all Spell cards in your draw pile by 1. Exhaust.}",
+  "JAINA_CARD_FLAMEWAKER_CARD.title": "Flamewaker",
+  "JAINA_CARD_FLAMEWAKER_CARD.description": "Summon a [blue]2/4[/blue] [red]Flamewaker[/red]. After you cast a spell, deal 2 instances of 1 damage, split randomly among all enemies."
 }
