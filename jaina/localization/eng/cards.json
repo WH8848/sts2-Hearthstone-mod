@@ -132,5 +132,7 @@
   "JAINA_CARD_FLAMEWAKER_CARD.description": "Summon a [blue]2/4[/blue] [red]Flamewaker[/red]. After you cast a spell, deal 2 instances of 1 damage, split randomly among all enemies.",
   "JAINA_CARD_MASK_OF_CTHUN_CARD.title": "Mask of C'Thun",
   "JAINA_CARD_MASK_OF_CTHUN_CARD.titleUpgraded": "Sunset Volley",
-  "JAINA_CARD_MASK_OF_CTHUN_CARD.description": "{IfUpgraded:show:[gold]Fire[/gold].\nDeal 10 damage randomly split among all enemies. Summon a random minion that costs 3.|[gold]Shadow[/gold].\nDeal 10 damage randomly split among all enemies.}"
+  "JAINA_CARD_MASK_OF_CTHUN_CARD.description": "{IfUpgraded:show:[gold]Fire[/gold].\nDeal 10 damage randomly split among all enemies. Summon a random minion that costs 3.|[gold]Shadow[/gold].\nDeal 10 damage randomly split among all enemies.}",
+  "JAINA_CARD_SANCTUM_CANDLESELLER_CARD.title": "Sanctum Candleseller",
+  "JAINA_CARD_SANCTUM_CANDLESELLER_CARD.description": "Summon a [blue]4/5[/blue] [red]Sanctum Candleseller[/red]. After you cast a [gold]Fire[/gold] spell, draw a Spell card."
 }
