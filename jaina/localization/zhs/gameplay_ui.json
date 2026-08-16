@@ -1,3 +1,4 @@
 {
-  "CARD_TYPE.MINION": "随从"
+  "CARD_TYPE.MINION": "随从",
+  "CARD_TYPE.HERO": "英雄"
 }

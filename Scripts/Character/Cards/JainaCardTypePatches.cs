@@ -82,7 +82,8 @@ public static class JainaCardTypePatches
     }
 
     /// <summary>
-    /// 动态"英雄"类型标签显示：CARD_TYPE.POWER 本地化文本（英雄卡显示"能力"字样）
+    /// 动态"英雄"类型标签显示：CARD_TYPE.HERO 本地化文本（英雄卡显示"英雄"字样，
+    /// 键由本 mod 的 gameplay_ui.json 提供）
     /// </summary>
     [HarmonyPatch(typeof(CardTypeExtensions), "ToLocString")]
     private static class HeroLocStringPatch
@@ -91,7 +92,7 @@ public static class JainaCardTypePatches
         {
             if (cardType == JainaCardTypes.Hero)
             {
-                __result = new LocString("gameplay_ui", "CARD_TYPE.POWER");
+                __result = new LocString("gameplay_ui", "CARD_TYPE.HERO");
                 return false;
             }
             return true;

@@ -1,3 +1,4 @@
 {
-  "CARD_TYPE.MINION": "Minion"
+  "CARD_TYPE.MINION": "Minion",
+  "CARD_TYPE.HERO": "Hero"
 }
