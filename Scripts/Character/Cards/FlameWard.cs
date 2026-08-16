@@ -15,10 +15,9 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
-/// 火焰结界 (Flame Ward) - 吉安娜专属攻击牌（罕见，1 费）。
-/// 受到攻击时，对敌人造成 4 次 3 点伤害，随机分配到所有敌人身上。
-/// 升级后变为"烈焰风暴 (Flamestrike)"（2 费）：造成 4 次 5 点伤害，随机分配到所有敌人身上。
-/// 升级加费通过原版 CardEnergyCost.UpgradeBy(1) 实现（所有界面显示一致）。
+/// 火焰结界 (Flame Ward) - 吉安娜专属攻击牌（罕见，2 费）。
+/// 受到攻击时，对敌人造成 7 次 3 点伤害，随机分配到所有敌人身上。
+/// 升级后变为"烈焰风暴 (Flamestrike)"（2 费）：造成 7 次 5 点伤害，随机分配到所有敌人身上。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
 public sealed class FlameWard : JainaSpellCardTemplate
@@ -41,12 +40,12 @@ public sealed class FlameWard : JainaSpellCardTemplate
         IsUpgraded ? "res://assets/card_art/flamestrike.png" : "res://assets/card_art/flame_ward.png";
 
     public FlameWard()
-        : base(1, CardType.Attack, CardRarity.Uncommon, TargetType.None, true)
+        : base(2, CardType.Attack, CardRarity.Uncommon, TargetType.None, true)
     {
     }
 
     /// <summary>
-    /// 升级后卡牌名称变为"烈焰风暴 (Flamestrike)"，费用保持 1 费不变
+    /// 升级后卡牌名称变为"烈焰风暴 (Flamestrike)"，费用保持 2 费不变
     /// </summary>
     public override string Title
     {
@@ -69,24 +68,24 @@ public sealed class FlameWard : JainaSpellCardTemplate
 
         if (IsUpgraded)
         {
-            // 烈焰风暴：立即造成 4 次伤害，随机分配到所有敌人
+            // 烈焰风暴：立即造成 7 次伤害，随机分配到所有敌人
             await DealRandomDamage(choiceContext, cardPlay);
         }
         else
         {
-            // 火焰结界：挂一次性结界（受击时触发 4 次随机伤害）
+            // 火焰结界：挂一次性结界（受击时触发 7 次随机伤害）
             await PowerCmd.Apply<FlameWardPower>(
                 choiceContext, [base.Owner.Creature], base.DynamicVars.Damage.BaseValue, base.Owner.Creature, this);
         }
     }
 
     /// <summary>
-    /// 造成 4 次伤害，每次随机分配到一名存活敌人
+    /// 造成 7 次伤害，每次随机分配到一名存活敌人
     /// </summary>
     private async Task DealRandomDamage(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
         var combatState = base.Owner.Creature.CombatState;
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < 7; i++)
         {
             var enemies = combatState.GetOpponentsOf(base.Owner.Creature)
                 .Where(e => e.IsAlive && e.IsHittable)
@@ -104,9 +103,8 @@ public sealed class FlameWard : JainaSpellCardTemplate
 
     protected override void OnUpgrade()
     {
-        // 升级为烈焰风暴：伤害 3 -> 5，费用 1 -> 2
-        // （原版机制：UpgradeValueBy/UpgradeBy 设置 WasJustUpgraded，升级预览绿色高亮）
+        // 升级为烈焰风暴：伤害 3 -> 5，费用保持 2 费不变
+        // （原版机制：UpgradeValueBy 设置 WasJustUpgraded，升级预览绿色高亮）
         base.DynamicVars.Damage.UpgradeValueBy(2m);
-        EnergyCost.UpgradeBy(1);
     }
 }
