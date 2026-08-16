@@ -62,9 +62,9 @@ public sealed class MinionSquadPower : PowerModel, IModPowerAssetOverrides
             return amount;
         }
 
-        // 按召唤顺序（Pets 列表顺序即召唤顺序）遍历随从
+        // 按召唤顺序（Pets 列表顺序即召唤顺序）遍历随从（地标不参与挡刀）
         var minions = player.PlayerCombatState.Pets
-            .Where(p => p != null && p.IsAlive && p.Monster is JainaMinionBase)
+            .Where(p => p != null && p.IsAlive && p.Monster is JainaMinionBase && p.Monster is not JainaLandmarkBase)
             .ToList();
 
         foreach (var minion in minions)

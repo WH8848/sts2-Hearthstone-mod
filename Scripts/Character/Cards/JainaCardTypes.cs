@@ -22,6 +22,12 @@ public static class JainaCardTypes
     public static CardType Hero { get; private set; }
 
     /// <summary>
+    /// 地标类型（动态枚举值，地标卡专用：占随从槽，每两个回合可点击使用一次触发效果，
+    /// 拥有耐久度，每次使用耐久度-1）
+    /// </summary>
+    public static CardType Landmark { get; private set; }
+
+    /// <summary>
     /// 注册动态 CardType 值（必须在模型初始化前调用）
     /// </summary>
     public static void Initialize()
@@ -32,5 +38,6 @@ public static class JainaCardTypes
         }
         Minion = DynamicEnumValueRegistry<CardType>.RegisterOwned(Entry.ModId, "MINION").Value;
         Hero = DynamicEnumValueRegistry<CardType>.RegisterOwned(Entry.ModId, "HERO").Value;
+        Landmark = DynamicEnumValueRegistry<CardType>.RegisterOwned(Entry.ModId, "LANDMARK").Value;
     }
 }

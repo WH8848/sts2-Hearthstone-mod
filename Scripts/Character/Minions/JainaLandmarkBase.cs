@@ -1,0 +1,135 @@
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using MegaCrit.Sts2.Core.Combat;
+using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Entities.Creatures;
+using MegaCrit.Sts2.Core.Entities.Players;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Models;
+using jaina.Scripts.Character.Powers;
+using MinionLib.Minion;
+
+namespace jaina.Scripts.Character.Minions;
+
+/// <summary>
+/// 吉安娜地标基类 - 占据一个随从槽位的地标单位。
+/// - 不可攻击（攻击力恒为 0，不显示攻击意图），不参与随从军势挡刀（见 MinionSquadPower 过滤）；
+/// - 每两个回合可点击使用一次：玩家点击地标 → 选择一名角色 → 触发 <see cref="OnLandmarkEffect"/>；
+/// - 拥有耐久度（<see cref="LandmarkDurabilityPower"/>）：每次使用 -1，归零时地标被摧毁（离开战场）；
+/// - 冷却（<see cref="LandmarkCooldownPower"/>）：打出当回合不可使用（挂 1 层），
+///   每次使用后挂 2 层（使用回合后的下一回合不可用，再下一回合恢复）。
+/// </summary>
+public abstract class JainaLandmarkBase : JainaMinionBase
+{
+    /// <summary>
+    /// 地标初始耐久度（每次使用 -1，归零时地标被摧毁）
+    /// </summary>
+    public abstract int LandmarkDurability { get; }
+
+    /// <summary>
+    /// 地标不可被攻击/不受伤害影响（生命值仅作兜底，不显示血条）
+    /// </summary>
+    public override int MinInitialHp => 999;
+
+    public override int MaxInitialHp => 999;
+
+    /// <summary>
+    /// 被召唤时初始化：设置高生命兜底、挂冷却（打出当回合不可用）与耐久度。
+    /// </summary>
+    public override async Task OnSummon(PlayerChoiceContext choiceContext, Player owner, MinionSummonOptions options)
+    {
+        await base.OnSummon(choiceContext, owner, options);
+
+        var applier = owner.Creature;
+
+        // 打出当回合不可使用（冷却 1 层，下回合开始移除并授予使用行动点）
+        await PowerCmd.Apply<LandmarkCooldownPower>(choiceContext, Creature, 1m, applier, null);
+
+        // 耐久度
+        await PowerCmd.Apply<LandmarkDurabilityPower>(choiceContext, Creature, LandmarkDurability, applier, null);
+
+        RefreshIntentDisplay();
+    }
+
+    /// <summary>
+    /// 玩家回合开始：冷却递减（归零移除并恢复可用），冷却结束后授予本回合的使用行动点。
+    /// 地标不调用基类实现（基类授予的是攻击行动点，地标不可攻击）。
+    /// </summary>
+    public override async Task BeforeSideTurnStart(PlayerChoiceContext choiceContext, CombatSide side,
+        IReadOnlyList<Creature> participants, ICombatState combatState)
+    {
+        if (side != CombatSide.Player || !Creature.IsAlive)
+        {
+            return;
+        }
+        // 召唤当回合不可使用（OnSummon 已挂冷却 1 层；此处再兜底，避免极端时序下提前可用）
+        if (IsSummonedThisTurn())
+        {
+            return;
+        }
+
+        var cooldown = Creature.GetPower<LandmarkCooldownPower>();
+        if (cooldown != null)
+        {
+            // 冷却中：递减，归零移除
+            if (cooldown.Amount <= 1)
+            {
+                await PowerCmd.Remove(cooldown);
+            }
+            else
+            {
+                await PowerCmd.Decrement(cooldown);
+            }
+            RefreshIntentDisplay();
+            return;
+        }
+
+        // 冷却结束：授予本回合的使用行动点
+        var applier = Creature.PetOwner?.Creature ?? Creature;
+        await PowerCmd.Apply<JainaLandmarkUseAction>(choiceContext, Creature, 1m, applier, null);
+        RefreshIntentDisplay();
+    }
+
+    /// <summary>
+    /// 玩家点击地标使用：触发具体效果 → 耐久 -1（归零摧毁地标）→ 挂 2 层冷却。
+    /// 由 <see cref="JainaLandmarkUseAction.OnAct"/> 调用。
+    /// </summary>
+    public async Task PerformUse(PlayerChoiceContext choiceContext, Creature target)
+    {
+        if (!Creature.IsAlive)
+        {
+            return;
+        }
+
+        // 具体效果（冻结/召唤等）
+        await OnLandmarkEffect(choiceContext, target);
+        if (!Creature.IsAlive)
+        {
+            return;
+        }
+
+        // 耐久 -1；归零时地标被摧毁（离开战场）
+        var durability = Creature.GetPower<LandmarkDurabilityPower>();
+        if (durability != null)
+        {
+            if (durability.Amount <= 1)
+            {
+                await PowerCmd.Remove(durability);
+                await CreatureCmd.Kill(Creature, force: true);
+                return;
+            }
+            await PowerCmd.Decrement(durability);
+        }
+
+        // 冷却 2 层：每两个回合可点击使用一次（使用回合后的下一回合不可用，再下一回合恢复）
+        var applier = Creature.PetOwner?.Creature ?? Creature;
+        await PowerCmd.Apply<LandmarkCooldownPower>(choiceContext, Creature, 2m, applier, null);
+        RefreshIntentDisplay();
+    }
+
+    /// <summary>
+    /// 地标使用效果（点击使用地标时触发）。子类实现具体效果。
+    /// </summary>
+    /// <param name="target">点击时选择的目标角色（任意活物）</param>
+    public abstract Task OnLandmarkEffect(PlayerChoiceContext choiceContext, Creature target);
+}

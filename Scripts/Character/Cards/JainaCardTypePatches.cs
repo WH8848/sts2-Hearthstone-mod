@@ -132,4 +132,55 @@ public static class JainaCardTypePatches
             return true;
         }
     }
+
+    /// <summary>
+    /// 动态"地标"类型标签显示：CARD_TYPE.LANDMARK 本地化文本（键由本 mod 的 gameplay_ui.json 提供）
+    /// </summary>
+    [HarmonyPatch(typeof(CardTypeExtensions), "ToLocString")]
+    private static class LandmarkLocStringPatch
+    {
+        private static bool Prefix(CardType cardType, ref LocString __result)
+        {
+            if (cardType == JainaCardTypes.Landmark)
+            {
+                __result = new LocString("gameplay_ui", "CARD_TYPE.LANDMARK");
+                return false;
+            }
+            return true;
+        }
+    }
+
+    /// <summary>
+    /// 卡框材质：动态地标类型映射为能力卡框（Prefix 跳过原 switch）
+    /// </summary>
+    [HarmonyPatch(typeof(CardModel), "FramePath", MethodType.Getter)]
+    private static class LandmarkFramePathPatch
+    {
+        private static bool Prefix(CardModel __instance, ref string __result)
+        {
+            if (__instance.Type == JainaCardTypes.Landmark)
+            {
+                __result = ImageHelper.GetImagePath("atlases/ui_atlas.sprites/card/card_frame_power_s.tres");
+                return false;
+            }
+            return true;
+        }
+    }
+
+    /// <summary>
+    /// 卡牌边框：动态地标类型映射为能力边框
+    /// </summary>
+    [HarmonyPatch(typeof(CardModel), "PortraitBorderPath", MethodType.Getter)]
+    private static class LandmarkPortraitBorderPathPatch
+    {
+        private static bool Prefix(CardModel __instance, ref string __result)
+        {
+            if (__instance.Type == JainaCardTypes.Landmark)
+            {
+                __result = ImageHelper.GetImagePath("atlases/ui_atlas.sprites/card/card_portrait_border_power_s.tres");
+                return false;
+            }
+            return true;
+        }
+    }
 }

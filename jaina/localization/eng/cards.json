@@ -183,5 +183,7 @@
   "JAINA_CARD_WILDFIRE_CARD.title": "Wildfire",
   "JAINA_CARD_WILDFIRE_CARD.description": "[gold]Fire[/gold].\nYour Hero Power deals {Damage:diff()} more damage. Can be upgraded indefinitely.",
   "JAINA_CARD_HEARTHSTONE_FORM_CARD.title": "Hearthstone Form",
-  "JAINA_CARD_HEARTHSTONE_FORM_CARD.description": "{IfUpgraded:show:All your cards have [gold]Retain[/gold] and [gold]Exhaust[/gold]. When you draw a Status card, draw an extra card. Each turn, gain 10 Energy and draw only 1 card. [gold]Retain[/gold].|All your cards have [gold]Retain[/gold] and [gold]Exhaust[/gold]. When you draw a Status card, draw an extra card. Each turn, gain 10 Energy and draw only 1 card.}"
+  "JAINA_CARD_HEARTHSTONE_FORM_CARD.description": "{IfUpgraded:show:All your cards have [gold]Retain[/gold] and [gold]Exhaust[/gold]. When you draw a Status card, draw an extra card. Each turn, gain 10 Energy and draw only 1 card. [gold]Retain[/gold].|All your cards have [gold]Retain[/gold] and [gold]Exhaust[/gold]. When you draw a Status card, draw an extra card. Each turn, gain 10 Energy and draw only 1 card.}",
+  "JAINA_CARD_NIGHTCLOAK_SANCTUM_CARD.title": "Nightcloak Sanctum",
+  "JAINA_CARD_NIGHTCLOAK_SANCTUM_CARD.description": "[gold]Landmark[/gold].\nGive a character 1 [gold]Freeze[/gold].\nSummon a [blue]2/2[/blue] [red]Volatile Skeleton[/red].\n[gold]Durability[/gold]: {Durability}."
 }

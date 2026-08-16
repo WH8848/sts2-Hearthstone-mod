@@ -630,7 +630,7 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
     /// <summary>
     /// 是否为召唤当回合（召唤后第一回合内）
     /// </summary>
-    private bool IsSummonedThisTurn()
+    protected bool IsSummonedThisTurn()
     {
         var turn = Creature.PetOwner?.PlayerCombatState?.TurnNumber ?? -1;
         return turn == _summonedTurn && _summonedTurn >= 0;

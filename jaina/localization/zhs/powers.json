@@ -72,5 +72,14 @@
   "JAINA_POWER_HEARTHSTONE_FORM_POWER.smartDescription": "全卡保留+消耗；抽到状态卡额外抽一张；每回合10点能量，限抽1张。",
   "JAINA_POWER_ICE_BLOCK_POWER.title": "寒冰屏障",
   "JAINA_POWER_ICE_BLOCK_POWER.description": "当你将要承受致命伤害时，防止这些伤害，并在本回合中免疫。",
-  "JAINA_POWER_ICE_BLOCK_POWER.smartDescription": "致命伤害防护 + 本回合免疫。"
+  "JAINA_POWER_ICE_BLOCK_POWER.smartDescription": "致命伤害防护 + 本回合免疫。",
+  "JAINA_POWER_LANDMARK_COOLDOWN_POWER.title": "地标冷却",
+  "JAINA_POWER_LANDMARK_COOLDOWN_POWER.description": "地标冷却中：{Amount} 回合内无法使用。",
+  "JAINA_POWER_LANDMARK_COOLDOWN_POWER.smartDescription": "冷却中：{Amount} 回合内无法使用。",
+  "JAINA_POWER_LANDMARK_DURABILITY_POWER.title": "地标耐久度",
+  "JAINA_POWER_LANDMARK_DURABILITY_POWER.description": "地标耐久度：{Amount}。每次使用地标时耐久度-1，归零时地标被摧毁。",
+  "JAINA_POWER_LANDMARK_DURABILITY_POWER.smartDescription": "耐久度 {Amount}，每次使用-1，归零时地标被摧毁。",
+  "JAINA_POWER_JAINA_LANDMARK_USE_ACTION.title": "使用地标",
+  "JAINA_POWER_JAINA_LANDMARK_USE_ACTION.description": "[gold]行动[/gold]：选择 1 名角色，触发地标效果。消耗 1 点。",
+  "JAINA_POWER_JAINA_LANDMARK_USE_ACTION.smartDescription": "[gold]行动[/gold]：选择 1 名角色，触发地标效果。消耗 1 点。"
 }

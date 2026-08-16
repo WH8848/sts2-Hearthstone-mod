@@ -72,5 +72,14 @@
   "JAINA_POWER_HEARTHSTONE_FORM_POWER.smartDescription": "All cards Retain + Exhaust; Status draws trigger extra draws; 10 Energy per turn, draw only 1 card.",
   "JAINA_POWER_ICE_BLOCK_POWER.title": "Ice Block",
   "JAINA_POWER_ICE_BLOCK_POWER.description": "When you would take fatal damage, prevent it and become Immune this turn.",
-  "JAINA_POWER_ICE_BLOCK_POWER.smartDescription": "Prevent fatal damage and become Immune this turn."
+  "JAINA_POWER_ICE_BLOCK_POWER.smartDescription": "Prevent fatal damage and become Immune this turn.",
+  "JAINA_POWER_LANDMARK_COOLDOWN_POWER.title": "Landmark Cooldown",
+  "JAINA_POWER_LANDMARK_COOLDOWN_POWER.description": "Landmark is on cooldown: cannot be used for {Amount} more turns.",
+  "JAINA_POWER_LANDMARK_COOLDOWN_POWER.smartDescription": "On cooldown: cannot be used for {Amount} more turns.",
+  "JAINA_POWER_LANDMARK_DURABILITY_POWER.title": "Landmark Durability",
+  "JAINA_POWER_LANDMARK_DURABILITY_POWER.description": "Landmark durability: {Amount}. Decreases by 1 each use. The landmark is destroyed at 0.",
+  "JAINA_POWER_LANDMARK_DURABILITY_POWER.smartDescription": "Durability {Amount}, -1 per use, destroyed at 0.",
+  "JAINA_POWER_JAINA_LANDMARK_USE_ACTION.title": "Use Landmark",
+  "JAINA_POWER_JAINA_LANDMARK_USE_ACTION.description": "[gold]Action[/gold]: Choose 1 character and trigger the landmark's effect. Spend 1 point.",
+  "JAINA_POWER_JAINA_LANDMARK_USE_ACTION.smartDescription": "[gold]Action[/gold]: Choose 1 character and trigger the landmark's effect. Spend 1 point."
 }

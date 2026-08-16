@@ -50,5 +50,7 @@
   "JAINA_KEYWORD_DISCOVER.title": "Discover",
   "JAINA_KEYWORD_DISCOVER.description": "Discover: Choose one of three random cards to add to your hand.",
   "JAINA_KEYWORD_IMMUNE.title": "Immune",
-  "JAINA_KEYWORD_IMMUNE.description": "Immune: Cannot take damage."
+  "JAINA_KEYWORD_IMMUNE.description": "Immune: Cannot take damage.",
+  "JAINA_KEYWORD_LANDMARK.title": "Landmark",
+  "JAINA_KEYWORD_LANDMARK.description": "Landmark: Occupies a minion slot. Can be clicked to use once every two turns. Has durability; -1 per use, destroyed at 0."
 }

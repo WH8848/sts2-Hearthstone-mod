@@ -38,7 +38,9 @@ public static class JainaMinionCardMap
         [typeof(SolarianPrimeMinion)] = typeof(SolarianPrimeCard),
         [typeof(ImpWranglerMinion)] = typeof(ImpWranglerCard),
         [typeof(RecklessApprenticeMinion)] = typeof(RecklessApprenticeCard),
-        [typeof(IceWalkerMinion)] = typeof(IceWalkerCard)
+        [typeof(IceWalkerMinion)] = typeof(IceWalkerCard),
+        // 地标（悬停显示地标卡；不进入 MinionTypes 随机召唤池）
+        [typeof(NightcloakSanctumLandmark)] = typeof(NightcloakSanctumCard)
     };
 
     /// <summary>
@@ -50,7 +52,15 @@ public static class JainaMinionCardMap
     }
 
     /// <summary>
-    /// 全部随从生物类型
+    /// 全部随从生物类型（含地标；随机召唤池如需排除地标请过滤 <see cref="IsLandmarkType"/>）
     /// </summary>
     public static IEnumerable<Type> MinionTypes => CardByMinionType.Keys;
+
+    /// <summary>
+    /// 该随从生物类型是否为地标（地标不进入随机召唤池）
+    /// </summary>
+    public static bool IsLandmarkType(Type minionType)
+    {
+        return typeof(JainaLandmarkBase).IsAssignableFrom(minionType);
+    }
 }

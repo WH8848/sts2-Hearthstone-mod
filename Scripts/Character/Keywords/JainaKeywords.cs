@@ -48,6 +48,8 @@ namespace jaina.Scripts.Character.Keywords;
 [RegisterOwnedKeyword(nameof(Discover), IconPath = "res://icon.svg")]
 // 免疫：不会受到任何伤害
 [RegisterOwnedKeyword(nameof(Immune), IconPath = "res://icon.svg")]
+// 地标：占随从槽，每两个回合可点击使用一次触发效果，拥有耐久度（不注入卡面描述，仅提供悬停解释）
+[RegisterOwnedKeyword(nameof(Landmark), IconPath = "res://icon.svg")]
 public class JainaKeywords
 {
     /// <summary>
@@ -179,4 +181,9 @@ public class JainaKeywords
     /// 免疫：不会受到任何伤害
     /// </summary>
     public static readonly CardKeyword Immune = ModContentRegistry.GetQualifiedKeywordId(Entry.ModId, nameof(Immune)).GetModCardKeyword();
+
+    /// <summary>
+    /// 地标：占随从槽，每两个回合可点击使用一次触发效果，拥有耐久度
+    /// </summary>
+    public static readonly CardKeyword Landmark = ModContentRegistry.GetQualifiedKeywordId(Entry.ModId, nameof(Landmark)).GetModCardKeyword();
 }

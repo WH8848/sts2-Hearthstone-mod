@@ -135,6 +135,8 @@ public static class JainaMinionPool
             nameof(ImpWranglerMinion) => await SummonMinion<ImpWranglerMinion>(choiceContext, player, maxHp, attack, position, source),
             nameof(RecklessApprenticeMinion) => await SummonMinion<RecklessApprenticeMinion>(choiceContext, player, maxHp, attack, position, source),
             nameof(IceWalkerMinion) => await SummonMinion<IceWalkerMinion>(choiceContext, player, maxHp, attack, position, source),
+            // 地标（占随从槽，不进入随机召唤池 _minionTypes）
+            nameof(NightcloakSanctumLandmark) => await SummonMinion<NightcloakSanctumLandmark>(choiceContext, player, maxHp, attack, position, source),
             _ => null!,
         };
     }
@@ -161,10 +163,14 @@ public static class JainaMinionPool
         int cost,
         MinionPosition position = MinionPosition.FrontUpper)
     {
-        // 收集费用匹配的随从类型
+        // 收集费用匹配的随从类型（地标不进入随机召唤池）
         var candidates = new List<Type>();
         foreach (var minionType in JainaMinionCardMap.MinionTypes)
         {
+            if (JainaMinionCardMap.IsLandmarkType(minionType))
+            {
+                continue;
+            }
             var cardType = JainaMinionCardMap.GetCardType(minionType);
             if (cardType == null)
             {
