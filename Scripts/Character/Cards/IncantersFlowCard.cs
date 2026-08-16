@@ -73,9 +73,12 @@ public sealed class IncantersFlowCard : JainaSpellCardTemplate
         }
         else
         {
-            // 咒术洪流：抽牌堆中所有法术牌费用减少 1
+            // 咒术洪流：抽牌堆中所有法术牌费用减少 1。
+            // 法术牌 = 攻击/技能牌，或挂"法术牌"关键词的卡（任务线卡、寒冰屏障等能力卡视为法术牌）。
             foreach (var card in drawPile.Cards
-                         .Where(c => c != null && (c.Type == CardType.Attack || c.Type == CardType.Skill))
+                         .Where(c => c != null &&
+                                     (c.Type == CardType.Attack || c.Type == CardType.Skill ||
+                                      c.Keywords.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Spell)))
                          .ToList())
             {
                 card.EnergyCost.SetCustomBaseCost(System.Math.Max(0, card.EnergyCost.GetResolved() - 1));
