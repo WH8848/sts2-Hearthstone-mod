@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
@@ -72,16 +73,37 @@ public sealed class EvocationCard : JainaSpellCardTemplate
         }
         var rng = base.Owner.RunState.Rng.CombatCardSelection;
 
-        // 用随机法师法术牌填满手牌（不占手牌位的英雄技能卡不影响容量）
+        // 用随机法师法术牌填满手牌（不占手牌位的英雄技能卡不影响容量）。
+        // 每种法术牌按可升级级别展开：未升级形态与升级形态（+）都可能被填入手牌。
+        var pool = new List<(System.Type Type, int UpgradeLevel)>();
+        foreach (var t in MageSpellPool)
+        {
+            var canonical = MegaCrit.Sts2.Core.Models.ModelDb.GetByIdOrNull<MegaCrit.Sts2.Core.Models.CardModel>(
+                MegaCrit.Sts2.Core.Models.ModelDb.GetId(t));
+            if (canonical == null)
+            {
+                continue;
+            }
+            int maxLevel = Math.Min(canonical.MaxUpgradeLevel, 2);
+            for (int level = 0; level <= maxLevel; level++)
+            {
+                pool.Add((t, level));
+            }
+        }
+
         while (!jaina.Scripts.Character.JainaHandHelper.IsHandFull(base.Owner))
         {
-            var type = rng.NextItem(MageSpellPool);
-            if (type == null)
+            if (pool.Count == 0)
+            {
+                break;
+            }
+            var entry = rng.NextItem(pool);
+            if (entry.Type == null)
             {
                 break;
             }
             var card = jaina.Scripts.Character.JainaCastTracker.CreateCardWithUpgrade(
-                combatState, base.Owner, type, 0);
+                combatState, base.Owner, entry.Type, entry.UpgradeLevel);
             if (card == null)
             {
                 continue;

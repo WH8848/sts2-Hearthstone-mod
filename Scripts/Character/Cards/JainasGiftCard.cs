@@ -89,6 +89,7 @@ public sealed class JainasGiftCard : JainaSpellCardTemplate
         else
         {
             // 发现一张带有虚无的寒冰箭、奥术智慧或火球术
+            // （每种按可升级级别展开：未升级形态与升级形态（+）都可被发现）
             var combatState = base.Owner.Creature.CombatState;
             if (combatState == null)
             {
@@ -96,9 +97,12 @@ public sealed class JainasGiftCard : JainaSpellCardTemplate
             }
             var pool = new List<CardModel>
             {
-                CreateGiftCard(combatState, typeof(Frostbolt)),
-                CreateGiftCard(combatState, typeof(ArcaneIntellect)),
-                CreateGiftCard(combatState, typeof(Fireball))
+                CreateGiftCard(combatState, typeof(Frostbolt), 0),
+                CreateGiftCard(combatState, typeof(Frostbolt), 1),
+                CreateGiftCard(combatState, typeof(ArcaneIntellect), 0),
+                CreateGiftCard(combatState, typeof(ArcaneIntellect), 1),
+                CreateGiftCard(combatState, typeof(Fireball), 0),
+                CreateGiftCard(combatState, typeof(Fireball), 1)
             };
             pool.RemoveAll(c => c == null);
 
@@ -115,9 +119,9 @@ public sealed class JainasGiftCard : JainaSpellCardTemplate
     }
 
     /// <summary>
-    /// 创建带虚无关键词的礼物候选卡（寒冰箭/奥术智慧/火球术）
+    /// 创建带虚无关键词的礼物候选卡（寒冰箭/奥术智慧/火球术，按升级级别恢复形态）
     /// </summary>
-    private CardModel? CreateGiftCard(ICombatState combatState, System.Type cardType)
+    private CardModel? CreateGiftCard(ICombatState combatState, System.Type cardType, int upgradeLevel)
     {
         var canonical = ModelDb.GetByIdOrNull<CardModel>(ModelDb.GetId(cardType));
         if (canonical == null)
@@ -125,6 +129,10 @@ public sealed class JainasGiftCard : JainaSpellCardTemplate
             return null;
         }
         var card = combatState.CreateCard(canonical, base.Owner);
+        for (int i = 0; i < upgradeLevel && card.CurrentUpgradeLevel < card.MaxUpgradeLevel; i++)
+        {
+            card.UpgradeInternal();
+        }
         // 附加虚无：回合结束时留在手牌则消耗
         CardCmd.ApplyKeyword(card, CardKeyword.Ethereal);
         return card;

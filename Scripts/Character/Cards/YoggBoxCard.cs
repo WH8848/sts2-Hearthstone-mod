@@ -136,7 +136,9 @@ public sealed class YoggBoxCard : JainaSpellCardTemplate
     }
 
     /// <summary>
-    /// 法术池：吉安娜所有攻击/技能牌（按费用过滤）。返回带 Owner 的可打出实例。
+    /// 法术池：吉安娜所有攻击/技能牌（按费用过滤，含升级形态）。
+    /// 每种法术牌按可升级级别展开：未升级形态与升级形态（+）都可能被施放。
+    /// 返回带 Owner 的可打出实例。
     /// </summary>
     private List<CardModel> BuildSpellPool(ICombatState combatState, bool cost2PlusOnly)
     {
@@ -148,12 +150,21 @@ public sealed class YoggBoxCard : JainaSpellCardTemplate
             {
                 continue;
             }
-            if (cost2PlusOnly && canonical.EnergyCost.Canonical < 2)
+            int maxLevel = Math.Min(canonical.MaxUpgradeLevel, 2);
+            for (int level = 0; level <= maxLevel; level++)
             {
-                continue;
+                var card = jaina.Scripts.Character.JainaCastTracker.CreateCardWithUpgrade(
+                    combatState, base.Owner, type, level);
+                if (card == null)
+                {
+                    continue;
+                }
+                if (cost2PlusOnly && card.EnergyCost.Canonical < 2)
+                {
+                    continue;
+                }
+                result.Add(card);
             }
-            var card = combatState.CreateCard(canonical, base.Owner);
-            result.Add(card);
         }
         return result;
     }

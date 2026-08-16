@@ -30,7 +30,8 @@ public static class JainaDiscoverHelper
     ];
 
     /// <summary>
-    /// 从发现池中随机选若干张（不重复），可过滤费用上限
+    /// 从发现池中随机选若干张（不重复），可过滤费用上限。
+    /// 每种法术牌按可升级级别展开：未升级形态与全部升级形态（+）都可被发现。
     /// </summary>
     public static List<CardModel> RollCandidates(Player player, int count = 3, int? maxCost = null)
     {
@@ -40,9 +41,20 @@ public static class JainaDiscoverHelper
         foreach (var t in AttackSkillPool)
         {
             var canonical = ModelDb.GetByIdOrNull<CardModel>(ModelDb.GetId(t));
-            if (canonical != null)
+            if (canonical == null)
             {
-                pool.Add(combatState.CreateCard(canonical, player));
+                continue;
+            }
+            // 展开升级形态：未升级 + 全部升级级别（升级后的法术牌同样可被发现）
+            int maxLevel = Math.Min(canonical.MaxUpgradeLevel, 2);
+            for (int level = 0; level <= maxLevel; level++)
+            {
+                var card = jaina.Scripts.Character.JainaCastTracker.CreateCardWithUpgrade(
+                    combatState, player, t, level);
+                if (card != null)
+                {
+                    pool.Add(card);
+                }
             }
         }
         if (maxCost is int max && max >= 0)
