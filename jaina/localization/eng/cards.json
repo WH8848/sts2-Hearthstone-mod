@@ -185,5 +185,7 @@
   "JAINA_CARD_HEARTHSTONE_FORM_CARD.title": "Hearthstone Form",
   "JAINA_CARD_HEARTHSTONE_FORM_CARD.description": "{IfUpgraded:show:All your cards have [gold]Retain[/gold] and [gold]Exhaust[/gold]. When you draw a Status card, draw an extra card. Each turn, gain 10 Energy and draw only 1 card. [gold]Retain[/gold].|All your cards have [gold]Retain[/gold] and [gold]Exhaust[/gold]. When you draw a Status card, draw an extra card. Each turn, gain 10 Energy and draw only 1 card.}",
   "JAINA_CARD_NIGHTCLOAK_SANCTUM_CARD.title": "Nightcloak Sanctum",
-  "JAINA_CARD_NIGHTCLOAK_SANCTUM_CARD.description": "[gold]Landmark[/gold].\nGive a character 1 [gold]Freeze[/gold].\nSummon a [blue]2/2[/blue] [red]Volatile Skeleton[/red].\n[gold]Durability[/gold]: {Durability}."
+  "JAINA_CARD_NIGHTCLOAK_SANCTUM_CARD.description": "[gold]Landmark[/gold].\nGive a character 1 [gold]Freeze[/gold].\nSummon a [blue]2/2[/blue] [red]Volatile Skeleton[/red].\n[gold]Durability[/gold]: {Durability}.",
+  "JAINA_CARD_TRINKET_SHOP_CARD.title": "Trinket Tracker",
+  "JAINA_CARD_TRINKET_SHOP_CARD.description": "[gold]Landmark[/gold].\nDraw a card. If you play it this turn, reactivate this.\n[gold]Durability[/gold]: {Durability}."
 }
