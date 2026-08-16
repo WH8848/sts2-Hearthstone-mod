@@ -133,6 +133,7 @@ public static class JainaMinionPool
             nameof(AstromancerSolarianMinion) => await SummonMinion<AstromancerSolarianMinion>(choiceContext, player, maxHp, attack, position, source),
             nameof(SolarianPrimeMinion) => await SummonMinion<SolarianPrimeMinion>(choiceContext, player, maxHp, attack, position, source),
             nameof(ImpWranglerMinion) => await SummonMinion<ImpWranglerMinion>(choiceContext, player, maxHp, attack, position, source),
+            nameof(RecklessApprenticeMinion) => await SummonMinion<RecklessApprenticeMinion>(choiceContext, player, maxHp, attack, position, source),
             _ => null!,
         };
     }

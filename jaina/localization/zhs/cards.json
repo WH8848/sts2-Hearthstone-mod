@@ -165,5 +165,7 @@
   "JAINA_CARD_EVOCATION_CARD.title": "唤醒",
   "JAINA_CARD_EVOCATION_CARD.description": "用随机[blue]法师法术牌[/blue]填满你的手牌。这些牌具有[gold]虚无[/gold]。",
   "JAINA_CARD_IMP_WRANGLER_CARD.title": "小精灵驾驭者",
-  "JAINA_CARD_IMP_WRANGLER_CARD.description": "召唤一个[blue]4/4[/blue]的[red]小精灵驾驭者[/red]。[gold]战吼[/gold]：[gold]灌注[/gold]并触发你的英雄技能。"
+  "JAINA_CARD_IMP_WRANGLER_CARD.description": "召唤一个[blue]4/4[/blue]的[red]小精灵驾驭者[/red]。[gold]战吼[/gold]：[gold]灌注[/gold]并触发你的英雄技能。",
+  "JAINA_CARD_RECKLESS_APPRENTICE_CARD.title": "鲁莽的学徒",
+  "JAINA_CARD_RECKLESS_APPRENTICE_CARD.description": "召唤一个[blue]3/5[/blue]的[red]鲁莽的学徒[/red]。[gold]战吼[/gold]：向随机敌人发射8次你的英雄技能。"
 }
