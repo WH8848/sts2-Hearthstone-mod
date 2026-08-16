@@ -109,8 +109,9 @@ public static class JainaDiscoverHelper
 
     /// <summary>
     /// 从吉安娜全卡池中发现一张"费用消耗精确等于指定值"的卡牌（拾荒清道夫战吼用）。
-    /// 池：JainaCardPool 全部卡（法术/随从/地标），每种按可升级级别展开；
-    /// 排除英雄技能卡（火焰冲击等）与任务线卡（不可被发现）。
+    /// 池：JainaCardPool 全部卡（法术/随从/地标）+ 幸运币（中立衍生池特例加入），
+    /// 每种按可升级级别展开；
+    /// 排除英雄技能卡（火焰冲击等）、英雄卡（魔导师晨拥）与任务线卡（不可被发现）。
     /// </summary>
     public static async Task<CardModel?> DiscoverCardOfCostAndAddToHand(
         PlayerChoiceContext choiceContext, Player player, int cost)
@@ -121,30 +122,45 @@ public static class JainaDiscoverHelper
         }
         var combatState = player.Creature.CombatState;
         var pool = new List<CardModel>();
-        foreach (var canonical in ModelDb.CardPool<JainaCardPool>().AllCards)
+
+        void AddCandidates(Type cardType)
         {
+            var canonical = ModelDb.GetByIdOrNull<CardModel>(ModelDb.GetId(cardType));
             if (canonical == null)
             {
-                continue;
+                return;
             }
-            // 英雄技能卡与任务线卡不可被发现
+            // 英雄技能卡、英雄卡与任务线卡不可被发现
             if (canonical.CanonicalKeywords?.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.HeroPower) == true ||
-                canonical.CanonicalKeywords?.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Quest) == true)
+                canonical.CanonicalKeywords?.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Quest) == true ||
+                canonical.Type == JainaCardTypes.Hero)
             {
-                continue;
+                return;
             }
             // 展开升级形态（未升级 + 允许的升级级别）
-            int maxLevel = jaina.Scripts.Character.JainaCastTracker.GetDiscoverPoolMaxUpgradeLevel(canonical.GetType());
+            int maxLevel = jaina.Scripts.Character.JainaCastTracker.GetDiscoverPoolMaxUpgradeLevel(cardType);
             for (int level = 0; level <= maxLevel; level++)
             {
                 var card = jaina.Scripts.Character.JainaCastTracker.CreateCardWithUpgrade(
-                    combatState, player, canonical.GetType(), level);
+                    combatState, player, cardType, level);
                 if (card != null && card.EnergyCost.Canonical == cost)
                 {
                     pool.Add(card);
                 }
             }
         }
+
+        // 吉安娜主卡池全部卡
+        foreach (var canonical in ModelDb.CardPool<JainaCardPool>().AllCards)
+        {
+            if (canonical != null)
+            {
+                AddCandidates(canonical.GetType());
+            }
+        }
+        // 幸运币（中立衍生池，特例：拾荒清道夫可发现）
+        AddCandidates(typeof(LuckyCoin));
+
         if (pool.Count == 0)
         {
             return null;
