@@ -73,8 +73,10 @@ public sealed class MeteorCard : JainaSpellCardTemplate
 
         if (IsUpgraded)
         {
-            // 星辰能量：随机对一个敌方造成 5 点伤害，重复此效果每次伤害减少 1 点（5、4、3、2、1）
-            for (int damage = 5; damage >= 1; damage--)
+            // 星辰能量：随机对一个敌方造成 (5+力量) 点伤害，重复此效果每次伤害减少 1 点（直到 1）。
+            // 力量只加在起始值上（1 点力量 → 6、5、4、3、2、1；10 点力量 → 15、…、1）。
+            int strength = base.Owner.Creature.GetPowerAmount<MegaCrit.Sts2.Core.Models.Powers.StrengthPower>();
+            for (int damage = 5 + strength; damage >= 1; damage--)
             {
                 var enemies = combatState.GetOpponentsOf(base.Owner.Creature)
                     .Where(e => e != null && e.IsAlive && e.IsHittable)
