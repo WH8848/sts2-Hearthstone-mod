@@ -76,7 +76,7 @@ public sealed class KhadgarOrbPower : PowerModel, IModPowerAssetOverrides
         }
 
         // 随机施放一个有用的法师法术
-        await CastRandomMageSpell(choiceContext, player);
+        await MageSpellCaster.CastRandomMageSpell(choiceContext, player);
 
         // 失去 1 点耐久度；耐久为 0 时武器能力消失（球效果一并移除）
         await JainaWeaponSlot.ConsumeDurability(choiceContext, Owner, weapon);
@@ -84,48 +84,5 @@ public sealed class KhadgarOrbPower : PowerModel, IModPowerAssetOverrides
         {
             await PowerCmd.Remove(this);
         }
-    }
-
-    /// <summary>
-    /// 从有用法师法术池随机选一张，按升级级别创建实例并免费自动打出（随机目标）。
-    /// </summary>
-    private async Task CastRandomMageSpell(PlayerChoiceContext choiceContext, Player player)
-    {
-        var combatState = player.Creature.CombatState;
-        if (combatState == null)
-        {
-            return;
-        }
-        var rng = player.RunState.Rng.CombatCardSelection;
-        var (type, upgradeLevel) = rng.NextItem(UsefulMageSpells);
-        if (type == null)
-        {
-            return;
-        }
-        var card = jaina.Scripts.Character.JainaCastTracker.CreateCardWithUpgrade(
-            combatState, player, type, upgradeLevel);
-        if (card == null)
-        {
-            return;
-        }
-        jaina.Scripts.Character.JainaCastTracker.MarkGenerated(card);
-
-        // 单目标法术：随机选合法目标（与罗曼斯重放同一语义）
-        Creature? target = null;
-        if (card.TargetType == TargetType.AnyEnemy || card.TargetType == TargetType.AnyPlayer ||
-            card.TargetType == TargetType.AnyAlly ||
-            (CustomTargetTypeManager.TryGetCustomTargetType(card.TargetType, out var customType) &&
-             customType.IsSingleTarget))
-        {
-            var pool = combatState.Creatures
-                .Where(c => c != null && c.IsAlive && card.IsValidTarget(c))
-                .ToList();
-            target = pool.Count > 0 ? player.RunState.Rng.CombatTargets.NextItem(pool) : null;
-            if (target == null)
-            {
-                return;
-            }
-        }
-        await CardCmd.AutoPlay(choiceContext, card, target);
     }
 }
