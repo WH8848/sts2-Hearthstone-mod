@@ -15,9 +15,9 @@ namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
 /// 撕裂现实 (Tear Reality) - 1费技能牌（罕见，奥术派系）。
-/// 随机将 2 张来自过去的法师法术牌置入你的手牌，其费用消耗减少 1 点。
-/// 升级后变为"操控时间 (Time Control)"：发现两张来自过去的奥术法术牌，其费用消耗减少 1 点。
-/// "来自过去" = 本局对战中施放过的法术（与倒带/罗曼斯同语义）。
+/// 随机将 2 张法师法术牌置入你的手牌，其费用消耗减少 1 点。
+/// 升级后变为"操控时间 (Time Control)"：发现两张奥术法术牌，其费用消耗减少 1 点。
+/// "来自过去"仅为卡牌描述风味——实际检索吉安娜的全部法术牌（攻击/技能牌）。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
 public sealed class TearRealityCard : JainaSpellCardTemplate
@@ -58,6 +58,30 @@ public sealed class TearRealityCard : JainaSpellCardTemplate
         }
     }
 
+    /// <summary>
+    /// 吉安娜全部法术牌池（攻击/技能牌，排除自身与英雄技能卡）。
+    /// 与匣中古神随机施放池保持一致（YoggBoxCard.SpellTypes）。
+    /// </summary>
+    private static readonly System.Type[] AllSpellTypes =
+    [
+        typeof(Fireball),
+        typeof(Frostbolt),
+        typeof(ArcaneIntellect),
+        typeof(FreezingPotion),
+        typeof(IceBarrier),
+        typeof(Trick),
+        typeof(Awaken),
+        typeof(NorgannonWisdom),
+        typeof(DeepFreezeCard),
+        typeof(FlameWard),
+        typeof(DeathborneCard),
+        typeof(FlameLance),
+        typeof(FrostNova),
+        typeof(ArcaneBarrage),
+        typeof(ApexisBlast),
+        typeof(IgniteCard)
+    ];
+
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
         // 记录施放（倒带/罗曼斯/三派系追踪）
@@ -68,26 +92,17 @@ public sealed class TearRealityCard : JainaSpellCardTemplate
         {
             return;
         }
-        var rec = jaina.Scripts.Character.JainaCastTracker.For(combatState);
-        // 本局施放过的法术类型（排除自身与英雄技能卡）
-        var playedTypes = rec.PlayedAttackSkills
-            .Where(t => t != typeof(TearRealityCard) && t != typeof(Fireblast) && t != typeof(ArcaneBurstCard))
-            .ToList();
-        if (playedTypes.Count == 0)
-        {
-            return;
-        }
 
         if (IsUpgraded)
         {
-            // 操控时间：发现两张来自过去的奥术法术牌，费用减少 1 点
-            await DiscoverTwoArcane(choiceContext, playedTypes);
+            // 操控时间：发现两张奥术法术牌，费用减少 1 点
+            await DiscoverTwoArcane(choiceContext);
             return;
         }
 
-        // 撕裂现实：随机将 2 张来自过去的法师法术牌置入手牌，费用减少 1 点
+        // 撕裂现实：随机将 2 张法师法术牌置入手牌，费用减少 1 点
         var rng = base.Owner.RunState.Rng.CombatCardSelection;
-        var pool = new List<System.Type>(playedTypes);
+        var pool = new List<System.Type>(AllSpellTypes);
         for (int i = 0; i < 2; i++)
         {
             if (pool.Count == 0)
@@ -100,13 +115,12 @@ public sealed class TearRealityCard : JainaSpellCardTemplate
                 break;
             }
             pool.Remove(type);
-            rec.PlayedUpgradeLevels.TryGetValue(type, out var upgradeLevel);
-            await GrantDiscountedCard(choiceContext, type, upgradeLevel);
+            await GrantDiscountedCard(choiceContext, type, 0);
         }
     }
 
     /// <summary>
-    /// 创建一张来自过去的法术牌（恢复施放时升级级别），费用减少 1 点后置入手牌。
+    /// 创建一张法术牌（按升级级别恢复形态），费用减少 1 点后置入手牌。
     /// </summary>
     private async Task GrantDiscountedCard(PlayerChoiceContext choiceContext, System.Type type, int upgradeLevel)
     {
@@ -131,12 +145,12 @@ public sealed class TearRealityCard : JainaSpellCardTemplate
     }
 
     /// <summary>
-    /// 操控时间：从施放过的法术中筛出奥术派系的，两次三选一发现，选中的费用减少 1 点置入手牌。
+    /// 操控时间：从吉安娜全部法术牌中筛出奥术派系的，两次三选一发现，选中的费用减少 1 点置入手牌。
     /// </summary>
-    private async Task DiscoverTwoArcane(PlayerChoiceContext choiceContext, List<System.Type> playedTypes)
+    private async Task DiscoverTwoArcane(PlayerChoiceContext choiceContext)
     {
         // 筛出奥术派系法术（CanonicalKeywords 含奥术关键词）
-        var arcaneTypes = playedTypes
+        var arcaneTypes = AllSpellTypes
             .Where(t =>
             {
                 var canonical = ModelDb.GetByIdOrNull<CardModel>(ModelDb.GetId(t));
