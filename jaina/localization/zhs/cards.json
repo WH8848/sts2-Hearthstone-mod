@@ -119,5 +119,7 @@
   "JAINA_CARD_IGNITE_CARD.description": "[gold]火焰[/gold]。\n造成{Damage:diff()}点伤害，将一张升级过的“点燃”洗入你的弃牌堆。可无限升级，每次升级伤害+1。消耗。",
   "JAINA_CARD_JAINAS_GIFT_CARD.title": "吉安娜的礼物",
   "JAINA_CARD_JAINAS_GIFT_CARD.titleUpgraded": "倒带",
-  "JAINA_CARD_JAINAS_GIFT_CARD.description": "[gold]奥术[/gold]。\n{IfUpgraded:show:发现一张你在本局对战中施放过的其他[blue]法术牌[/blue]的一张复制。|发现一张带有[gold]虚无[/gold]的寒冰箭、奥术智慧或火球术。}"
+  "JAINA_CARD_JAINAS_GIFT_CARD.description": "[gold]奥术[/gold]。\n{IfUpgraded:show:发现一张你在本局对战中施放过的其他[blue]法术牌[/blue]的一张复制。|发现一张带有[gold]虚无[/gold]的寒冰箭、奥术智慧或火球术。}",
+  "JAINA_CARD_GREY_SAGE_PARROT_CARD.title": "灰贤鹦鹉",
+  "JAINA_CARD_GREY_SAGE_PARROT_CARD.description": "召唤一个[blue]4/5[/blue]的[red]灰贤鹦鹉[/red]。[gold]战吼[/gold]：重复你施放的上一个费用消耗大于等于2点的法术。"
 }

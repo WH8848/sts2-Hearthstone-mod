@@ -54,6 +54,12 @@ public static class JainaCastTracker
         public readonly Dictionary<Type, int> GeneratedUpgradeLevels = [];
 
         public readonly HashSet<JainaSpellSchool> Schools = [];
+
+        /// <summary>
+        /// 最近施放的一个"费用消耗 ≥ 2"的法术牌（灰贤鹦鹉战吼重复用）。
+        /// 记录 (类型, 施放时的升级级别, 是否本局衍生)。
+        /// </summary>
+        public (Type Type, int UpgradeLevel, bool IsGenerated)? LastCastSpellCost2Plus;
     }
 
     private static readonly ConditionalWeakTable<ICombatState, CombatRecord> Records = new();
@@ -143,6 +149,12 @@ public static class JainaCastTracker
         if (SchoolByCardType.TryGetValue(type, out var school))
         {
             rec.Schools.Add(school);
+        }
+        // 灰贤鹦鹉：记录最近施放的"费用消耗 ≥ 2"的法术牌（按施放时的升级级别与本局衍生状态）
+        // 用 Canonical（基础费用，含升级调整）判定——临时减费（巫师学徒等）不改变"≥2"语义的稳定性
+        if (card.EnergyCost.Canonical >= 2)
+        {
+            rec.LastCastSpellCost2Plus = (type, card.CurrentUpgradeLevel, IsGeneratedCard(card));
         }
     }
 

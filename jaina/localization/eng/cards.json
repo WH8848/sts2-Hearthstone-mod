@@ -119,5 +119,7 @@
   "JAINA_CARD_IGNITE_CARD.description": "[gold]Fire[/gold].\nDeal {Damage:diff()} damage. Shuffle an upgraded \"Ignite\" into your discard pile. Can be upgraded infinitely; each upgrade increases damage by 1. Exhaust.",
   "JAINA_CARD_JAINAS_GIFT_CARD.title": "Jaina's Gift",
   "JAINA_CARD_JAINAS_GIFT_CARD.titleUpgraded": "Rewind",
-  "JAINA_CARD_JAINAS_GIFT_CARD.description": "[gold]Arcane[/gold].\n{IfUpgraded:show:Discover a copy of another [blue]Spell card[/blue] you have cast this combat.|Discover a Frostbolt, Arcane Intellect, or Fireball with [gold]Ethereal[/gold].}"
+  "JAINA_CARD_JAINAS_GIFT_CARD.description": "[gold]Arcane[/gold].\n{IfUpgraded:show:Discover a copy of another [blue]Spell card[/blue] you have cast this combat.|Discover a Frostbolt, Arcane Intellect, or Fireball with [gold]Ethereal[/gold].}",
+  "JAINA_CARD_GREY_SAGE_PARROT_CARD.title": "Grey Sage Parrot",
+  "JAINA_CARD_GREY_SAGE_PARROT_CARD.description": "Summon a [blue]4/5[/blue] [red]Grey Sage Parrot[/red]. [gold]Battlecry[/gold]: Repeat the last Spell you cast that costs 2 or more."
 }
