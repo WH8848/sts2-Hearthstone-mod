@@ -15,9 +15,10 @@ namespace jaina.Scripts.Character.Minions;
 /// 吉安娜地标基类 - 占据一个随从槽位的地标单位。
 /// - 不可攻击（攻击力恒为 0，不显示攻击意图），不参与随从军势挡刀（见 MinionSquadPower 过滤）；
 /// - 每两个回合可点击使用一次：玩家点击地标 → 选择一名角色 → 触发 <see cref="OnLandmarkEffect"/>；
+///   打出当回合即可使用（召唤时立即授予行动点）；
 /// - 拥有耐久度（<see cref="LandmarkDurabilityPower"/>）：每次使用 -1，归零时地标被摧毁（离开战场）；
-/// - 冷却（<see cref="LandmarkCooldownPower"/>）：打出当回合不可使用（挂 1 层），
-///   每次使用后挂 2 层（使用回合后的下一回合不可用，再下一回合恢复）。
+/// - 冷却（<see cref="LandmarkCooldownPower"/>）：每次使用后挂 2 层，玩家回合开始递减，
+///   归零恢复（使用回合后的下一回合不可用，再下一回合恢复）。
 /// </summary>
 public abstract class JainaLandmarkBase : JainaMinionBase
 {
@@ -34,7 +35,8 @@ public abstract class JainaLandmarkBase : JainaMinionBase
     public override int MaxInitialHp => 999;
 
     /// <summary>
-    /// 被召唤时初始化：设置高生命兜底、挂冷却（打出当回合不可用）与耐久度。
+    /// 被召唤时初始化：设置高生命兜底、挂耐久度，并立即授予本回合的使用行动点
+    /// （打出当回合即可使用；行动点回合末自动移除）。
     /// </summary>
     public override async Task OnSummon(PlayerChoiceContext choiceContext, Player owner, MinionSummonOptions options)
     {
@@ -42,11 +44,11 @@ public abstract class JainaLandmarkBase : JainaMinionBase
 
         var applier = owner.Creature;
 
-        // 打出当回合不可使用（冷却 1 层，下回合开始移除并授予使用行动点）
-        await PowerCmd.Apply<LandmarkCooldownPower>(choiceContext, Creature, 1m, applier, null);
-
         // 耐久度
         await PowerCmd.Apply<LandmarkDurabilityPower>(choiceContext, Creature, LandmarkDurability, applier, null);
+
+        // 打出当回合即可使用：直接授予本回合的使用行动点（回合末自动移除，下回合按冷却重新授予）
+        await PowerCmd.Apply<JainaLandmarkUseAction>(choiceContext, Creature, 1m, applier, null);
 
         RefreshIntentDisplay();
     }
@@ -62,7 +64,8 @@ public abstract class JainaLandmarkBase : JainaMinionBase
         {
             return;
         }
-        // 召唤当回合不可使用（OnSummon 已挂冷却 1 层；此处再兜底，避免极端时序下提前可用）
+        // 召唤当回合的回合开始回调（如回合开始阶段被召唤）不再重复授予行动点：
+        // 行动点已在 OnSummon 授予（打出当回合可用）
         if (IsSummonedThisTurn())
         {
             return;
