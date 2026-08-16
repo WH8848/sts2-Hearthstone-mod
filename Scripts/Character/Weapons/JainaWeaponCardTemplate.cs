@@ -29,6 +29,12 @@ public abstract class JainaWeaponCardTemplate : ModCardTemplate
     public abstract int WeaponDurability { get; }
 
     /// <summary>
+    /// 武器能力牌不可升级（MaxUpgradeLevel=0 → IsUpgradable=false，
+    /// 升级界面/升级遗物不会把武器卡列为可升级候选）
+    /// </summary>
+    public override int MaxUpgradeLevel => 0;
+
+    /// <summary>
     /// 关键词：武器（只可装备1把）+ 耐久度（归零时卡牌被消耗）
     /// </summary>
     public override IEnumerable<CardKeyword> CanonicalKeywords =>

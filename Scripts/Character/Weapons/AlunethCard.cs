@@ -12,9 +12,9 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace jaina.Scripts.Character.Weapons;
 
 /// <summary>
-/// 艾露尼斯 (Aluneth) - 3费武器能力卡（稀有）。
+/// 艾露尼斯 (Aluneth) - 2费武器能力卡（稀有）。
 /// 每回合开始时抽三张牌。武器：攻击力 0 / 耐久度 3。
-/// 升级后费用 3 -> 2（效果不变）。
+/// 武器能力牌不可升级。
 /// </summary>
 [RegisterCard(typeof(jaina.Scripts.Character.JainaCardPool))]
 public sealed class AlunethCard : JainaWeaponCardTemplate
@@ -26,12 +26,12 @@ public sealed class AlunethCard : JainaWeaponCardTemplate
     public override string CustomPortraitPath => "res://assets/card_art/aluneth.png";
 
     public AlunethCard()
-        : base(3, CardRarity.Rare)
+        : base(2, CardRarity.Rare)
     {
     }
 
     /// <summary>
-    /// 升级后卡牌名称不变，费用 3 -> 2
+    /// 卡名不变
     /// </summary>
     public override string Title
     {
@@ -62,11 +62,5 @@ public sealed class AlunethCard : JainaWeaponCardTemplate
 
         // 挂载"每回合开始抽3张"效果
         await PowerCmd.Apply<AlunethPower>(choiceContext, [base.Owner.Creature], 1m, base.Owner.Creature, this);
-    }
-
-    protected override void OnUpgrade()
-    {
-        // 费用 3 -> 2（原版 UpgradeBy 机制，所有界面显示一致）
-        EnergyCost.UpgradeBy(-1);
     }
 }
