@@ -14,12 +14,17 @@ namespace jaina.Scripts.Character.Cards;
 /// <summary>
 /// 源生之石 (Forbidden Stone) - 1费能力牌（衍生卡，稀有）。
 /// 在你发现一张牌后，会自动使用其余选项并失去1点耐久度。耐久度8。耐久度0时能力消失。
-/// 升级前后费用均为 1。
+/// 武器能力卡：不升级也不可升级。
 /// 由禁忌序列作为奖励直接置入手牌。
 /// </summary>
 [RegisterCard(typeof(JainaNeutralCardPool))]
 public sealed class ForbiddenStoneCard : ModCardTemplate
 {
+    /// <summary>
+    /// 武器能力卡不可升级（IsUpgradable=false，不出现在升级候选）
+    /// </summary>
+    public override int MaxUpgradeLevel => 0;
+
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
         [CardKeyword.Exhaust, jaina.Scripts.Character.Keywords.JainaKeywords.Weapon,
          jaina.Scripts.Character.Keywords.JainaKeywords.Durability];
