@@ -8,7 +8,7 @@ using STS2RitsuLib.Interop.AutoRegistration;
 namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
-/// 拾荒清道夫 (Scrappy Scavenger) - 0费随从卡（普通）。
+/// 拾荒清道夫 (Scrappy Scavenger) - 0费随从卡（罕见）。
 /// 战吼：发现一张费用消耗等同于你剩余费用的卡牌。属性 1/1。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
@@ -32,7 +32,7 @@ public sealed class ScrappyScavengerCard : JainaMinionCardTemplate
         [JainaKeywords.Battlecry, CardKeyword.Exhaust];
 
     public ScrappyScavengerCard()
-        : base(0, CardRarity.Common)
+        : base(0, CardRarity.Uncommon)
     {
     }
 }
