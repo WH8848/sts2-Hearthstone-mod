@@ -5,8 +5,10 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
+using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.ValueProps;
 using jaina.Scripts.Character.Minions;
 using jaina.Scripts.Character.Powers;
@@ -51,6 +53,18 @@ public sealed class DeepFreezeCard : JainaSpellCardTemplate
             }
             LocString? upgraded = LocString.GetIfExists("cards", base.Id.Entry + ".titleUpgraded");
             return upgraded?.GetFormattedText() ?? title.GetFormattedText() + "+";
+        }
+    }
+
+    /// <summary>
+    /// 悬停提示：显示召唤的衍生物"水元素"卡（深度冻结召唤 2 个 / 海啸召唤 3 个；
+    /// 参考灵体采集者显示小精灵/死神之躯显示骷髅的做法）
+    /// </summary>
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips
+    {
+        get
+        {
+            yield return new CardHoverTip(ModelDb.Card<WaterElementalCard>());
         }
     }
 
