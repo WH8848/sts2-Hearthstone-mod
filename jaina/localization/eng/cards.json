@@ -148,6 +148,8 @@
   "JAINA_CARD_VEXALLUS_CARD.description": "[gold]Elemental[/gold].\nSummon a [blue]3/5[/blue] [red]Vexallus[/red]. Your [gold]Arcane[/gold] spells cast twice.",
   "JAINA_CARD_METAL_DETECTOR_CARD.title": "Metal Detector",
   "JAINA_CARD_METAL_DETECTOR_CARD.description": "{IfUpgraded:show:Attack once, add a Coin to your hand.|[gold]Deathrattle[/gold]: Add a Coin to your hand.}\nAttack 3. Durability 2.",
+  "JAINA_CARD_MAROONED_ARCHMAGE_CARD.title": "Marooned Archmage",
+  "JAINA_CARD_MAROONED_ARCHMAGE_CARD.description": "Summon a [blue]3/4[/blue] [red]Marooned Archmage[/red]. The first spell you cast each turn costs (1) less.",
   "JAINA_CARD_MAGISTER_DAWNGRASP_CARD.title": "Magister Dawngrasp",
   "JAINA_CARD_MAGISTER_DAWNGRASP_CARD.description": "[gold]Battlecry[/gold]: Recast one spell from each spell school you have cast this battle.\nGain 5 Armor. Your Hero Power becomes [gold]Arcane Burst[/gold].",
   "JAINA_CARD_ARCANE_BURST_CARD.title": "Arcane Burst",
