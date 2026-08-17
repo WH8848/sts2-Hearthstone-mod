@@ -113,18 +113,19 @@ public sealed class YoggBoxCard : JainaSpellCardTemplate
 
         foreach (var card in picked)
         {
-            // 单目标法术：从场上所有活物（含自己/队友角色与双方随从，联机可打队友）
-            // 随机选合法目标。用 TargetType != None 判断需要目标——
-            // 不能只认 MinionLib 注册的自定义目标类型（其他角色的卡目标类型不在其注册表，
-            // 会导致无法选择自己/队友角色与双方随从）。
+            // 单目标法术：目标可从全部活物（自己/队友角色、双方随从、敌人）中随机选择——
+            // 合法目标优先（IsValidTarget）；其他角色的自定义目标类型无法判定时回退全部活物，
+            // 保证卡牌总能施放（联机可打队友）。
             Creature? target = null;
             if (card.TargetType != TargetType.None)
             {
                 var allCreatures = combatState.Creatures
                     .Concat(combatState.Players.SelectMany(p => p.PlayerCombatState?.Pets ?? []))
-                    .Where(c => c != null && c.IsAlive && card.IsValidTarget(c))
+                    .Where(c => c != null && c.IsAlive)
                     .ToList();
-                target = allCreatures.Count > 0 ? rng.NextItem(allCreatures) : null;
+                var legal = allCreatures.Where(c => card.IsValidTarget(c)).ToList();
+                var targetPool = legal.Count > 0 ? legal : allCreatures;
+                target = targetPool.Count > 0 ? rng.NextItem(targetPool) : null;
                 if (target == null)
                 {
                     continue;

@@ -103,13 +103,14 @@ public sealed class TrickTotemPower : PowerModel, IModPowerAssetOverrides
             jaina.Scripts.Character.JainaCastTracker.MarkGenerated(spell);
             jaina.Scripts.Character.Powers.RommathReplayTracker.Mark(spell);
 
-            // 单目标牌：从场上所有活物（含自己/队友角色与双方随从）中随机选一个合法目标
+            // 单目标牌：目标可从全部活物（自己/队友角色、双方随从、敌人）中随机选择——
+            // 合法目标优先（IsValidTarget）；自定义目标类型无法判定时回退全部活物
             Creature? target = null;
             if (spell.TargetType != TargetType.None)
             {
-                var pool = GetAllAliveCreatures(combatState)
-                    .Where(c => spell.IsValidTarget(c))
-                    .ToList();
+                var allCreatures = GetAllAliveCreatures(combatState).ToList();
+                var legal = allCreatures.Where(c => spell.IsValidTarget(c)).ToList();
+                var pool = legal.Count > 0 ? legal : allCreatures;
                 target = pool.Count > 0 ? rng.NextItem(pool) : null;
                 if (target == null)
                 {
