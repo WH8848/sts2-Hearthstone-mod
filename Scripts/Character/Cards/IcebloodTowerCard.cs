@@ -24,7 +24,10 @@ public sealed class IcebloodTowerCard : ModCardTemplate
     /// </summary>
     public override int MaxUpgradeLevel => 1;
 
-    public override IEnumerable<CardKeyword> CanonicalKeywords => [];
+    /// <summary>
+    /// 法术牌关键词：冰血哨塔视为法术牌（可被咒术洪流减费、可被复制等）
+    /// </summary>
+    public override IEnumerable<CardKeyword> CanonicalKeywords => [jaina.Scripts.Character.Keywords.JainaKeywords.Spell];
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [];
 
