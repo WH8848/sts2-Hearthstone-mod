@@ -20,3 +20,5 @@ mono_crash.*.json
 # Personal / temp files
 DeepSeek_Harness_安装教程.*
 .tmp_w.png
+/.idea
+env.props
