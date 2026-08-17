@@ -83,7 +83,7 @@ public sealed class HearthstoneFormCard : ModCardTemplate
     new[]
     {
         typeof(MegaCrit.Sts2.Core.Entities.Cards.PileType),
-        typeof(MinionLib.Utilities.BetterExtraArgs.DescriptionPreviewType),
+        typeof(MegaCrit.Sts2.Core.Models.CardModel.DescriptionPreviewType),
         typeof(MegaCrit.Sts2.Core.Entities.Creatures.Creature)
     })]
 public static class HearthstoneFormKeywordRenderPatch
