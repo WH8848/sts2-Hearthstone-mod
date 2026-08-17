@@ -1,8 +1,10 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using jaina.Scripts.Character.Keywords;
@@ -14,23 +16,52 @@ namespace jaina.Scripts.Character.Cards;
 /// <summary>
 /// 惊奇套牌 (Deck of Wonders) - 1费技能牌（罕见，奥术派系）。
 /// 将五张惊奇卡牌洗入你的抽牌堆。抽到时随机施放一个全角色卡牌。
+/// 升级后变为旅社谍战 (Agency Espionage)：将每个其他角色的各一张牌洗入你的抽牌堆，
+/// 其法力值消耗为0点。抽取其中一张。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
 public sealed class AmazingDeckCard : JainaSpellCardTemplate
 {
     /// <summary>
-    /// 法术牌 + 奥术派系
+    /// 可升级（升级后变为旅社谍战）
     /// </summary>
-    public override IEnumerable<CardKeyword> CanonicalKeywords =>
-        [JainaKeywords.Spell, JainaKeywords.Arcane];
+    public override int MaxUpgradeLevel => 1;
+
+    /// <summary>
+    /// 关键词：基础版 法术 + 奥术；升级版（旅社谍战）法术（无派系）
+    /// </summary>
+    public override IEnumerable<CardKeyword> CanonicalKeywords => IsUpgraded
+        ? [JainaKeywords.Spell]
+        : [JainaKeywords.Spell, JainaKeywords.Arcane];
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [];
 
-    public override string CustomPortraitPath => "res://assets/card_art/deck_of_wonders.png";
+    /// <summary>
+    /// 卡牌原画：惊奇套牌 / 升级后（旅社谍战）切换原画
+    /// </summary>
+    public override string CustomPortraitPath =>
+        IsUpgraded ? "res://assets/card_art/agency_espionage.png" : "res://assets/card_art/deck_of_wonders.png";
 
     public AmazingDeckCard()
         : base(1, CardType.Skill, CardRarity.Uncommon, TargetType.None, true)
     {
+    }
+
+    /// <summary>
+    /// 升级后卡牌名称变为"旅社谍战"
+    /// </summary>
+    public override string Title
+    {
+        get
+        {
+            var title = new LocString("cards", base.Id.Entry + ".title");
+            if (!IsUpgraded)
+            {
+                return title.GetFormattedText();
+            }
+            LocString? upgraded = LocString.GetIfExists("cards", base.Id.Entry + ".titleUpgraded");
+            return upgraded?.GetFormattedText() ?? title.GetFormattedText() + "+";
+        }
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
@@ -44,12 +75,49 @@ public sealed class AmazingDeckCard : JainaSpellCardTemplate
         {
             return;
         }
+
+        if (IsUpgraded)
+        {
+            // 旅社谍战：将每个其他角色的各一张牌洗入抽牌堆（随机位置），费用变为 0，抽取其中一张
+            var rng = owner.RunState.Rng.CombatTargets;
+            var jainaPool = ModelDb.CardPool<jaina.Scripts.Character.JainaCardPool>();
+            foreach (var pool in ModelDb.AllCharacterCardPools)
+            {
+                if (pool == jainaPool)
+                {
+                    continue; // 排除自己（吉安娜）
+                }
+                var candidates = pool.AllCards.Where(c => c != null).ToList();
+                if (candidates.Count == 0)
+                {
+                    continue;
+                }
+                var chosen = rng.NextItem(candidates);
+                if (chosen == null)
+                {
+                    continue;
+                }
+                var copy = combatState.CreateCard(chosen, owner);
+                if (copy == null)
+                {
+                    continue;
+                }
+                copy.EnergyCost.SetCustomBaseCost(0);
+                jaina.Scripts.Character.JainaCastTracker.MarkGenerated(copy);
+                await CardPileCmd.Add(copy, PileType.Draw, CardPilePosition.Random);
+            }
+
+            // 抽取其中一张
+            await CardPileCmd.Draw(choiceContext, 1, owner);
+            return;
+        }
+
+        // 惊奇套牌：将五张惊奇卡牌洗入抽牌堆（随机位置）
         var canonical = ModelDb.GetByIdOrNull<CardModel>(ModelDb.GetId(typeof(AmazingCard)));
         if (canonical == null)
         {
             return;
         }
-        // 将五张惊奇卡牌洗入抽牌堆（随机位置）
         for (int i = 0; i < 5; i++)
         {
             var card = combatState.CreateCard(canonical, owner);
