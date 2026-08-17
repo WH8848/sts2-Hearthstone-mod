@@ -37,6 +37,30 @@ public static class JainaDeathrattleDamagePatch
 {
     private static MethodBase TargetMethod()
     {
+        // 诊断：列出 CreatureCmd 全部嵌套类与 Damage 状态机字段（定位用）
+        try
+        {
+            var diag = new System.Text.StringBuilder();
+            foreach (var type in typeof(CreatureCmd).GetNestedTypes(BindingFlags.NonPublic))
+            {
+                diag.Append(type.Name).Append('|');
+                if (type.Name.StartsWith("<Damage>d__", System.StringComparison.Ordinal))
+                {
+                    diag.Append('{');
+                    foreach (var field in type.GetFields(BindingFlags.Instance | BindingFlags.NonPublic))
+                    {
+                        diag.Append(field.Name).Append(',');
+                    }
+                    diag.Append('}');
+                }
+            }
+            MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaDeathrattlePatch] CreatureCmd nested: {diag}");
+        }
+        catch (System.Exception ex)
+        {
+            MegaCrit.Sts2.Core.Logging.Log.Warn($"[JainaDeathrattlePatch] diag error: {ex.Message}");
+        }
+
         // 定位 Damage 核心重载的状态机：含 dealer 参数的 <Damage>d__* 嵌套类
         foreach (var type in typeof(CreatureCmd).GetNestedTypes(BindingFlags.NonPublic))
         {
@@ -58,7 +82,22 @@ public static class JainaDeathrattleDamagePatch
                 return type.GetMethod("MoveNext", BindingFlags.Instance | BindingFlags.NonPublic);
             }
         }
-        return null;
+        MegaCrit.Sts2.Core.Logging.Log.Warn("[JainaDeathrattlePatch] state machine not found, falling back to wrapper");
+        // Fallback：patch wrapper 方法（Transpiler 无匹配则无效，但不崩溃）
+        return typeof(CreatureCmd).GetMethod(nameof(CreatureCmd.Damage),
+            BindingFlags.Public | BindingFlags.Static,
+            null,
+            new[]
+            {
+                typeof(PlayerChoiceContext),
+                typeof(IEnumerable<Creature>),
+                typeof(decimal),
+                typeof(ValueProp),
+                typeof(Creature),
+                typeof(CardModel),
+                typeof(CardPlay)
+            },
+            null);
     }
 
     private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
