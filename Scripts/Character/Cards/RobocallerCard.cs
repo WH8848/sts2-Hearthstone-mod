@@ -14,7 +14,7 @@ namespace jaina.Scripts.Character.Cards;
 /// <summary>
 /// 拨号机器人 (Robocaller) - 1费随从卡（普通）。属性 3/2。
 /// [gold]保留[/gold]：手牌中不会在回合结束时被弃置。
-/// 每回合开始时随机拨号（三个 0~5 的数字，可重复），卡面上的拨号数字同步更新；
+/// 每回合开始时随机拨号（三个 0~3 的数字，可重复），卡面上的拨号数字同步更新；
 /// 战吼：从抽牌堆定向抽取费用消耗等于当前拨号数字的牌各一张（每回合随机拨号！）。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
@@ -58,7 +58,7 @@ public sealed class RobocallerCard : JainaMinionCardTemplate
     }
 
     /// <summary>
-    /// 每回合开始时（主人回合）随机拨号：三个 0~5 的数字（可重复），
+    /// 每回合开始时（主人回合）随机拨号：三个 0~3 的数字（可重复），
     /// 更新卡面拨号数字显示。用共享 RNG（联机两端确定性一致）。
     /// </summary>
     public override async Task AfterPlayerTurnStart(PlayerChoiceContext choiceContext, Player player)
@@ -70,7 +70,7 @@ public sealed class RobocallerCard : JainaMinionCardTemplate
         var rng = player.RunState.Rng.CombatTargets;
         for (int i = 0; i < 3; i++)
         {
-            CurrentDials[i] = rng.NextInt(0, 6);
+            CurrentDials[i] = rng.NextInt(0, 4);
         }
         await Task.CompletedTask;
     }
