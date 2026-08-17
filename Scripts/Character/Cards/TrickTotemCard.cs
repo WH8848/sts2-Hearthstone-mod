@@ -48,14 +48,7 @@ public sealed class TrickTotemCard : JainaSpellCardTemplate
         // 记录施放（倒带/罗曼斯/三派系追踪）
         jaina.Scripts.Character.JainaCastTracker.RecordPlayed(this);
 
-        // 顶替旧的戏法图腾效果（打出新图腾替换旧效果）
-        var old = base.Owner.Creature.Powers.OfType<TrickTotemPower>().FirstOrDefault();
-        if (old != null)
-        {
-            await PowerCmd.Remove(old);
-        }
-
-        // 挂戏法图腾（回合结束时随机施放费用 <= 1 的全角色卡牌）
+        // 挂戏法图腾（可叠层：每张 +1 层，回合结束每层各施放一次）
         await PowerCmd.Apply<TrickTotemPower>(
             choiceContext, [base.Owner.Creature], 1m, base.Owner.Creature, this);
     }

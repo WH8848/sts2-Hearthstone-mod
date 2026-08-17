@@ -33,12 +33,15 @@ public sealed class TrickTotemPower : PowerModel, IModPowerAssetOverrides
 
     public override PowerType Type => PowerType.Buff;
 
-    public override PowerStackType StackType => PowerStackType.Single;
+    /// <summary>
+    /// 可叠层：多张戏法图腾每回合结束各施放一次（Amount = 层数）
+    /// </summary>
+    public override PowerStackType StackType => PowerStackType.Counter;
 
     protected override bool IsVisibleInternal => true;
 
     /// <summary>
-    /// 玩家回合结束：随机施放一个费用消耗 <= 1 的全角色卡牌
+    /// 玩家回合结束：每层戏法图腾随机施放一个费用消耗 <= 1 的全角色卡牌
     /// （攻击/技能牌，不含英雄技能卡；按可升级级别展开；单目标随机选合法目标）。
     /// </summary>
     public override async Task AfterSideTurnEnd(PlayerChoiceContext choiceContext, CombatSide side,
@@ -88,30 +91,47 @@ public sealed class TrickTotemPower : PowerModel, IModPowerAssetOverrides
         {
             return;
         }
-        var spell = rng.NextItem(candidates);
-        if (spell == null)
+        // 每层戏法图腾各施放一次（Amount = 层数）
+        int casts = Math.Max(1, (int)Amount);
+        for (int c = 0; c < casts; c++)
         {
-            return;
-        }
-        jaina.Scripts.Character.JainaCastTracker.MarkGenerated(spell);
-        jaina.Scripts.Character.Powers.RommathReplayTracker.Mark(spell);
-
-        // 单目标牌：从场上所有活物中随机选一个合法目标（联机可打队友）
-        Creature? target = null;
-        if (spell.TargetType == TargetType.AnyEnemy || spell.TargetType == TargetType.AnyPlayer ||
-            spell.TargetType == TargetType.AnyAlly ||
-            (CustomTargetTypeManager.TryGetCustomTargetType(spell.TargetType, out var customType) &&
-             customType.IsSingleTarget))
-        {
-            var pool = combatState.Creatures
-                .Where(c => c != null && c.IsAlive && spell.IsValidTarget(c))
-                .ToList();
-            target = pool.Count > 0 ? rng.NextItem(pool) : null;
-            if (target == null)
+            var spell = rng.NextItem(candidates);
+            if (spell == null)
             {
                 return;
             }
+            jaina.Scripts.Character.JainaCastTracker.MarkGenerated(spell);
+            jaina.Scripts.Character.Powers.RommathReplayTracker.Mark(spell);
+
+            // 单目标牌：从场上所有活物（含自己/队友角色与双方随从）中随机选一个合法目标
+            Creature? target = null;
+            if (spell.TargetType != TargetType.None)
+            {
+                var pool = GetAllAliveCreatures(combatState)
+                    .Where(c => spell.IsValidTarget(c))
+                    .ToList();
+                target = pool.Count > 0 ? rng.NextItem(pool) : null;
+                if (target == null)
+                {
+                    return;
+                }
+            }
+            await CardCmd.AutoPlay(choiceContext, spell, target);
         }
-        await CardCmd.AutoPlay(choiceContext, spell, target);
+    }
+
+    /// <summary>
+    /// 全部存活生物（敌人 + 所有玩家角色 + 双方随从）
+    /// </summary>
+    private static IEnumerable<Creature> GetAllAliveCreatures(ICombatState combatState)
+    {
+        var list = combatState.Creatures
+            .Where(c => c != null && c.IsAlive)
+            .ToList();
+        foreach (var player in combatState.Players)
+        {
+            list.AddRange(player.PlayerCombatState?.Pets.Where(p => p != null && p.IsAlive) ?? []);
+        }
+        return list;
     }
 }

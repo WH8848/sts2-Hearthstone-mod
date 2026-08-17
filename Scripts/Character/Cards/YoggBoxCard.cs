@@ -113,14 +113,15 @@ public sealed class YoggBoxCard : JainaSpellCardTemplate
 
         foreach (var card in picked)
         {
-            // 单目标法术：从场上所有活物（含队友/自己，联机可打队友）随机选合法目标
+            // 单目标法术：从场上所有活物（含自己/队友角色与双方随从，联机可打队友）
+            // 随机选合法目标。用 TargetType != None 判断需要目标——
+            // 不能只认 MinionLib 注册的自定义目标类型（其他角色的卡目标类型不在其注册表，
+            // 会导致无法选择自己/队友角色与双方随从）。
             Creature? target = null;
-            if (card.TargetType == TargetType.AnyEnemy || card.TargetType == TargetType.AnyPlayer ||
-                card.TargetType == TargetType.AnyAlly ||
-                (CustomTargetTypeManager.TryGetCustomTargetType(card.TargetType, out var customType) &&
-                 customType.IsSingleTarget))
+            if (card.TargetType != TargetType.None)
             {
                 var allCreatures = combatState.Creatures
+                    .Concat(combatState.Players.SelectMany(p => p.PlayerCombatState?.Pets ?? []))
                     .Where(c => c != null && c.IsAlive && card.IsValidTarget(c))
                     .ToList();
                 target = allCreatures.Count > 0 ? rng.NextItem(allCreatures) : null;
@@ -138,6 +139,8 @@ public sealed class YoggBoxCard : JainaSpellCardTemplate
     /// <summary>
     /// 法术池：全角色攻击/技能牌（按费用过滤，含升级形态）。
     /// 排除英雄技能卡（火焰冲击等）——英雄技能不是可施放的法术牌。
+    /// 排除非角色卡池（无色/诅咒/先古/状态/任务/事件/衍生池）、先古稀有度卡
+    /// 与多人游戏专属卡。
     /// 每种按可升级级别展开：未升级形态与升级形态（+）都可能被施放。
     /// 返回带 Owner 的可打出实例。
     /// </summary>
@@ -158,6 +161,17 @@ public sealed class YoggBoxCard : JainaSpellCardTemplate
             {
                 continue;
             }
+            // 排除非角色卡池（无色/诅咒/先古/状态/任务/事件/衍生池）
+            if (IsInExcludedPool(canonical))
+            {
+                continue;
+            }
+            // 排除先古稀有度卡与多人游戏专属卡
+            if (canonical.Rarity == CardRarity.Ancient ||
+                canonical.MultiplayerConstraint != CardMultiplayerConstraint.None)
+            {
+                continue;
+            }
             int maxLevel = jaina.Scripts.Character.JainaCastTracker.GetDiscoverPoolMaxUpgradeLevel(canonical.GetType());
             for (int level = 0; level <= maxLevel; level++)
             {
@@ -175,5 +189,36 @@ public sealed class YoggBoxCard : JainaSpellCardTemplate
             }
         }
         return result;
+    }
+
+    /// <summary>
+    /// 该卡是否属于被排除的非角色卡池
+    /// （无色/诅咒/先古/状态/任务/事件/衍生池）
+    /// </summary>
+    private static readonly HashSet<Type> ExcludedPoolTypes =
+    [
+        typeof(MegaCrit.Sts2.Core.Models.CardPools.ColorlessCardPool),
+        typeof(MegaCrit.Sts2.Core.Models.CardPools.CurseCardPool),
+        typeof(MegaCrit.Sts2.Core.Models.CardPools.DeprecatedCardPool),
+        typeof(MegaCrit.Sts2.Core.Models.CardPools.StatusCardPool),
+        typeof(MegaCrit.Sts2.Core.Models.CardPools.QuestCardPool),
+        typeof(MegaCrit.Sts2.Core.Models.CardPools.EventCardPool),
+        typeof(MegaCrit.Sts2.Core.Models.CardPools.TokenCardPool)
+    ];
+
+    private static bool IsInExcludedPool(CardModel canonical)
+    {
+        foreach (var pool in ModelDb.AllCardPools)
+        {
+            if (pool == null || !ExcludedPoolTypes.Contains(pool.GetType()))
+            {
+                continue;
+            }
+            if (pool.AllCards.Contains(canonical))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }
