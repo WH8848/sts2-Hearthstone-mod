@@ -58,7 +58,7 @@ public sealed class EvocationCard : JainaSpellCardTemplate
         typeof(Fireball),
         typeof(Frostbolt),
         typeof(ArcaneIntellect),
-        typeof(FreezingPotion),
+        typeof(RayOfFrostCard),
         typeof(IceBarrier),
         typeof(Trick),
         typeof(Awaken),

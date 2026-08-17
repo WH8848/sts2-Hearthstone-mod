@@ -12,7 +12,7 @@ namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
 /// 吉安娜发现（Discover）工具：从吉安娜的攻击/技能牌池中随机抽取若干张供玩家选择。
-/// 发现池：火球术、寒冰箭、火焰冲击、奥术智慧、冰冻药水、寒冰护盾。
+/// 发现池：火球术、寒冰箭、火焰冲击、奥术智慧、霜冻射线、寒冰护盾。
 /// </summary>
 public static class JainaDiscoverHelper
 {
@@ -25,7 +25,7 @@ public static class JainaDiscoverHelper
         typeof(Fireball),
         typeof(Frostbolt),
         typeof(ArcaneIntellect),
-        typeof(FreezingPotion),
+        typeof(RayOfFrostCard),
         typeof(IceBarrier)
     ];
 

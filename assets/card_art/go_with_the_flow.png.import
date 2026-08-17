@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dw3ciwdi5ryqj"
-path="res://.godot/imported/freezing_potion.png-abbe05c91b735ef7eff2338e8c060081.ctex"
+uid="uid://cs0hwqhmwcp6x"
+path="res://.godot/imported/go_with_the_flow.png-f405e1804efc802577e425753b4e74e2.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/card_art/freezing_potion.png"
-dest_files=["res://.godot/imported/freezing_potion.png-abbe05c91b735ef7eff2338e8c060081.ctex"]
+source_file="res://assets/card_art/go_with_the_flow.png"
+dest_files=["res://.godot/imported/go_with_the_flow.png-f405e1804efc802577e425753b4e74e2.ctex"]
 
 [params]
 

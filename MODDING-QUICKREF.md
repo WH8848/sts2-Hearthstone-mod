@@ -78,7 +78,7 @@ var card = combatState.CreateCard(canonicalModel, owner);                 // 生
 
 - `Scripts/Entry.cs`（入口；含 [JainaDiag] 临时诊断）
 - `Scripts/Character/`：`Jaina.cs`（人物）、`JainaCardPool.cs`/`JainaNeutralCardPool.cs`/`JainaRelicPool.cs`、`JainaCastTracker.cs`（施放记录，罗曼斯/倒带用）
-- `Scripts/Character/Cards/`：法术卡（Fireball/Frostbolt/Fireblast/ApexisBlast/FreezingPotion/FlameWard/...）、随从卡、`JainaTargetTypes.cs`、`JainaCardTypes.cs`（动态 Minion 类型）、`MerchantPowerSlotPatch.cs`
+- `Scripts/Character/Cards/`：法术卡（Fireball/Frostbolt/Fireblast/ApexisBlast/RayOfFrostCard/FlameWard/...）、随从卡、`JainaTargetTypes.cs`、`JainaCardTypes.cs`（动态 Minion 类型）、`MerchantPowerSlotPatch.cs`
 - `Scripts/Character/Minions/`：`JainaMinionBase.cs`、`JainaAttackAction.cs`、`JainaConditionalAttackIntent.cs`、各随从（Imp/Zealot/VolatileSkeleton/SpiritCollector/Rommath/Luna/Kalecgos/Antonidas/Mozaki/Varden/Aegwynn/SorcererApprentice/ArcaneArtificer/Renathal）、`JainaMinionPool.cs`（随机召唤）
 - `Scripts/Character/Powers/`：FlameWardPower/FreezePower/EmpowerPower/AntonidasPower/KalecgosPower/SorcererApprenticePower/ArcaneArtificerPower/...
 - `Scripts/Character/Relics/`：`EvenMatch.cs`（初始遗物）+ `EvenMatchAncient.cs`（先古升级版）
