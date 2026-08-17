@@ -183,4 +183,26 @@ public static class JainaCardTypePatches
             return true;
         }
     }
+
+    /// <summary>
+    /// 兜底：未覆盖的动态 CardType（含其它 mod 注册的扩展值）在图鉴/卡面渲染时
+    /// 不再抛 SwitchExpressionException，显示"卡牌"。
+    /// Priority 最低：本文件的随从/英雄/地标 patch 先执行（命中即短路），
+    /// 其余动态值落到这里兜底。
+    /// </summary>
+    [HarmonyPatch(typeof(CardTypeExtensions), "ToLocString")]
+    [HarmonyPriority(Priority.Lowest)]
+    private static class UnknownCardTypeLocStringFallbackPatch
+    {
+        private static bool Prefix(CardType cardType, ref LocString __result)
+        {
+            // 原版枚举值（None/Attack/Skill/Power/Status/Curse/Quest）走原方法
+            if ((int)cardType <= (int)CardType.Quest)
+            {
+                return true;
+            }
+            __result = new LocString("gameplay_ui", "CARD_TYPE.UNKNOWN");
+            return false;
+        }
+    }
 }
