@@ -33,7 +33,7 @@
   "JAINA_CARD_TRICK_TOTEM_CARD.title": "戏法图腾",
   "JAINA_CARD_TRICK_TOTEM_CARD.description": "在你的回合结束时，随机施放一个费用消耗小于或等于1点的全角色卡牌。",
   "JAINA_CARD_SKATING_ELEMENTAL_CARD.title": "滑冰元素",
-  "JAINA_CARD_SKATING_ELEMENTAL_CARD.description": "召唤一个[blue]3/4[/blue]的[red]滑冰元素[/red]。[gold]微缩[/gold]。\n[gold]战吼[/gold]：给于敌方1层冻结，获得等同于其减少的总体伤害的格挡。",
+  "JAINA_CARD_SKATING_ELEMENTAL_CARD.description": "召唤一个[blue]3/4[/blue]的[red]滑冰元素[/red]。[gold]微缩[/gold]。\n[gold]战吼[/gold]：给于1名敌方1层冻结，获得等同于其减少的总体伤害的格挡。",
   "JAINA_CARD_ARCHMAGES_RUNE_CARD.title": "大法师的符文",
   "JAINA_CARD_ARCHMAGES_RUNE_CARD.description": "对敌人施放消耗总计{TotalCost:diff()}费的法师法术。可无限升级，每次升级多1费。消耗。",
   "JAINA_CARD_FONT_OF_POWER_CARD.title": "能量之泉",

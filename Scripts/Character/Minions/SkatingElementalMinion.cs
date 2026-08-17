@@ -13,8 +13,8 @@ namespace jaina.Scripts.Character.Minions;
 /// <summary>
 /// 滑冰元素 (Sleet Skater) - 吉安娜专属随从。
 /// 属性：攻击 3，生命 4。
-/// 战吼：给于敌方1层冻结，获得等同于其减少的总体伤害的格挡。
-/// （1层冻结使敌方攻击伤害减少 25%；减少的总体伤害 = 各敌方意图攻击伤害 × 25% 之和）
+/// 战吼：给于1名敌方1层冻结，获得等同于其减少的总体伤害的格挡。
+/// （1层冻结使敌方攻击伤害减少 25%；减少的总体伤害 = 该敌方意图攻击伤害 × 25%）
 /// </summary>
 [RegisterMonster]
 public sealed class SkatingElementalMinion : JainaMinionBase
@@ -31,8 +31,9 @@ public sealed class SkatingElementalMinion : JainaMinionBase
     protected override string MinionVisualsPath => "res://assets/card_art/sleet_skater.png";
 
     /// <summary>
-    /// 战吼：给于敌方1层冻结；获得格挡 = 敌方因冻结减少的总体伤害
-    /// （1层冻结使敌方攻击伤害减少 25%；减少量按敌方当前意图攻击伤害 × 25% 合计）。
+    /// 战吼：给于1名敌方1层冻结；获得格挡 = 该敌方因冻结减少的总体伤害
+    /// （1层冻结使敌方攻击伤害减少 25%——按该敌方当前意图攻击伤害 × 25% 计算）。
+    /// 随从战吼无法选目标：随机选择一名敌方。
     /// </summary>
     public override async Task OnBattlecry(PlayerChoiceContext choiceContext)
     {
@@ -46,26 +47,28 @@ public sealed class SkatingElementalMinion : JainaMinionBase
         {
             return;
         }
+        var rng = owner.RunState.Rng.CombatTargets;
 
-        // 给于敌方1层冻结（全体敌方）
+        // 给于1名敌方1层冻结（随机一名敌方）
         var enemies = combatState.Creatures
             .Where(c => c != null && c.IsAlive && c.Side != Creature.Side)
             .ToList();
-        foreach (var enemy in enemies)
+        if (enemies.Count == 0)
         {
-            await PowerCmd.Apply<FreezePower>(choiceContext, [enemy], 1m, Creature, null);
+            return;
         }
+        var enemy = rng.NextItem(enemies);
+        if (enemy == null)
+        {
+            return;
+        }
+        await PowerCmd.Apply<FreezePower>(choiceContext, [enemy], 1m, Creature, null);
 
         // 获得等同于其减少的总体伤害的格挡：
-        // 1层冻结使每个敌方攻击伤害减少 25%——按敌方当前意图攻击伤害计算减少量，
-        // 总和即"减少的总体伤害"
+        // 1层冻结使该敌方攻击伤害减少 25%——按敌方当前意图攻击伤害计算减少量
         int totalAttack = 0;
-        foreach (var enemy in enemies)
+        if (enemy.Monster?.NextMove != null)
         {
-            if (enemy.Monster?.NextMove == null)
-            {
-                continue;
-            }
             foreach (var intent in enemy.Monster.NextMove.Intents)
             {
                 if (intent is AttackIntent atk)
