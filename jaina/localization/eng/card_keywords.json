@@ -54,5 +54,7 @@
   "JAINA_KEYWORD_IMMUNE.title": "Immune",
   "JAINA_KEYWORD_IMMUNE.description": "Immune: Cannot take damage.",
   "JAINA_KEYWORD_LANDMARK.title": "Landmark",
-  "JAINA_KEYWORD_LANDMARK.description": "Landmark: Occupies a minion slot. Can be clicked to use once every two turns. Has durability; -1 per use, destroyed at 0."
+  "JAINA_KEYWORD_LANDMARK.description": "Landmark: Occupies a minion slot. Can be clicked to use once every two turns. Has durability; -1 per use, destroyed at 0.",
+  "JAINA_KEYWORD_FATIGUE.title": "Fatigue",
+  "JAINA_KEYWORD_FATIGUE.description": "Fatigue: When your Draw Pile and Discard Pile are empty, the 1st card drawn deals 1 damage to you, the 2nd deals 2, and so on. (Mimics Hearthstone's fatigue mechanic.)"
 }

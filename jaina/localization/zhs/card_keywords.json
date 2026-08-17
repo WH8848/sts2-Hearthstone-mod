@@ -54,5 +54,7 @@
   "JAINA_KEYWORD_IMMUNE.title": "免疫",
   "JAINA_KEYWORD_IMMUNE.description": "免疫：不会受到任何伤害。",
   "JAINA_KEYWORD_LANDMARK.title": "地标",
-  "JAINA_KEYWORD_LANDMARK.description": "地标：占据一个随从槽位，每两个回合可以点击使用一次触发效果。拥有耐久度，每次使用耐久度-1，归零时地标被摧毁。"
+  "JAINA_KEYWORD_LANDMARK.description": "地标：占据一个随从槽位，每两个回合可以点击使用一次触发效果。拥有耐久度，每次使用耐久度-1，归零时地标被摧毁。",
+  "JAINA_KEYWORD_FATIGUE.title": "疲劳",
+  "JAINA_KEYWORD_FATIGUE.description": "疲劳：当你抽牌堆和弃牌堆无牌可抽时，抽第1张牌扣1滴血，抽第2张牌扣2滴血，以此类推。（模仿炉石传说的疲劳机制）"
 }
