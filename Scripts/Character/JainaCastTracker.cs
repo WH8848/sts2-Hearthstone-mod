@@ -141,7 +141,6 @@ public static class JainaCastTracker
         [typeof(IgniteCard)] = JainaSpellSchool.Fire,
         [typeof(Frostbolt)] = JainaSpellSchool.Frost,
         [typeof(RayOfFrostCard)] = JainaSpellSchool.Frost,
-        [typeof(GoWithTheFlowCard)] = JainaSpellSchool.Frost,
         [typeof(AmazingDeckCard)] = JainaSpellSchool.Arcane,
         [typeof(IceBarrier)] = JainaSpellSchool.Frost,
         [typeof(DeepFreezeCard)] = JainaSpellSchool.Frost,
