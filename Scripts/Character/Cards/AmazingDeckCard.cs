@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
@@ -45,6 +46,17 @@ public sealed class AmazingDeckCard : JainaSpellCardTemplate
     public AmazingDeckCard()
         : base(1, CardType.Skill, CardRarity.Uncommon, TargetType.None, true)
     {
+    }
+
+    /// <summary>
+    /// 悬停提示：左侧显示衍生的惊奇卡牌（参考灵体采集者显示小精灵）
+    /// </summary>
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips
+    {
+        get
+        {
+            yield return new CardHoverTip(ModelDb.Card<AmazingCard>());
+        }
     }
 
     /// <summary>
