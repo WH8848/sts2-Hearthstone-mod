@@ -21,12 +21,15 @@ namespace jaina.Scripts.Character.Cards;
 public sealed class HearthstoneFormCard : ModCardTemplate
 {
     /// <summary>
-    /// 关键词（卡面右侧显示注释）：保留（本卡保留）、消耗（能力卡打出后消耗）、疲劳（无牌可抽时扣血递增）。
+    /// 关键词（卡面右侧显示注释）：消耗（能力卡打出后消耗）、疲劳（无牌可抽时扣血递增）。
+    /// 升级后额外获得保留（本卡保留：升级前本卡无保留，升级后才有）。
     /// 疲劳行为由 <see cref="HearthstoneFormPower"/> 实现，此处仅为关键词注释展示。
     /// </summary>
-    public override IEnumerable<CardKeyword> CanonicalKeywords =>
-        [CardKeyword.Retain, CardKeyword.Exhaust,
-         jaina.Scripts.Character.Keywords.JainaKeywords.Fatigue];
+    public override IEnumerable<CardKeyword> CanonicalKeywords => IsUpgraded
+        ? [CardKeyword.Retain, CardKeyword.Exhaust,
+           jaina.Scripts.Character.Keywords.JainaKeywords.Fatigue]
+        : [CardKeyword.Exhaust,
+           jaina.Scripts.Character.Keywords.JainaKeywords.Fatigue];
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [];
 
