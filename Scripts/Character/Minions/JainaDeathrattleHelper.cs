@@ -82,8 +82,9 @@ public static class JainaDeathrattleDamagePatch
     {
         var codes = instructions.ToList();
         var isDeadGetter = AccessTools.PropertyGetter(typeof(Creature), nameof(Creature.IsDead));
-        var isResolvingGetter =
-            AccessTools.PropertyGetter(typeof(JainaDeathrattleHelper), nameof(JainaDeathrattleHelper.IsResolvingDeathrattle));
+        // IsResolvingDeathrattle 是静态字段（不是属性），用 Ldsfld 加载
+        var isResolvingField =
+            AccessTools.Field(typeof(JainaDeathrattleHelper), nameof(JainaDeathrattleHelper.IsResolvingDeathrattle));
         for (int i = 0; i < codes.Count; i++)
         {
             // 定位：callvirt Creature.get_IsDead() 后跟 brfalse/brfalse.s（!IsDead → 正常伤害流程）
@@ -94,11 +95,11 @@ public static class JainaDeathrattleDamagePatch
                 var br = codes[i + 1];
                 // 替换为：
                 //   brfalse L_ok            （!IsDead → 正常）
-                //   call get_IsResolvingDeathrattle
+                //   ldsfld IsResolvingDeathrattle
                 //   brtrue L_ok             （亡语结算中 → 正常，放行死 dealer）
                 codes.InsertRange(i + 2, new[]
                 {
-                    new CodeInstruction(OpCodes.Call, isResolvingGetter),
+                    new CodeInstruction(OpCodes.Ldsfld, isResolvingField),
                     new CodeInstruction(OpCodes.Brtrue, br.operand)
                 });
                 break;
