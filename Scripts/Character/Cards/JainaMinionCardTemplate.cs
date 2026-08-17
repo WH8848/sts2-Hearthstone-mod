@@ -87,11 +87,19 @@ public abstract class JainaMinionCardTemplate : ModCardTemplate,
     public override CardType Type => JainaCardTypes.Minion;
 
     /// <summary>
-    /// 随从卡默认不可升级（MaxUpgradeLevel=0 → IsUpgradable=false，
-    /// 升级界面/升级遗物不会把随从卡列为可升级候选）。
-    /// 有升级形态的随从卡（如奥术师晨拥+）子类覆写 MaxUpgradeLevel 恢复可升级。
+    /// 随从卡默认可升级 1 次（取消不可升级限制）；升级后去除消耗词条
+    /// （特殊随从如奥术师晨拥覆写 OnUpgrade 为空以保留消耗）。
     /// </summary>
-    public override int MaxUpgradeLevel => 0;
+    public override int MaxUpgradeLevel => 1;
+
+    /// <summary>
+    /// 升级：去除消耗词条（LocalKeywords 懒初始化只算一次，
+    /// 升级形态 Keywords 缓存自基础状态——需显式移除 Exhaust，否则升级后卡面仍显示"消耗"）。
+    /// </summary>
+    protected override void OnUpgrade()
+    {
+        RemoveKeyword(CardKeyword.Exhaust);
+    }
 
     /// <summary>
     /// 关键词：默认无（子类按需声明亡语/冲锋等）。

@@ -15,11 +15,10 @@ namespace jaina.Scripts.Character.Cards;
 public sealed class DawngraspCard : JainaMinionCardTemplate
 {
     /// <summary>
-    /// 战吼（悬停解释）；基础版消耗，升级后去除消耗词条（不再消耗）
+    /// 战吼（悬停解释）；随从卡消耗（升级后也保留消耗——晨拥升级不去除消耗词条）
     /// </summary>
-    public override IEnumerable<CardKeyword> CanonicalKeywords => IsUpgraded
-        ? [jaina.Scripts.Character.Keywords.JainaKeywords.Battlecry]
-        : [jaina.Scripts.Character.Keywords.JainaKeywords.Battlecry, CardKeyword.Exhaust];
+    public override IEnumerable<CardKeyword> CanonicalKeywords =>
+        [jaina.Scripts.Character.Keywords.JainaKeywords.Battlecry, CardKeyword.Exhaust];
 
     public override string CustomPortraitPath => "res://assets/card_art/arcanist_dawngrasp.png";
     protected override Type MinionType => typeof(DawngraspMinion);
@@ -56,11 +55,10 @@ public sealed class DawngraspCard : JainaMinionCardTemplate
     }
 
     /// <summary>
-    /// 升级：去除消耗词条（LocalKeywords 懒初始化只算一次，
-    /// 升级形态 Keywords 缓存自基础状态——需显式移除 Exhaust）
+    /// 升级：覆盖为空——奥术师晨拥升级后不去除消耗词条（保留消耗）。
+    /// 不调用 base（基类 OnUpgrade 会移除 Exhaust）。
     /// </summary>
     protected override void OnUpgrade()
     {
-        RemoveKeyword(CardKeyword.Exhaust);
     }
 }
