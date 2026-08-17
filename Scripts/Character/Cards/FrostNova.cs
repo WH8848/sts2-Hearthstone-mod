@@ -14,22 +14,27 @@ namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
 /// 冰霜新星 (Frost Nova) - 1费技能（罕见，冰霜派系）。
-/// 给予敌方全体 4 层冻结。不可升级。
+/// 给予敌方全体 4 层冻结。基础版消耗；升级后不再消耗。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
 public sealed class FrostNova : JainaSpellCardTemplate
 {
     /// <summary>
-    /// 不可升级
+    /// 可升级（升级后去除消耗）
     /// </summary>
-    public override int MaxUpgradeLevel => 0;
+    public override int MaxUpgradeLevel => 1;
 
     /// <summary>
-    /// 法术牌 + 冰霜派系 + 冻结（悬停解释）
+    /// 法术牌 + 冰霜派系 + 冻结（悬停解释）；基础版消耗（升级后不再消耗）
     /// </summary>
-    public override IEnumerable<CardKeyword> CanonicalKeywords =>
-        [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Frost,
-         jaina.Scripts.Character.Keywords.JainaKeywords.Freeze];
+    public override IEnumerable<CardKeyword> CanonicalKeywords => IsUpgraded
+        ? [jaina.Scripts.Character.Keywords.JainaKeywords.Spell,
+           jaina.Scripts.Character.Keywords.JainaKeywords.Frost,
+           jaina.Scripts.Character.Keywords.JainaKeywords.Freeze]
+        : [jaina.Scripts.Character.Keywords.JainaKeywords.Spell,
+           jaina.Scripts.Character.Keywords.JainaKeywords.Frost,
+           jaina.Scripts.Character.Keywords.JainaKeywords.Freeze,
+           CardKeyword.Exhaust];
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [];
 

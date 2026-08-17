@@ -13,21 +13,25 @@ namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
 /// 脱罪力证 (Exoneration) - 1费技能牌（罕见，冰霜派系）。
-/// 获得1层无实体。不可升级。
+/// 获得1层无实体。基础版消耗；升级后不再消耗。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
 public sealed class ExonerationCard : JainaSpellCardTemplate
 {
     /// <summary>
-    /// 不可升级
+    /// 可升级（升级后去除消耗）
     /// </summary>
-    public override int MaxUpgradeLevel => 0;
+    public override int MaxUpgradeLevel => 1;
 
     /// <summary>
-    /// 法术牌 + 冰霜派系
+    /// 法术牌 + 冰霜派系；基础版消耗（升级后不再消耗）
     /// </summary>
-    public override IEnumerable<CardKeyword> CanonicalKeywords =>
-        [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Frost];
+    public override IEnumerable<CardKeyword> CanonicalKeywords => IsUpgraded
+        ? [jaina.Scripts.Character.Keywords.JainaKeywords.Spell,
+           jaina.Scripts.Character.Keywords.JainaKeywords.Frost]
+        : [jaina.Scripts.Character.Keywords.JainaKeywords.Spell,
+           jaina.Scripts.Character.Keywords.JainaKeywords.Frost,
+           CardKeyword.Exhaust];
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [];
 
