@@ -24,14 +24,15 @@ namespace jaina.Scripts.Character.Cards;
 public sealed class HearthstoneFormCard : ModCardTemplate
 {
     /// <summary>
-    /// 关键词（卡面右侧显示注释）：未升级 = 虚无 + 疲劳；升级后移除虚无，只留疲劳。
-    /// 本卡不挂 Retain/Exhaust 关键词（参考虚空形态：光环效果卡本卡不渲染"保留/消耗"行）——
-    /// 保留与消耗是打出后赋予全部卡牌的效果，由 <see cref="HearthstoneFormPower"/> 提供，
-    /// 已写在描述第一句。
+    /// 关键词（悬停注释）：未升级 = 虚无 + 保留 + 消耗 + 疲劳；升级后移除虚无。
+    /// 描述第一句的"保留/消耗"挂关键词注释，但渲染行由
+    /// <see cref="HearthstoneFormKeywordRenderPatch"/> 移除（位置不动，不出现顶部/底部渲染行）。
+    /// 保留与消耗效果由 <see cref="HearthstoneFormPower"/> 赋予全部卡牌。
     /// </summary>
     public override IEnumerable<CardKeyword> CanonicalKeywords => IsUpgraded
-        ? [jaina.Scripts.Character.Keywords.JainaKeywords.Fatigue]
-        : [CardKeyword.Ethereal,
+        ? [CardKeyword.Retain, CardKeyword.Exhaust,
+           jaina.Scripts.Character.Keywords.JainaKeywords.Fatigue]
+        : [CardKeyword.Ethereal, CardKeyword.Retain, CardKeyword.Exhaust,
            jaina.Scripts.Character.Keywords.JainaKeywords.Fatigue];
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [];
