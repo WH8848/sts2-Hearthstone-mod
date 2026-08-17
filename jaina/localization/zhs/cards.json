@@ -199,5 +199,7 @@
   "JAINA_CARD_MANA_BISCUIT.title": "法力饼干",
   "JAINA_CARD_MANA_BISCUIT.description": "复原两费。",
   "JAINA_CARD_ROBOCALLER_CARD.title": "拨号机器人",
-  "JAINA_CARD_ROBOCALLER_CARD.description": "召唤一个[blue]3/2[/blue]的[red]拨号机器人[/red]。[gold]战吼[/gold]：抽取费用消耗为[blue]2[/blue]，[blue]2[/blue]和[blue]2[/blue]的牌各一张。（每回合随机拨号！）"
+  "JAINA_CARD_ROBOCALLER_CARD.description": "召唤一个[blue]3/2[/blue]的[red]拨号机器人[/red]。[gold]战吼[/gold]：抽取费用消耗为[blue]2[/blue]，[blue]2[/blue]和[blue]2[/blue]的牌各一张。（每回合随机拨号！）",
+  "JAINA_CARD_CONNIVING_CONMAN_CARD.title": "蓄谋诈骗犯",
+  "JAINA_CARD_CONNIVING_CONMAN_CARD.description": "召唤一个[blue]4/4[/blue]的[red]蓄谋诈骗犯[/red]。[gold]战吼[/gold]：再次使用你使用过的上一张卡牌。"
 }

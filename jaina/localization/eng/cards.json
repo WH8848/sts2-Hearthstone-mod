@@ -199,5 +199,7 @@
   "JAINA_CARD_MANA_BISCUIT.title": "Mana Biscuit",
   "JAINA_CARD_MANA_BISCUIT.description": "Restore 2 Energy.",
   "JAINA_CARD_ROBOCALLER_CARD.title": "Robocaller",
-  "JAINA_CARD_ROBOCALLER_CARD.description": "Summon a [blue]3/2[/blue] [red]Robocaller[/red]. [gold]Battlecry[/gold]: Draw a card that costs [blue]2[/blue], one that costs [blue]2[/blue], and one that costs [blue]2[/blue]. (The dial is randomized each turn!)"
+  "JAINA_CARD_ROBOCALLER_CARD.description": "Summon a [blue]3/2[/blue] [red]Robocaller[/red]. [gold]Battlecry[/gold]: Draw a card that costs [blue]2[/blue], one that costs [blue]2[/blue], and one that costs [blue]2[/blue]. (The dial is randomized each turn!)",
+  "JAINA_CARD_CONNIVING_CONMAN_CARD.title": "Conniving Conman",
+  "JAINA_CARD_CONNIVING_CONMAN_CARD.description": "Summon a [blue]4/4[/blue] [red]Conniving Conman[/red]. [gold]Battlecry[/gold]: Play the last card you played again."
 }

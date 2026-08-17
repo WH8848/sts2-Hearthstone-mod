@@ -94,6 +94,12 @@ public static class JainaCastTracker
         /// 骷髅死亡时在 <see cref="jaina.Scripts.Character.Minions.VolatileSkeleton.OnDeathrattle"/> 记录。
         /// </summary>
         public int SkeletonDeaths;
+
+        /// <summary>
+        /// 玩家最近施放的一张攻击/技能牌（蓄谋诈骗犯战吼"再次使用你使用过的上一张卡牌"用）。
+        /// 记录 (类型, 施放时的升级级别, 是否本局衍生)；未施放过为 null。
+        /// </summary>
+        public (Type Type, int UpgradeLevel, bool IsGenerated)? LastPlayedCard;
     }
 
     private static readonly ConditionalWeakTable<ICombatState, CombatRecord> Records = new();
@@ -171,6 +177,8 @@ public static class JainaCastTracker
         var rec = For(state);
         var type = card.GetType();
         rec.PlayedAttackSkills.Add(type);
+        // 记录"上一张施放的攻击/技能牌"（蓄谋诈骗犯战吼重放用）
+        rec.LastPlayedCard = (type, card.CurrentUpgradeLevel, IsGeneratedCard(card));
         if (card.CurrentUpgradeLevel > 0 &&
             (!rec.PlayedUpgradeLevels.TryGetValue(type, out var prev) || card.CurrentUpgradeLevel > prev))
         {
