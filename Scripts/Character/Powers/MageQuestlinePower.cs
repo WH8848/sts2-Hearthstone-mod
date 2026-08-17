@@ -62,8 +62,10 @@ public sealed class MageQuestlinePower : PowerModel, IModPowerAssetOverrides
             return;
         }
         var card = cardPlay.Card;
-        // 只统计法术牌（攻击牌和技能牌），能力牌/随从牌不计
-        if (card.Type != CardType.Attack && card.Type != CardType.Skill)
+        // 只统计法术牌：攻击/技能牌，或带"法术牌"关键词的能力牌
+        // （寒冰屏障/冰血哨塔/任务线卡视为法术牌，施放计入任务进度）
+        if (card.Type != CardType.Attack && card.Type != CardType.Skill &&
+            !card.Keywords.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Spell))
         {
             return;
         }
@@ -126,13 +128,15 @@ public sealed class MageQuestlinePower : PowerModel, IModPowerAssetOverrides
     }
 
     /// <summary>
-    /// 抽一张法术牌：从抽牌堆中找第一张攻击/技能牌置入手牌；抽牌堆中没有则普通抽一张。
+    /// 抽一张法术牌：从抽牌堆中找第一张攻击/技能牌（或带"法术牌"关键词的能力牌）
+    /// 置入手牌；抽牌堆中没有则普通抽一张。
     /// </summary>
     private static async Task GrantDrawSpell(PlayerChoiceContext choiceContext, Player player)
     {
         var drawPile = player.PlayerCombatState?.DrawPile;
         var spell = drawPile?.Cards.FirstOrDefault(c =>
-            c != null && (c.Type == CardType.Attack || c.Type == CardType.Skill));
+            c != null && (c.Type == CardType.Attack || c.Type == CardType.Skill ||
+                          c.Keywords.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Spell)));
         if (spell == null)
         {
             await CardPileCmd.Draw(choiceContext, 1, player);

@@ -36,8 +36,9 @@ public sealed class SanctumCandlesellerMinion : JainaMinionBase
             return;
         }
         var card = cardPlay.Card;
-        // 只统计法术牌（攻击牌和技能牌）且带火焰派系关键词
-        if (card.Type != CardType.Attack && card.Type != CardType.Skill)
+        // 只统计法术牌（攻击/技能牌，或带"法术牌"关键词的能力牌）
+        if (card.Type != CardType.Attack && card.Type != CardType.Skill &&
+            !card.Keywords.Contains(JainaKeywords.Spell))
         {
             return;
         }
@@ -56,10 +57,11 @@ public sealed class SanctumCandlesellerMinion : JainaMinionBase
         {
             return;
         }
-        // 优先抽牌堆
+        // 优先抽牌堆（攻击/技能牌，或带"法术牌"关键词的能力牌）
         var drawPile = combatState.DrawPile;
         var spell = drawPile.Cards.FirstOrDefault(c =>
-            c != null && (c.Type == CardType.Attack || c.Type == CardType.Skill));
+            c != null && (c.Type == CardType.Attack || c.Type == CardType.Skill ||
+                          c.Keywords.Contains(JainaKeywords.Spell)));
         if (spell != null)
         {
             await CardPileCmd.Add(spell, PileType.Hand);
@@ -68,7 +70,8 @@ public sealed class SanctumCandlesellerMinion : JainaMinionBase
         // 抽牌堆没有：从弃牌堆找
         var discardPile = combatState.DiscardPile;
         var discarded = discardPile.Cards.FirstOrDefault(c =>
-            c != null && (c.Type == CardType.Attack || c.Type == CardType.Skill));
+            c != null && (c.Type == CardType.Attack || c.Type == CardType.Skill ||
+                          c.Keywords.Contains(JainaKeywords.Spell)));
         if (discarded != null)
         {
             await CardPileCmd.Add(discarded, PileType.Hand);
