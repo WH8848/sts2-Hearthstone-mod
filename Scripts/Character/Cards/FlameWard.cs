@@ -15,7 +15,7 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
-/// 火焰结界 (Flame Ward) - 吉安娜专属攻击牌（罕见，2 费）。
+/// 火焰结界 (Flame Ward) - 吉安娜专属攻击牌（罕见，1 费）。
 /// 受到攻击时，对敌人造成 7 次 3 点伤害，随机分配到所有敌人身上。
 /// 升级后变为"火热促销 (Fire Sale)"（1 费）：交易。对敌人造成 7 次 3 点伤害，
 /// 随机分配到所有敌人身上。
@@ -46,12 +46,12 @@ public sealed class FlameWard : JainaSpellCardTemplate
         IsUpgraded ? "res://assets/card_art/fire_sale.png" : "res://assets/card_art/flame_ward.png";
 
     public FlameWard()
-        : base(2, CardType.Attack, CardRarity.Uncommon, TargetType.None, true)
+        : base(1, CardType.Attack, CardRarity.Uncommon, TargetType.None, true)
     {
     }
 
     /// <summary>
-    /// 升级后卡牌名称变为"火热促销 (Fire Sale)"，费用 2 -> 1
+    /// 升级后卡牌名称变为"火热促销 (Fire Sale)"，费用保持 1 费不变
     /// </summary>
     public override string Title
     {
@@ -109,9 +109,8 @@ public sealed class FlameWard : JainaSpellCardTemplate
 
     protected override void OnUpgrade()
     {
-        // 升级为火热促销：费用 2 -> 1；伤害保持 3 点不变；
+        // 升级为火热促销：费用保持 1 费不变；伤害保持 3 点不变；
         // 显式加入交易关键词（LocalKeywords 懒初始化只算一次，升级形态 Keywords 缓存自基础状态）
-        EnergyCost.UpgradeBy(-1);
         AddKeyword(jaina.Scripts.Character.Keywords.JainaKeywords.Tradeable);
     }
 }
