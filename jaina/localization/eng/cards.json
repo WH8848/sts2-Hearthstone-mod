@@ -129,7 +129,7 @@
   "JAINA_CARD_GREY_SAGE_PARROT_CARD.description": "[gold]Beast[/gold].\nSummon a [blue]4/5[/blue] [red]Grey Sage Parrot[/red]. [gold]Battlecry[/gold]: Repeat the last Spell you cast that costs 2 or more.",
   "JAINA_CARD_YOGG_BOX_CARD.title": "Yogg in the Box",
   "JAINA_CARD_YOGG_BOX_CARD.titleUpgraded": "Puzzle Box of Yogg-Saron",
-  "JAINA_CARD_YOGG_BOX_CARD.description": "[gold]Shadow[/gold].\n{IfUpgraded:show:Cast 10 random spells (targets chosen randomly, can hit allies in multiplayer).|Cast 5 random spells. If your draw pile has no minions, the spells cast cost 2 or more. (Targets chosen randomly, can hit allies in multiplayer).}",
+  "JAINA_CARD_YOGG_BOX_CARD.description": "[gold]Shadow[/gold].\n{IfUpgraded:show:Cast 10 random all-class cards (targets chosen randomly, can hit allies in multiplayer).|Cast 5 random all-class cards. If your draw pile has no minions, the cards cast cost 2 or more. (Targets chosen randomly, can hit allies in multiplayer).}",
   "JAINA_CARD_ALUNETH_CARD.title": "Aluneth",
   "JAINA_CARD_ALUNETH_CARD.description": "At the start of each turn, draw 3 cards.\nAttack 0. Durability 3.",
   "JAINA_CARD_INCANTERS_FLOW_CARD.title": "Incanter's Flow",

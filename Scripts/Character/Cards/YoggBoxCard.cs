@@ -136,25 +136,33 @@ public sealed class YoggBoxCard : JainaSpellCardTemplate
     }
 
     /// <summary>
-    /// 法术池：吉安娜所有攻击/技能牌（按费用过滤，含升级形态）。
-    /// 每种法术牌按可升级级别展开：未升级形态与升级形态（+）都可能被施放。
+    /// 法术池：全角色攻击/技能牌（按费用过滤，含升级形态）。
+    /// 排除英雄技能卡（火焰冲击等）——英雄技能不是可施放的法术牌。
+    /// 每种按可升级级别展开：未升级形态与升级形态（+）都可能被施放。
     /// 返回带 Owner 的可打出实例。
     /// </summary>
     private List<CardModel> BuildSpellPool(ICombatState combatState, bool cost2PlusOnly)
     {
         var result = new List<CardModel>();
-        foreach (var type in SpellTypes)
+        foreach (var canonical in ModelDb.AllCards)
         {
-            var canonical = ModelDb.GetByIdOrNull<CardModel>(ModelDb.GetId(type));
             if (canonical == null)
             {
                 continue;
             }
-            int maxLevel = jaina.Scripts.Character.JainaCastTracker.GetDiscoverPoolMaxUpgradeLevel(type);
+            if (canonical.Type != CardType.Attack && canonical.Type != CardType.Skill)
+            {
+                continue;
+            }
+            if (HeroPowerHandHelper.IsHeroPowerCard(canonical))
+            {
+                continue;
+            }
+            int maxLevel = jaina.Scripts.Character.JainaCastTracker.GetDiscoverPoolMaxUpgradeLevel(canonical.GetType());
             for (int level = 0; level <= maxLevel; level++)
             {
                 var card = jaina.Scripts.Character.JainaCastTracker.CreateCardWithUpgrade(
-                    combatState, base.Owner, type, level);
+                    combatState, base.Owner, canonical.GetType(), level);
                 if (card == null)
                 {
                     continue;
@@ -168,27 +176,4 @@ public sealed class YoggBoxCard : JainaSpellCardTemplate
         }
         return result;
     }
-
-    /// <summary>
-    /// 吉安娜法术池（随机施放用）：包含主要攻击/技能牌。
-    /// 排除英雄技能（火焰冲击）与任务线卡。
-    /// </summary>
-    private static readonly Type[] SpellTypes =
-    [
-        typeof(Fireball),
-        typeof(Frostbolt),
-        typeof(ArcaneIntellect),
-        typeof(FreezingPotion),
-        typeof(IceBarrier),
-        typeof(Trick),
-        typeof(Awaken),
-        typeof(NorgannonWisdom),
-        typeof(DeepFreezeCard),
-        typeof(FlameWard),
-        typeof(DeathborneCard),
-        typeof(FrostNova),
-        typeof(ArcaneBarrage),
-        typeof(ApexisBlast),
-        typeof(IgniteCard)
-    ];
 }
