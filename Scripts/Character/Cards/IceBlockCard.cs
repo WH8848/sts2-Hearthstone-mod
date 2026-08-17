@@ -54,8 +54,14 @@ public sealed class IceBlockCard : ModCardTemplate
         // 记录施放（倒带/罗曼斯/三派系追踪）
         jaina.Scripts.Character.JainaCastTracker.RecordPlayed(this);
 
-        // 挂寒冰屏障（致命伤害防护 + 本回合免疫，一次性）
+        // 挂寒冰屏障（常驻可叠层：致命伤害时移除1层 + 免疫到下回合开始）
         await PowerCmd.Apply<IceBlockPower>(
             choiceContext, [base.Owner.Creature], 1m, base.Owner.Creature, this);
+
+        // 升级后不消耗：打出后回到弃牌堆（基础版为能力牌，打出后进消耗堆）
+        if (IsUpgraded && Pile != null)
+        {
+            await CardPileCmd.Add(this, PileType.Discard);
+        }
     }
 }

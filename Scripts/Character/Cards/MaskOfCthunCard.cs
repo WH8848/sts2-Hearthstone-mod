@@ -42,6 +42,16 @@ public sealed class MaskOfCthunCard : JainaSpellCardTemplate
     }
 
     /// <summary>
+    /// 升级为夕阳漫射：派系从暗影切换为火焰。
+    /// 需显式移除/加入：LocalKeywords 懒初始化只算一次，升级形态 Keywords 缓存自基础状态。
+    /// </summary>
+    protected override void OnUpgrade()
+    {
+        RemoveKeyword(jaina.Scripts.Character.Keywords.JainaKeywords.Shadow);
+        AddKeyword(jaina.Scripts.Character.Keywords.JainaKeywords.Fire);
+    }
+
+    /// <summary>
     /// 升级后卡牌名称变为"夕阳漫射 (Sunset Volley)"
     /// </summary>
     public override string Title

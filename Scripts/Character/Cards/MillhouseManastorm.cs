@@ -42,7 +42,9 @@ public sealed class MillhouseManastorm : JainaSpellCardTemplate
 
     protected override void OnUpgrade()
     {
-        // 升级后费用保持 2 费（不降费），仅获得"固有"关键词（见 CanonicalKeywords）
+        // 升级后费用保持 2 费（不降费），仅获得"固有"关键词（见 CanonicalKeywords）。
+        // 需显式加入：LocalKeywords 懒初始化只算一次，升级形态 Keywords 缓存自基础状态。
+        AddKeyword(CardKeyword.Innate);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)

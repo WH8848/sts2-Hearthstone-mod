@@ -43,6 +43,15 @@ public sealed class DeckOfWondersCard : JainaSpellCardTemplate
     {
     }
 
+    /// <summary>
+    /// 升级：移除消耗（LocalKeywords 懒初始化只算一次，升级形态的 Keywords
+    /// 缓存自基础状态——需显式移除 Exhaust，否则升级后卡面仍显示"消耗"）。
+    /// </summary>
+    protected override void OnUpgrade()
+    {
+        RemoveKeyword(CardKeyword.Exhaust);
+    }
+
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
         // 记录施放（倒带/罗曼斯/三派系追踪）
