@@ -27,6 +27,8 @@
   "JAINA_CARD_RAY_OF_FROST_CARD.description": "[gold]Frost[/gold].\n[gold]Twinspell[/gold].\n[gold]Freeze[/gold] a minion or enemy.",
   "JAINA_CARD_GO_WITH_THE_FLOW_CARD.title": "Go with the Flow",
   "JAINA_CARD_GO_WITH_THE_FLOW_CARD.description": "[gold]Frost[/gold].\nChoose a character. If it's an enemy, give it 1 [gold]Freeze[/gold]; if it's a friendly minion, give it +1 Strength.",
+  "JAINA_CARD_ICEBLOOD_TOWER_CARD.title": "Iceblood Tower",
+  "JAINA_CARD_ICEBLOOD_TOWER_CARD.description": "At the end of your turn, randomly cast another spell from your Draw Pile.",
   "JAINA_CARD_IMP_CARD.title": "Imp",
   "JAINA_CARD_IMP_CARD.description": "[gold]Undead[/gold].\nSummon a [blue]1/1[/blue] [red]Imp[/red].",
   "JAINA_CARD_SPIRIT_COLLECTOR_CARD.title": "Spirit Collector",
