@@ -72,7 +72,7 @@ public class JainaKeywords
     public static readonly CardKeyword Charge = ModContentRegistry.GetQualifiedKeywordId(Entry.ModId, nameof(Charge)).GetModCardKeyword();
 
     /// <summary>
-    /// 冻结：被冻结的角色攻击造成的伤害减少 25%，可叠加，最大 4 层，回合结束全部消失。
+    /// 冻结：被冻结的角色攻击造成的伤害减少 12.5%，可叠加，最大 8 层，回合结束全部消失。
     /// </summary>
     public static readonly CardKeyword Freeze = ModContentRegistry.GetQualifiedKeywordId(Entry.ModId, nameof(Freeze)).GetModCardKeyword();
 

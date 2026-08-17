@@ -14,7 +14,7 @@ namespace jaina.Scripts.Character.Minions;
 /// 滑冰元素 (Sleet Skater) - 吉安娜专属随从。
 /// 属性：攻击 3，生命 4。
 /// 战吼：给于1名敌方1层冻结，获得等同于其减少的总体伤害的格挡。
-/// （1层冻结使敌方攻击伤害减少 25%；减少的总体伤害 = 该敌方意图攻击伤害 × 25%）
+/// （1层冻结使敌方攻击伤害减少 12.5%；减少的总体伤害 = 该敌方意图攻击伤害 × 12.5%）
 /// </summary>
 [RegisterMonster]
 public sealed class SkatingElementalMinion : JainaMinionBase
@@ -32,7 +32,7 @@ public sealed class SkatingElementalMinion : JainaMinionBase
 
     /// <summary>
     /// 战吼：给于1名敌方1层冻结；获得格挡 = 该敌方因冻结减少的总体伤害
-    /// （1层冻结使敌方攻击伤害减少 25%——按该敌方当前意图攻击伤害 × 25% 计算）。
+    /// （1层冻结使敌方攻击伤害减少 12.5%——按该敌方当前意图攻击伤害 × 12.5% 计算）。
     /// 随从战吼无法选目标：随机选择一名敌方。
     /// </summary>
     public override async Task OnBattlecry(PlayerChoiceContext choiceContext)
@@ -65,7 +65,7 @@ public sealed class SkatingElementalMinion : JainaMinionBase
         await PowerCmd.Apply<FreezePower>(choiceContext, [enemy], 1m, Creature, null);
 
         // 获得等同于其减少的总体伤害的格挡：
-        // 1层冻结使该敌方攻击伤害减少 25%——按敌方当前意图攻击伤害计算减少量
+        // 1层冻结使该敌方攻击伤害减少 12.5%——按敌方当前意图攻击伤害计算减少量
         int totalAttack = 0;
         if (enemy.Monster?.NextMove != null)
         {
@@ -77,7 +77,7 @@ public sealed class SkatingElementalMinion : JainaMinionBase
                 }
             }
         }
-        int block = (int)(totalAttack * 0.25m);
+        int block = (int)(totalAttack * 0.125m);
         if (block > 0)
         {
             await CreatureCmd.GainBlock(owner.Creature, block, ValueProp.Move, null);
