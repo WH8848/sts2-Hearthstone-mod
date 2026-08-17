@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.HoverTips;
 using jaina.Scripts.Character.Minions;
 using STS2RitsuLib.Interop.AutoRegistration;
 
@@ -17,6 +19,17 @@ public sealed class ArcaneArtificerCard : JainaMinionCardTemplate
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
         [jaina.Scripts.Character.Keywords.JainaKeywords.Elemental,
          jaina.Scripts.Character.Keywords.JainaKeywords.Spell, CardKeyword.Exhaust];
+
+    /// <summary>
+    /// 悬停提示：格挡关键词注释（描述中"获得格挡"）
+    /// </summary>
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips
+    {
+        get
+        {
+            yield return HoverTipFactory.Static(StaticHoverTip.Block);
+        }
+    }
 
     public override string CustomPortraitPath => "res://assets/card_art/arcane_artificer.png";
     protected override Type MinionType => typeof(ArcaneArtificerMinion);

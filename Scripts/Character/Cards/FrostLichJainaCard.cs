@@ -24,7 +24,7 @@ namespace jaina.Scripts.Character.Cards;
 public sealed class FrostLichJainaCard : JainaHeroCardTemplate
 {
     /// <summary>
-    /// 获得 5 点护甲值
+    /// 获得 5 点格挡
     /// </summary>
     protected override int HeroArmor => 5;
 
@@ -51,13 +51,14 @@ public sealed class FrostLichJainaCard : JainaHeroCardTemplate
     }
 
     /// <summary>
-    /// 悬停提示：先显示替换后的英雄技能卡（冰冷触摸），再显示战吼召唤的水元素卡
+    /// 悬停提示：格挡关键词注释，再显示替换后的英雄技能卡（冰冷触摸）与战吼召唤的水元素卡
     /// （参考灵体采集者显示小精灵的做法）。
     /// </summary>
     protected override IEnumerable<IHoverTip> AdditionalHoverTips
     {
         get
         {
+            yield return HoverTipFactory.Static(StaticHoverTip.Block);
             // 替换后的英雄技能卡（冰冷触摸）
             if (HeroPowerType != null)
             {

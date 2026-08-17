@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
@@ -18,15 +19,26 @@ namespace jaina.Scripts.Character.Cards;
 /// <summary>
 /// 魔导师晨拥 (Magister Dawngrasp) - 2费英雄卡（稀有）。
 /// 战吼：再次施放你在本局对战中施放过的每个法术派系的一个法术（随机目标，免费自动打出）。
-/// 获得 5 点护甲值。替换英雄技能为"奥术爆裂"。
+/// 获得 5 点格挡。替换英雄技能为"奥术爆裂"。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
 public sealed class MagisterDawngraspCard : JainaHeroCardTemplate
 {
     /// <summary>
-    /// 获得 5 点护甲值
+    /// 获得 5 点格挡
     /// </summary>
     protected override int HeroArmor => 5;
+
+    /// <summary>
+    /// 悬停提示：格挡关键词注释（描述中"获得5点格挡"）
+    /// </summary>
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips
+    {
+        get
+        {
+            yield return HoverTipFactory.Static(StaticHoverTip.Block);
+        }
+    }
 
     /// <summary>
     /// 替换英雄技能为奥术爆裂

@@ -73,12 +73,13 @@ public sealed class IceBarrier : JainaSpellCardTemplate
     }
 
     /// <summary>
-    /// 悬停提示：升级后的冰冷案例显示不稳定的骷髅衍生物卡。
+    /// 悬停提示：格挡关键词注释（右侧显示）；升级后的冰冷案例显示不稳定的骷髅衍生物卡。
     /// </summary>
     protected override IEnumerable<IHoverTip> AdditionalHoverTips
     {
         get
         {
+            yield return HoverTipFactory.Static(StaticHoverTip.Block);
             if (!IsUpgraded)
             {
                 yield break;
