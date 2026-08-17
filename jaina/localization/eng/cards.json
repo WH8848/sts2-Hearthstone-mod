@@ -102,7 +102,7 @@
   "JAINA_CARD_DEATHBORNE_CARD.titleUpgraded": "Blizzard",
   "JAINA_CARD_DEATHBORNE_CARD.description": "{IfUpgraded:show:[gold]Frost[/gold].\nDeal 7 instances of 2 damage, split randomly among all enemies. Each instance gives an enemy 1 [gold]Freeze[/gold].|[gold]Frost[/gold].\nDeal 2 damage to all minions, then deal 7 instances of 2 damage to enemies. For each character killed, summon a [blue]2/2[/blue] [red]Volatile Skeleton[/red].}",
   "JAINA_CARD_FROST_NOVA.title": "Frost Nova",
-  "JAINA_CARD_FROST_NOVA.description": "[gold]Frost[/gold].\nGive all enemies 4 [gold]Freeze[/gold].",
+  "JAINA_CARD_FROST_NOVA.description": "{IfUpgraded:show:[gold]Frost[/gold].\nGive all enemies 7 [gold]Freeze[/gold].|[gold]Frost[/gold].\nGive all enemies 7 [gold]Freeze[/gold]. Exhaust.}",
   "JAINA_CARD_EXONERATION_CARD.title": "Exoneration",
   "JAINA_CARD_EXONERATION_CARD.description": "[gold]Frost[/gold].\nGain 1 [gold]Intangible[/gold].",
   "JAINA_CARD_ICE_BLOCK_CARD.title": "Ice Block",

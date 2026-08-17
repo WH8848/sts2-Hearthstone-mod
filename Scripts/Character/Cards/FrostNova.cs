@@ -14,7 +14,7 @@ namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
 /// 冰霜新星 (Frost Nova) - 1费技能（罕见，冰霜派系）。
-/// 给予敌方全体 4 层冻结。基础版消耗；升级后不再消耗。
+/// 给予敌方全体 7 层冻结。基础版消耗；升级后不再消耗。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
 public sealed class FrostNova : JainaSpellCardTemplate
@@ -62,7 +62,7 @@ public sealed class FrostNova : JainaSpellCardTemplate
         // 记录施放（倒带/罗曼斯/三派系追踪）
         jaina.Scripts.Character.JainaCastTracker.RecordPlayed(this);
 
-        // 给予敌方全体 4 层冻结
+        // 给予敌方全体 7 层冻结
         var combatState = base.Owner.Creature.CombatState;
         var enemies = combatState.GetOpponentsOf(base.Owner.Creature)
             .Where(e => e != null && e.IsAlive)
@@ -70,7 +70,7 @@ public sealed class FrostNova : JainaSpellCardTemplate
         foreach (var enemy in enemies)
         {
             await PowerCmd.Apply<FreezePower>(
-                choiceContext, [enemy], 4m, base.Owner.Creature, this);
+                choiceContext, [enemy], 7m, base.Owner.Creature, this);
         }
     }
 }
