@@ -191,7 +191,7 @@ public static class JainaCardTypePatches
     /// 其余动态值落到这里兜底。
     /// </summary>
     [HarmonyPatch(typeof(CardTypeExtensions), "ToLocString")]
-    [HarmonyPriority(Priority.Lowest)]
+    [HarmonyPriority(Priority.Last)]
     private static class UnknownCardTypeLocStringFallbackPatch
     {
         private static bool Prefix(CardType cardType, ref LocString __result)
