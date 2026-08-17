@@ -36,7 +36,10 @@ public sealed class DeckOfWondersCard : JainaSpellCardTemplate
     /// </summary>
     public override int MaxUpgradeLevel => 1;
 
-    public override string CustomPortraitPath => "res://assets/card_art/deck_of_wonders.png";
+    /// <summary>
+    /// 卡牌原画：程序绘制的"愚人套牌"占位图（与惊奇套牌的 Deck of Wonders 原画区分）
+    /// </summary>
+    public override string CustomPortraitPath => "res://assets/card_art/deck_of_wonders_fool.png";
 
     public DeckOfWondersCard()
         : base(0, CardType.Skill, CardRarity.Rare, TargetType.None, true)
