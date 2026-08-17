@@ -19,7 +19,7 @@ namespace jaina.Scripts.Character.Cards;
 /// <summary>
 /// 死神之躯 (Deathborne) - 2费技能牌（罕见，冰霜派系）。
 /// 对所有随从造成2点伤害，对敌人造成7次2点伤害。每消灭一个角色，召唤一个2/2的不稳定的骷髅。
-/// 升级后变为"暴风雪 (Blizzard)"：造成7次2点伤害，随机分配到所有敌人身上，每次伤害给予敌人1层冻结。
+/// 升级后变为"暴风雪 (Blizzard)"：造成7次2点伤害，随机分配到所有敌人身上。给予敌方全体7层冻结。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
 public sealed class DeathborneCard : JainaSpellCardTemplate
@@ -140,7 +140,7 @@ public sealed class DeathborneCard : JainaSpellCardTemplate
     }
 
     /// <summary>
-    /// 暴风雪（升级形态）：造成 7 次 2 点伤害，随机分配到所有敌人身上，每次伤害给予敌人 1 层冻结。
+    /// 暴风雪（升级形态）：造成 7 次 2 点伤害，随机分配到所有敌人身上；给予敌方全体 7 层冻结。
     /// </summary>
     private async Task PlayAsBlizzard(PlayerChoiceContext choiceContext, CardPlay cardPlay, MegaCrit.Sts2.Core.Combat.ICombatState combatState)
     {
@@ -161,7 +161,15 @@ public sealed class DeathborneCard : JainaSpellCardTemplate
             // 攻击伤害：吃力量加成（与原版多次攻击牌一致，每次命中都计算力量）；
             // 传 cardSource/cardPlay（蜷身等依赖 cardSource 的敌方 Power 才能触发）
             await CreatureCmd.Damage(choiceContext, [target], 2m, ValueProp.Move, base.Owner.Creature, this, cardPlay);
-            await PowerCmd.Apply<FreezePower>(choiceContext, [target], 1m, base.Owner.Creature, this);
+        }
+
+        // 给予敌方全体 7 层冻结
+        var allEnemies = combatState.GetOpponentsOf(base.Owner.Creature)
+            .Where(e => e != null && e.IsAlive)
+            .ToList();
+        foreach (var enemy in allEnemies)
+        {
+            await PowerCmd.Apply<FreezePower>(choiceContext, [enemy], 7m, base.Owner.Creature, this);
         }
     }
 }
