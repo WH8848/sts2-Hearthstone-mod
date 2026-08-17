@@ -166,8 +166,15 @@ public abstract class JainaLandmarkBase : JainaMinionBase
     }
 
     /// <summary>
+    /// 地标使用时的目标类型（默认 None：点击直接触发，不选目标）。
+    /// 需要选择目标的地标（如夜隐者圣所冻结目标）覆写为对应目标类型。
+    /// </summary>
+    public virtual MegaCrit.Sts2.Core.Entities.Cards.TargetType UseTargetType =>
+        MegaCrit.Sts2.Core.Entities.Cards.TargetType.None;
+
+    /// <summary>
     /// 地标使用效果（点击使用地标时触发）。子类实现具体效果。
     /// </summary>
-    /// <param name="target">点击时选择的目标角色（任意活物）</param>
+    /// <param name="target">点击时选择的目标角色（无目标地标为 null）</param>
     public abstract Task OnLandmarkEffect(PlayerChoiceContext choiceContext, Creature target);
 }

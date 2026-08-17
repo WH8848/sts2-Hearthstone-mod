@@ -26,6 +26,12 @@ public sealed class NightcloakSanctumLandmark : JainaLandmarkBase
     public override int LandmarkDurability => 3;
 
     /// <summary>
+    /// 使用需要选择目标：任意活物（给予一名角色 1 层冻结）
+    /// </summary>
+    public override MegaCrit.Sts2.Core.Entities.Cards.TargetType UseTargetType =>
+        jaina.Scripts.Character.Cards.JainaTargetTypes.AnyTargetable;
+
+    /// <summary>
     /// 使用效果：给予目标角色 1 层冻结，并召唤一个 2/2 的不稳定的骷髅。
     /// </summary>
     public override async Task OnLandmarkEffect(PlayerChoiceContext choiceContext, Creature target)

@@ -30,9 +30,11 @@ public sealed class JainaLandmarkUseAction : ActionModel, IModPowerAssetOverride
     public string? CustomBigIconPath => AssetProfile.BigIconPath;
 
     /// <summary>
-    /// 目标：任意活物（给予一名角色 1 层冻结）
+    /// 目标类型由地标实体决定：默认 None（点击直接触发，不选目标）；
+    /// 需要选目标的地标（如夜隐者圣所：任意活物）覆写 UseTargetType。
     /// </summary>
-    public override TargetType TargetType => Cards.JainaTargetTypes.AnyTargetable;
+    public override TargetType TargetType =>
+        (Owner?.Monster as JainaLandmarkBase)?.UseTargetType ?? TargetType.None;
 
     /// <summary>
     /// 使用行动点是当回合有效的，回合结束自动移除（冷却中不授予）
@@ -50,10 +52,11 @@ public sealed class JainaLandmarkUseAction : ActionModel, IModPowerAssetOverride
 
     protected override async Task OnAct(PlayerChoiceContext choiceContext, Creature? target)
     {
-        if (target == null || !Owner.IsAlive)
+        if (!Owner.IsAlive)
         {
             return;
         }
+        // 无目标地标（潮汐之池/小玩物小屋）target 为 null；有目标地标（夜隐者圣所）target 必非 null
         var landmark = Owner.Monster as JainaLandmarkBase;
         if (landmark == null)
         {
