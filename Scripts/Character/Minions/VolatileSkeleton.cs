@@ -80,7 +80,11 @@ public sealed class VolatileSkeleton : JainaMinionBase
         JainaDeathrattleHelper.IsResolvingDeathrattle = true;
         try
         {
-            await CreatureCmd.Damage(choiceContext, [target], DeathrattleDamage, ValueProp.Unpowered, Creature);
+            var results = (await CreatureCmd.Damage(choiceContext, [target], DeathrattleDamage, ValueProp.Unpowered, Creature)).ToList();
+            MegaCrit.Sts2.Core.Logging.Log.Info(
+                $"[JainaDeathrattle] VolatileSkeleton damage: target={target.Monster?.GetType().Name} " +
+                $"unblocked={results.Sum(r => r.UnblockedDamage)} blocked={results.Sum(r => r.BlockedDamage)} " +
+                $"resolving={JainaDeathrattleHelper.IsResolvingDeathrattle}");
         }
         finally
         {

@@ -29,26 +29,36 @@ public static class JainaDeathrattleHelper
 /// CreatureCmd.Damage 核心重载：把"dealer 已死 → 返回空结果"改为
 /// "dealer 已死 且 不在亡语结算中 → 返回空结果"。
 /// 亡语结算期间（IsResolvingDeathrattle=true）死随从照常造成伤害（炉石语义）。
+/// 注意：Damage 是 async 方法，实际逻辑在 <Damage>d__*::MoveNext 状态机中——
+/// patch wrapper 方法体为空（无 IsDead 检查），必须 patch 状态机。
 /// </summary>
 [HarmonyPatch]
 public static class JainaDeathrattleDamagePatch
 {
     private static MethodBase TargetMethod()
     {
-        return typeof(CreatureCmd).GetMethod(nameof(CreatureCmd.Damage),
-            BindingFlags.Public | BindingFlags.Static,
-            null,
-            new[]
+        // 定位 Damage 核心重载的状态机：含 dealer 参数的 <Damage>d__* 嵌套类
+        foreach (var type in typeof(CreatureCmd).GetNestedTypes(BindingFlags.NonPublic))
+        {
+            if (!type.Name.StartsWith("<Damage>d__", System.StringComparison.Ordinal))
             {
-                typeof(PlayerChoiceContext),
-                typeof(IEnumerable<Creature>),
-                typeof(decimal),
-                typeof(ValueProp),
-                typeof(Creature),
-                typeof(CardModel),
-                typeof(CardPlay)
-            },
-            null);
+                continue;
+            }
+            bool hasDealerField = false;
+            foreach (var field in type.GetFields(BindingFlags.Instance | BindingFlags.NonPublic))
+            {
+                if (field.Name.Contains("dealer"))
+                {
+                    hasDealerField = true;
+                    break;
+                }
+            }
+            if (hasDealerField)
+            {
+                return type.GetMethod("MoveNext", BindingFlags.Instance | BindingFlags.NonPublic);
+            }
+        }
+        return null;
     }
 
     private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
