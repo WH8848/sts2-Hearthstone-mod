@@ -143,7 +143,7 @@
   "JAINA_CARD_SANCTUM_CANDLESELLER_CARD.title": "Sanctum Candleseller",
   "JAINA_CARD_SANCTUM_CANDLESELLER_CARD.description": "[gold]Elemental[/gold].\nSummon a [blue]4/5[/blue] [red]Sanctum Candleseller[/red]. After you cast a [gold]Fire[/gold] spell, draw a Spell card.",
   "JAINA_CARD_ENERGY_SHAPER_CARD.title": "Energy Shaper",
-  "JAINA_CARD_ENERGY_SHAPER_CARD.description": "Summon a [blue]3/4[/blue] [red]Energy Shaper[/red]. [gold]Battlecry[/gold]: Transform all spells in your hand into ones that cost 1 more. (They keep their original Cost.)",
+  "JAINA_CARD_ENERGY_SHAPER_CARD.description": "Summon a [blue]3/4[/blue] [red]Energy Shaper[/red]. [gold]Battlecry[/gold]: Transform all spells in your hand into all-class cards that cost 1 more. (They keep their original Cost.)",
   "JAINA_CARD_MAGISTER_DAWNGRASP_CARD.title": "Magister Dawngrasp",
   "JAINA_CARD_MAGISTER_DAWNGRASP_CARD.description": "[gold]Battlecry[/gold]: Recast one spell from each spell school you have cast this battle.\nGain 5 Armor. Your Hero Power becomes [gold]Arcane Burst[/gold].",
   "JAINA_CARD_ARCANE_BURST_CARD.title": "Arcane Burst",

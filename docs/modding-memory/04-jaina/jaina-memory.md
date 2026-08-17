@@ -7,7 +7,7 @@
 - 开发《杀戮尖塔2》(STS2 v0.111.1) MOD "Jaina"（Godot 4.5.1 + C#/.NET 10）：把炉石传说吉安娜/法师体系搬进 STS2（随从系统、法术派系、炉石关键词、任务线、武器位）。
 - 用户迭代式报 bug/提需求，逐条修复；每次回答完自动 `git add -A && git commit && git push origin main`（push 失败重试 4 次）。
 - 中文环境；卡图用 hearthstonejson orig 或 wiki.gg 英文炉石 wiki 下载后 **cover 居中裁剪为 250x190**（保持原画比例不拉伸，System.Drawing）；本地化修改后必须重新 `dotnet build`（否则 pck 不更新）。
-- 用户偏好：官方原画优先（wiki.gg full.jpg），无原画程序绘制占位；卡名是真实炉石卡（多次纠正找原版卡：圣殿蜡烛商→Sanctum Chandler SW_111、灯光表演→Lightshow ETC_528、加工失误→Manufacturing Error TOY_371、咒术洪流→Incanter's Flow BT_002）；描述数字前后不加空格（zhs）；关键词金色 `[gold]`；"牌库之外"= 本局生成过的攻击/技能牌类型；任务线后阶段卡进中性池（不出现在奖励与图鉴）。
+- 用户偏好：官方原画优先（wiki.gg full.jpg），无原画程序绘制占位；卡名是真实炉石卡（多次纠正找原版卡：圣殿蜡烛商→Sanctum Chandler SW_111、灯光表演→Lightshow ETC_528、加工失误→Manufacturing Error TOY_371、咒术洪流→Incanter's Flow BT_002）；描述数字前后不加空格（zhs）；关键词金色 `[gold]`；"牌库之外"= 本局生成过的攻击/技能牌类型；任务线后阶段卡进中性池（不出现在奖励与图鉴）；**思维链使用中文显示**（AI 思考/推理过程用中文输出）。
 
 ## 2. 关键技术概念
 - **RitsuLib 0.5.12**：`[RegisterCard]`/`[RegisterMonster]`/`[RegisterPower]`/`[RegisterOwnedKeyword(nameof(X), IconPath="res://icon.svg")]`（本地化键 `JAINA_KEYWORD_X`，驼峰转大写）；`ModContentRegistry.GetQualifiedKeywordId(Entry.ModId, nameof(X)).GetModCardKeyword()`；`IModPowerAssetOverrides`（Power 图标，using `STS2RitsuLib.Scaffolding.Content.Patches`）；`Harmony("jaina").PatchAll` 自动应用所有 `[HarmonyPatch]`；`[HarmonyPatch]` 无参 + `TargetMethod()`/`TargetMethods()` 定位状态机（async 方法必须 patch `<X>d__N::MoveNext`，用字段探测定位，不能直接 patch 声明方法）。

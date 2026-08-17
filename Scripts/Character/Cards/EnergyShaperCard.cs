@@ -9,7 +9,7 @@ namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
 /// 能量塑形师 (Energy Shaper) - 1费随从卡（罕见）。
-/// 战吼：将你手牌中的所有法术牌变形成为费用增加1点的法术牌。（保留其原始费用。）
+/// 战吼：将你手牌中的所有法术牌变形成为费用增加1点的全角色卡牌。（保留其原始费用。）
 /// 属性 3/4。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]

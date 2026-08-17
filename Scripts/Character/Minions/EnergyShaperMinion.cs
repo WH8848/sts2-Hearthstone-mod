@@ -14,7 +14,7 @@ namespace jaina.Scripts.Character.Minions;
 /// <summary>
 /// 能量塑形师 (Energy Shaper) - 吉安娜专属随从。
 /// 属性：攻击 3，生命 4。
-/// 战吼：将你手牌中的所有法术牌变形成为费用增加1点的法术牌。（保留其原始费用。）
+/// 战吼：将你手牌中的所有法术牌变形成为费用增加1点的全角色卡牌。（保留其原始费用。）
 /// 仅手牌打出时触发。
 /// </summary>
 [RegisterMonster]
@@ -33,7 +33,7 @@ public sealed class EnergyShaperMinion : JainaMinionBase
 
     /// <summary>
     /// 战吼：将手牌中所有法术牌（攻击/技能牌，不含英雄技能卡）变形为
-    /// 一张随机法术牌，其原始费用 = 原牌费用 + 1；变形后的牌保留原牌费用显示。
+    /// 一张随机全角色卡牌，其原始费用 = 原牌费用 + 1；变形后的牌保留原牌费用显示。
     /// </summary>
     public override async Task OnBattlecry(PlayerChoiceContext choiceContext)
     {
