@@ -15,8 +15,8 @@ namespace jaina.Scripts.Character.Minions;
 /// <summary>
 /// 拨号机器人 (Robocaller) - 吉安娜专属随从。
 /// 属性：攻击 3，生命 2。
-/// 战吼：随机拨号（三个 0~4 的数字，可重复），从抽牌堆定向抽取费用消耗等于
-/// 每个拨号数字的牌各一张（每回合随机拨号！）。
+/// 战吼：按打出时卡面上显示的拨号数字（三个 0~5，每回合开始时随机拨号），
+/// 从抽牌堆定向抽取费用消耗等于每个拨号数字的牌各一张（每回合随机拨号！）。
 /// 注意：X 费卡（CostsX）费用不定，不会被拨号抽中。
 /// </summary>
 [RegisterMonster]
@@ -32,7 +32,19 @@ public sealed class RobocallerMinion : JainaMinionBase
     public override int MaxInitialHp => 2;
 
     /// <summary>
-    /// 战吼：随机拨号三个 0~4 数字，从抽牌堆各抽取一张费用匹配的牌。
+    /// 召唤来源卡（手牌打出时传拨号机器人卡实例，读取其当前拨号数字）
+    /// </summary>
+    private MegaCrit.Sts2.Core.Models.CardModel? _sourceCard;
+
+    public override async Task OnSummon(PlayerChoiceContext choiceContext, Player owner, MinionSummonOptions options)
+    {
+        _sourceCard = options.Source;
+        await base.OnSummon(choiceContext, owner, options);
+    }
+
+    /// <summary>
+    /// 战吼：按卡面当前拨号数字（三个 0~5），从抽牌堆各抽取一张费用匹配的牌。
+    /// 非手牌打出（随机召唤等）不触发战吼。
     /// </summary>
     public override async Task OnBattlecry(PlayerChoiceContext choiceContext)
     {
@@ -46,14 +58,11 @@ public sealed class RobocallerMinion : JainaMinionBase
         {
             return;
         }
-        var rng = owner.RunState.Rng.CombatTargets;
 
-        // 随机拨号：三个 0~4 的数字（可重复；费用只有 0/1/2/3/4 和 X，X 费不会被拨号）
-        var dial = new int[3];
-        for (int i = 0; i < 3; i++)
-        {
-            dial[i] = rng.NextInt(0, 5);
-        }
+        // 读取打出时卡面上的拨号数字（每回合开始时随机拨号 0~5）
+        var dial = _sourceCard is Cards.RobocallerCard rc
+            ? rc.CurrentDials
+            : new int[] { 0, 0, 0 };
 
         foreach (var digit in dial)
         {
