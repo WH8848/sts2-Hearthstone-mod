@@ -14,9 +14,9 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
-/// 陨石术 (Meteor) - 2费攻击牌（普通，火焰派系）。
+/// 陨石术 (Meteor) - 3费攻击牌（普通，火焰派系）。
 /// 对一个敌人造成 15 点伤害，再对随机敌人造成 2 次 4 点伤害。
-/// 升级后变为"烈焰风暴 (Flamestrike)"：造成 7 次 5 点伤害，随机分配到所有敌人身上。
+/// 升级后变为"烈焰风暴 (Flamestrike)"（3 费）：造成 7 次 5 点伤害，随机分配到所有敌人身上。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
 public sealed class MeteorCard : JainaSpellCardTemplate
@@ -36,7 +36,7 @@ public sealed class MeteorCard : JainaSpellCardTemplate
         IsUpgraded ? "res://assets/card_art/flamestrike.png" : "res://assets/card_art/meteor.png";
 
     public MeteorCard()
-        : base(2, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy, true)
+        : base(3, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy, true)
     {
     }
 
