@@ -62,13 +62,17 @@ public sealed class DeathborneCard : JainaSpellCardTemplate
 
     /// <summary>
     /// 悬停提示：显示每消灭一个角色召唤的衍生物"不稳定的骷髅"卡
-    /// （参考灵体采集者显示小精灵/冰霜女巫吉安娜显示水元素的做法）
+    /// （参考灵体采集者显示小精灵/冰霜女巫吉安娜显示水元素的做法）。
+    /// 升级后（暴风雪）不再召唤骷髅，不显示衍生卡悬停。
     /// </summary>
     protected override IEnumerable<IHoverTip> AdditionalHoverTips
     {
         get
         {
-            yield return new CardHoverTip(MegaCrit.Sts2.Core.Models.ModelDb.Card<VolatileSkeletonCard>());
+            if (!IsUpgraded)
+            {
+                yield return new CardHoverTip(MegaCrit.Sts2.Core.Models.ModelDb.Card<VolatileSkeletonCard>());
+            }
         }
     }
 
