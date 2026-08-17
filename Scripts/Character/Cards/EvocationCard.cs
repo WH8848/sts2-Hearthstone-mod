@@ -14,29 +14,40 @@ namespace jaina.Scripts.Character.Cards;
 /// <summary>
 /// 唤醒 (Evocation) - 0费技能牌（稀有，奥术派系）。
 /// 用随机法师法术牌填满你的手牌。这些牌具有虚无。
-/// 不可升级。
+/// 基础版消耗；升级后不再消耗。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
 public sealed class EvocationCard : JainaSpellCardTemplate
 {
     /// <summary>
-    /// 法术牌 + 奥术派系
+    /// 法术牌 + 奥术派系；基础版消耗（升级后不再消耗）
     /// </summary>
-    public override IEnumerable<CardKeyword> CanonicalKeywords =>
-        [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Arcane];
+    public override IEnumerable<CardKeyword> CanonicalKeywords => IsUpgraded
+        ? [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Arcane]
+        : [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Arcane,
+           CardKeyword.Exhaust];
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [];
 
     /// <summary>
-    /// 不可升级
+    /// 可升级（升级后去除消耗）
     /// </summary>
-    public override int MaxUpgradeLevel => 0;
+    public override int MaxUpgradeLevel => 1;
 
     public override string CustomPortraitPath => "res://assets/card_art/evocation.png";
 
     public EvocationCard()
         : base(0, CardType.Skill, CardRarity.Rare, TargetType.None, true)
     {
+    }
+
+    /// <summary>
+    /// 升级：移除消耗（LocalKeywords 懒初始化只算一次，升级形态 Keywords
+    /// 缓存自基础状态——需显式移除 Exhaust，否则升级后卡面仍显示"消耗"）。
+    /// </summary>
+    protected override void OnUpgrade()
+    {
+        RemoveKeyword(CardKeyword.Exhaust);
     }
 
     /// <summary>
