@@ -13,3 +13,6 @@ mono_crash.*.json
 
 # ZCode workspace-internal files
 .zcode/
+
+# Packed build artifacts
+*.pck
