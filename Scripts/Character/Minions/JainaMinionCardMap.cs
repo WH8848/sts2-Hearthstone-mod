@@ -43,6 +43,7 @@ public static class JainaMinionCardMap
         [typeof(KelThuzadMinion)] = typeof(KelThuzadCard),
         [typeof(RobocallerMinion)] = typeof(RobocallerCard),
         [typeof(ConnivingConmanMinion)] = typeof(ConnivingConmanCard),
+        [typeof(VexallusMinion)] = typeof(VexallusCard),
         // 地标（悬停显示地标卡；不进入 MinionTypes 随机召唤池）
         [typeof(NightcloakSanctumLandmark)] = typeof(NightcloakSanctumCard),
         [typeof(TrinketShopLandmark)] = typeof(TrinketShopCard),
