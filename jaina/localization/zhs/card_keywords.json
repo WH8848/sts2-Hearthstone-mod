@@ -60,5 +60,7 @@
   "JAINA_KEYWORD_MINIATURIZE.title": "微缩",
   "JAINA_KEYWORD_MINIATURIZE.description": "微缩：当你使用带有“微缩”的随从牌后，会立即将一张0费1/1的复制置入你的手牌。只在从手牌中使用时触发，召唤、复活等其它方式登场不会触发。",
   "JAINA_KEYWORD_MINI.title": "微型",
-  "JAINA_KEYWORD_MINI.description": "微型：通过“微缩”效果产生的0费1/1复制卡牌本身（衍生关键词，只能通过“微缩”获得），完整保留原卡牌的所有文字效果。"
+  "JAINA_KEYWORD_MINI.description": "微型：通过“微缩”效果产生的0费1/1复制卡牌本身（衍生关键词，只能通过“微缩”获得），完整保留原卡牌的所有文字效果。",
+  "JAINA_KEYWORD_TRADEABLE.title": "交易",
+  "JAINA_KEYWORD_TRADEABLE.description": "交易：将此卡牌拖到弃牌堆上方松手会洗入你的弃牌堆，然后你从抽牌堆抽一张牌。"
 }

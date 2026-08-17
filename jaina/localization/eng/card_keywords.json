@@ -60,5 +60,7 @@
   "JAINA_KEYWORD_MINIATURIZE.title": "Miniaturize",
   "JAINA_KEYWORD_MINIATURIZE.description": "Miniaturize: After you play a minion with Miniaturize, add a 0-Cost 1/1 copy of it to your hand. Only triggers when played from your hand; Summoning or resurrecting does not trigger it.",
   "JAINA_KEYWORD_MINI.title": "Mini",
-  "JAINA_KEYWORD_MINI.description": "Mini: The 0-Cost 1/1 copy created by Miniaturize (a generated keyword that can only be obtained through Miniaturize). It keeps all text effects of the original card."
+  "JAINA_KEYWORD_MINI.description": "Mini: The 0-Cost 1/1 copy created by Miniaturize (a generated keyword that can only be obtained through Miniaturize). It keeps all text effects of the original card.",
+  "JAINA_KEYWORD_TRADEABLE.title": "Tradeable",
+  "JAINA_KEYWORD_TRADEABLE.description": "Tradeable: Drag this card over your Discard Pile and release to shuffle it into your Discard Pile, then draw a card from your Draw Pile."
 }

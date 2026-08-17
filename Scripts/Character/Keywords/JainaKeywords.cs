@@ -57,6 +57,8 @@ namespace jaina.Scripts.Character.Keywords;
 [RegisterOwnedKeyword(nameof(Miniaturize), IconPath = "res://icon.svg")]
 // 微型：微缩效果产生的0费1/1复制卡牌本身（衍生关键词，只能通过微缩获得）
 [RegisterOwnedKeyword(nameof(Mini), IconPath = "res://icon.svg")]
+// 交易：将此卡牌拖到弃牌堆上方松手会洗入你的弃牌堆，然后你从抽牌堆抽一张牌
+[RegisterOwnedKeyword(nameof(Tradeable), IconPath = "res://icon.svg")]
 public class JainaKeywords
 {
     /// <summary>
@@ -215,4 +217,9 @@ public class JainaKeywords
     /// 完整保留原卡牌的所有文字效果。
     /// </summary>
     public static readonly CardKeyword Mini = ModContentRegistry.GetQualifiedKeywordId(Entry.ModId, nameof(Mini)).GetModCardKeyword();
+
+    /// <summary>
+    /// 交易：将此卡牌拖到弃牌堆上方松手会洗入你的弃牌堆，然后你从抽牌堆抽一张牌。
+    /// </summary>
+    public static readonly CardKeyword Tradeable = ModContentRegistry.GetQualifiedKeywordId(Entry.ModId, nameof(Tradeable)).GetModCardKeyword();
 }
