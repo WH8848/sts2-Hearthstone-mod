@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.Commands;
@@ -79,15 +80,26 @@ public sealed class HearthstoneFormCard : ModCardTemplate
 /// 会在描述顶部/底部额外渲染一行——移除这两个独立关键词行（描述文本中的"保留/消耗"长句不受影响）。
 /// 右侧关键词注释（悬停提示）仍由 Keywords 提供，不受影响。
 /// </summary>
-[HarmonyPatch(typeof(MegaCrit.Sts2.Core.Models.CardModel), "GetDescriptionForPile",
-    new[]
-    {
-        typeof(MegaCrit.Sts2.Core.Entities.Cards.PileType),
-        typeof(MegaCrit.Sts2.Core.Models.CardModel.DescriptionPreviewType),
-        typeof(MegaCrit.Sts2.Core.Entities.Creatures.Creature)
-    })]
+[HarmonyPatch]
 public static class HearthstoneFormKeywordRenderPatch
 {
+    private static MethodBase TargetMethod()
+    {
+        // DescriptionPreviewType 是 CardModel 的私有嵌套类型，需反射获取
+        var previewType = typeof(MegaCrit.Sts2.Core.Models.CardModel)
+            .GetNestedType("DescriptionPreviewType", BindingFlags.NonPublic | BindingFlags.Public);
+        return typeof(MegaCrit.Sts2.Core.Models.CardModel).GetMethod("GetDescriptionForPile",
+            BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public,
+            null,
+            new[]
+            {
+                typeof(MegaCrit.Sts2.Core.Entities.Cards.PileType),
+                previewType,
+                typeof(MegaCrit.Sts2.Core.Entities.Creatures.Creature)
+            },
+            null);
+    }
+
     private static void Postfix(MegaCrit.Sts2.Core.Models.CardModel __instance, ref string __result)
     {
         if (__instance is not HearthstoneFormCard)
