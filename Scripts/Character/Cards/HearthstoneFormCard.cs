@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using HarmonyLib;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
@@ -69,5 +71,43 @@ public sealed class HearthstoneFormCard : ModCardTemplate
     protected override void OnUpgrade()
     {
         RemoveKeyword(CardKeyword.Ethereal);
+    }
+}
+
+/// <summary>
+/// 炉石形态卡面渲染修正：关键词的"保留"（beforeDescription 顶部）与"消耗"（afterDescription 底部）
+/// 会在描述顶部/底部额外渲染一行——移除这两个独立关键词行（描述文本中的"保留/消耗"长句不受影响）。
+/// 右侧关键词注释（悬停提示）仍由 Keywords 提供，不受影响。
+/// </summary>
+[HarmonyPatch(typeof(MegaCrit.Sts2.Core.Models.CardModel), "GetDescriptionForPile",
+    new[]
+    {
+        typeof(MegaCrit.Sts2.Core.Entities.Cards.PileType),
+        typeof(MinionLib.Utilities.BetterExtraArgs.DescriptionPreviewType),
+        typeof(MegaCrit.Sts2.Core.Entities.Creatures.Creature)
+    })]
+public static class HearthstoneFormKeywordRenderPatch
+{
+    private static void Postfix(MegaCrit.Sts2.Core.Models.CardModel __instance, ref string __result)
+    {
+        if (__instance is not HearthstoneFormCard)
+        {
+            return;
+        }
+        // 移除顶部"保留"与底部"消耗"的独立关键词行（金色词条或纯文本均可匹配）
+        var kept = new List<string>();
+        foreach (var line in __result.Split('\n'))
+        {
+            string clean = line.Trim()
+                .Replace("[gold]", string.Empty)
+                .Replace("[/gold]", string.Empty);
+            if (clean == "保留" || clean == "消耗" ||
+                clean == "Retain" || clean == "Exhaust")
+            {
+                continue;
+            }
+            kept.Add(line);
+        }
+        __result = string.Join('\n', kept);
     }
 }
