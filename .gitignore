@@ -16,3 +16,7 @@ mono_crash.*.json
 
 # Packed build artifacts
 *.pck
+
+# Personal / temp files
+DeepSeek_Harness_安装教程.*
+.tmp_w.png
