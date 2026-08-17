@@ -15,24 +15,26 @@ namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
 /// 愚人套牌 (Deck of Wonders) - 0费技能牌（稀有，奥术派系）。
-/// 将你抽牌堆和弃牌堆中的法术牌变形成为费用消耗增加1点的法术牌。（保留其原始费用消耗。）
-/// 不可升级。
+/// 将你抽牌堆和弃牌堆中的法术牌变形成为费用消耗增加1点的全角色卡牌。（保留其原始费用消耗。）
+/// 基础版消耗；升级后不再消耗。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
 public sealed class DeckOfWondersCard : JainaSpellCardTemplate
 {
     /// <summary>
-    /// 法术牌 + 奥术派系
+    /// 法术牌 + 奥术派系；基础版消耗（升级后不再消耗）
     /// </summary>
-    public override IEnumerable<CardKeyword> CanonicalKeywords =>
-        [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Arcane];
+    public override IEnumerable<CardKeyword> CanonicalKeywords => IsUpgraded
+        ? [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Arcane]
+        : [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Arcane,
+           CardKeyword.Exhaust];
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [];
 
     /// <summary>
-    /// 不可升级
+    /// 可升级（升级后去除消耗）
     /// </summary>
-    public override int MaxUpgradeLevel => 0;
+    public override int MaxUpgradeLevel => 1;
 
     public override string CustomPortraitPath => "res://assets/card_art/deck_of_wonders.png";
 
