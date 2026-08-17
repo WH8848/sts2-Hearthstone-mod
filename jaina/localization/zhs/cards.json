@@ -186,7 +186,7 @@
   "JAINA_CARD_DECK_OF_WONDERS_CARD.title": "愚人套牌",
   "JAINA_CARD_DECK_OF_WONDERS_CARD.description": "{IfUpgraded:show:将你抽牌堆和弃牌堆中的法术牌变形成为费用消耗增加1点的全角色卡牌。（保留其原始费用消耗。）|将你抽牌堆和弃牌堆中的法术牌变形成为费用消耗增加1点的全角色卡牌。（保留其原始费用消耗。）消耗。}",
   "JAINA_CARD_EVOCATION_CARD.title": "唤醒",
-  "JAINA_CARD_EVOCATION_CARD.description": "{IfUpgraded:show:用随机[blue]法师法术牌[/blue]填满你的手牌。这些牌具有[gold]虚无[/gold]。|用随机[blue]法师法术牌[/blue]填满你的手牌。这些牌具有[gold]虚无[/gold]。消耗。}",
+  "JAINA_CARD_EVOCATION_CARD.description": "用随机[blue]法师法术牌[/blue]填满你的手牌。这些牌具有[gold]虚无[/gold]。",
   "JAINA_CARD_IMP_WRANGLER_CARD.title": "小精灵驾驭者",
   "JAINA_CARD_IMP_WRANGLER_CARD.description": "召唤一个[blue]4/4[/blue]的[red]小精灵驾驭者[/red]。[gold]战吼[/gold]：[gold]灌注[/gold]并触发你的英雄技能。",
   "JAINA_CARD_RECKLESS_APPRENTICE_CARD.title": "鲁莽的学徒",
