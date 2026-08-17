@@ -20,12 +20,13 @@ namespace jaina.Scripts.Character.Cards;
 public sealed class Awaken : JainaSpellCardTemplate
 {
     /// <summary>
-    /// 法术牌关键词 + 升级后压轴关键词（卡面显示压轴词条）
+    /// 法术牌 + 奥术派系；基础版消耗（升级后不再消耗）；升级后获得压轴关键词
     /// </summary>
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
         IsUpgraded
             ? [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Finisher, jaina.Scripts.Character.Keywords.JainaKeywords.Arcane]
-            : [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Arcane];
+            : [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Arcane,
+               CardKeyword.Exhaust];
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [];
 
@@ -81,7 +82,9 @@ public sealed class Awaken : JainaSpellCardTemplate
 
     protected override void OnUpgrade()
     {
-        // 升级为巅峰无限：加入压轴关键词（LocalKeywords 懒缓存可能已在未升级状态初始化）
+        // 升级为巅峰无限：加入压轴关键词、移除消耗（LocalKeywords 懒缓存可能已在未升级状态初始化，
+        // 需显式操作——否则升级后卡面仍显示"消耗"、压轴不显示）
         AddKeyword(jaina.Scripts.Character.Keywords.JainaKeywords.Finisher);
+        RemoveKeyword(CardKeyword.Exhaust);
     }
 }

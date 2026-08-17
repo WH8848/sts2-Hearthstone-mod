@@ -61,7 +61,7 @@
   "JAINA_CARD_NORGANNON_WISDOM.description": "[gold]奥术[/gold]。\n抽{IfUpgraded:show:2|两}张牌。{IfUpgraded:show:每抽到一张[blue]法术牌[/blue]回一费。|在本局对战中，如果你释放了火焰奥术冰霜三个派系的[blue]法术牌[/blue]各一张，本牌的费用降为0。}",
   "JAINA_CARD_AWAKEN.title": "远古雕文",
   "JAINA_CARD_AWAKEN.titleUpgraded": "巅峰无限",
-  "JAINA_CARD_AWAKEN.description": "[gold]奥术[/gold]。\n发现一张[blue]法术牌[/blue]，使其费用减少1点。{IfUpgraded:show:\n[gold]压轴[/gold]：下回合开始时，将本牌移回你的手牌。|}",
+  "JAINA_CARD_AWAKEN.description": "[gold]奥术[/gold]。\n发现一张[blue]法术牌[/blue]，使其费用减少1点{IfUpgraded:show:。\n[gold]压轴[/gold]：下回合开始时，将本牌移回你的手牌。|。消耗。}",
   "JAINA_CARD_OBJECTION.title": "异议",
   "JAINA_CARD_OBJECTION.titleUpgraded": "法术反制",
   "JAINA_CARD_OBJECTION.description": "{IfUpgraded:show:[gold]奥术[/gold]。\n|}敌人的下一个{IfUpgraded:show:非攻击意图|攻击意图}不会{IfUpgraded:show:触发任何效果。|造成任何伤害。}",
