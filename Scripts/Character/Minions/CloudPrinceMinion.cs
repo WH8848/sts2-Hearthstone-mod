@@ -11,11 +11,16 @@ namespace jaina.Scripts.Character.Minions;
 /// <summary>
 /// 云雾王子 (Cloud Prince) - 吉安娜专属随从。
 /// 属性：攻击 4，生命 4。元素种族。
-/// 战吼：你的状态栏中每有1种状态，则造成6点伤害（每次随机分配到一名存活敌人）。
+/// 战吼：选择1名敌人，你的状态栏中每有1种状态，则对其造成6点伤害。
 /// </summary>
 [RegisterMonster]
 public sealed class CloudPrinceMinion : JainaMinionBase
 {
+    /// <summary>
+    /// 战吼选择的目标（由随从卡 OnPlay 在召唤前静态传入；召唤完成后清除）
+    /// </summary>
+    public static MegaCrit.Sts2.Core.Entities.Creatures.Creature? BattlecryTargetOverride;
+
     public override JainaMinionBehaviorMode BehaviorMode => JainaMinionBehaviorMode.Manual;
 
     public override int MinInitialHp => 4;
@@ -28,9 +33,8 @@ public sealed class CloudPrinceMinion : JainaMinionBase
     protected override string MinionVisualsPath => "res://assets/card_art/cloud_prince.png";
 
     /// <summary>
-    /// 战吼：你的状态栏中每有1种状态，则造成6点伤害
-    /// （状态数 = 主人当前身上的 Power 数量；每 1 种状态造成 6 点伤害，
-    /// 每次随机分配到一名存活敌人）。
+    /// 战吼：选择1名敌人，你的状态栏中每有1种状态，则对其造成6点伤害
+    /// （状态数 = 主人当前身上的 Power 数量；选择目标失效时回退随机一名存活敌人）。
     /// </summary>
     public override async Task OnBattlecry(PlayerChoiceContext choiceContext)
     {
@@ -45,22 +49,23 @@ public sealed class CloudPrinceMinion : JainaMinionBase
             return;
         }
 
-        // 状态栏中的状态数（主人身上的 Power 数量）
+        // 目标：战吼选择的目标（失效时回退随机一名存活敌人）
+        var target = BattlecryTargetOverride;
+        if (target == null || !target.IsAlive || !target.IsHittable || target.Side == Creature.Side)
+        {
+            target = combatState.GetOpponentsOf(owner.Creature)
+                .Where(e => e != null && e.IsAlive && e.IsHittable)
+                .FirstOrDefault();
+        }
+        if (target == null)
+        {
+            return;
+        }
+
+        // 状态栏中的状态数（主人身上的 Power 数量），每 1 种状态对目标造成 6 点伤害
         int statusCount = owner.Creature.Powers.Count;
         for (int i = 0; i < statusCount; i++)
         {
-            var enemies = combatState.GetOpponentsOf(owner.Creature)
-                .Where(e => e != null && e.IsAlive && e.IsHittable)
-                .ToList();
-            if (enemies.Count == 0)
-            {
-                break;
-            }
-            var target = combatState.RunState.Rng.CombatTargets.NextItem(enemies);
-            if (target == null)
-            {
-                break;
-            }
             await CreatureCmd.Damage(choiceContext, [target], 6m, ValueProp.Move, Creature, null, null);
         }
     }
