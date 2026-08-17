@@ -34,6 +34,8 @@
   "JAINA_CARD_TRICK_TOTEM_CARD.description": "At the end of your turn, randomly cast an all-class card that costs 1 or less.",
   "JAINA_CARD_SKATING_ELEMENTAL_CARD.title": "Sleet Skater",
   "JAINA_CARD_SKATING_ELEMENTAL_CARD.description": "Summon a [blue]3/4[/blue] [red]Sleet Skater[/red]. [gold]Miniaturize[/gold].\n[gold]Battlecry[/gold]: Give all enemies 1 Freeze. Gain Block equal to the total damage they reduce.",
+  "JAINA_CARD_ARCHMAGES_RUNE_CARD.title": "Archmage's Rune",
+  "JAINA_CARD_ARCHMAGES_RUNE_CARD.description": "Cast spells that cost {TotalCost:diff()} in total at enemies. Can be upgraded infinitely; each upgrade adds 1 to the total. Exhaust.",
   "JAINA_CARD_AMAZING_DECK_CARD.title": "Deck of Wonders",
   "JAINA_CARD_AMAZING_DECK_CARD.titleUpgraded": "Agency Espionage",
   "JAINA_CARD_AMAZING_DECK_CARD.description": "{IfUpgraded:show:Shuffle a card from each other character into your Draw Pile. They cost (0). Draw one.|[gold]Arcane[/gold].\nShuffle five Amazing Cards into your Draw Pile. When drawn, they randomly cast an all-class card.}",
