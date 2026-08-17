@@ -21,13 +21,15 @@ namespace jaina.Scripts.Character.Cards;
 public sealed class HearthstoneFormCard : ModCardTemplate
 {
     /// <summary>
-    /// 关键词（卡面右侧显示注释）：保留、消耗、疲劳——描述中的"保留/消耗/疲劳"都是关键词，
-    /// 右侧统一显示三个注释（基础/升级相同）。
+    /// 关键词（卡面右侧显示注释）——严格按描述文本：
+    /// 基础版：虚无、保留、消耗、疲劳；升级版：保留、消耗、疲劳（升级后无虚无）。
     /// 疲劳行为由 <see cref="HearthstoneFormPower"/> 实现，此处仅为关键词注释展示。
     /// </summary>
-    public override IEnumerable<CardKeyword> CanonicalKeywords =>
-        [CardKeyword.Retain, CardKeyword.Exhaust,
-         jaina.Scripts.Character.Keywords.JainaKeywords.Fatigue];
+    public override IEnumerable<CardKeyword> CanonicalKeywords => IsUpgraded
+        ? [CardKeyword.Retain, CardKeyword.Exhaust,
+           jaina.Scripts.Character.Keywords.JainaKeywords.Fatigue]
+        : [CardKeyword.Ethereal, CardKeyword.Retain, CardKeyword.Exhaust,
+           jaina.Scripts.Character.Keywords.JainaKeywords.Fatigue];
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [];
 
@@ -58,5 +60,14 @@ public sealed class HearthstoneFormCard : ModCardTemplate
         // 挂炉石形态光环（每回合 10 能量 / 限抽 1 张 / 状态卡补抽 / 全卡保留+消耗）
         await PowerCmd.Apply<HearthstoneFormPower>(
             choiceContext, [base.Owner.Creature], 1m, base.Owner.Creature, this);
+    }
+
+    /// <summary>
+    /// 升级：移除虚无（LocalKeywords 懒初始化只算一次，升级形态 Keywords
+    /// 缓存自基础状态——需显式移除 Ethereal，否则升级后卡面仍显示"虚无"）。
+    /// </summary>
+    protected override void OnUpgrade()
+    {
+        RemoveKeyword(CardKeyword.Ethereal);
     }
 }
