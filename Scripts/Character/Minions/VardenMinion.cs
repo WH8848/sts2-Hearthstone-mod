@@ -13,7 +13,7 @@ namespace jaina.Scripts.Character.Minions;
 
 /// <summary>
 /// 瓦尔登·晨拥 (Varden Dawngrasp) - 吉安娜专属随从。
-/// 属性：攻击 3，生命 3。战吼：给予敌方全体 4 层冻结。如果敌方已被冻结，则每层冻结对其造成 4 点伤害。
+/// 属性：攻击 3，生命 3。战吼：给予敌方全体 7 层冻结。如果敌方已被冻结，则每层冻结对其造成 4 点伤害。
 /// </summary>
 [RegisterMonster]
 public sealed class VardenMinion : JainaMinionBase
@@ -27,7 +27,7 @@ public sealed class VardenMinion : JainaMinionBase
     protected override string MinionVisualsPath => "res://assets/card_art/varden_dawngrasp.png";
 
     /// <summary>
-    /// 战吼：先按现有冻结层数结算伤害，再给予全体敌人 4 层冻结。
+    /// 战吼：先按现有冻结层数结算伤害，再给予全体敌人 7 层冻结。
     /// 仅手牌打出时触发，随机召唤不触发。
     /// </summary>
     public override async Task OnBattlecry(PlayerChoiceContext choiceContext)
@@ -46,8 +46,8 @@ public sealed class VardenMinion : JainaMinionBase
             {
                 await CreatureCmd.Damage(choiceContext, [enemy], existing.Amount * 4m, ValueProp.Unpowered, Creature);
             }
-            // 给予 4 层冻结
-            await PowerCmd.Apply<FreezePower>(choiceContext, [enemy], 4m, owner.Creature, null);
+            // 给予 7 层冻结
+            await PowerCmd.Apply<FreezePower>(choiceContext, [enemy], 7m, owner.Creature, null);
         }
     }
 }

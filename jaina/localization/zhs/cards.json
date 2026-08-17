@@ -63,7 +63,7 @@
   "JAINA_CARD_ANTONIDAS_CARD.title": "大法师安东尼达斯",
   "JAINA_CARD_ANTONIDAS_CARD.description": "召唤一个[blue]5/7[/blue]的[red]大法师安东尼达斯[/red]。每当你施放一张[blue]法术牌[/blue]，将一张“火球术”攻击牌置入你的手牌。",
   "JAINA_CARD_VARDEN_CARD.title": "瓦尔登·晨拥",
-  "JAINA_CARD_VARDEN_CARD.description": "召唤一个[blue]3/3[/blue]的[red]瓦尔登·晨拥[/red]。[gold]战吼[/gold]：对所有敌人给予4层[gold]冻结[/gold]。如果敌方已被冻结，则每层冻结对其造成4点伤害。",
+  "JAINA_CARD_VARDEN_CARD.description": "召唤一个[blue]3/3[/blue]的[red]瓦尔登·晨拥[/red]。[gold]战吼[/gold]：给予敌方全体7层[gold]冻结[/gold]。如果敌方已被冻结，则每层冻结对其造成4点伤害。",
   "JAINA_CARD_ROMMATH_CARD.title": "大法师罗曼斯",
   "JAINA_CARD_ROMMATH_CARD.description": "召唤一个[blue]5/7[/blue]的[red]大法师罗曼斯[/red]。[gold]战吼[/gold]：再次施放你在本局对战中施放的每个牌组之外的[blue]法术牌[/blue]（随机目标）。",
   "JAINA_CARD_MOZAKI_CARD.title": "决斗大师莫扎奇",

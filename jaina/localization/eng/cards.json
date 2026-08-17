@@ -63,7 +63,7 @@
   "JAINA_CARD_ANTONIDAS_CARD.title": "Archmage Antonidas",
   "JAINA_CARD_ANTONIDAS_CARD.description": "Summon a [blue]5/7[/blue] [red]Archmage Antonidas[/red]. Whenever you cast a [blue]Spell card[/blue], add a \"Fireball\" Attack card to your hand.",
   "JAINA_CARD_VARDEN_CARD.title": "Varden Dawngrasp",
-  "JAINA_CARD_VARDEN_CARD.description": "Summon a [blue]3/3[/blue] [red]Varden Dawngrasp[/red]. [gold]Battlecry[/gold]: Give all enemies 4 [gold]Freeze[/gold]. If an enemy is already Frozen, deal 4 damage for each stack of Freeze.",
+  "JAINA_CARD_VARDEN_CARD.description": "Summon a [blue]3/3[/blue] [red]Varden Dawngrasp[/red]. [gold]Battlecry[/gold]: Give all enemies 7 [gold]Freeze[/gold]. If an enemy is already Frozen, deal 4 damage for each stack of Freeze.",
   "JAINA_CARD_ROMMATH_CARD.title": "Archmage Rommath",
   "JAINA_CARD_ROMMATH_CARD.description": "Summon a [blue]5/7[/blue] [red]Archmage Rommath[/red]. [gold]Battlecry[/gold]: Recast every [blue]Spell card[/blue] from outside your deck that you have cast this combat (targets chosen randomly).",
   "JAINA_CARD_MOZAKI_CARD.title": "Mozaki Master of Flame",
