@@ -28,6 +28,8 @@
   "JAINA_CARD_RAY_OF_FROST_CARD.description": "{IfUpgraded:show:[gold]冰霜[/gold]。\n选择一个角色。如果是敌方，给予其1层[gold]冻结[/gold]；如果是友方随从，使其获得力量+1。|[gold]冰霜[/gold]。\n[gold]双生法术[/gold]。\n[gold]冻结[/gold]一个随从或敌人。}",
   "JAINA_CARD_ICEBLOOD_TOWER_CARD.title": "冰血哨塔",
   "JAINA_CARD_ICEBLOOD_TOWER_CARD.description": "在你的回合结束时，随机从你的抽牌堆中施放另一个法术。",
+  "JAINA_CARD_COLDARRA_DRAKE_CARD.title": "考达拉幼龙",
+  "JAINA_CARD_COLDARRA_DRAKE_CARD.description": "召唤一个[blue]6/7[/blue]的[red]考达拉幼龙[/red]。你的英雄技能变为1费，你可以使用任意次数的英雄技能。",
   "JAINA_CARD_AMAZING_DECK_CARD.title": "惊奇套牌",
   "JAINA_CARD_AMAZING_DECK_CARD.titleUpgraded": "旅社谍战",
   "JAINA_CARD_AMAZING_DECK_CARD.description": "{IfUpgraded:show:将每个其他角色的各一张牌洗入你的抽牌堆，其法力值消耗为0点。抽取其中一张。|[gold]奥术[/gold]。\n将五张惊奇卡牌洗入你的抽牌堆。抽到时随机施放一个全角色卡牌。}",
