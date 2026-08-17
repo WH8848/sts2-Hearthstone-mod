@@ -42,19 +42,22 @@ public sealed class GreySageParrotMinion : JainaMinionBase
             return;
         }
         var rec = jaina.Scripts.Character.JainaCastTracker.For(combatState);
-        if (rec.LastCastSpellCost2Plus is not { } last)
+        // 重复"我"施放的上一个费用 ≥ 2 的法术（按玩家区分，联机不误用队友的）
+        if (!rec.LastCastSpellCost2PlusByPlayer.TryGetValue(owner.NetId, out var last) ||
+            last is not { } played)
         {
             return;
         }
+        var last2 = played;
 
         // 按施放时的升级级别与衍生状态创建副本（衍生卡保持"牌库之外"语义）
         var card = jaina.Scripts.Character.JainaCastTracker.CreateCardWithUpgrade(
-            combatState, owner, last.Type, last.UpgradeLevel);
+            combatState, owner, last2.Type, last2.UpgradeLevel);
         if (card == null)
         {
             return;
         }
-        if (last.IsGenerated)
+        if (last2.IsGenerated)
         {
             jaina.Scripts.Character.JainaCastTracker.MarkGenerated(card);
         }

@@ -95,9 +95,10 @@ public sealed class IcyTouchCard : JainaSpellCardTemplate
         {
             return;
         }
-        // 仅当冰霜女巫吉安娜已替换英雄技能为冰冷触摸时入手
+        // 仅当冰霜女巫吉安娜已替换英雄技能为冰冷触摸时入手（按玩家区分）
         var rec = jaina.Scripts.Character.JainaCastTracker.For(combatState);
-        if (rec.CurrentHeroPowerType != typeof(IcyTouchCard))
+        if (!rec.CurrentHeroPowerTypeByPlayer.TryGetValue(player.NetId, out var heroPowerType) ||
+            heroPowerType != typeof(IcyTouchCard))
         {
             return;
         }

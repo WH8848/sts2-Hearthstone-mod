@@ -56,8 +56,10 @@ public sealed class ImpWranglerMinion : JainaMinionBase
             return;
         }
         var rec = jaina.Scripts.Character.JainaCastTracker.For(combatState);
-        // 当前英雄技能类型（null = 默认火焰冲击）
-        var heroPowerType = rec.CurrentHeroPowerType ?? typeof(Cards.Fireblast);
+        // 当前英雄技能类型（null = 默认火焰冲击；按玩家区分，联机用我自己的）
+        var heroPowerType = rec.CurrentHeroPowerTypeByPlayer.TryGetValue(owner.NetId, out var hpt)
+            ? hpt ?? typeof(Cards.Fireblast)
+            : typeof(Cards.Fireblast);
         // 副本：与手牌中的英雄技能同一张（同类型同升级等级），不标记衍生/消耗
         var heroPower = jaina.Scripts.Character.JainaCastTracker.CreateHeroPowerCopy(
             combatState, owner, heroPowerType);

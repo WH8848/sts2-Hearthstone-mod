@@ -109,8 +109,9 @@ public abstract class JainaHeroCardTemplate : ModCardTemplate
                 return;
             }
             var rec = jaina.Scripts.Character.JainaCastTracker.For(combatState);
-            // 英雄技能已是指定的新技能（如重复打出同一张英雄卡）：不重复创建
-            if (rec.CurrentHeroPowerType == HeroPowerType)
+            // 英雄技能已是指定的新技能（如重复打出同一张英雄卡）：不重复创建（按玩家区分）
+            rec.CurrentHeroPowerTypeByPlayer.TryGetValue(base.Owner.NetId, out var currentHeroPowerType);
+            if (currentHeroPowerType == HeroPowerType)
             {
                 return;
             }
@@ -142,7 +143,7 @@ public abstract class JainaHeroCardTemplate : ModCardTemplate
                 await CardPileCmd.RemoveFromCombat(oldHeroPowers, skipVisuals: false);
             }
 
-            rec.CurrentHeroPowerType = HeroPowerType;
+            rec.CurrentHeroPowerTypeByPlayer[base.Owner.NetId] = HeroPowerType;
 
             // 创建新英雄技能卡实例并加入手牌（英雄技能卡不占手牌位）。
             // 与火焰冲击一致：不标记"衍生"（无蓝光、不计入牌库外法术计数），

@@ -46,7 +46,8 @@ public sealed class MordreshFireEyeMinion : JainaMinionBase
             return;
         }
         var rec = jaina.Scripts.Character.JainaCastTracker.For(combatState);
-        if (rec.HeroPowerDamageDealt < 10)
+        rec.HeroPowerDamageDealtByPlayer.TryGetValue(owner.NetId, out var heroPowerDamage);
+        if (heroPowerDamage < 10)
         {
             return;
         }

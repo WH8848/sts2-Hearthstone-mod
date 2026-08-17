@@ -58,8 +58,13 @@ public sealed class VolatileSkeleton : JainaMinionBase
                 $"[JainaDeathrattle] VolatileSkeleton: no combat state at death (creatureStateNull={Creature.CombatState == null})");
             return;
         }
-        // 记录本局死亡过的骷髅（天定之灾克尔苏加德战吼"复活你的不稳定的骷髅"用）
-        jaina.Scripts.Character.JainaCastTracker.For(state).SkeletonDeaths++;
+        // 记录本局死亡过的骷髅（天定之灾克尔苏加德战吼"复活你的不稳定的骷髅"用；按主人区分）
+        var rec = jaina.Scripts.Character.JainaCastTracker.For(state);
+        if (Creature.PetOwner != null)
+        {
+            rec.SkeletonDeathsByPlayer.TryGetValue(Creature.PetOwner.NetId, out var deaths);
+            rec.SkeletonDeathsByPlayer[Creature.PetOwner.NetId] = deaths + 1;
+        }
         var opponents = state
             .GetOpponentsOf(Creature)
             .Where(e => e != null && e.IsAlive && e.IsHittable)

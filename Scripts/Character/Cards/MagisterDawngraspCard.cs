@@ -78,7 +78,11 @@ public sealed class MagisterDawngraspCard : JainaHeroCardTemplate
             return;
         }
         var rec = jaina.Scripts.Character.JainaCastTracker.For(combatState);
-        foreach (var (school, last) in rec.LastCastBySchool)
+        // 再次施放"我"施放过的每个法术派系的一个法术（按玩家区分，联机不混入队友的）
+        var mySchools = rec.LastCastBySchoolByPlayer.TryGetValue(base.Owner.NetId, out var schools)
+            ? schools
+            : new Dictionary<JainaSpellSchool, (Type Type, int UpgradeLevel, bool IsGenerated)>();
+        foreach (var (school, last) in mySchools)
         {
             var card = jaina.Scripts.Character.JainaCastTracker.CreateCardWithUpgrade(
                 combatState, base.Owner, last.Type, last.UpgradeLevel);

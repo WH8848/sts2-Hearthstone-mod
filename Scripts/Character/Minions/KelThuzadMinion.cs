@@ -44,7 +44,8 @@ public sealed class KelThuzadMinion : JainaMinionBase
         {
             return;
         }
-        int died = jaina.Scripts.Character.JainaCastTracker.For(state).SkeletonDeaths;
+        var rec = jaina.Scripts.Character.JainaCastTracker.For(state);
+        rec.SkeletonDeathsByPlayer.TryGetValue(owner.NetId, out var died);
         if (died <= 0)
         {
             return;

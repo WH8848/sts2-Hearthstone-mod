@@ -62,12 +62,13 @@ public sealed class ArcaneBarrage : JainaSpellCardTemplate
     }
 
     /// <summary>
-    /// 灯光表演光束数：2 + 本局已施放过的灯光表演次数（施放本张前计数）
+    /// 灯光表演光束数：2 + 本局已施放过的灯光表演次数（施放本张前计数，按玩家区分）
     /// </summary>
     private int LightshowBeamCount(ICombatState combatState)
     {
         var rec = jaina.Scripts.Character.JainaCastTracker.For(combatState);
-        return 2 + rec.LightshowCasts;
+        rec.LightshowCastsByPlayer.TryGetValue(base.Owner.NetId, out var casts);
+        return 2 + casts;
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
@@ -85,8 +86,10 @@ public sealed class ArcaneBarrage : JainaSpellCardTemplate
         {
             // 灯光表演：对随机敌人造成 N 次 2 点伤害（N = 2 + 本局已施放次数）
             int beams = LightshowBeamCount(combatState);
-            // 施放本张后计数 +1（供下一次灯光表演递增）
-            jaina.Scripts.Character.JainaCastTracker.For(combatState).LightshowCasts++;
+            // 施放本张后计数 +1（供下一次灯光表演递增，按玩家区分）
+            var rec2 = jaina.Scripts.Character.JainaCastTracker.For(combatState);
+            rec2.LightshowCastsByPlayer.TryGetValue(base.Owner.NetId, out var casts);
+            rec2.LightshowCastsByPlayer[base.Owner.NetId] = casts + 1;
             for (int i = 0; i < beams; i++)
             {
                 var enemies = combatState.GetOpponentsOf(base.Owner.Creature)

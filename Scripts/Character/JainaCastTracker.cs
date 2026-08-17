@@ -29,78 +29,110 @@ public enum JainaSpellSchool
 public static class JainaCastTracker
 {
     /// <summary>
-    /// 单场战斗的施放记录
+    /// 单场战斗的施放记录。
+    /// 联机注意：所有"按玩家语义"的记录都按玩家 NetId 区分——
+    /// 两端都会对每个玩家的卡执行 RecordPlayed（确定性），
+    /// 读取时用 owner.NetId 取自己的记录，避免误用队友的数据。
     /// </summary>
     public sealed class CombatRecord
     {
-        public readonly HashSet<Type> PlayedAttackSkills = [];
-        public readonly HashSet<Type> GeneratedAttackSkills = [];
+        /// <summary>
+        /// 各玩家施放过的攻击/技能牌类型（吉安娜的礼物倒带候选池用）。
+        /// </summary>
+        public readonly Dictionary<ulong, HashSet<Type>> PlayedAttackSkillsByPlayer = [];
 
         /// <summary>
-        /// 玩家手打的"牌库之外"攻击/技能牌次数（按类型计数，罗曼斯重放用）。
-        /// 只计玩家手打（排除罗曼斯重放等自动打出），与打开时空之门"只计手打"语义一致；
-        /// 罗曼斯按此计数重放每种类型多次（炉石：每次施放都重放）。
+        /// 各玩家生成过的攻击/技能牌类型（"牌库之外"类型级判定用，罗曼斯/任务线）。
         /// </summary>
-        public readonly Dictionary<Type, int> PlayerCastOutsideDeckCounts = [];
+        public readonly Dictionary<ulong, HashSet<Type>> GeneratedAttackSkillsByPlayer = [];
 
         /// <summary>
-        /// 施放过的牌的最高升级级别（倒带复制时恢复升级状态，如清凉的泉水）
+        /// 各玩家手打的"牌库之外"攻击/技能牌次数（按类型计数，罗曼斯重放用）。
+        /// 只计玩家手打（排除罗曼斯重放等自动打出）。
         /// </summary>
-        public readonly Dictionary<Type, int> PlayedUpgradeLevels = [];
+        public readonly Dictionary<ulong, Dictionary<Type, int>> PlayerCastOutsideDeckCountsByPlayer = [];
 
         /// <summary>
-        /// 生成过的牌的最高升级级别（罗曼斯重放时恢复升级状态）
+        /// 各玩家施放过的牌的最高升级级别（倒带复制时恢复升级状态）
         /// </summary>
-        public readonly Dictionary<Type, int> GeneratedUpgradeLevels = [];
+        public readonly Dictionary<ulong, Dictionary<Type, int>> PlayedUpgradeLevelsByPlayer = [];
+
+        /// <summary>
+        /// 各玩家生成过的牌的最高升级级别（罗曼斯重放时恢复升级状态）
+        /// </summary>
+        public readonly Dictionary<ulong, Dictionary<Type, int>> GeneratedUpgradeLevelsByPlayer = [];
 
         public readonly HashSet<JainaSpellSchool> Schools = [];
 
         /// <summary>
-        /// 最近施放的一个"费用消耗 ≥ 2"的法术牌（灰贤鹦鹉战吼重复用）。
+        /// 各玩家最近施放的一个"费用消耗 ≥ 2"的法术牌（灰贤鹦鹉战吼重复用）。
         /// 记录 (类型, 施放时的升级级别, 是否本局衍生)。
         /// </summary>
-        public (Type Type, int UpgradeLevel, bool IsGenerated)? LastCastSpellCost2Plus;
+        public readonly Dictionary<ulong, (Type Type, int UpgradeLevel, bool IsGenerated)?> LastCastSpellCost2PlusByPlayer = [];
 
         /// <summary>
-        /// 本局施放过的"灯光表演"（升级版奥术弹幕）次数（灯光表演的光束数递增用）
+        /// 各玩家施放过的"灯光表演"（升级版奥术弹幕）次数（灯光表演的光束数递增用）
         /// </summary>
-        public int LightshowCasts;
+        public readonly Dictionary<ulong, int> LightshowCastsByPlayer = [];
 
         /// <summary>
-        /// 各法术派系最近施放过的法术（魔导师晨拥战吼重放用）。
+        /// 各玩家各法术派系最近施放过的法术（魔导师晨拥战吼重放用）。
         /// 记录 (类型, 施放时的升级级别, 是否本局衍生)。
         /// </summary>
-        public readonly Dictionary<JainaSpellSchool, (Type Type, int UpgradeLevel, bool IsGenerated)> LastCastBySchool = [];
+        public readonly Dictionary<ulong, Dictionary<JainaSpellSchool, (Type Type, int UpgradeLevel, bool IsGenerated)>> LastCastBySchoolByPlayer = [];
 
         /// <summary>
-        /// 奥术爆裂（英雄技能）本局已打出次数（每次打出 +2 伤害）
+        /// 各玩家奥术爆裂（英雄技能）本局已打出次数（每次打出 +2 伤害）
         /// </summary>
-        public int ArcaneBurstCasts;
+        public readonly Dictionary<ulong, int> ArcaneBurstCastsByPlayer = [];
 
         /// <summary>
-        /// 当前英雄技能类型（打出英雄卡后替换；null = 默认火焰冲击）。
-        /// 魔导师晨拥打出后置为 typeof(ArcaneBurstCard)。
+        /// 各玩家当前英雄技能类型（打出英雄卡后替换；null = 默认火焰冲击）。
         /// </summary>
-        public System.Type? CurrentHeroPowerType;
+        public readonly Dictionary<ulong, System.Type?> CurrentHeroPowerTypeByPlayer = [];
 
         /// <summary>
-        /// 本局对战中英雄技能累计造成的伤害（火眼莫德雷斯战吼条件用）。
-        /// 火焰冲击/二级火焰冲击/奥术爆裂/冰冷触摸造成伤害后累计。
+        /// 各玩家本局对战中英雄技能累计造成的伤害（火眼莫德雷斯战吼条件用）。
         /// </summary>
-        public int HeroPowerDamageDealt;
+        public readonly Dictionary<ulong, int> HeroPowerDamageDealtByPlayer = [];
 
         /// <summary>
-        /// 本局对战中死亡过的不稳定的骷髅数量（天定之灾克尔苏加德战吼"复活你的不稳定的骷髅"用）。
-        /// 骷髅死亡时在 <see cref="jaina.Scripts.Character.Minions.VolatileSkeleton.OnDeathrattle"/> 记录。
+        /// 各玩家本局对战中死亡过的不稳定的骷髅数量（天定之灾克尔苏加德战吼用）。
         /// </summary>
-        public int SkeletonDeaths;
+        public readonly Dictionary<ulong, int> SkeletonDeathsByPlayer = [];
 
         /// <summary>
         /// 各玩家最近施放的一张攻击/技能牌（蓄谋诈骗犯战吼"再次使用你使用过的上一张卡牌"用）。
-        /// 按玩家区分（联机时每个玩家只重放自己施放的上一张牌，不误用队友的）。
         /// 记录 (类型, 施放时的升级级别, 是否本局衍生)；未施放过为 null。
         /// </summary>
         public readonly Dictionary<ulong, (Type Type, int UpgradeLevel, bool IsGenerated)?> LastPlayedCardByPlayer = [];
+
+        /// <summary>
+        /// 取某玩家的类型集合（不存在则创建）
+        /// </summary>
+        public HashSet<Type> SetFor(Dictionary<ulong, HashSet<Type>> map, ulong netId)
+        {
+            if (!map.TryGetValue(netId, out var set))
+            {
+                set = [];
+                map[netId] = set;
+            }
+            return set;
+        }
+
+        /// <summary>
+        /// 取某玩家的嵌套字典（不存在则创建）
+        /// </summary>
+        public Dictionary<TKey, TValue> MapFor<TKey, TValue>(Dictionary<ulong, Dictionary<TKey, TValue>> map, ulong netId)
+            where TKey : notnull
+        {
+            if (!map.TryGetValue(netId, out var m))
+            {
+                m = [];
+                map[netId] = m;
+            }
+            return m;
+        }
     }
 
     private static readonly ConditionalWeakTable<ICombatState, CombatRecord> Records = new();
@@ -179,33 +211,36 @@ public static class JainaCastTracker
         }
         var rec = For(state);
         var type = card.GetType();
-        rec.PlayedAttackSkills.Add(type);
+        var ownerId = card.Owner.NetId;
+        rec.SetFor(rec.PlayedAttackSkillsByPlayer, ownerId).Add(type);
         // 记录"上一张施放的攻击/技能牌"（蓄谋诈骗犯战吼重放用）——按玩家区分，
         // 联机时每个玩家只重放自己施放的上一张牌
-        rec.LastPlayedCardByPlayer[card.Owner.NetId] = (type, card.CurrentUpgradeLevel, IsGeneratedCard(card));
+        rec.LastPlayedCardByPlayer[ownerId] = (type, card.CurrentUpgradeLevel, IsGeneratedCard(card));
+        var playedUpgrades = rec.MapFor(rec.PlayedUpgradeLevelsByPlayer, ownerId);
         if (card.CurrentUpgradeLevel > 0 &&
-            (!rec.PlayedUpgradeLevels.TryGetValue(type, out var prev) || card.CurrentUpgradeLevel > prev))
+            (!playedUpgrades.TryGetValue(type, out var prev) || card.CurrentUpgradeLevel > prev))
         {
-            rec.PlayedUpgradeLevels[type] = card.CurrentUpgradeLevel;
+            playedUpgrades[type] = card.CurrentUpgradeLevel;
         }
         // 罗曼斯重放计数：只计"玩家手打的牌库之外法术"。
         // 排除罗曼斯重放等自动打出（AutoPlayMarkPatch 已标记），避免重放自身导致计数膨胀。
         if (IsOutsideDeckCard(card) && !jaina.Scripts.Character.Powers.RommathReplayTracker.IsMarked(card))
         {
-            rec.PlayerCastOutsideDeckCounts.TryGetValue(type, out var n);
-            rec.PlayerCastOutsideDeckCounts[type] = n + 1;
+            var counts = rec.MapFor(rec.PlayerCastOutsideDeckCountsByPlayer, ownerId);
+            counts.TryGetValue(type, out var n);
+            counts[type] = n + 1;
         }
         if (SchoolByCardType.TryGetValue(type, out var school))
         {
             rec.Schools.Add(school);
-            // 记录该派系最近施放的法术（魔导师晨拥战吼重放用）
-            rec.LastCastBySchool[school] = (type, card.CurrentUpgradeLevel, IsGeneratedCard(card));
+            // 记录该派系最近施放的法术（魔导师晨拥战吼重放用）——按玩家区分
+            rec.MapFor(rec.LastCastBySchoolByPlayer, ownerId)[school] = (type, card.CurrentUpgradeLevel, IsGeneratedCard(card));
         }
         // 灰贤鹦鹉：记录最近施放的"费用消耗 ≥ 2"的法术牌（按施放时的升级级别与本局衍生状态）
         // 用 Canonical（基础费用，含升级调整）判定——临时减费（巫师学徒等）不改变"≥2"语义的稳定性
         if (card.EnergyCost.Canonical >= 2)
         {
-            rec.LastCastSpellCost2Plus = (type, card.CurrentUpgradeLevel, IsGeneratedCard(card));
+            rec.LastCastSpellCost2PlusByPlayer[ownerId] = (type, card.CurrentUpgradeLevel, IsGeneratedCard(card));
         }
     }
 
@@ -247,11 +282,13 @@ public static class JainaCastTracker
         }
         var rec = For(state);
         var type = card.GetType();
-        rec.GeneratedAttackSkills.Add(type);
+        var ownerId = card.Owner.NetId;
+        rec.SetFor(rec.GeneratedAttackSkillsByPlayer, ownerId).Add(type);
+        var genUpgrades = rec.MapFor(rec.GeneratedUpgradeLevelsByPlayer, ownerId);
         if (card.CurrentUpgradeLevel > 0 &&
-            (!rec.GeneratedUpgradeLevels.TryGetValue(type, out var prev) || card.CurrentUpgradeLevel > prev))
+            (!genUpgrades.TryGetValue(type, out var prev) || card.CurrentUpgradeLevel > prev))
         {
-            rec.GeneratedUpgradeLevels[type] = card.CurrentUpgradeLevel;
+            genUpgrades[type] = card.CurrentUpgradeLevel;
         }
     }
 
@@ -266,11 +303,13 @@ public static class JainaCastTracker
             return;
         }
         var state = card.CombatState ?? card.Owner?.Creature.CombatState;
-        if (state == null)
+        if (state == null || card.Owner == null)
         {
             return;
         }
-        For(state).HeroPowerDamageDealt += damage;
+        var rec = For(state);
+        rec.HeroPowerDamageDealtByPlayer.TryGetValue(card.Owner.NetId, out var total);
+        rec.HeroPowerDamageDealtByPlayer[card.Owner.NetId] = total + damage;
     }
 
     /// <summary>
@@ -284,6 +323,7 @@ public static class JainaCastTracker
     /// <summary>
     /// 该攻击/技能牌是否"牌库之外"（本局对战内生成过的类型，含实例标记或类型记录）。
     /// 实例标记覆盖生成时记录过的卡；类型记录覆盖罗曼斯重放等漏标实例的卡。
+    /// 类型记录按卡所属玩家区分（联机：队友生成的类型不算我的"牌库之外"）。
     /// </summary>
     public static bool IsOutsideDeckCard(CardModel card)
     {
@@ -296,11 +336,13 @@ public static class JainaCastTracker
             return true;
         }
         var state = card.CombatState ?? card.Owner?.Creature.CombatState;
-        if (state == null)
+        if (state == null || card.Owner == null)
         {
             return false;
         }
-        return For(state).GeneratedAttackSkills.Contains(card.GetType());
+        var rec = For(state);
+        return rec.GeneratedAttackSkillsByPlayer.TryGetValue(card.Owner.NetId, out var set) &&
+               set.Contains(card.GetType());
     }
 
     /// <summary>

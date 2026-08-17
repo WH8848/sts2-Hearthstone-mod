@@ -128,9 +128,10 @@ public sealed class FireblastAncient : JainaSpellCardTemplate
     {
         if (player == base.Owner)
         {
-            // 英雄技能已被英雄卡替换：不再入手二级火焰冲击
+            // 英雄技能已被英雄卡替换：不再入手二级火焰冲击（按玩家区分，联机不受队友英雄卡影响）
             var rec = jaina.Scripts.Character.JainaCastTracker.For(combatState);
-            if (rec.CurrentHeroPowerType != null && rec.CurrentHeroPowerType != typeof(FireblastAncient))
+            if (rec.CurrentHeroPowerTypeByPlayer.TryGetValue(player.NetId, out var heroPowerType) &&
+                heroPowerType != null && heroPowerType != typeof(FireblastAncient))
             {
                 return;
             }

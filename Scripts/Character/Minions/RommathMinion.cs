@@ -43,13 +43,20 @@ public sealed class RommathMinion : JainaMinionBase
             return;
         }
         var rec = jaina.Scripts.Character.JainaCastTracker.For(combatState);
+        // 重放"我"手打的牌库之外法术（按玩家区分，联机不混入队友的）
+        var myCounts = rec.PlayerCastOutsideDeckCountsByPlayer.TryGetValue(owner.NetId, out var countsMap)
+            ? countsMap
+            : new Dictionary<System.Type, int>();
+        var myGenUpgrades = rec.GeneratedUpgradeLevelsByPlayer.TryGetValue(owner.NetId, out var genUpgradesMap)
+            ? genUpgradesMap
+            : new Dictionary<System.Type, int>();
         // 快照遍历，避免重放触发的新记录影响本循环
-        var counts = rec.PlayerCastOutsideDeckCounts.ToList();
+        var counts = myCounts.ToList();
         foreach (var (type, count) in counts)
         {
             for (int i = 0; i < count; i++)
             {
-                rec.GeneratedUpgradeLevels.TryGetValue(type, out var upgradeLevel);
+                myGenUpgrades.TryGetValue(type, out var upgradeLevel);
                 var card = jaina.Scripts.Character.JainaCastTracker.CreateCardWithUpgrade(
                     combatState, owner, type, upgradeLevel);
                 if (card == null)

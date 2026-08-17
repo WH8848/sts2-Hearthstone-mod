@@ -146,7 +146,11 @@ public sealed class JainasGiftCard : JainaSpellCardTemplate
             return;
         }
         var rec = jaina.Scripts.Character.JainaCastTracker.For(combatState);
-        var playedTypes = rec.PlayedAttackSkills
+        // 候选池 = 我施放过的攻击/技能牌（按玩家区分，联机不混入队友的）
+        var playedSet = rec.PlayedAttackSkillsByPlayer.TryGetValue(base.Owner.NetId, out var myPlayed)
+            ? myPlayed
+            : new HashSet<System.Type>();
+        var playedTypes = playedSet
             .Where(t => t != typeof(JainasGiftCard) && t != typeof(Fireblast) && t != typeof(ArcaneBurstCard))
             .ToList();
         if (playedTypes.Count == 0)
@@ -157,6 +161,9 @@ public sealed class JainasGiftCard : JainaSpellCardTemplate
         var rng = base.Owner.RunState.Rng.CombatTargets;
         var pool = new List<System.Type>(playedTypes);
         var candidates = new List<CardModel>();
+        var playedUpgrades = rec.PlayedUpgradeLevelsByPlayer.TryGetValue(base.Owner.NetId, out var myUpgrades)
+            ? myUpgrades
+            : new Dictionary<System.Type, int>();
         while (candidates.Count < 3 && pool.Count > 0)
         {
             var type = rng.NextItem(pool);
@@ -165,7 +172,7 @@ public sealed class JainasGiftCard : JainaSpellCardTemplate
                 break;
             }
             pool.Remove(type);
-            rec.PlayedUpgradeLevels.TryGetValue(type, out var upgradeLevel);
+            playedUpgrades.TryGetValue(type, out var upgradeLevel);
             var card = jaina.Scripts.Character.JainaCastTracker.CreateCardWithUpgrade(
                 combatState, base.Owner, type, upgradeLevel);
             if (card != null)
