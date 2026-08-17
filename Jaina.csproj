@@ -7,14 +7,16 @@
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 
-    <!-- 改成你的杀戮尖塔2目录 -->
+    <!-- 临时兼容，建议删除这段，统一由env.props管理路径 -->
     <Sts2Dir>E:\SteamLibrary\steamapps\common\Slay the Spire 2</Sts2Dir>
     <Sts2DataDir>$(Sts2Dir)\data_sts2_windows_x86_64</Sts2DataDir>
-
-    <!-- Godot 可执行文件（用于构建后自动导出 pck） -->
+    <Sts2ModDir>$(Sts2Dir)\mods</Sts2ModDir>
     <GodotExe>E:\MOD\sts2\Godot_v4.5.1-stable_mono_win64\Godot_v4.5.1-stable_mono_win64\Godot_v4.5.1-stable_mono_win64.exe</GodotExe>
+    <!-- 临时兼容结束 -->
   </PropertyGroup>
 
+  <Import Project="env.props" Condition="Exists('env.props')"/>
+    
   <ItemGroup>
     <!-- 排除反编译产生的临时目录（含 _decomp：避免反编译源码遮蔽游戏同名类型导致 patch 失效） -->
     <Compile Remove="ritsu_decomp/**" />
@@ -25,6 +27,8 @@
     <Content Remove="game_decomp/**" />
     <Content Remove="_decomp/**" />
     <Content Remove="_decomp*/**" />
+    <Content Include="env.props" />
+    <Content Include="env.props.example" />
     <None Remove="ritsu_decomp/**" />
     <None Remove="game_decomp/**" />
     <None Remove="_decomp/**" />
@@ -72,11 +76,11 @@
   <!-- 自动复制dll、json 和本地化文件 -->
   <Target Name="Copy Mod" AfterTargets="PostBuildEvent">
     <Message Text="Copying mod to Slay the Spire 2 mods folder..." Importance="high" />
-    <MakeDir Directories="$(Sts2Dir)\mods\" />
-    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(Sts2Dir)\mods\$(MSBuildProjectName)\" />
+    <MakeDir Directories="$(Sts2ModDir)\" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(Sts2ModDir)\$(MSBuildProjectName)\" />
     <!-- 拷贝 pdb（断点调试必需；存在才拷） -->
-    <Copy SourceFiles="$(TargetDir)$(TargetName).pdb" DestinationFolder="$(Sts2Dir)\mods\$(MSBuildProjectName)\" Condition="Exists('$(TargetDir)$(TargetName).pdb')" />
-    <Copy SourceFiles="$(MSBuildProjectName).json" DestinationFolder="$(Sts2Dir)/mods/$(MSBuildProjectName)/" />
+    <Copy SourceFiles="$(TargetDir)$(TargetName).pdb" DestinationFolder="$(Sts2ModDir)\$(MSBuildProjectName)\" Condition="Exists('$(TargetDir)$(TargetName).pdb')" />
+    <Copy SourceFiles="$(MSBuildProjectName).json" DestinationFolder="$(Sts2ModDir)\$(MSBuildProjectName)/" />
     <!-- 本地化不打到 mods 目录：localization 已随 Godot 导出打进 Jaina.pck，
          游戏从 res://jaina/localization/ 读取，mods 目录无需重复存放 -->
   </Target>
@@ -86,8 +90,8 @@
        Condition 防止递归：Godot 导出时会内部执行 dotnet publish（ExportDebug/ExportRelease 配置），
        那一步必须跳过本 target，否则无限循环。 -->
   <Target Name="Export Pck" AfterTargets="Copy Mod" Condition="'$(Configuration)' != 'ExportDebug' and '$(Configuration)' != 'ExportRelease'">
-    <Message Text="Exporting pck to $(Sts2Dir)\mods\$(MSBuildProjectName)\$(MSBuildProjectName).pck ..." Importance="high" />
-    <Exec Command="&quot;$(GodotExe)&quot; --headless --path &quot;$(MSBuildProjectDirectory)&quot; --export-pack &quot;Windows Desktop&quot; &quot;$(Sts2Dir)\mods\$(MSBuildProjectName)\$(MSBuildProjectName).pck&quot;" />
+    <Message Text="Exporting pck to $(Sts2ModDir)\$(MSBuildProjectName)\$(MSBuildProjectName).pck ..." Importance="high" />
+    <Exec Command="&quot;$(GodotExe)&quot; --headless --path &quot;$(MSBuildProjectDirectory)&quot; --export-pack &quot;Windows Desktop&quot; &quot;$(Sts2ModDir)\$(MSBuildProjectName)\$(MSBuildProjectName).pck&quot;" />
   </Target>
 
   <!-- 复制运行库到 .NET 输出目录：sts2/0Harmony/RitsuLib/MinionLib/System.IO.Hashing
