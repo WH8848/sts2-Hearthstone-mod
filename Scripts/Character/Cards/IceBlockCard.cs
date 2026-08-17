@@ -13,7 +13,8 @@ namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
 /// 寒冰屏障 (Ice Block) - 1费能力牌（稀有，冰霜派系）。
-/// 当你将要承受致命伤害时，防止这些伤害，并在本回合中免疫。不可升级。
+/// 获得 1 层常驻可叠层的寒冰屏障：当你将要承受致命伤害时，移除 1 层，
+/// 此次致命伤害变为 0，并获得免疫直到下回合开始。不可升级。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
 public sealed class IceBlockCard : ModCardTemplate
