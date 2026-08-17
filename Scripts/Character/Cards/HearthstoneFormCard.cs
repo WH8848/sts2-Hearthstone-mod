@@ -14,32 +14,35 @@ namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
 /// 炉石形态 (Hearthstone Form) - 3费能力牌（稀有）。
-/// 你的全部卡牌获得保留和消耗；当你抽到状态卡时额外抽一张。
-/// 此后每回合你获得十点能量，每回合只能抽一张卡。
+/// 你的全部卡牌获得保留和消耗；格挡不再在你的回合开始时消失；
+/// 当你抽到状态牌时额外抽一张卡牌；下回合开始每回合获得十点能量，
+/// 抽五张牌变为抽一张牌；手牌上限之后抽到的牌会被消耗；
+/// 抽牌堆和弃牌堆无牌可抽时进入疲劳。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
 public sealed class HearthstoneFormCard : ModCardTemplate
 {
     /// <summary>
-    /// 关键词（渲染行）：未升级 = 虚无 + 疲劳；升级后移除虚无，只留疲劳。
-    /// 本卡不挂 Retain/Exhaust 关键词（挂上会被游戏渲染到描述顶部/底部）——
-    /// "保留/消耗"的悬停注释由 <see cref="AdditionalHoverTips"/> 提供（HoverTipFactory.FromKeyword），
-    /// 只显示在悬停提示里，不产生渲染行。
-    /// 保留与消耗效果由 <see cref="HearthstoneFormPower"/> 赋予全部卡牌。
+    /// 关键词：疲劳（mod 关键词不渲染到描述，仅悬停注释）。
+    /// 虚无/保留/消耗不挂 Keywords（原版关键词会渲染到描述顶部/底部）——
+    /// 虚无写在本卡描述文本中；保留/消耗/虚无的悬停注释由
+    /// <see cref="AdditionalHoverTips"/> 提供（HoverTipFactory.FromKeyword）。
     /// </summary>
-    public override IEnumerable<CardKeyword> CanonicalKeywords => IsUpgraded
-        ? [jaina.Scripts.Character.Keywords.JainaKeywords.Fatigue]
-        : [CardKeyword.Ethereal,
-           jaina.Scripts.Character.Keywords.JainaKeywords.Fatigue];
+    public override IEnumerable<CardKeyword> CanonicalKeywords =>
+        [jaina.Scripts.Character.Keywords.JainaKeywords.Fatigue];
 
     /// <summary>
-    /// 悬停提示：保留 / 消耗 关键词注释（不挂在 Keywords 上，避免渲染行；
-    /// HoverTipFactory.FromKeyword 直接提供关键词悬停提示）。
+    /// 悬停提示（关键词注释，不产生渲染行）：
+    /// 未升级 = 虚无 + 保留 + 消耗；升级后移除虚无注释。
     /// </summary>
     protected override IEnumerable<IHoverTip> AdditionalHoverTips
     {
         get
         {
+            if (!IsUpgraded)
+            {
+                yield return HoverTipFactory.FromKeyword(CardKeyword.Ethereal);
+            }
             yield return HoverTipFactory.FromKeyword(CardKeyword.Retain);
             yield return HoverTipFactory.FromKeyword(CardKeyword.Exhaust);
         }
@@ -71,17 +74,8 @@ public sealed class HearthstoneFormCard : ModCardTemplate
         // 记录施放（倒带/罗曼斯/三派系追踪）
         jaina.Scripts.Character.JainaCastTracker.RecordPlayed(this);
 
-        // 挂炉石形态光环（每回合 10 能量 / 限抽 1 张 / 状态卡补抽 / 全卡保留+消耗）
+        // 挂炉石形态光环（全卡保留+消耗 / 格挡不消失 / 10 能量 / 限抽 1 张 / 状态卡补抽 / 烧牌 / 疲劳）
         await PowerCmd.Apply<HearthstoneFormPower>(
             choiceContext, [base.Owner.Creature], 1m, base.Owner.Creature, this);
-    }
-
-    /// <summary>
-    /// 升级：移除虚无（LocalKeywords 懒初始化只算一次，升级形态 Keywords
-    /// 缓存自基础状态——需显式移除 Ethereal，否则升级后卡面仍显示"虚无"）。
-    /// </summary>
-    protected override void OnUpgrade()
-    {
-        RemoveKeyword(CardKeyword.Ethereal);
     }
 }

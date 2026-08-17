@@ -103,6 +103,18 @@ public sealed class HearthstoneFormPower : PowerModel, IModPowerAssetOverrides
     }
 
     /// <summary>
+    /// 格挡不再在你的回合开始时消失（参考原版壁垒 BarricadePower 的 ShouldClearBlock 实现）
+    /// </summary>
+    public override bool ShouldClearBlock(Creature creature)
+    {
+        if (Owner != creature)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    /// <summary>
     /// 抽牌拦截（炉石形态激活时）：
     /// - 手牌已达上限且有牌可抽 → 拦截，触发"烧牌"（抽到的牌被消耗，见 <see cref="AfterPreventingDraw"/>）；
     /// - 抽牌堆和弃牌堆都无牌可抽 → 拦截，触发疲劳（扣血递增）。
