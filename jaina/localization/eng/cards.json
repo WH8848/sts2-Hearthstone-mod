@@ -38,6 +38,8 @@
   "JAINA_CARD_ARCHMAGES_RUNE_CARD.description": "Cast spells that cost {TotalCost:diff()} in total at enemies. Can be upgraded infinitely; each upgrade adds 1 to the total. Exhaust.",
   "JAINA_CARD_FONT_OF_POWER_CARD.title": "Font of Power",
   "JAINA_CARD_FONT_OF_POWER_CARD.description": "{IfUpgraded:show:[gold]Arcane[/gold].\nDiscover a Mage minion. If your Draw Pile has no minions, get all 3 instead.|[gold]Arcane[/gold].\nDiscover a Mage minion. If your Draw Pile has no minions, get all 3 instead. Exhaust.}",
+  "JAINA_CARD_CLOUD_PRINCE_CARD.title": "Cloud Prince",
+  "JAINA_CARD_CLOUD_PRINCE_CARD.description": "[gold]Elemental[/gold].\nSummon a [blue]4/4[/blue] [red]Cloud Prince[/red]. [gold]Battlecry[/gold]: For each status on you, deal 6 damage.",
   "JAINA_CARD_AMAZING_DECK_CARD.title": "Deck of Wonders",
   "JAINA_CARD_AMAZING_DECK_CARD.titleUpgraded": "Agency Espionage",
   "JAINA_CARD_AMAZING_DECK_CARD.description": "{IfUpgraded:show:Shuffle a card from each other character into your Draw Pile. They cost (0). Draw one.|[gold]Arcane[/gold].\nShuffle five Amazing Cards into your Draw Pile. When drawn, they randomly cast an all-class card.}",
