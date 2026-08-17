@@ -56,5 +56,9 @@
   "JAINA_KEYWORD_LANDMARK.title": "地标",
   "JAINA_KEYWORD_LANDMARK.description": "地标：占据一个随从槽位，每两个回合可以点击使用一次触发效果。拥有耐久度，每次使用耐久度-1，归零时地标被摧毁。",
   "JAINA_KEYWORD_FATIGUE.title": "疲劳",
-  "JAINA_KEYWORD_FATIGUE.description": "疲劳：当你抽牌堆和弃牌堆无牌可抽时，抽第1张牌失去1点生命，抽第2张牌失去2点生命，以此类推。"
+  "JAINA_KEYWORD_FATIGUE.description": "疲劳：当你抽牌堆和弃牌堆无牌可抽时，抽第1张牌失去1点生命，抽第2张牌失去2点生命，以此类推。",
+  "JAINA_KEYWORD_MINIATURIZE.title": "微缩",
+  "JAINA_KEYWORD_MINIATURIZE.description": "微缩：当你使用带有“微缩”的随从牌后，会立即将一张0费1/1的复制置入你的手牌。只在从手牌中使用时触发，召唤、复活等其它方式登场不会触发。",
+  "JAINA_KEYWORD_MINI.title": "微型",
+  "JAINA_KEYWORD_MINI.description": "微型：通过“微缩”效果产生的0费1/1复制卡牌本身（衍生关键词，只能通过“微缩”获得），完整保留原卡牌的所有文字效果。"
 }

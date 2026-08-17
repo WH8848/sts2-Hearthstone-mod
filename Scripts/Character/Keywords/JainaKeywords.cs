@@ -53,6 +53,10 @@ namespace jaina.Scripts.Character.Keywords;
 [RegisterOwnedKeyword(nameof(Landmark), IconPath = "res://icon.svg")]
 // 疲劳：当你抽牌堆和弃牌堆无牌可抽时，抽第1张牌失去1点生命，抽第2张牌失去2点生命，以此类推
 [RegisterOwnedKeyword(nameof(Fatigue), IconPath = "res://icon.svg")]
+// 微缩：使用（从手牌打出）带微缩的随从牌后，立即将一张0费1/1的复制置入手牌
+[RegisterOwnedKeyword(nameof(Miniaturize), IconPath = "res://icon.svg")]
+// 微型：微缩效果产生的0费1/1复制卡牌本身（衍生关键词，只能通过微缩获得）
+[RegisterOwnedKeyword(nameof(Mini), IconPath = "res://icon.svg")]
 public class JainaKeywords
 {
     /// <summary>
@@ -199,4 +203,16 @@ public class JainaKeywords
     /// 疲劳：当你抽牌堆和弃牌堆无牌可抽时，抽第1张牌失去1点生命，抽第2张牌失去2点生命，以此类推
     /// </summary>
     public static readonly CardKeyword Fatigue = ModContentRegistry.GetQualifiedKeywordId(Entry.ModId, nameof(Fatigue)).GetModCardKeyword();
+
+    /// <summary>
+    /// 微缩：当你使用带有"微缩"的随从牌后，会立即将一张0费1/1的复制置入你的手牌。
+    /// 只在从手牌中使用时触发；召唤/复活不触发。
+    /// </summary>
+    public static readonly CardKeyword Miniaturize = ModContentRegistry.GetQualifiedKeywordId(Entry.ModId, nameof(Miniaturize)).GetModCardKeyword();
+
+    /// <summary>
+    /// 微型：通过"微缩"效果产生的0费1/1复制卡牌本身（衍生关键词，只能通过微缩获得），
+    /// 完整保留原卡牌的所有文字效果。
+    /// </summary>
+    public static readonly CardKeyword Mini = ModContentRegistry.GetQualifiedKeywordId(Entry.ModId, nameof(Mini)).GetModCardKeyword();
 }

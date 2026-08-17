@@ -56,5 +56,9 @@
   "JAINA_KEYWORD_LANDMARK.title": "Landmark",
   "JAINA_KEYWORD_LANDMARK.description": "Landmark: Occupies a minion slot. Can be clicked to use once every two turns. Has durability; -1 per use, destroyed at 0.",
   "JAINA_KEYWORD_FATIGUE.title": "Fatigue",
-  "JAINA_KEYWORD_FATIGUE.description": "Fatigue: When your Draw Pile and Discard Pile are empty, the 1st card drawn makes you lose 1 HP, the 2nd makes you lose 2 HP, and so on."
+  "JAINA_KEYWORD_FATIGUE.description": "Fatigue: When your Draw Pile and Discard Pile are empty, the 1st card drawn makes you lose 1 HP, the 2nd makes you lose 2 HP, and so on.",
+  "JAINA_KEYWORD_MINIATURIZE.title": "Miniaturize",
+  "JAINA_KEYWORD_MINIATURIZE.description": "Miniaturize: After you play a minion with Miniaturize, add a 0-Cost 1/1 copy of it to your hand. Only triggers when played from your hand; Summoning or resurrecting does not trigger it.",
+  "JAINA_KEYWORD_MINI.title": "Mini",
+  "JAINA_KEYWORD_MINI.description": "Mini: The 0-Cost 1/1 copy created by Miniaturize (a generated keyword that can only be obtained through Miniaturize). It keeps all text effects of the original card."
 }
