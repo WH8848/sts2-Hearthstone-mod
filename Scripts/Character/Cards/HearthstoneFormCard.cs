@@ -21,10 +21,9 @@ namespace jaina.Scripts.Character.Cards;
 public sealed class HearthstoneFormCard : ModCardTemplate
 {
     /// <summary>
-    /// 关键词（卡面右侧显示注释）：保留、消耗、疲劳。
-    /// 保留：描述第一句"你的全部卡牌获得保留和消耗"（基础/升级统一显示注释）；
-    /// 消耗：能力卡打出后消耗（引擎行为）；疲劳：无牌可抽时扣血递增（行为由
-    /// <see cref="HearthstoneFormPower"/> 实现，此处仅为关键词注释展示）。
+    /// 关键词（卡面右侧显示注释）：保留、消耗、疲劳——描述中的"保留/消耗/疲劳"都是关键词，
+    /// 右侧统一显示三个注释（基础/升级相同）。
+    /// 疲劳行为由 <see cref="HearthstoneFormPower"/> 实现，此处仅为关键词注释展示。
     /// </summary>
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
         [CardKeyword.Retain, CardKeyword.Exhaust,
