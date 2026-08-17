@@ -19,7 +19,7 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
-/// 深度冻结 (Deep Freeze) - 2费技能牌（罕见，冰霜派系）。
+/// 深度冻结 (Deep Freeze) - 3费技能牌（罕见，冰霜派系）。
 /// 给一个敌人 1 层冻结，召唤两个 3/6 的水元素。
 /// 升级后变为海啸 (Tsunami)：召唤三个 3/6 的水元素（冻结攻击目标），并使其随机攻击敌人。
 /// </summary>
@@ -38,7 +38,7 @@ public sealed class DeepFreezeCard : JainaSpellCardTemplate
         IsUpgraded ? "res://assets/card_art/tsunami.png" : "res://assets/card_art/deep_freeze.png";
 
     public DeepFreezeCard()
-        : base(2, CardType.Skill, CardRarity.Uncommon, TargetType.AnyEnemy, true)
+        : base(3, CardType.Skill, CardRarity.Uncommon, TargetType.AnyEnemy, true)
     {
     }
 
