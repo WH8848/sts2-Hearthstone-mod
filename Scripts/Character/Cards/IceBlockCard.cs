@@ -17,7 +17,7 @@ namespace jaina.Scripts.Character.Cards;
 /// 升级后费用变为 1。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
-public sealed class IceBlockCard : ModCardTemplate
+public sealed class IceBlockCard : JainaSpellCardTemplate
 {
     /// <summary>
     /// 可升级（升级后费用 2 -> 1）
@@ -55,13 +55,8 @@ public sealed class IceBlockCard : ModCardTemplate
         jaina.Scripts.Character.JainaCastTracker.RecordPlayed(this);
 
         // 挂寒冰屏障（常驻可叠层：致命伤害时移除1层 + 免疫到下回合开始）
+        // 打出后按原版能力牌机制移除（基础版与升级版均不再进弃牌堆）
         await PowerCmd.Apply<IceBlockPower>(
             choiceContext, [base.Owner.Creature], 1m, base.Owner.Creature, this);
-
-        // 升级后不消耗：打出后回到弃牌堆（基础版为能力牌，打出后进消耗堆）
-        if (IsUpgraded && Pile != null)
-        {
-            await CardPileCmd.Add(this, PileType.Discard);
-        }
     }
 }

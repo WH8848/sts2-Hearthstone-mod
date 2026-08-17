@@ -17,7 +17,7 @@ namespace jaina.Scripts.Character.Cards;
 /// 任务线第一阶段。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
-public sealed class SorcerersGambitCard : ModCardTemplate
+public sealed class SorcerersGambitCard : JainaSpellCardTemplate
 {
     /// <summary>
     /// 法术牌 + 任务（悬停解释）+ 固有：战斗开始时该牌在手牌中。

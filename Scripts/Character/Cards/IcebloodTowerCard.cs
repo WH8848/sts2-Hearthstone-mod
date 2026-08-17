@@ -17,7 +17,7 @@ namespace jaina.Scripts.Character.Cards;
 /// 升级后费用变为 2。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
-public sealed class IcebloodTowerCard : ModCardTemplate
+public sealed class IcebloodTowerCard : JainaSpellCardTemplate
 {
     /// <summary>
     /// 可升级（升级后费用 3 -> 2）

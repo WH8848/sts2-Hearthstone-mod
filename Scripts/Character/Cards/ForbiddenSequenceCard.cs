@@ -19,7 +19,7 @@ namespace jaina.Scripts.Character.Cards;
 /// 奖励 = 源生之石直接置入手牌。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
-public sealed class ForbiddenSequenceCard : ModCardTemplate
+public sealed class ForbiddenSequenceCard : JainaSpellCardTemplate
 {
     /// <summary>
     /// 法术牌 + 任务（悬停解释）+ 发现（悬停解释）+ 固有：战斗开始时该牌在手牌中。

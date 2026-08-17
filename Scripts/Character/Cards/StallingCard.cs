@@ -18,7 +18,7 @@ namespace jaina.Scripts.Character.Cards;
 /// 衍生卡：不进入吉安娜卡池，不出现在卡牌奖励与图鉴中（仅由任务奖励入手）。
 /// </summary>
 [RegisterCard(typeof(JainaNeutralCardPool))]
-public sealed class StallingCard : ModCardTemplate
+public sealed class StallingCard : JainaSpellCardTemplate
 {
     /// <summary>
     /// 任务（悬停解释）：任务卡专属关键词

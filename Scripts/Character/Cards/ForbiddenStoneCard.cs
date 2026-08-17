@@ -18,7 +18,7 @@ namespace jaina.Scripts.Character.Cards;
 /// 由禁忌序列作为奖励直接置入手牌。
 /// </summary>
 [RegisterCard(typeof(JainaNeutralCardPool))]
-public sealed class ForbiddenStoneCard : ModCardTemplate
+public sealed class ForbiddenStoneCard : JainaSpellCardTemplate
 {
     /// <summary>
     /// 武器能力卡不可升级（IsUpgradable=false，不出现在升级候选）

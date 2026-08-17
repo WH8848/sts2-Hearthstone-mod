@@ -17,4 +17,19 @@ public abstract class JainaSpellCardTemplate : ModCardTemplate
         : base(baseCost, type, rarity, target, showInCardLibrary)
     {
     }
+
+    /// <summary>
+    /// 能力牌（Power 类型）打出后的去向与杀戮尖塔2原版机制一致：
+    /// 强制返回 PileType.None（打出后从对局中移除，不进入弃牌堆，也不显示"消耗"标签）。
+    /// 原版 CardModel.GetResultLocationForCardPlay 对 Power 类型同样返回 None，
+    /// 这里显式保证 mod 能力卡不受任何扩展逻辑影响。
+    /// </summary>
+    protected override CardLocation GetResultLocationForCardPlay()
+    {
+        if (Type == CardType.Power)
+        {
+            return new CardLocation(Owner, PileType.None, CardPilePosition.Bottom);
+        }
+        return base.GetResultLocationForCardPlay();
+    }
 }

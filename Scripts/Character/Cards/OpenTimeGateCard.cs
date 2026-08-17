@@ -19,7 +19,7 @@ namespace jaina.Scripts.Character.Cards;
 /// 奖励 = 时空扭曲直接置入手牌。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
-public sealed class OpenTimeGateCard : ModCardTemplate
+public sealed class OpenTimeGateCard : JainaSpellCardTemplate
 {
     /// <summary>
     /// 法术牌 + 任务（悬停解释）+ 固有：战斗开始时该牌在手牌中。

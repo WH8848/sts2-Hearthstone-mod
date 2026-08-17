@@ -20,7 +20,7 @@ namespace jaina.Scripts.Character.Cards;
 /// 抽牌堆和弃牌堆无牌可抽时进入疲劳。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
-public sealed class HearthstoneFormCard : ModCardTemplate
+public sealed class HearthstoneFormCard : JainaSpellCardTemplate
 {
     /// <summary>
     /// 关键词：疲劳（mod 关键词不渲染到描述，仅悬停注释）。
