@@ -45,10 +45,13 @@ public sealed class ConnivingConmanMinion : JainaMinionBase
             return;
         }
         var rec = jaina.Scripts.Character.JainaCastTracker.For(combatState);
-        if (rec.LastPlayedCard is not var (type, upgradeLevel, isGenerated))
+        // 只重放"我"（打出诈骗犯的玩家）施放的上一张牌——按玩家区分，联机不误用队友的
+        if (!rec.LastPlayedCardByPlayer.TryGetValue(owner.NetId, out var last) ||
+            last is not { } played)
         {
             return;
         }
+        var (type, upgradeLevel, isGenerated) = played;
 
         // 按记录创建上一张卡的副本（恢复升级级别）
         var card = jaina.Scripts.Character.JainaCastTracker.CreateCardWithUpgrade(

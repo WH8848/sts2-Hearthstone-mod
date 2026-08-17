@@ -96,10 +96,11 @@ public static class JainaCastTracker
         public int SkeletonDeaths;
 
         /// <summary>
-        /// 玩家最近施放的一张攻击/技能牌（蓄谋诈骗犯战吼"再次使用你使用过的上一张卡牌"用）。
+        /// 各玩家最近施放的一张攻击/技能牌（蓄谋诈骗犯战吼"再次使用你使用过的上一张卡牌"用）。
+        /// 按玩家区分（联机时每个玩家只重放自己施放的上一张牌，不误用队友的）。
         /// 记录 (类型, 施放时的升级级别, 是否本局衍生)；未施放过为 null。
         /// </summary>
-        public (Type Type, int UpgradeLevel, bool IsGenerated)? LastPlayedCard;
+        public readonly Dictionary<ulong, (Type Type, int UpgradeLevel, bool IsGenerated)?> LastPlayedCardByPlayer = [];
     }
 
     private static readonly ConditionalWeakTable<ICombatState, CombatRecord> Records = new();
@@ -179,8 +180,9 @@ public static class JainaCastTracker
         var rec = For(state);
         var type = card.GetType();
         rec.PlayedAttackSkills.Add(type);
-        // 记录"上一张施放的攻击/技能牌"（蓄谋诈骗犯战吼重放用）
-        rec.LastPlayedCard = (type, card.CurrentUpgradeLevel, IsGeneratedCard(card));
+        // 记录"上一张施放的攻击/技能牌"（蓄谋诈骗犯战吼重放用）——按玩家区分，
+        // 联机时每个玩家只重放自己施放的上一张牌
+        rec.LastPlayedCardByPlayer[card.Owner.NetId] = (type, card.CurrentUpgradeLevel, IsGeneratedCard(card));
         if (card.CurrentUpgradeLevel > 0 &&
             (!rec.PlayedUpgradeLevels.TryGetValue(type, out var prev) || card.CurrentUpgradeLevel > prev))
         {
