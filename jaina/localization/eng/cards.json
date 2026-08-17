@@ -30,6 +30,8 @@
   "JAINA_CARD_ICEBLOOD_TOWER_CARD.description": "At the end of your turn, randomly cast another spell from your Draw Pile.",
   "JAINA_CARD_COLDARRA_DRAKE_CARD.title": "Coldarra Drake",
   "JAINA_CARD_COLDARRA_DRAKE_CARD.description": "Summon a [blue]6/7[/blue] [red]Coldarra Drake[/red]. Your Hero Power costs 1 and can be used any number of times.",
+  "JAINA_CARD_TRICK_TOTEM_CARD.title": "Trick Totem",
+  "JAINA_CARD_TRICK_TOTEM_CARD.description": "At the end of your turn, randomly cast an all-class card that costs 1 or less.",
   "JAINA_CARD_AMAZING_DECK_CARD.title": "Deck of Wonders",
   "JAINA_CARD_AMAZING_DECK_CARD.titleUpgraded": "Agency Espionage",
   "JAINA_CARD_AMAZING_DECK_CARD.description": "{IfUpgraded:show:Shuffle a card from each other character into your Draw Pile. They cost (0). Draw one.|[gold]Arcane[/gold].\nShuffle five Amazing Cards into your Draw Pile. When drawn, they randomly cast an all-class card.}",
