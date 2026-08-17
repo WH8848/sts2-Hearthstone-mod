@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
@@ -36,6 +37,8 @@ public sealed class TearRealityCard : JainaSpellCardTemplate
     /// </summary>
     public override string CustomPortraitPath =>
         IsUpgraded ? "res://assets/card_art/time_control.png" : "res://assets/card_art/tear_reality.png";
+
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips => [HoverTipFactory.FromKeyword(jaina.Scripts.Character.Keywords.JainaKeywords.Discover)];
 
     public TearRealityCard()
         : base(1, CardType.Skill, CardRarity.Uncommon, TargetType.None, true)

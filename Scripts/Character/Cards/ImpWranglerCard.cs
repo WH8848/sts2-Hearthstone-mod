@@ -1,9 +1,9 @@
-using System;
 using System.Collections.Generic;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.HoverTips;
 using jaina.Scripts.Character.Minions;
 using STS2RitsuLib.Interop.AutoRegistration;
+using jaina.Scripts.Character.Keywords;
 
 namespace jaina.Scripts.Character.Cards;
 
@@ -22,13 +22,7 @@ public sealed class ImpWranglerCard : JainaMinionCardTemplate
     /// <summary>
     /// 悬停提示：显示灌注额外召唤的小精灵衍生物卡（参考灵体采集者）
     /// </summary>
-    protected override IEnumerable<IHoverTip> AdditionalHoverTips
-    {
-        get
-        {
-            yield return new CardHoverTip(MegaCrit.Sts2.Core.Models.ModelDb.Card<ImpCard>());
-        }
-    }
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips => [HoverTipFactory.FromCard<ImpCard>(),HoverTipFactory.FromKeyword(DescriptionKeywords.SpecialHeroSkill)];
 
     protected override Type MinionType => typeof(ImpWranglerMinion);
 

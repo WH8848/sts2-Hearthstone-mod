@@ -66,6 +66,7 @@ public sealed class JainasGiftCard : JainaSpellCardTemplate
     {
         get
         {
+            yield return HoverTipFactory.FromKeyword(jaina.Scripts.Character.Keywords.JainaKeywords.Discover);
             if (IsUpgraded)
             {
                 yield break;

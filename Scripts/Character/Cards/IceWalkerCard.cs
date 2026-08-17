@@ -1,8 +1,10 @@
-using System;
 using System.Collections.Generic;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using jaina.Scripts.Character.Minions;
 using STS2RitsuLib.Interop.AutoRegistration;
+using MegaCrit.Sts2.Core.HoverTips;
+using jaina.Scripts.Character.Powers;
+using jaina.Scripts.Character.Keywords;
 
 namespace jaina.Scripts.Character.Cards;
 
@@ -23,6 +25,8 @@ public sealed class IceWalkerCard : JainaMinionCardTemplate
     protected override int MinionAttack => 1;
 
     protected override int MinionHealth => 3;
+
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips =>[HoverTipFactory.FromKeyword(DescriptionKeywords.Minion),HoverTipFactory.FromPower<FreezePower>()];
 
     /// <summary>
     /// 元素种族 + 消耗（随从卡打出后消耗，模板默认）

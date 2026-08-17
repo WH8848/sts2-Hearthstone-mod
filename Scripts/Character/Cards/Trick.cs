@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -26,6 +27,8 @@ public sealed class Trick : JainaSpellCardTemplate
 
     public override string CustomPortraitPath =>
         IsUpgraded ? "res://assets/card_art/vast_wisdom.png" : "res://assets/card_art/trick.png";
+
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips => [HoverTipFactory.FromKeyword(jaina.Scripts.Character.Keywords.JainaKeywords.Discover)];
 
     public Trick()
         : base(0, CardType.Skill, CardRarity.Common, TargetType.None, true)

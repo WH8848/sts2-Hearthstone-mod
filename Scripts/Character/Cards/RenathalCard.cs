@@ -1,4 +1,3 @@
-using System;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using jaina.Scripts.Character.Minions;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -16,7 +15,7 @@ public sealed class RenathalCard : JainaMinionCardTemplate
     protected override Type MinionType => typeof(RenathalMinion);
 
     protected override int MinionAttack => 3;
-
+    
     protected override int MinionHealth => 4;
 
     public RenathalCard()

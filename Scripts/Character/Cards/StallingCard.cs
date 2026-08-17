@@ -36,6 +36,7 @@ public sealed class StallingCard : JainaSpellCardTemplate
     {
         get
         {
+            yield return HoverTipFactory.FromKeyword(jaina.Scripts.Character.Keywords.JainaKeywords.Discover);
             yield return new CardHoverTip(MageQuestlinePower.GetQuestlineHoverCard<ReachPortalChamberCard>(IsUpgraded));
             yield return new CardHoverTip(MageQuestlinePower.GetQuestlineHoverCard<DawngraspCard>(IsUpgraded));
         }

@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using jaina.Scripts.Character.Keywords;
@@ -31,6 +32,8 @@ public sealed class Awaken : JainaSpellCardTemplate
 
     public override string CustomPortraitPath =>
         IsUpgraded ? "res://assets/card_art/peak_infinity.png" : "res://assets/card_art/awaken.png";
+
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips => [HoverTipFactory.FromKeyword(jaina.Scripts.Character.Keywords.JainaKeywords.Discover)];
 
     public Awaken()
         : base(0, CardType.Skill, CardRarity.Rare, TargetType.None, true)

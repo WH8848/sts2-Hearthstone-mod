@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.HoverTips;
 using jaina.Scripts.Character.Keywords;
 using jaina.Scripts.Character.Minions;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -18,6 +19,10 @@ public sealed class ScrappyScavengerCard : JainaMinionCardTemplate
     /// 卡牌原画：炉石传说"拾荒清道夫"（Scrappy Scavenger, 118192）官方原画
     /// </summary>
     public override string CustomPortraitPath => "res://assets/card_art/scrappy_scavenger.png";
+
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+        [HoverTipFactory.FromKeyword(DescriptionKeywords.Minion),
+         HoverTipFactory.FromKeyword(JainaKeywords.Discover)];
 
     protected override Type MinionType => typeof(ScrappyScavengerMinion);
 

@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.HoverTips;
 using jaina.Scripts.Character.Minions;
 using STS2RitsuLib.Interop.AutoRegistration;
 
@@ -17,6 +19,8 @@ public sealed class TidePoolCard : JainaLandmarkCardTemplate
     /// 卡牌原画：炉石传说"潮汐之池"（Tide Pools, PIP_058）官方原画
     /// </summary>
     public override string CustomPortraitPath => "res://assets/card_art/tide_pools.png";
+
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips => [HoverTipFactory.FromKeyword(jaina.Scripts.Character.Keywords.JainaKeywords.Discover)];
 
     /// <summary>
     /// 耐久度 3

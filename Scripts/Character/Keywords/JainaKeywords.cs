@@ -1,4 +1,3 @@
-using Godot;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using STS2RitsuLib.Content;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -27,10 +26,10 @@ namespace jaina.Scripts.Character.Keywords;
 // 卡面上通过类型标签"攻击|法术"等方式展示，见 SpellCardTypePlaquePatch。
 [RegisterOwnedKeyword(nameof(Spell), IconPath = "res://icon.svg", IncludeInCardHoverTip = false)]
 // 法术派系关键词（不注入卡面描述，描述文本中以金色词条样式出现，悬停显示解释）
-[RegisterOwnedKeyword(nameof(Fire), IconPath = "res://icon.svg")]
-[RegisterOwnedKeyword(nameof(Frost), IconPath = "res://icon.svg")]
-[RegisterOwnedKeyword(nameof(Arcane), IconPath = "res://icon.svg")]
-[RegisterOwnedKeyword(nameof(Shadow), IconPath = "res://icon.svg")]
+[RegisterOwnedKeyword(nameof(Fire), IconPath = "res://icon.svg",CardDescriptionPlacement = ModKeywordCardDescriptionPlacement.BeforeCardDescription)]
+[RegisterOwnedKeyword(nameof(Frost), IconPath = "res://icon.svg",CardDescriptionPlacement = ModKeywordCardDescriptionPlacement.BeforeCardDescription)]
+[RegisterOwnedKeyword(nameof(Arcane), IconPath = "res://icon.svg",CardDescriptionPlacement = ModKeywordCardDescriptionPlacement.BeforeCardDescription)]
+[RegisterOwnedKeyword(nameof(Shadow), IconPath = "res://icon.svg",CardDescriptionPlacement = ModKeywordCardDescriptionPlacement.BeforeCardDescription)]
 // 任务：任务卡专属关键词（不注入卡面描述，仅提供悬停解释）
 [RegisterOwnedKeyword(nameof(Quest), IconPath = "res://icon.svg")]
 // 耐久度：拥有耐久度的卡牌，耐久度为0时卡牌被消耗（不注入卡面描述，仅提供悬停解释）
@@ -60,7 +59,7 @@ namespace jaina.Scripts.Character.Keywords;
 // 微型：微缩效果产生的0费1/1复制卡牌本身（衍生关键词，只能通过微缩获得）
 [RegisterOwnedKeyword(nameof(Mini), IconPath = "res://icon.svg")]
 // 交易：将此卡牌拖到弃牌堆上方松手会洗入你的弃牌堆，然后你从抽牌堆抽一张牌
-[RegisterOwnedKeyword(nameof(Tradeable), IconPath = "res://icon.svg")]
+[RegisterOwnedKeyword(nameof(Tradeable), IconPath = "res://icon.svg",CardDescriptionPlacement = ModKeywordCardDescriptionPlacement.BeforeCardDescription)]
 public class JainaKeywords
 {
     /// <summary>

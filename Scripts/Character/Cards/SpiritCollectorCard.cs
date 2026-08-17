@@ -8,6 +8,7 @@ using MegaCrit.Sts2.Core.HoverTips;
 using jaina.Scripts.Character.Minions;
 using jaina.Scripts.Character.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
+using jaina.Scripts.Character.Keywords;
 
 namespace jaina.Scripts.Character.Cards;
 
@@ -22,7 +23,7 @@ public sealed class SpiritCollectorCard : JainaMinionCardTemplate
     /// 战吼：获取一张 0 费 1/1 小精灵并灌注英雄技能
     /// </summary>
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
-        [jaina.Scripts.Character.Keywords.JainaKeywords.Battlecry, jaina.Scripts.Character.Keywords.JainaKeywords.Empower, CardKeyword.Exhaust];
+        [jaina.Scripts.Character.Keywords.JainaKeywords.Battlecry, jaina.Scripts.Character.Keywords.JainaKeywords.Empower, CardKeyword.Exhaust,DescriptionKeywords.SpecialHeroSkill];
 
     /// <summary>
     /// 卡牌原画：炉石传说"灵体采集者"（Spirit Gatherer, EDR_871）官方原画

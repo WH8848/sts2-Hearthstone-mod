@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -7,6 +6,7 @@ using jaina.Scripts.Character.Keywords;
 using jaina.Scripts.Character.Minions;
 using MinionLib.Minion;
 using STS2RitsuLib.Scaffolding.Content;
+using MegaCrit.Sts2.Core.HoverTips;
 
 namespace jaina.Scripts.Character.Cards;
 
@@ -60,6 +60,8 @@ public abstract class JainaMinionCardTemplate : ModCardTemplate,
     /// 标准生命值（供 JainaMinionPool 等外部按卡面属性召唤时读取；含覆写）
     /// </summary>
     public int StandardMinionHealth => _overrideHealth ?? MinionHealth;
+
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips => [HoverTipFactory.FromKeyword(DescriptionKeywords.Minion)];
 
     /// <summary>
     /// 描述后处理（MinionLib IDescriptionPostProcessCard）：

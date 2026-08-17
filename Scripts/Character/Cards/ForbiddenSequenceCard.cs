@@ -42,6 +42,7 @@ public sealed class ForbiddenSequenceCard : JainaSpellCardTemplate
     {
         get
         {
+            yield return HoverTipFactory.FromKeyword(jaina.Scripts.Character.Keywords.JainaKeywords.Discover);
             var canonical = ModelDb.Card<ForbiddenStoneCard>();
             yield return new CardHoverTip(canonical);
         }

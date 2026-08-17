@@ -8,7 +8,7 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using jaina.Scripts.Character.Keywords;
 using STS2RitsuLib.Interop.AutoRegistration;
-using STS2RitsuLib.Scaffolding.Content;
+using MegaCrit.Sts2.Core.HoverTips;
 
 namespace jaina.Scripts.Character.Cards;
 
@@ -34,7 +34,10 @@ public sealed class FontOfPowerCard : JainaSpellCardTemplate
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [];
 
+
     public override string CustomPortraitPath => "res://assets/card_art/font_of_power.png";
+
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips => [HoverTipFactory.FromKeyword(JainaKeywords.Discover)];
 
     public FontOfPowerCard()
         : base(0, CardType.Skill, CardRarity.Common, TargetType.None, true)

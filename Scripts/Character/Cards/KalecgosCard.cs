@@ -1,8 +1,9 @@
-using System;
 using System.Collections.Generic;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.HoverTips;
 using jaina.Scripts.Character.Minions;
 using STS2RitsuLib.Interop.AutoRegistration;
+using jaina.Scripts.Character.Keywords;
 
 namespace jaina.Scripts.Character.Cards;
 
@@ -20,6 +21,11 @@ public sealed class KalecgosCard : JainaMinionCardTemplate
          jaina.Scripts.Character.Keywords.JainaKeywords.Spell, CardKeyword.Exhaust];
 
     public override string CustomPortraitPath => "res://assets/card_art/kalecgos.png";
+
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+        [HoverTipFactory.FromKeyword(DescriptionKeywords.Minion),
+         HoverTipFactory.FromKeyword(jaina.Scripts.Character.Keywords.JainaKeywords.Discover)];
+
     protected override Type MinionType => typeof(KalecgosMinion);
 
     protected override int MinionAttack => 4;

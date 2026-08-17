@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using jaina.Scripts.Character.Powers;
@@ -30,6 +31,8 @@ public sealed class ForbiddenStoneCard : JainaSpellCardTemplate
          jaina.Scripts.Character.Keywords.JainaKeywords.Durability];
 
     public override string CustomPortraitPath => "res://assets/card_art/forbidden_stone.png";
+
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips => [HoverTipFactory.FromKeyword(jaina.Scripts.Character.Keywords.JainaKeywords.Discover)];
 
     public ForbiddenStoneCard()
         : base(1, CardType.Power, CardRarity.Token, TargetType.Self, true)

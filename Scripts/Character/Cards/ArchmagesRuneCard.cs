@@ -51,18 +51,6 @@ public sealed class ArchmagesRuneCard : JainaSpellCardTemplate
     }
 
     /// <summary>
-    /// 卡名不变（可无限升级，不改变名称）
-    /// </summary>
-    public override string Title
-    {
-        get
-        {
-            var title = new LocString("cards", base.Id.Entry + ".title");
-            return title.GetFormattedText();
-        }
-    }
-
-    /// <summary>
     /// 升级：每次升级多1费（UpgradeValueBy 设置 WasJustUpgraded，升级预览数值绿色高亮）
     /// </summary>
     protected override void OnUpgrade()
