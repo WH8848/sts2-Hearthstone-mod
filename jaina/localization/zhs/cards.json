@@ -183,7 +183,7 @@
   "JAINA_CARD_WILDFIRE_CARD.title": "野火",
   "JAINA_CARD_WILDFIRE_CARD.description": "[gold]火焰[/gold]。\n你的英雄技能造成的伤害增加{Damage:diff()}点。可无限升级。",
   "JAINA_CARD_HEARTHSTONE_FORM_CARD.title": "炉石形态",
-  "JAINA_CARD_HEARTHSTONE_FORM_CARD.description": "你的全部卡牌获得[gold]保留[/gold]和[gold]消耗[/gold]。\n当你抽到状态牌时额外抽一张卡牌。\n下回合开始每回合获得十点能量，抽五张牌变为抽一张牌。\n手牌上限之后抽到的牌会被消耗。\n当抽牌堆和弃牌堆无牌可抽时，进入[gold]疲劳[/gold]。",
+  "JAINA_CARD_HEARTHSTONE_FORM_CARD.description": "你的全部卡牌获得[gold]保留[/gold]和[gold]消耗[/gold]。\n当你抽到状态牌时额外抽一张卡牌。\n下回合开始每回合获得十点能量，抽五张牌变为抽一张牌。\n手牌上限之后抽到的牌会被消耗。\n当抽牌堆和弃牌堆无牌可抽时，进入[gold]疲劳[/gold]。[gold]保留[/gold]。",
   "JAINA_CARD_NIGHTCLOAK_SANCTUM_CARD.title": "夜隐者圣所",
   "JAINA_CARD_NIGHTCLOAK_SANCTUM_CARD.description": "[gold]地标[/gold]。\n给予一名角色1层[gold]冻结[/gold]。\n召唤一个[blue]2/2[/blue]的[red]不稳定的骷髅[/red]。\n[gold]耐久度[/gold]：{Durability}。",
   "JAINA_CARD_TRINKET_SHOP_CARD.title": "小玩物小屋",
