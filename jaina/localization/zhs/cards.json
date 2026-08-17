@@ -82,7 +82,7 @@
   "JAINA_CARD_EXONERATION_CARD.title": "脱罪力证",
   "JAINA_CARD_EXONERATION_CARD.description": "{IfUpgraded:show:[gold]冰霜[/gold]。\n获得1层[gold]无实体[/gold]。|[gold]冰霜[/gold]。\n获得1层[gold]无实体[/gold]。消耗。}",
   "JAINA_CARD_ICE_BLOCK_CARD.title": "寒冰屏障",
-  "JAINA_CARD_ICE_BLOCK_CARD.description": "[gold]冰霜[/gold]。\n当你将要承受致命伤害时，防止这些伤害，并在本回合中[gold]免疫[/gold]。",
+  "JAINA_CARD_ICE_BLOCK_CARD.description": "[gold]冰霜[/gold]。\n获得1层[gold]寒冰屏障[/gold]（常驻可叠层）：当你将要承受致命伤害时，移除1层，此次伤害变为0，并获得[gold]免疫[/gold]直到下回合开始。",
   "JAINA_CARD_FORBIDDEN_FLAME_CARD.title": "禁忌烈焰",
   "JAINA_CARD_FORBIDDEN_FLAME_CARD.description": "[gold]火焰[/gold]。\n对一个角色造成{IfUpgraded:show:12x|10x}点伤害（x = 消耗的能量）。",
   "JAINA_CARD_FORBIDDEN_SHRINE_CARD.title": "禁忌神龛",
