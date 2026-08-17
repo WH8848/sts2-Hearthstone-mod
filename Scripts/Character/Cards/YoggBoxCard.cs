@@ -18,7 +18,7 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
-/// 匣中古神 (Yogg in the Box) - 3费技能牌（稀有，暗影派系）。
+/// 匣中古神 (Yogg in the Box) - 3费技能牌（罕见，暗影派系）。
 /// 随机施放 5 个法术。如果你的抽牌堆里没有随从牌，则这些法术的费用消耗大于或等于 2 点。
 /// （目标随机，联机可打队友）
 /// 升级后变为尤格-萨隆的谜之匣 (Puzzle Box of Yogg-Saron)：随机施放 10 个法术（目标随机，联机可打队友）。
@@ -38,7 +38,7 @@ public sealed class YoggBoxCard : JainaSpellCardTemplate
         IsUpgraded ? "res://assets/card_art/puzzle_box_yogg.png" : "res://assets/card_art/yogg_in_the_box.png";
 
     public YoggBoxCard()
-        : base(3, CardType.Skill, CardRarity.Rare, TargetType.None, true)
+        : base(3, CardType.Skill, CardRarity.Uncommon, TargetType.None, true)
     {
     }
 
