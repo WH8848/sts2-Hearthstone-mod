@@ -68,20 +68,22 @@ public class Entry
     }
 
     /// <summary>
-    /// 战斗开始：给本地玩家挂载角色固有的武器攻击行动点（每回合 1 点，幂等）
+    /// 战斗开始：给所有玩家挂载角色固有的武器攻击行动点（每回合 1 点，幂等）。
+    /// 注意：必须遍历全部玩家（而非仅 LocalContext.GetMe）——CombatBegan 事件在每端
+    /// 独立触发且此处使用本地执行上下文（不广播）——若只给本地玩家挂载，
+    /// 联机时另一端看不到该 Power，导致状态分歧（State Divergence）断线。
+    /// 每端为所有玩家挂载 → 两端状态一致。
     /// </summary>
     private static void OnCombatBeganForWeaponAction(MegaCrit.Sts2.Core.Combat.CombatState state)
     {
         try
         {
-            var me = MegaCrit.Sts2.Core.Context.LocalContext.GetMe(state);
-            if (me == null)
+            foreach (var player in state.Players)
             {
-                return;
+                var ctx = new MegaCrit.Sts2.Core.GameActions.Multiplayer.ThrowingPlayerChoiceContext();
+                _ = MegaCrit.Sts2.Core.Helpers.TaskHelper.RunSafely(
+                    jaina.Scripts.Character.Weapons.JainaWeaponSlot.EnsureAttackAction(ctx, player));
             }
-            var ctx = new MegaCrit.Sts2.Core.GameActions.Multiplayer.ThrowingPlayerChoiceContext();
-            _ = MegaCrit.Sts2.Core.Helpers.TaskHelper.RunSafely(
-                jaina.Scripts.Character.Weapons.JainaWeaponSlot.EnsureAttackAction(ctx, me));
         }
         catch (System.Exception ex)
         {
