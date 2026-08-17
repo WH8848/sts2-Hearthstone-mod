@@ -49,13 +49,17 @@ public sealed class AmazingDeckCard : JainaSpellCardTemplate
     }
 
     /// <summary>
-    /// 悬停提示：左侧显示衍生的惊奇卡牌（参考灵体采集者显示小精灵）
+    /// 悬停提示：左侧显示衍生的惊奇卡牌（参考灵体采集者显示小精灵）。
+    /// 升级后（旅社谍战）不再产生惊奇卡牌，不显示衍生卡悬停。
     /// </summary>
     protected override IEnumerable<IHoverTip> AdditionalHoverTips
     {
         get
         {
-            yield return new CardHoverTip(ModelDb.Card<AmazingCard>());
+            if (!IsUpgraded)
+            {
+                yield return new CardHoverTip(ModelDb.Card<AmazingCard>());
+            }
         }
     }
 
