@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://d02yswjo31bpk"
-path="res://.godot/imported/deck_of_wonders_fool.png-0de3f833479caaaabdebe3ada2b7ee30.ctex"
+uid="uid://ctxgejqwa0bjj"
+path="res://.godot/imported/deck_of_lunacy.png-22a4e2d702ee679ce48a311fcedf393d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/card_art/deck_of_wonders_fool.png"
-dest_files=["res://.godot/imported/deck_of_wonders_fool.png-0de3f833479caaaabdebe3ada2b7ee30.ctex"]
+source_file="res://assets/card_art/deck_of_lunacy.png"
+dest_files=["res://.godot/imported/deck_of_lunacy.png-22a4e2d702ee679ce48a311fcedf393d.ctex"]
 
 [params]
 

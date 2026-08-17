@@ -14,7 +14,7 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
-/// 愚人套牌 (Deck of Wonders) - 0费技能牌（稀有，奥术派系）。
+/// 愚人套牌 (Deck of Lunacy) - 0费技能牌（稀有，奥术派系）。
 /// 将你抽牌堆和弃牌堆中的法术牌变形成为费用消耗增加1点的全角色卡牌。（保留其原始费用消耗。）
 /// 基础版消耗；升级后不再消耗。
 /// </summary>
@@ -37,9 +37,9 @@ public sealed class DeckOfWondersCard : JainaSpellCardTemplate
     public override int MaxUpgradeLevel => 1;
 
     /// <summary>
-    /// 卡牌原画：程序绘制的"愚人套牌"占位图（与惊奇套牌的 Deck of Wonders 原画区分）
+    /// 卡牌原画：炉石传说"愚人套牌"（Deck of Lunacy, DMF_712）官方原画
     /// </summary>
-    public override string CustomPortraitPath => "res://assets/card_art/deck_of_wonders_fool.png";
+    public override string CustomPortraitPath => "res://assets/card_art/deck_of_lunacy.png";
 
     public DeckOfWondersCard()
         : base(0, CardType.Skill, CardRarity.Rare, TargetType.None, true)
