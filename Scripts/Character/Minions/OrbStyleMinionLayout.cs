@@ -37,6 +37,7 @@ public sealed class OrbStyleMinionLayout : IMinionLayout
 
         // 按宠物主人分组
         var groups = unhandled
+            .Where(creature => creature.Entity.Monster is JainaMinionBase)
             .GroupBy(m => m.Entity.PetOwner)
             .ToList();
 
