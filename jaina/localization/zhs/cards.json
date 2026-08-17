@@ -32,7 +32,7 @@
   "JAINA_CARD_AMAZING_DECK_CARD.title": "惊奇套牌",
   "JAINA_CARD_AMAZING_DECK_CARD.description": "[gold]奥术[/gold]。\n将五张惊奇卡牌洗入你的抽牌堆。抽到时随机施放一个全角色卡牌。",
   "JAINA_CARD_AMAZING_CARD.title": "惊奇卡牌",
-  "JAINA_CARD_AMAZING_CARD.description": "抽到时施放随机施放一个全角色卡牌，释放后此卡消耗。",
+  "JAINA_CARD_AMAZING_CARD.description": "抽到时随机释放一个全角色卡牌，释放后此卡消耗。",
   "JAINA_CARD_AGENCY_ESPIONAGE_CARD.title": "旅社谍战",
   "JAINA_CARD_AGENCY_ESPIONAGE_CARD.description": "将每个其他角色的各一张牌洗入你的抽牌堆，其法力值消耗为0点。抽取其中一张。",
   "JAINA_CARD_IMP_CARD.title": "小精灵",
