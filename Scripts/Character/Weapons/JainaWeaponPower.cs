@@ -41,6 +41,18 @@ public sealed class JainaWeaponPower : PowerModel, IModPowerAssetOverrides
     public int Attack { get; private set; }
 
     /// <summary>
+    /// 武器摧毁时回调（炉石武器亡语：耐久归零或被新武器顶替时触发）。
+    /// 由武器能力卡 OnPlay 挂载；无则跳过。
+    /// </summary>
+    public Func<PlayerChoiceContext, Task>? OnDestroyed { get; set; }
+
+    /// <summary>
+    /// 武器攻击后回调（角色用武器攻击一次后触发）。
+    /// 由武器能力卡 OnPlay 挂载；无则跳过。
+    /// </summary>
+    public Func<PlayerChoiceContext, Task>? OnAttack { get; set; }
+
+    /// <summary>
     /// 设置武器攻击力（挂载前调用）
     /// </summary>
     public void SetWeaponStats(int attack)
@@ -91,6 +103,11 @@ public sealed class JainaWeaponPower : PowerModel, IModPowerAssetOverrides
         if (Amount <= 0)
         {
             // 耐久已耗尽（理论上挂载时即移除，这里兜底）
+            // 兜底移除同样触发武器亡语（OnDestroyed 回调）
+            if (OnDestroyed != null)
+            {
+                await OnDestroyed(choiceContext);
+            }
             await PowerCmd.Remove(this);
         }
     }

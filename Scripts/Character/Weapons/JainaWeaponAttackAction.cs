@@ -116,5 +116,11 @@ public sealed class JainaWeaponAttackAction : ActionModel, IModPowerAssetOverrid
 
         // 每攻击一次，武器耐久度 -1；归零时武器能力消失
         await JainaWeaponSlot.ConsumeDurability(choiceContext, Owner, weapon);
+
+        // 武器攻击后回调（如金属探测器升级形态：攻击1次，获取一张幸运币）
+        if (weapon.OnAttack != null)
+        {
+            await weapon.OnAttack(choiceContext);
+        }
     }
 }

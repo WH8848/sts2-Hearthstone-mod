@@ -34,9 +34,14 @@ public static class JainaWeaponSlot
         }
 
         // 顶替：移除旧武器能力（含攻击力/剩余耐久全部被新武器替换）
+        // 炉石规则：武器被替换时触发旧武器亡语（OnDestroyed 回调）
         var old = player.Creature.Powers.OfType<JainaWeaponPower>().FirstOrDefault();
         if (old != null)
         {
+            if (old.OnDestroyed != null)
+            {
+                await old.OnDestroyed(choiceContext);
+            }
             await PowerCmd.Remove(old);
         }
 
@@ -80,6 +85,11 @@ public static class JainaWeaponSlot
         if (weapon.Amount <= 1)
         {
             // 耐久归零：武器能力消失（行动点保留，但攻击力为 0 不可行动）
+            // 触发武器亡语（OnDestroyed 回调）
+            if (weapon.OnDestroyed != null)
+            {
+                await weapon.OnDestroyed(choiceContext);
+            }
             await PowerCmd.Remove(weapon);
             return;
         }
