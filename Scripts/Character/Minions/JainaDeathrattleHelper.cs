@@ -37,47 +37,25 @@ public static class JainaDeathrattleDamagePatch
 {
     private static MethodBase TargetMethod()
     {
-        // 诊断：列出 CreatureCmd 全部嵌套类与 Damage 状态机字段（定位用）
-        try
-        {
-            var diag = new System.Text.StringBuilder();
-            foreach (var type in typeof(CreatureCmd).GetNestedTypes(BindingFlags.NonPublic))
-            {
-                diag.Append(type.Name).Append('|');
-                if (type.Name.StartsWith("<Damage>d__", System.StringComparison.Ordinal))
-                {
-                    diag.Append('{');
-                    foreach (var field in type.GetFields(BindingFlags.Instance | BindingFlags.NonPublic))
-                    {
-                        diag.Append(field.Name).Append(',');
-                    }
-                    diag.Append('}');
-                }
-            }
-            MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaDeathrattlePatch] CreatureCmd nested: {diag}");
-        }
-        catch (System.Exception ex)
-        {
-            MegaCrit.Sts2.Core.Logging.Log.Warn($"[JainaDeathrattlePatch] diag error: {ex.Message}");
-        }
-
-        // 定位 Damage 核心重载的状态机：含 dealer 参数的 <Damage>d__* 嵌套类
+        // 定位 Damage 核心重载的状态机：<Damage>d__* 中含 <results> 字段的嵌套类
+        // （核心重载有局部变量 result/List<DamageResult>；其它重载状态机无此字段。
+        //  注意：新版编译器把 async 参数存为 <>8__N 槽，不能用参数名探测。）
         foreach (var type in typeof(CreatureCmd).GetNestedTypes(BindingFlags.NonPublic))
         {
             if (!type.Name.StartsWith("<Damage>d__", System.StringComparison.Ordinal))
             {
                 continue;
             }
-            bool hasDealerField = false;
+            bool hasResultsField = false;
             foreach (var field in type.GetFields(BindingFlags.Instance | BindingFlags.NonPublic))
             {
-                if (field.Name.Contains("dealer"))
+                if (field.Name.Contains("results"))
                 {
-                    hasDealerField = true;
+                    hasResultsField = true;
                     break;
                 }
             }
-            if (hasDealerField)
+            if (hasResultsField)
             {
                 return type.GetMethod("MoveNext", BindingFlags.Instance | BindingFlags.NonPublic);
             }
