@@ -43,6 +43,8 @@
   "JAINA_CARD_GREATER_ARCANE_MISSILES_CARD.title": "Greater Arcane Missiles",
   "JAINA_CARD_GREATER_ARCANE_MISSILES_CARD.titleUpgraded": "Star Power",
   "JAINA_CARD_GREATER_ARCANE_MISSILES_CARD.description": "{IfUpgraded:show:[gold]Arcane[/gold].\nDeal 5 + Strength damage to a random enemy. Repeat this, reducing the damage by 1 each time.|[gold]Fire[/gold].\nDeal [blue]3[/blue] damage to a random enemy 3 times.}",
+  "JAINA_CARD_SIMULACRUM_CARD.title": "Simulacrum",
+  "JAINA_CARD_SIMULACRUM_CARD.description": "[gold]Frost[/gold].\nCopy the minion with the lowest Cost in your hand.",
   "JAINA_CARD_AMAZING_DECK_CARD.title": "Deck of Wonders",
   "JAINA_CARD_AMAZING_DECK_CARD.titleUpgraded": "Agency Espionage",
   "JAINA_CARD_AMAZING_DECK_CARD.description": "{IfUpgraded:show:Shuffle a card from each other character into your Draw Pile. They cost (0). Draw one.|[gold]Arcane[/gold].\nShuffle five Amazing Cards into your Draw Pile. When drawn, they randomly cast an all-class card.}",
