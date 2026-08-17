@@ -14,37 +14,34 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
-/// 陨石术 (Meteor) - 2费攻击牌（稀有，火焰派系）。
-/// 对一个敌人造成 15 点伤害，再随机造成 2 次 4 点伤害。
-/// 升级后变为"星辰能量 (Star Power)"：随机对一个敌方造成 5 点伤害。
-/// 重复此效果，每次伤害减少 1 点（5、4、3、2、1）。
+/// 陨石术 (Meteor) - 2费攻击牌（普通，火焰派系）。
+/// 对一个敌人造成 15 点伤害，再对随机敌人造成 2 次 4 点伤害。
+/// 升级后变为"烈焰风暴 (Flamestrike)"：造成 7 次 5 点伤害，随机分配到所有敌人身上。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
 public sealed class MeteorCard : JainaSpellCardTemplate
 {
     /// <summary>
-    /// 法术牌 + 火焰派系（升级后为奥术派系）
+    /// 法术牌 + 火焰派系
     /// </summary>
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
-        IsUpgraded
-            ? [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Arcane]
-            : [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Fire];
+        [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Fire];
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [];
 
     /// <summary>
-    /// 卡牌原画：陨石术 / 升级后（星辰能量）切换原画
+    /// 卡牌原画：陨石术 / 升级后（烈焰风暴）切换原画
     /// </summary>
     public override string CustomPortraitPath =>
-        IsUpgraded ? "res://assets/card_art/star_power.png" : "res://assets/card_art/meteor.png";
+        IsUpgraded ? "res://assets/card_art/flamestrike.png" : "res://assets/card_art/meteor.png";
 
     public MeteorCard()
-        : base(2, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy, true)
+        : base(2, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy, true)
     {
     }
 
     /// <summary>
-    /// 升级后卡牌名称变为"星辰能量 (Star Power)"
+    /// 升级后卡牌名称变为"烈焰风暴 (Flamestrike)"
     /// </summary>
     public override string Title
     {
@@ -73,10 +70,8 @@ public sealed class MeteorCard : JainaSpellCardTemplate
 
         if (IsUpgraded)
         {
-            // 星辰能量：随机对一个敌方造成 (5+力量) 点伤害，重复此效果每次伤害减少 1 点（直到 1）。
-            // 力量只加在起始值上（1 点力量 → 6、5、4、3、2、1；10 点力量 → 15、…、1）。
-            int strength = base.Owner.Creature.GetPowerAmount<MegaCrit.Sts2.Core.Models.Powers.StrengthPower>();
-            for (int damage = 5 + strength; damage >= 1; damage--)
+            // 烈焰风暴：造成 7 次 5 点伤害，随机分配到所有敌人
+            for (int i = 0; i < 7; i++)
             {
                 var enemies = combatState.GetOpponentsOf(base.Owner.Creature)
                     .Where(e => e != null && e.IsAlive && e.IsHittable)
@@ -90,7 +85,7 @@ public sealed class MeteorCard : JainaSpellCardTemplate
                 {
                     break;
                 }
-                await CreatureCmd.Damage(choiceContext, [target], damage, ValueProp.Move, base.Owner.Creature, this, cardPlay);
+                await CreatureCmd.Damage(choiceContext, [target], 5m, ValueProp.Move, base.Owner.Creature, this, cardPlay);
             }
             return;
         }
@@ -101,7 +96,7 @@ public sealed class MeteorCard : JainaSpellCardTemplate
             await CreatureCmd.Damage(choiceContext, [mainTarget], 15m, ValueProp.Move, base.Owner.Creature, this, cardPlay);
         }
 
-        // 再随机造成 2 次 4 点伤害
+        // 再对随机敌人造成 2 次 4 点伤害
         for (int i = 0; i < 2; i++)
         {
             var enemies = combatState.GetOpponentsOf(base.Owner.Creature)
