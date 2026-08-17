@@ -1,11 +1,9 @@
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
-using HarmonyLib;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using jaina.Scripts.Character.Powers;
@@ -18,22 +16,34 @@ namespace jaina.Scripts.Character.Cards;
 /// 炉石形态 (Hearthstone Form) - 3费能力牌（稀有）。
 /// 你的全部卡牌获得保留和消耗；当你抽到状态卡时额外抽一张。
 /// 此后每回合你获得十点能量，每回合只能抽一张卡。
-/// 升级后：额外获得保留（本卡保留）。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
 public sealed class HearthstoneFormCard : ModCardTemplate
 {
     /// <summary>
-    /// 关键词（悬停注释）：未升级 = 虚无 + 保留 + 消耗 + 疲劳；升级后移除虚无。
-    /// 描述第一句的"保留/消耗"挂关键词注释，但渲染行由
-    /// <see cref="HearthstoneFormKeywordRenderPatch"/> 移除（位置不动，不出现顶部/底部渲染行）。
+    /// 关键词（渲染行）：未升级 = 虚无 + 疲劳；升级后移除虚无，只留疲劳。
+    /// 本卡不挂 Retain/Exhaust 关键词（挂上会被游戏渲染到描述顶部/底部）——
+    /// "保留/消耗"的悬停注释由 <see cref="AdditionalHoverTips"/> 提供（HoverTipFactory.FromKeyword），
+    /// 只显示在悬停提示里，不产生渲染行。
     /// 保留与消耗效果由 <see cref="HearthstoneFormPower"/> 赋予全部卡牌。
     /// </summary>
     public override IEnumerable<CardKeyword> CanonicalKeywords => IsUpgraded
-        ? [CardKeyword.Retain, CardKeyword.Exhaust,
-           jaina.Scripts.Character.Keywords.JainaKeywords.Fatigue]
-        : [CardKeyword.Ethereal, CardKeyword.Retain, CardKeyword.Exhaust,
+        ? [jaina.Scripts.Character.Keywords.JainaKeywords.Fatigue]
+        : [CardKeyword.Ethereal,
            jaina.Scripts.Character.Keywords.JainaKeywords.Fatigue];
+
+    /// <summary>
+    /// 悬停提示：保留 / 消耗 关键词注释（不挂在 Keywords 上，避免渲染行；
+    /// HoverTipFactory.FromKeyword 直接提供关键词悬停提示）。
+    /// </summary>
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips
+    {
+        get
+        {
+            yield return HoverTipFactory.FromKeyword(CardKeyword.Retain);
+            yield return HoverTipFactory.FromKeyword(CardKeyword.Exhaust);
+        }
+    }
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [];
 
@@ -73,55 +83,5 @@ public sealed class HearthstoneFormCard : ModCardTemplate
     protected override void OnUpgrade()
     {
         RemoveKeyword(CardKeyword.Ethereal);
-    }
-}
-
-/// <summary>
-/// 炉石形态卡面渲染修正：关键词的"保留"（beforeDescription 顶部）与"消耗"（afterDescription 底部）
-/// 会在描述顶部/底部额外渲染一行——移除这两个独立关键词行（描述文本中的"保留/消耗"长句不受影响）。
-/// 右侧关键词注释（悬停提示）仍由 Keywords 提供，不受影响。
-/// </summary>
-[HarmonyPatch]
-public static class HearthstoneFormKeywordRenderPatch
-{
-    private static MethodBase TargetMethod()
-    {
-        // DescriptionPreviewType 是 CardModel 的私有嵌套类型，需反射获取
-        var previewType = typeof(MegaCrit.Sts2.Core.Models.CardModel)
-            .GetNestedType("DescriptionPreviewType", BindingFlags.NonPublic | BindingFlags.Public);
-        return typeof(MegaCrit.Sts2.Core.Models.CardModel).GetMethod("GetDescriptionForPile",
-            BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public,
-            null,
-            new[]
-            {
-                typeof(MegaCrit.Sts2.Core.Entities.Cards.PileType),
-                previewType,
-                typeof(MegaCrit.Sts2.Core.Entities.Creatures.Creature)
-            },
-            null);
-    }
-
-    private static void Postfix(MegaCrit.Sts2.Core.Models.CardModel __instance, ref string __result)
-    {
-        if (__instance is not HearthstoneFormCard)
-        {
-            return;
-        }
-        // 移除顶部"保留"与底部"消耗"的独立关键词渲染行（金色词条或纯文本均可匹配；
-        // 描述文本中的长句不受影响）。"虚无"渲染行保留。
-        var kept = new List<string>();
-        foreach (var line in __result.Split('\n'))
-        {
-            string clean = line.Trim()
-                .Replace("[gold]", string.Empty)
-                .Replace("[/gold]", string.Empty);
-            if (clean == "保留" || clean == "消耗" ||
-                clean == "Retain" || clean == "Exhaust")
-            {
-                continue;
-            }
-            kept.Add(line);
-        }
-        __result = string.Join('\n', kept);
     }
 }
