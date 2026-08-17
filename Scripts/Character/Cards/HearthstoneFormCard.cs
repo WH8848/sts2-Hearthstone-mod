@@ -106,7 +106,8 @@ public static class HearthstoneFormKeywordRenderPatch
         {
             return;
         }
-        // 移除顶部"保留"与底部"消耗"的独立关键词行（金色词条或纯文本均可匹配）
+        // 移除顶部"保留"与底部"消耗"的独立关键词渲染行（金色词条或纯文本均可匹配；
+        // 描述文本中的长句不受影响）。"虚无"渲染行保留。
         var kept = new List<string>();
         foreach (var line in __result.Split('\n'))
         {
