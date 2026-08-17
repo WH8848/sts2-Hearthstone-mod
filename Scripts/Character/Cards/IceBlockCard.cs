@@ -12,17 +12,17 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
-/// 寒冰屏障 (Ice Block) - 1费能力牌（稀有，冰霜派系）。
-/// 获得 1 层常驻可叠层的寒冰屏障：当你将要承受致命伤害时，移除 1 层，
-/// 此次致命伤害变为 0，并获得免疫直到下回合开始。不可升级。
+/// 寒冰屏障 (Ice Block) - 2费能力牌（稀有，冰霜派系）。
+/// 当你将要承受致命伤害时，防止这些伤害，并在本回合中免疫。
+/// 升级后费用变为 1。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
 public sealed class IceBlockCard : ModCardTemplate
 {
     /// <summary>
-    /// 不可升级
+    /// 可升级（升级后费用 2 -> 1）
     /// </summary>
-    public override int MaxUpgradeLevel => 0;
+    public override int MaxUpgradeLevel => 1;
 
     /// <summary>
     /// 法术牌 + 冰霜派系 + 免疫（悬停解释）。视为法术牌（可被复制）。
@@ -37,8 +37,16 @@ public sealed class IceBlockCard : ModCardTemplate
     public override string CustomPortraitPath => "res://assets/card_art/ice_block.png";
 
     public IceBlockCard()
-        : base(1, CardType.Power, CardRarity.Rare, TargetType.Self, true)
+        : base(2, CardType.Power, CardRarity.Rare, TargetType.Self, true)
     {
+    }
+
+    /// <summary>
+    /// 升级：费用 2 -> 1
+    /// </summary>
+    protected override void OnUpgrade()
+    {
+        EnergyCost.UpgradeBy(-1);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
