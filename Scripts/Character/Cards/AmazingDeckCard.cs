@@ -120,7 +120,16 @@ public sealed class AmazingDeckCard : JainaSpellCardTemplate
                 {
                     continue;
                 }
+                // 费用归零：能量费用（含 X 费卡的 _base）与星星费用（含星星 X）全部置 0，
+                // 并打内部标记（X 费用卡打出时花费=当前能量/星星，不走 _base，
+                // 由 ZeroCostMarkPatch 按标记强制 0 花费并让卡面显示 0）
                 copy.EnergyCost.SetCustomBaseCost(0);
+                if (copy.BaseStarCost > 0)
+                {
+                    // 星星费用归零（BaseStarCost setter 私有，用公开的临时费用 API）
+                    copy.SetStarCostThisCombat(0);
+                }
+                copy.AddKeyword(jaina.Scripts.Character.Keywords.JainaKeywords.ZeroCostMark);
                 jaina.Scripts.Character.JainaCastTracker.MarkGenerated(copy);
                 shuffled.Add(copy);
             }

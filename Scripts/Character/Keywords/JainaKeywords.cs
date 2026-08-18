@@ -60,6 +60,9 @@ namespace jaina.Scripts.Character.Keywords;
 [RegisterOwnedKeyword(nameof(Mini), IconPath = "res://icon.svg")]
 // 交易：将此卡牌拖到弃牌堆上方松手会洗入你的弃牌堆，然后你从抽牌堆抽一张牌
 [RegisterOwnedKeyword(nameof(Tradeable), IconPath = "res://icon.svg",CardDescriptionPlacement = ModKeywordCardDescriptionPlacement.BeforeCardDescription)]
+// 零费标记：旅社谍战洗入的其它角色卡牌内部标记（能量/星星/X 全部费用归零用；
+// 不作为关键词展示，仅用于 ZeroCostMarkPatch 识别）
+[RegisterOwnedKeyword(nameof(ZeroCostMark), IconPath = "res://icon.svg", IncludeInCardHoverTip = false)]
 public class JainaKeywords
 {
     /// <summary>
@@ -224,4 +227,10 @@ public class JainaKeywords
     /// 交易：将此卡牌拖到弃牌堆上方松手会洗入你的弃牌堆，然后你从抽牌堆抽一张牌。
     /// </summary>
     public static readonly CardKeyword Tradeable = ModContentRegistry.GetQualifiedKeywordId(Entry.ModId, nameof(Tradeable)).GetModCardKeyword();
+
+    /// <summary>
+    /// 零费标记：旅社谍战洗入的其它角色卡牌内部标记（内部关键词，不显示；
+    /// 能量/星星/X 费用全部归零，见 ZeroCostMarkPatch）。
+    /// </summary>
+    public static readonly CardKeyword ZeroCostMark = ModContentRegistry.GetQualifiedKeywordId(Entry.ModId, nameof(ZeroCostMark)).GetModCardKeyword();
 }
