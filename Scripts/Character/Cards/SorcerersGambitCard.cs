@@ -78,6 +78,8 @@ public sealed class SorcerersGambitCard : JainaSpellCardTemplate
         if (applied is { Count: > 0 } && applied[0] is MageQuestlinePower quest)
         {
             quest.RewardUpgraded = IsUpgraded;
+            // 打出此能力后才开始计数：打出前施放的法术不计入任务进度
+            quest.StartCountingAfterPlay();
         }
     }
 }

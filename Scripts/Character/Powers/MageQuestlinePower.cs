@@ -67,6 +67,15 @@ public sealed class MageQuestlinePower : PowerModel, IModPowerAssetOverrides
         _schools = [];
     }
 
+    /// <summary>
+    /// 打出此任务卡后才开始计数：清空已统计的派系进度
+    /// （防御性——打出前的施放不应计入任务进度）。
+    /// </summary>
+    public void StartCountingAfterPlay()
+    {
+        _schools.Clear();
+    }
+
     public override PowerType Type => PowerType.Buff;
 
     public override PowerStackType StackType => PowerStackType.Single;

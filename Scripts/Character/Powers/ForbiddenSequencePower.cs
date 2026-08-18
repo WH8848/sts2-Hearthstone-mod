@@ -43,6 +43,15 @@ public sealed class ForbiddenSequencePower : PowerModel, IModPowerAssetOverrides
 
     protected override bool IsVisibleInternal => true;
 
+    /// <summary>
+    /// 打出禁忌序列后才开始计数：把计数起点设为当前最新发现 Seq，
+    /// 打出之前已完成的发现不计入任务进度。
+    /// </summary>
+    public void StartCountingAfterPlay()
+    {
+        _lastSeq = DiscoverTracker.GetLatestSeq(Owner?.Player);
+    }
+
     public override async Task AfterCardPlayed(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
         var player = Owner?.Player;

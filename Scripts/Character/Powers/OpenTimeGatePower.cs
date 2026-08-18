@@ -44,6 +44,15 @@ public sealed class OpenTimeGatePower : PowerModel, IModPowerAssetOverrides
 
     protected override bool IsVisibleInternal => true;
 
+    /// <summary>
+    /// 打出此能力后才开始计数：清空已统计的施放次数
+    /// （防御性——打出前的施放不应计入任务进度）。
+    /// </summary>
+    public void StartCountingAfterPlay()
+    {
+        _count = 0;
+    }
+
     public override async Task AfterCardPlayed(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
         var player = Owner?.Player;

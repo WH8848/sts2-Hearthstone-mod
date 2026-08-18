@@ -107,4 +107,18 @@ public static class DiscoverTracker
         }
         return queue.FirstOrDefault(p => p.Seq > afterSeq);
     }
+
+    /// <summary>
+    /// 该玩家当前已入队的最大发现 Seq（无记录返回 0）。
+    /// 任务卡打出时用作计数起点——跳过打出之前已完成的发现，
+    /// 保证"打出此能力后，才开始计数任务进度"。
+    /// </summary>
+    public static long GetLatestSeq(Player player)
+    {
+        if (!Pending.TryGetValue(player, out var queue) || queue.Count == 0)
+        {
+            return 0;
+        }
+        return queue.Max(p => p.Seq);
+    }
 }

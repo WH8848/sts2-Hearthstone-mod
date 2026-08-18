@@ -77,6 +77,8 @@ public sealed class ForbiddenSequenceCard : JainaSpellCardTemplate
         if (applied is { Count: > 0 } && applied[0] is ForbiddenSequencePower seq)
         {
             seq.Threshold = IsUpgraded ? 7 : 8;
+            // 打出此能力后才开始计数：跳过打出之前已完成的发现
+            seq.StartCountingAfterPlay();
         }
     }
 }
