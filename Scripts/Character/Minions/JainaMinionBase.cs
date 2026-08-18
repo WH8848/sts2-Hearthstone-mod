@@ -161,11 +161,6 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
     private Godot.Node? _hoverCardNode;
 
     /// <summary>
-    /// 悬停附加节点（左侧衍生物卡面 / 右侧注释标签），随主卡一起清理
-    /// </summary>
-    private readonly List<Godot.Node> _hoverExtraNodes = [];
-
-    /// <summary>
     /// 视觉根节点（TryCreateCreatureVisuals 创建；悬停卡面的回退挂载点）
     /// </summary>
     private CanvasItem? _visualsRoot;
@@ -242,78 +237,11 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
             ClampCardToViewport(host, cardNode);
             MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaHover] card shown: {canonical.Id} host={(host == _visualsRoot ? "visuals-root" : "creature-node")} insideTree={cardNode.IsInsideTree()} ready={cardNode.IsNodeReady()}");
             _hoverCardNode = cardNode;
-            // 附加悬停内容：主卡左侧衍生物卡面 + 右侧注释（主卡 AdditionalHoverTips）
-            ShowExtraHoverContent(host, cardNode, canonical);
         }
         catch (System.Exception ex)
         {
             // 悬停卡面失败不影响随从视觉/战斗
             MegaCrit.Sts2.Core.Logging.Log.Warn($"[JainaHover] error: {ex}");
-        }
-    }
-
-    /// <summary>
-    /// 悬停附加内容：主卡<b>左侧</b>显示衍生物卡面（AdditionalHoverTips 中的 CardHoverTip），
-    /// 主卡<b>右侧</b>显示注释文本（其余 HoverTip：关键词解释等）。
-    /// </summary>
-    private void ShowExtraHoverContent(CanvasItem host, Control mainCard, CardModel canonical)
-    {
-        try
-        {
-            var tips = canonical.HoverTips?.ToList() ?? [];
-            if (tips.Count == 0)
-            {
-                return;
-            }
-            var canvasTransform = host.GetGlobalTransformWithCanvas();
-            var mainPos = canvasTransform * mainCard.Position;
-            var mainSize = mainCard.Size * mainCard.Scale;
-
-            // 主卡左侧：衍生物卡面（CardHoverTip，每张再向左错开）
-            float leftX = mainPos.X - 10f;
-            foreach (var tip in tips)
-            {
-                if (tip is MegaCrit.Sts2.Core.HoverTips.CardHoverTip cardTip && cardTip.Card != null)
-                {
-                    var extraCard = MegaCrit.Sts2.Core.Nodes.Cards.NCard.Create(cardTip.Card);
-                    if (extraCard == null)
-                    {
-                        continue;
-                    }
-                    extraCard.UpdateVisuals(MegaCrit.Sts2.Core.Entities.Cards.PileType.None,
-                        MegaCrit.Sts2.Core.Entities.Cards.CardPreviewMode.Normal);
-                    extraCard.MouseFilter = Control.MouseFilterEnum.Ignore;
-                    host.AddChild(extraCard);
-                    extraCard.Scale = Vector2.One * 0.72f;
-                    leftX -= extraCard.Size.X * extraCard.Scale.X + 10f;
-                    extraCard.Position = canvasTransform.AffineInverse() * new Vector2(leftX, mainPos.Y);
-                    extraCard.ZIndex = 499;
-                    ClampCardToViewport(host, extraCard);
-                    _hoverExtraNodes.Add(extraCard);
-                }
-            }
-
-            // 主卡右侧：注释文本（HoverTip：标题 + 描述，合并为一个标签）
-            var notes = tips.OfType<MegaCrit.Sts2.Core.HoverTips.HoverTip>()
-                .Select(h => h.Title + "\n" + h.Description)
-                .ToList();
-            if (notes.Count > 0)
-            {
-                var label = new Godot.Label
-                {
-                    Text = string.Join("\n\n", notes),
-                    MouseFilter = Control.MouseFilterEnum.Ignore,
-                    ZIndex = 501,
-                };
-                host.AddChild(label);
-                label.Position = canvasTransform.AffineInverse() *
-                                 new Vector2(mainPos.X + mainSize.X + 10f, mainPos.Y);
-                _hoverExtraNodes.Add(label);
-            }
-        }
-        catch (System.Exception ex)
-        {
-            MegaCrit.Sts2.Core.Logging.Log.Warn($"[JainaHover] extra hover content error: {ex}");
         }
     }
 
@@ -330,29 +258,6 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
     {
         var node = _hoverCardNode;
         _hoverCardNode = null;
-        // 清理附加节点（衍生物卡面同样要恢复池化 NCard 状态）
-        foreach (var extra in _hoverExtraNodes)
-        {
-            if (extra == null || !GodotObject.IsInstanceValid(extra))
-            {
-                continue;
-            }
-            if (extra is Control extraControl)
-            {
-                extraControl.ZIndex = 0;
-                extraControl.Scale = Vector2.One;
-                extraControl.Position = Vector2.Zero;
-            }
-            var captured = extra;
-            Callable.From(() =>
-            {
-                if (GodotObject.IsInstanceValid(captured))
-                {
-                    captured.QueueFreeSafely();
-                }
-            }).CallDeferred();
-        }
-        _hoverExtraNodes.Clear();
         if (node == null || !GodotObject.IsInstanceValid(node))
         {
             return;
@@ -421,14 +326,10 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
     }
 
     /// <summary>
-    /// 血条显示：<b>自己的随从常驻显示</b>（存活时，不需要悬停）；
-    /// 队友的随从平时隐藏，鼠标悬停其主人（玩家角色）时才显示
-    /// （PlayerHoverPetsHealthBarPatch，参考亡灵契约师奥斯提）。
+    /// 随从平时不显示血条（保持场面简洁）；鼠标悬停其主人（玩家角色，自己或队友）时
+    /// 才显示血条（PlayerHoverPetsHealthBarPatch，参考亡灵契约师奥斯提）。
     /// </summary>
-    public override bool IsHealthBarVisible =>
-        Creature.PetOwner != null &&
-        MegaCrit.Sts2.Core.Context.LocalContext.IsMe(Creature.PetOwner) &&
-        Creature.IsAlive;
+    public override bool IsHealthBarVisible => false;
 
     /// <summary>
     /// 血条视觉缩短一半：MinionLib 强制随从可交互使血条显示，
@@ -508,14 +409,9 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
         {
             return false;
         }
-        // 攻击意图显示条件（与血条规则一致）：
-        // 自己的随从常驻显示；队友的随从只在悬停其主人（玩家角色）时显示
+        // 攻击意图与血条规则一致：鼠标悬停主人（玩家角色，自己或队友）时才显示
         var petOwner = Creature.PetOwner;
-        if (petOwner == null)
-        {
-            return false;
-        }
-        if (!MegaCrit.Sts2.Core.Context.LocalContext.IsMe(petOwner) &&
+        if (petOwner == null ||
             jaina.Scripts.Character.Powers.PlayerHoverPetsHealthBarPatch.HoveredPlayerNetId != petOwner.NetId)
         {
             return false;

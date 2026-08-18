@@ -97,8 +97,12 @@ public abstract class JainaHeroCardTemplate : ModCardTemplate
             await CreatureCmd.GainBlock(base.Owner.Creature, HeroArmor, ValueProp.Unpowered, cardPlay);
         }
 
-        // 2. 触发英雄战吼
-        await OnHeroBattlecry(choiceContext, cardPlay);
+        // 2. 触发英雄战吼（自动打出——如诈骗犯重放英雄卡——不触发战吼，
+        //    只获得护盾与英雄技能替换，与炉石"非手牌打出不触发战吼"一致）
+        if (!cardPlay.IsAutoPlay)
+        {
+            await OnHeroBattlecry(choiceContext, cardPlay);
+        }
 
         // 3. 替换英雄技能（若指定了新的英雄技能卡类型）
         if (HeroPowerType != null)

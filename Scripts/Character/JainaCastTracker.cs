@@ -204,8 +204,9 @@ public static class JainaCastTracker
         {
             return;
         }
+        bool isHeroCard = card is jaina.Scripts.Character.Cards.JainaHeroCardTemplate;
         if (card.Type != CardType.Attack && card.Type != CardType.Skill &&
-            !card.Keywords.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Spell))
+            !card.Keywords.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Spell) && !isHeroCard)
         {
             return;
         }
@@ -218,6 +219,16 @@ public static class JainaCastTracker
         var rec = For(state);
         var type = card.GetType();
         var ownerId = card.Owner.NetId;
+
+        // 英雄卡（魔导师晨拥/冰霜女巫吉安娜）：只记录"上一张"（诈骗犯重放用——
+        // 重放英雄卡不触发战吼，只获得护盾与英雄技能替换），
+        // 不加入攻击/技能池（倒带/罗曼斯/西瓦拉/派系追踪不受影响）
+        if (isHeroCard)
+        {
+            rec.LastPlayedCardByPlayer[ownerId] = (type, card.CurrentUpgradeLevel, IsGeneratedCard(card));
+            return;
+        }
+
         rec.SetFor(rec.PlayedAttackSkillsByPlayer, ownerId).Add(type);
         // 记录"上一张施放的攻击/技能牌"（蓄谋诈骗犯战吼重放用）——按玩家区分，
         // 联机时每个玩家只重放自己施放的上一张牌
