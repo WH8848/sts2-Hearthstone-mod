@@ -2,91 +2,45 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
-using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
-using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.ValueProps;
 using STS2RitsuLib.Interop.AutoRegistration;
-using STS2RitsuLib.Scaffolding.Content;
 
 namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
-/// 奥术弹幕 (Arcane Barrage) - 1费攻击（普通，奥术派系）。
-/// 对一个敌人造成 3 点伤害，再随机对所有敌人造成 2 次 2 点伤害。
-/// 升级后变为"灯光表演 (Lightshow)"（0费）：对随机敌人造成 2 次 2 点伤害，
-/// 每次释放攻击次数 +1（本局内，按玩家区分）；每次升级攻击次数 +1；可无限升级。
+/// 灯光表演 (Lightshow) - 0费攻击牌（普通，奥术派系）。
+/// 对随机敌人造成 N 次 2 点伤害（N = 2 + 升级次数），将一张升级过的"灯光表演"洗入你的弃牌堆。
+/// 可无限升级，每次升级攻击次数 +1。消耗。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
 public sealed class ArcaneBarrage : JainaSpellCardTemplate
 {
     /// <summary>
-    /// 法术牌 + 奥术派系
-    /// </summary>
-    public override IEnumerable<CardKeyword> CanonicalKeywords =>
-        [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Arcane];
-
-    protected override IEnumerable<DynamicVar> CanonicalVars =>
-    [
-        new DamageVar(3m, ValueProp.Move)
-    ];
-
-    /// <summary>
-    /// 可无限升级（灯光表演每次升级攻击次数 +1；费用只在升级到灯光表演时减 1 次）
+    /// 无限升级 - 允许无限次升级（每次升级攻击次数 +1）
     /// </summary>
     public override int MaxUpgradeLevel => int.MaxValue;
 
     /// <summary>
-    /// 卡牌原画：奥术弹幕 / 升级后（灯光表演）切换原画
+    /// 法术牌 + 奥术派系 + 消耗（打出后从本场战斗移除）
     /// </summary>
-    public override string CustomPortraitPath =>
-        IsUpgraded ? "res://assets/card_art/lightshow.png" : "res://assets/card_art/arcane_barrage.png";
+    public override IEnumerable<CardKeyword> CanonicalKeywords =>
+        [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Arcane,
+         CardKeyword.Exhaust];
+
+    protected override IEnumerable<DynamicVar> CanonicalVars =>
+    [
+        new DynamicVar("Beams", 2),
+        new DynamicVar("Upgraded", 1)
+    ];
+
+    public override string CustomPortraitPath => "res://assets/card_art/lightshow.png";
 
     public ArcaneBarrage()
-        : base(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy, true)
+        : base(0, CardType.Attack, CardRarity.Common, TargetType.None, true)
     {
-    }
-
-    /// <summary>
-    /// 升级：第一次升级（→灯光表演）费用 1 → 0（只减一次）；后续升级只增加攻击次数不减费。
-    /// </summary>
-    protected override void OnUpgrade()
-    {
-        if (CurrentUpgradeLevel == 1)
-        {
-            EnergyCost.UpgradeBy(-1);
-        }
-    }
-
-    /// <summary>
-    /// 升级后卡牌名称变为"灯光表演 (Lightshow)"
-    /// </summary>
-    public override string Title
-    {
-        get
-        {
-            var title = new LocString("cards", base.Id.Entry + ".title");
-            if (!IsUpgraded)
-            {
-                return title.GetFormattedText();
-            }
-            LocString? upgraded = LocString.GetIfExists("cards", base.Id.Entry + ".titleUpgraded");
-            return upgraded?.GetFormattedText() ?? title.GetFormattedText() + "+";
-        }
-    }
-
-    /// <summary>
-    /// 灯光表演光束数：2（基础）+ 本局已施放的灯光表演次数（每次释放 +1，按玩家区分）
-    /// + 升级次数（灯光表演之后每次升级 +1）。
-    /// </summary>
-    private int LightshowBeamCount(ICombatState combatState)
-    {
-        var rec = jaina.Scripts.Character.JainaCastTracker.For(combatState);
-        rec.LightshowCastsByPlayer.TryGetValue(base.Owner.NetId, out var casts);
-        int upgrades = Math.Max(0, CurrentUpgradeLevel - 1);
-        return 2 + casts + upgrades;
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
@@ -100,46 +54,9 @@ public sealed class ArcaneBarrage : JainaSpellCardTemplate
             return;
         }
 
-        if (IsUpgraded)
-        {
-            // 灯光表演：对随机敌人造成 N 次 2 点伤害（N = 2 + 本局已施放次数）
-            int beams = LightshowBeamCount(combatState);
-            // 施放本张后计数 +1（供下一次灯光表演递增，按玩家区分）
-            var rec2 = jaina.Scripts.Character.JainaCastTracker.For(combatState);
-            rec2.LightshowCastsByPlayer.TryGetValue(base.Owner.NetId, out var casts);
-            rec2.LightshowCastsByPlayer[base.Owner.NetId] = casts + 1;
-            for (int i = 0; i < beams; i++)
-            {
-                var enemies = combatState.GetOpponentsOf(base.Owner.Creature)
-                    .Where(e => e.IsAlive && e.IsHittable)
-                    .ToList();
-                if (enemies.Count == 0)
-                {
-                    break;
-                }
-                var randomEnemy = combatState.RunState.Rng.CombatTargets.NextItem(enemies);
-                if (randomEnemy == null)
-                {
-                    break;
-                }
-                await CreatureCmd.Damage(choiceContext, [randomEnemy], 2m, ValueProp.Move, base.Owner.Creature, this, cardPlay);
-            }
-            return;
-        }
-
-        // 奥术弹幕：对目标造成 {Damage} 点伤害（吃力量修正）
-        if (cardPlay.Target is not { IsAlive: true } target)
-        {
-            return;
-        }
-        await DamageCmd.Attack(base.DynamicVars.Damage.BaseValue)
-            .FromCard(this, cardPlay)
-            .Targeting(target)
-            .WithHitFx("vfx/vfx_attack_blunt")
-            .Execute(choiceContext);
-
-        // 再随机对所有敌人造成 2 次 2 点伤害
-        for (int i = 0; i < 2; i++)
+        // 对随机敌人造成 Beams 次 2 点伤害（每次随机选一个存活可命中敌人）
+        int beams = (int)this.DynamicVars["Beams"].BaseValue;
+        for (int i = 0; i < beams; i++)
         {
             var enemies = combatState.GetOpponentsOf(base.Owner.Creature)
                 .Where(e => e.IsAlive && e.IsHittable)
@@ -148,14 +65,43 @@ public sealed class ArcaneBarrage : JainaSpellCardTemplate
             {
                 break;
             }
-            var randomTarget = combatState.RunState.Rng.CombatTargets.NextItem(enemies);
-            if (randomTarget == null)
+            var randomEnemy = combatState.RunState.Rng.CombatTargets.NextItem(enemies);
+            if (randomEnemy == null)
             {
                 break;
             }
             // Move 标记：每段伤害都触发振翅（Flutter）层数减少（IsPoweredAttack）；
             // 传 cardSource/cardPlay（蜷身等依赖 cardSource 的敌方 Power 才能触发）
-            await CreatureCmd.Damage(choiceContext, [randomTarget], 2m, ValueProp.Move, base.Owner.Creature, this, cardPlay);
+            await CreatureCmd.Damage(choiceContext, [randomEnemy], 2m, ValueProp.Move, base.Owner.Creature, this, cardPlay);
         }
+
+        // 将一张升级过的"灯光表演"洗入弃牌堆（升级等级 = 本卡当前升级等级 + 1）
+        var upgraded = jaina.Scripts.Character.JainaCastTracker.CreateCardWithUpgrade(
+            combatState, base.Owner, typeof(ArcaneBarrage), base.CurrentUpgradeLevel + 1);
+        if (upgraded == null)
+        {
+            return;
+        }
+        jaina.Scripts.Character.JainaCastTracker.MarkGenerated(upgraded);
+        this.DynamicVars["Upgraded"].BaseValue = this.CurrentUpgradeLevel;
+        // 塞入弃牌堆动画 + 弃牌堆计数刷新（生成卡没有 NCard 节点，原版 tween 流程
+        // 不会为它们创建动画/触发 CardAddFinished → 这里用原版生成卡塞堆流程 + 手动刷计数）
+        var results = await CardPileCmd.AddGeneratedCardsToCombat(
+            [upgraded], PileType.Discard, base.Owner, CardPilePosition.Bottom);
+        CardCmd.PreviewCardPileAdd(results, 1.0f);
+        foreach (var r in results)
+        {
+            if (r.success)
+            {
+                r.cardAdded.Pile?.InvokeCardAddFinished();
+            }
+        }
+    }
+
+    protected override void OnUpgrade()
+    {
+        // 每次升级攻击次数 +1（UpgradeValueBy 设置 WasJustUpgraded，升级预览数值绿色高亮）
+        base.DynamicVars["Beams"].UpgradeValueBy(1);
+        this.DynamicVars["Upgraded"].UpgradeValueBy(1);
     }
 }

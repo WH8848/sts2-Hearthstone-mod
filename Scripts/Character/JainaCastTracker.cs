@@ -71,11 +71,6 @@ public static class JainaCastTracker
         public readonly Dictionary<ulong, (Type Type, int UpgradeLevel, bool IsGenerated)?> LastCastSpellCost2PlusByPlayer = [];
 
         /// <summary>
-        /// 各玩家施放过的"灯光表演"（升级版奥术弹幕）次数（灯光表演的光束数递增用）
-        /// </summary>
-        public readonly Dictionary<ulong, int> LightshowCastsByPlayer = [];
-
-        /// <summary>
         /// 各玩家各法术派系最近施放过的法术（魔导师晨拥战吼重放用）。
         /// 记录 (类型, 施放时的升级级别, 是否本局衍生)。
         /// </summary>
