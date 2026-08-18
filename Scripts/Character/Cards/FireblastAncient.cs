@@ -92,12 +92,18 @@ public sealed class FireblastAncient : JainaSpellCardTemplate
                     choiceContext, base.Owner, maxHp: 1m, attack: 1m);
             }
 
+            // 目标防御：无目标时不施放（自动打出兜底，防 Targeting(null) NRE）
+            if (cardPlay.Target is not { IsAlive: true } fireblastTarget)
+            {
+                return;
+            }
+
             if (empowerStacks <= 0)
             {
                 // 无灌注：单段总伤害
                 await DamageCmd.Attack(totalDamage)
                     .FromCard(this, cardPlay)
-                    .Targeting(cardPlay.Target!)
+                    .Targeting(fireblastTarget)
                     .WithHitFx("vfx/vfx_attack_blunt", null, "blunt_attack.mp3")
                     .Execute(choiceContext);
             }
@@ -108,7 +114,7 @@ public sealed class FireblastAncient : JainaSpellCardTemplate
                 {
                     await DamageCmd.Attack(1m)
                         .FromCard(this, cardPlay)
-                        .Targeting(cardPlay.Target!)
+                        .Targeting(fireblastTarget)
                         .WithHitFx("vfx/vfx_attack_blunt", null, "blunt_attack.mp3")
                         .Execute(choiceContext);
                 }

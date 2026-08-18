@@ -67,9 +67,16 @@ public sealed class Fireball : JainaSpellCardTemplate
         // 记录施放（倒带/罗曼斯/三派系追踪）
         jaina.Scripts.Character.JainaCastTracker.RecordPlayed(this);
 
+        // 目标防御：自动打出（戏法图腾/浩劫等）无目标时不施放（AutoPlayTargetPatch 会补全目标，
+        // 这里兜底防 NRE——卡在空中/回合循环死亡）
+        if (cardPlay.Target is not { IsAlive: true } target)
+        {
+            return;
+        }
+
         await DamageCmd.Attack(base.DynamicVars.Damage.BaseValue)
             .FromCard(this, cardPlay)
-            .Targeting(cardPlay.Target!)
+            .Targeting(target)
             .WithHitFx("vfx/vfx_attack_blunt")
             .Execute(choiceContext);
     }
