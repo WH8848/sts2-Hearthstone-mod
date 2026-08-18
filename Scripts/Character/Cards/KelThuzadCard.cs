@@ -21,9 +21,9 @@ public sealed class KelThuzadCard : JainaMinionCardTemplate
     public override string CustomPortraitPath => "res://assets/card_art/kelthuzad_inevitable.png";
 
     /// <summary>
-    /// 悬停提示：显示战吼复活的"不稳定的骷髅"衍生物卡
+    /// 自身特性悬停：战吼复活的"不稳定的骷髅"衍生物卡（"随从"关键词解释由模板兜底）
     /// </summary>
-    protected override IEnumerable<IHoverTip> AdditionalHoverTips
+    protected override IEnumerable<IHoverTip> ExtraMinionHoverTips
     {
         get
         {

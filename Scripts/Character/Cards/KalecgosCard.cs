@@ -22,9 +22,11 @@ public sealed class KalecgosCard : JainaMinionCardTemplate
 
     public override string CustomPortraitPath => "res://assets/card_art/kalecgos.png";
 
-    protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
-        [HoverTipFactory.FromKeyword(DescriptionKeywords.Minion),
-         HoverTipFactory.FromKeyword(jaina.Scripts.Character.Keywords.JainaKeywords.Discover)];
+    /// <summary>
+    /// 自身特性悬停：发现解释（"随从"关键词解释由模板兜底）
+    /// </summary>
+    protected override IEnumerable<IHoverTip> ExtraMinionHoverTips =>
+        [HoverTipFactory.FromKeyword(jaina.Scripts.Character.Keywords.JainaKeywords.Discover)];
 
     protected override Type MinionType => typeof(KalecgosMinion);
 

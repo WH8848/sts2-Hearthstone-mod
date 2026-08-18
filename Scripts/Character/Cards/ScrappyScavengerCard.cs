@@ -20,9 +20,11 @@ public sealed class ScrappyScavengerCard : JainaMinionCardTemplate
     /// </summary>
     public override string CustomPortraitPath => "res://assets/card_art/scrappy_scavenger.png";
 
-    protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
-        [HoverTipFactory.FromKeyword(DescriptionKeywords.Minion),
-         HoverTipFactory.FromKeyword(JainaKeywords.Discover)];
+    /// <summary>
+    /// 自身特性悬停：发现解释（"随从"关键词解释由模板兜底）
+    /// </summary>
+    protected override IEnumerable<IHoverTip> ExtraMinionHoverTips =>
+        [HoverTipFactory.FromKeyword(JainaKeywords.Discover)];
 
     protected override Type MinionType => typeof(ScrappyScavengerMinion);
 

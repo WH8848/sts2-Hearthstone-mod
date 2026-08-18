@@ -26,7 +26,10 @@ public sealed class IceWalkerCard : JainaMinionCardTemplate
 
     protected override int MinionHealth => 3;
 
-    protected override IEnumerable<IHoverTip> AdditionalHoverTips =>[HoverTipFactory.FromKeyword(DescriptionKeywords.Minion),HoverTipFactory.FromPower<FreezePower>()];
+    /// <summary>
+    /// 自身特性悬停：冻结能力解释（"随从"关键词解释由模板兜底）
+    /// </summary>
+    protected override IEnumerable<IHoverTip> ExtraMinionHoverTips => [HoverTipFactory.FromPower<FreezePower>()];
 
     /// <summary>
     /// 元素种族 + 消耗（随从卡打出后消耗，模板默认）

@@ -38,9 +38,9 @@ public sealed class AstromancerSolarianCard : JainaMinionCardTemplate
     }
 
     /// <summary>
-    /// 悬停提示：显示亡语洗入牌库的衍生物"终极索兰莉安"卡（参考灵体采集者显示小精灵）
+    /// 自身特性悬停：亡语洗入牌库的衍生物"终极索兰莉安"卡（"随从"关键词解释由模板兜底）
     /// </summary>
-    protected override IEnumerable<IHoverTip> AdditionalHoverTips
+    protected override IEnumerable<IHoverTip> ExtraMinionHoverTips
     {
         get
         {

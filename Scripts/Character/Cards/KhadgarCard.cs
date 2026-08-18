@@ -40,9 +40,9 @@ public sealed class KhadgarCard : JainaMinionCardTemplate
     }
 
     /// <summary>
-    /// 悬停提示：显示战吼装备的衍生物"魔法智慧之球"卡（参考灵体采集者显示小精灵）
+    /// 自身特性悬停：战吼装备的衍生物"魔法智慧之球"卡（"随从"关键词解释由模板兜底）
     /// </summary>
-    protected override IEnumerable<IHoverTip> AdditionalHoverTips
+    protected override IEnumerable<IHoverTip> ExtraMinionHoverTips
     {
         get
         {

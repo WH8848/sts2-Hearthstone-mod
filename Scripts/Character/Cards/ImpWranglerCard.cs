@@ -20,9 +20,9 @@ public sealed class ImpWranglerCard : JainaMinionCardTemplate
     public override string CustomPortraitPath => "res://assets/card_art/imp_wrangler.png";
 
     /// <summary>
-    /// 悬停提示：显示灌注额外召唤的小精灵衍生物卡（参考灵体采集者）
+    /// 自身特性悬停：小精灵衍生物卡面 + 灌注技能解释（"随从"关键词解释由模板兜底）
     /// </summary>
-    protected override IEnumerable<IHoverTip> AdditionalHoverTips => [HoverTipFactory.FromCard<ImpCard>(),HoverTipFactory.FromKeyword(DescriptionKeywords.SpecialHeroSkill)];
+    protected override IEnumerable<IHoverTip> ExtraMinionHoverTips => [HoverTipFactory.FromCard<ImpCard>(), HoverTipFactory.FromKeyword(DescriptionKeywords.SpecialHeroSkill)];
 
     protected override Type MinionType => typeof(ImpWranglerMinion);
 

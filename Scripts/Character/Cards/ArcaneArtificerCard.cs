@@ -21,9 +21,9 @@ public sealed class ArcaneArtificerCard : JainaMinionCardTemplate
          jaina.Scripts.Character.Keywords.JainaKeywords.Spell, CardKeyword.Exhaust];
 
     /// <summary>
-    /// 悬停提示：格挡关键词注释（描述中"获得格挡"）
+    /// 自身特性悬停：格挡关键词注释（描述中"获得格挡"）（"随从"关键词解释由模板兜底）
     /// </summary>
-    protected override IEnumerable<IHoverTip> AdditionalHoverTips
+    protected override IEnumerable<IHoverTip> ExtraMinionHoverTips
     {
         get
         {

@@ -31,9 +31,9 @@ public sealed class SpiritCollectorCard : JainaMinionCardTemplate
     public override string CustomPortraitPath => "res://assets/card_art/spirit_collector.png";
 
     /// <summary>
-    /// 悬停提示：显示战吼获取的小精灵衍生物卡（参考冰冷案例/时空提速）
+    /// 自身特性悬停：战吼获取的小精灵衍生物卡（"随从"关键词解释由模板兜底）
     /// </summary>
-    protected override IEnumerable<IHoverTip> AdditionalHoverTips
+    protected override IEnumerable<IHoverTip> ExtraMinionHoverTips
     {
         get
         {

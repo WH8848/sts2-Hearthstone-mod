@@ -61,7 +61,19 @@ public abstract class JainaMinionCardTemplate : ModCardTemplate,
     /// </summary>
     public int StandardMinionHealth => _overrideHealth ?? MinionHealth;
 
-    protected override IEnumerable<IHoverTip> AdditionalHoverTips => [HoverTipFactory.FromKeyword(DescriptionKeywords.Minion)];
+    /// <summary>
+    /// 额外悬停提示（子类按需追加自身特性：衍生物卡面、能力解释等）。
+    /// "随从"关键词解释由模板兜底注入（格式同寒冰行者：随从 + 自身特性），
+    /// 子类覆写本属性不会丢失"随从"解释。
+    /// </summary>
+    protected virtual IEnumerable<IHoverTip> ExtraMinionHoverTips => [];
+
+    /// <summary>
+    /// 悬停提示：固定包含"随从"关键词解释（使用时召唤、随从栏、7个上限等规则），
+    /// 再追加子类自身特性提示（ExtraMinionHoverTips）。
+    /// </summary>
+    protected sealed override IEnumerable<IHoverTip> AdditionalHoverTips =>
+        [HoverTipFactory.FromKeyword(DescriptionKeywords.Minion), .. ExtraMinionHoverTips];
 
     /// <summary>
     /// 描述后处理（MinionLib IDescriptionPostProcessCard）：
