@@ -61,6 +61,10 @@ public sealed class EnergyShaperMinion : JainaMinionBase
 
         var rng = owner.RunState.Rng.CombatCardSelection;
         var combatState = Creature.CombatState;
+        if (combatState == null)
+        {
+            return;
+        }
 
         foreach (var spell in spells)
         {
@@ -88,9 +92,13 @@ public sealed class EnergyShaperMinion : JainaMinionBase
             {
                 continue;
             }
+            // 按可升级级别展开（含升级形态，上限与随机池一致：GetDiscoverPoolMaxUpgradeLevel）
+            int maxLevel = jaina.Scripts.Character.JainaCastTracker.GetDiscoverPoolMaxUpgradeLevel(chosen.GetType());
+            int upgradeLevel = rng.NextInt(0, maxLevel + 1);
 
             // 生成带 Owner 的变形目标实例（Transform 要求 replacement.Owner == original.Owner）
-            var replacement = combatState?.CreateCard(chosen, owner);
+            var replacement = jaina.Scripts.Character.JainaCastTracker.CreateCardWithUpgrade(
+                combatState, owner, chosen.GetType(), upgradeLevel);
             if (replacement == null)
             {
                 continue;
