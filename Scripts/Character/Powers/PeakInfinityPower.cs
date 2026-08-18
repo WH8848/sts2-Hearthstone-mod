@@ -31,7 +31,9 @@ public sealed class PeakInfinityPower : PowerModel
     public CardModel? TargetCard;
 
     /// <summary>
-    /// 压轴：下回合开始时，将本牌从弃牌堆移回手牌，本 Power 移除。
+    /// 压轴：下回合开始时，将本牌移回手牌，本 Power 移除。
+    /// 无论本牌在哪个牌堆（弃牌堆/消耗堆/抽牌堆等）都移回手牌
+    /// （只要还在对局中且不在手牌；已完全移出对局的卡无法回手）。
     /// </summary>
     public override async Task BeforeSideTurnStart(PlayerChoiceContext choiceContext, CombatSide side,
         IReadOnlyList<Creature> participants, ICombatState combatState)
@@ -40,9 +42,9 @@ public sealed class PeakInfinityPower : PowerModel
         {
             return;
         }
-        if (TargetCard is { Pile.Type: PileType.Discard })
+        if (TargetCard is { } card && card.Pile != null && card.Pile.Type != PileType.Hand)
         {
-            await CardPileCmd.Add(TargetCard, PileType.Hand);
+            await CardPileCmd.Add(card, PileType.Hand);
         }
         await PowerCmd.Remove(this);
     }

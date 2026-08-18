@@ -65,6 +65,7 @@
 - **再次释放的卡统一语义**：所有"再次释放玩家打过的牌"的重放路径（鹦鹉/诈骗犯/罗曼斯/魔导师晨拥/大法师的符文/维克萨勒斯）——① 不算玩家手打：`CardCmd.AutoPlay` 统一经 `AutoPlayMarkPatch` Prefix 打 `RommathReplayTracker.Mark`，`RecordPlayed` 对 Marked 卡不更新"上一张"/手打计数；② 自动带消耗：显式 `AddKeyword(CardKeyword.Exhaust)`（诈骗犯/鹦鹉/罗曼斯/魔导师晨拥显式，符文/维克萨勒斯/惊奇/Yogg/图腾/冰血塔经 `MarkGenerated` 隐式）。
 - **冰血哨塔重做**：改为回合结束从**抽牌堆**抽一张法术打出，抽牌堆没有则从**弃牌堆**抽；**施放的法术按自身规则结算**——带消耗词条的法术正常消耗（进消耗堆），不带消耗的进弃牌堆（不强行移除 Exhaust）；**可叠层**（StackType.Counter，每张哨塔各触发一次，OnPlay 不再顶替旧哨塔）。zhs/eng 卡+power 描述同步。
 - **同名卡不可自发现**：统一规则——发现/检索池排除"发起发现的卡自身"：倒带已排除 `typeof(JainasGiftCard)`（155 行）；拾荒清道夫 `DiscoverCardOfCostAndAddToHand` 新增 `excludeType` 参数排除自身卡类型；撕裂现实/能量之泉池本身不含自身。
+- **巅峰无限压轴回手无条件**：`PeakInfinityPower.BeforeSideTurnStart` 不再限定"只在弃牌堆回手"——无论卡在哪个牌堆（弃牌堆/消耗堆/抽牌堆等），只要压轴触发，回合开始都移回手牌（卡须仍在对局且不在手牌；已移出对局的无法回手）。
 - **联机回合结束按钮消失修复**：主机死亡后的玩家回合切换中，客机端 `NEndTurnButton` 可能停在 Hidden/Disabled（原版 `OnTurnStarted` 恢复路径在死亡玩家自动 SetReady 时序下被跳过）→ `EndTurnButtonRestorePatch`（Powers/）：patch `NEndTurnButton.OnTurnStarted` Postfix——玩家侧回合开始 + 本地玩家存活 + 未就绪时，若按钮非 Enabled 则 `AnimIn + Enable + 反射同步 _state=0`（纯本地 UI，联机安全）。
 - **联机断联（两处根因已定位）**：
   ① `DRAW_CARDS_NEXT_TURN_POWER` 只在一端存在（14:08 局 checksum 116/117）→ **万象辉星 mod 旧版导致**（已让队友更新版本，非本项目问题）；
