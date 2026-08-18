@@ -495,11 +495,20 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
     /// - 存活且攻击力 &gt; 0；
     /// - 非召唤当回合（召唤当回合不可攻击）；
     /// - 手动模式：本回合还有剩余行动点（JainaAttackAction.Amount 为唯一事实源）；
-    /// - 自动模式：本回合尚未攻击过。
+    /// - 自动模式：本回合尚未攻击过；
+    /// - 攻击意图与生命值一致：鼠标悬停主人（玩家角色，自己或队友）时才显示
+    ///   （PlayerHoverPetsHealthBarPatch.HoveredPlayerNetId）。
     /// </summary>
     public bool CanShowAttackIntent()
     {
         if (!Creature.IsAlive || BaseAttackValue <= 0)
+        {
+            return false;
+        }
+        // 攻击意图只在悬停主人角色时显示（与随从血条规则一致）
+        var petOwner = Creature.PetOwner;
+        if (petOwner == null ||
+            jaina.Scripts.Character.Powers.PlayerHoverPetsHealthBarPatch.HoveredPlayerNetId != petOwner.NetId)
         {
             return false;
         }
