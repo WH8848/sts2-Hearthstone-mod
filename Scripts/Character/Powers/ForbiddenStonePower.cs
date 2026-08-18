@@ -67,6 +67,12 @@ public sealed class ForbiddenStonePower : PowerModel, IModPowerAssetOverrides
         {
             _lastSeq = pending.Seq;
 
+            // 随机释放（自动打出）触发的发现不触发源生之石：跳过（只推进游标不消费）
+            if (pending.IsAuto)
+            {
+                continue;
+            }
+
             var combatState = player.Creature.CombatState;
             // 自动使用其余选项：免费自动打出（随机目标），与罗曼斯重放同一语义
             foreach (var other in pending.Others)
