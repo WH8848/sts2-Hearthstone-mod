@@ -421,11 +421,14 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
     }
 
     /// <summary>
-    /// 随从平时不显示血条（保持场面简洁）；鼠标悬停其主人（玩家角色，自己或队友）时
-    /// 才显示血条（参考亡灵契约师奥斯提：悬停队友可查看其随从生命值），
-    /// 见 PlayerHoverPetsHealthBarPatch。
+    /// 血条显示：<b>自己的随从常驻显示</b>（存活时，不需要悬停）；
+    /// 队友的随从平时隐藏，鼠标悬停其主人（玩家角色）时才显示
+    /// （PlayerHoverPetsHealthBarPatch，参考亡灵契约师奥斯提）。
     /// </summary>
-    public override bool IsHealthBarVisible => false;
+    public override bool IsHealthBarVisible =>
+        Creature.PetOwner != null &&
+        MegaCrit.Sts2.Core.Context.LocalContext.IsMe(Creature.PetOwner) &&
+        Creature.IsAlive;
 
     /// <summary>
     /// 血条视觉缩短一半：MinionLib 强制随从可交互使血条显示，
@@ -505,9 +508,14 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
         {
             return false;
         }
-        // 攻击意图只在悬停主人角色时显示（与随从血条规则一致）
+        // 攻击意图显示条件（与血条规则一致）：
+        // 自己的随从常驻显示；队友的随从只在悬停其主人（玩家角色）时显示
         var petOwner = Creature.PetOwner;
-        if (petOwner == null ||
+        if (petOwner == null)
+        {
+            return false;
+        }
+        if (!MegaCrit.Sts2.Core.Context.LocalContext.IsMe(petOwner) &&
             jaina.Scripts.Character.Powers.PlayerHoverPetsHealthBarPatch.HoveredPlayerNetId != petOwner.NetId)
         {
             return false;

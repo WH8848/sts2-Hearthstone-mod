@@ -60,13 +60,19 @@ public static class PlayerHoverPetsHealthBarPatch
     }
 
     /// <summary>
-    /// 刷新该玩家所有 Jaina 随从的攻击意图显示（悬停状态变化后意图出现/消失）
+    /// 刷新该玩家所有 Jaina 随从的攻击意图显示（悬停状态变化后意图出现/消失）。
+    /// 自己的随从意图常驻显示，跳过（CanShowAttackIntent 自行判断）。
     /// </summary>
     private static void RefreshPetsIntents(Player player)
     {
         try
         {
             if (player?.PlayerCombatState == null || NCombatRoom.Instance == null)
+            {
+                return;
+            }
+            // 自己的随从意图常驻，悬停控制只作用于队友的随从
+            if (MegaCrit.Sts2.Core.Context.LocalContext.IsMe(player))
             {
                 return;
             }
@@ -97,6 +103,11 @@ public static class PlayerHoverPetsHealthBarPatch
         try
         {
             if (player?.PlayerCombatState == null || NCombatRoom.Instance == null)
+            {
+                return;
+            }
+            // 自己的随从血条常驻，悬停控制只作用于队友的随从
+            if (MegaCrit.Sts2.Core.Context.LocalContext.IsMe(player))
             {
                 return;
             }
