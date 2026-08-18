@@ -32,8 +32,9 @@ public sealed class EnergyShaperMinion : JainaMinionBase
     protected override string MinionVisualsPath => "res://assets/card_art/energy_shaper.png";
 
     /// <summary>
-    /// 战吼：将手牌中所有法术牌（攻击/技能牌，不含英雄技能卡）变形为
-    /// 一张随机全角色卡牌，其原始费用 = 原牌费用 + 1；变形后的牌保留原牌费用显示。
+    /// 战吼：将手牌中所有法术牌（攻击/技能牌，或带"法术牌"关键词的能力牌，
+    /// 不含英雄技能卡与任务卡）变形为一张随机全角色卡牌（所有类型），
+    /// 其原始费用 = 原牌费用 + 1；变形后的牌保留原牌费用显示。
     /// </summary>
     public override async Task OnBattlecry(PlayerChoiceContext choiceContext)
     {
@@ -48,11 +49,14 @@ public sealed class EnergyShaperMinion : JainaMinionBase
             return;
         }
 
-        // 快照手牌中的法术牌（排除英雄技能卡：火焰冲击等英雄技能不应被变形）
+        // 快照手牌中的法术牌（isSpellCard 定义：攻击/技能牌，或带"法术牌"关键词的能力牌；
+        // 排除英雄技能卡与任务卡——任务卡不可被变形破坏任务线）
         var spells = hand.Cards
             .Where(c => c != null &&
-                        (c.Type == CardType.Attack || c.Type == CardType.Skill) &&
-                        !HeroPowerHandHelper.IsHeroPowerCard(c))
+                        (c.Type == CardType.Attack || c.Type == CardType.Skill ||
+                         c.Keywords.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Spell)) &&
+                        !HeroPowerHandHelper.IsHeroPowerCard(c) &&
+                        !c.Keywords.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Quest))
             .ToList();
         if (spells.Count == 0)
         {
@@ -74,11 +78,10 @@ public sealed class EnergyShaperMinion : JainaMinionBase
             }
             // 原牌原始费用
             int originalCost = spell.EnergyCost.Canonical;
-            // 目标池：所有法术牌（攻击/技能牌）中原始费用 = 原费用 + 1 的牌
-            // （应用 Jaina 随机池统一排除：7 个非角色池/先古稀有度/多人专属）
+            // 目标池：全角色卡牌（所有类型，不含英雄技能卡）中原始费用 = 原费用 + 1 的牌
+            // （应用 Jaina 随机池统一排除：8 个非角色/衍生池/任务卡/先古稀有度/多人专属）
             var candidates = ModelDb.AllCards
                 .Where(c => c != null &&
-                            (c.Type == CardType.Attack || c.Type == CardType.Skill) &&
                             c.EnergyCost.Canonical == originalCost + 1 &&
                             !HeroPowerHandHelper.IsHeroPowerCard(c) &&
                             jaina.Scripts.Character.JainaRandomPoolHelper.IsEligible(c))

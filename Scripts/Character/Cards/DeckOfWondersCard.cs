@@ -67,7 +67,8 @@ public sealed class DeckOfWondersCard : JainaSpellCardTemplate
         }
         var rng = base.Owner.RunState.Rng.CombatCardSelection;
 
-        // 快照抽牌堆 + 弃牌堆中的法术牌（攻击/技能牌，不含英雄技能卡）
+        // 快照抽牌堆 + 弃牌堆中的法术牌（isSpellCard 定义：攻击/技能牌，
+        // 或带"法术牌"关键词的能力牌；不含英雄技能卡与任务卡——任务卡不可被变形破坏任务线）
         var spells = new List<CardModel>();
         foreach (var pileType in new[] { PileType.Draw, PileType.Discard })
         {
@@ -78,8 +79,10 @@ public sealed class DeckOfWondersCard : JainaSpellCardTemplate
             }
             spells.AddRange(pile.Cards.Where(c =>
                 c != null &&
-                (c.Type == CardType.Attack || c.Type == CardType.Skill) &&
+                (c.Type == CardType.Attack || c.Type == CardType.Skill ||
+                 c.Keywords.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Spell)) &&
                 !HeroPowerHandHelper.IsHeroPowerCard(c) &&
+                !c.Keywords.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Quest) &&
                 c.IsTransformable));
         }
 
@@ -91,12 +94,11 @@ public sealed class DeckOfWondersCard : JainaSpellCardTemplate
             }
             // 原牌原始费用
             int originalCost = spell.EnergyCost.Canonical;
-            // 目标池：所有法术牌（攻击/技能牌）中原始费用 = 原费用 + 1 的牌，
+            // 目标池：全角色卡牌（所有类型，不含英雄技能卡）中原始费用 = 原费用 + 1 的牌，
             // 每种按可升级级别展开（未升级形态与升级形态（+）都可作为变形目标）；
-            // 应用 Jaina 随机池统一排除（7 个非角色池/先古稀有度/多人专属）
+            // 应用 Jaina 随机池统一排除（8 个非角色/衍生池/任务卡/先古稀有度/多人专属）
             var candidateTypes = ModelDb.AllCards
                 .Where(c => c != null &&
-                            (c.Type == CardType.Attack || c.Type == CardType.Skill) &&
                             c.EnergyCost.Canonical == originalCost + 1 &&
                             !HeroPowerHandHelper.IsHeroPowerCard(c) &&
                             jaina.Scripts.Character.JainaRandomPoolHelper.IsEligible(c))

@@ -80,8 +80,8 @@ public sealed class YoggBoxCard : JainaSpellCardTemplate
     }
 
     /// <summary>
-    /// 随机施放指定数量的法术：从吉安娜法术池随机取（不重复），随机目标（联机可打队友）。
-    /// 每个法术免费自动打出；单目标法术从场上所有活物（含队友）中随机选合法目标。
+    /// 随机施放指定数量的全角色卡牌：从全角色卡牌池随机取（不重复），随机目标（联机可打队友）。
+    /// 每个卡牌免费自动打出；单目标卡从场上所有活物（含队友）中随机选合法目标。
     /// </summary>
     private async Task CastRandomSpells(PlayerChoiceContext choiceContext, int count, bool cost2PlusOnly)
     {
@@ -129,10 +129,10 @@ public sealed class YoggBoxCard : JainaSpellCardTemplate
     }
 
     /// <summary>
-    /// 法术池：全角色攻击/技能牌（按费用过滤，含升级形态）。
-    /// 排除英雄技能卡（火焰冲击等）——英雄技能不是可施放的法术牌。
-    /// 排除非角色卡池（无色/诅咒/先古/状态/任务/事件/衍生池）、先古稀有度卡
-    /// 与多人游戏专属卡。
+    /// 全角色卡牌池：全角色所有类型（随从/英雄/地标/武器/法术，按费用过滤，含升级形态）。
+    /// 排除英雄技能卡（火焰冲击等）——英雄技能不是卡牌。
+    /// 排除非角色卡池（无色/诅咒/先古/状态/任务/事件/衍生 + 吉安娜中立衍生池）、
+    /// 任务卡（Quest 关键词）、先古稀有度卡与多人游戏专属卡。
     /// 每种按可升级级别展开：未升级形态与升级形态（+）都可能被施放。
     /// 返回带 Owner 的可打出实例。
     /// </summary>
@@ -161,9 +161,10 @@ public sealed class YoggBoxCard : JainaSpellCardTemplate
     }
 
     /// <summary>
-    /// 法术池的 canonical 卡列表（不含升级形态展开）：
-    /// 全角色攻击/技能牌，排除英雄技能卡与所有 Jaina 随机池排除项
-    /// （7 个非角色池/先古稀有度/多人专属，见 <see cref="JainaRandomPoolHelper"/>）。
+    /// 全角色卡牌池的 canonical 卡列表（不含升级形态展开）：
+    /// 全角色<b>所有类型</b>（随从/英雄/地标/武器/法术），排除英雄技能卡与所有
+    /// Jaina 随机池排除项（8 个非角色/衍生池/任务卡/先古稀有度/多人专属，
+    /// 见 <see cref="JainaRandomPoolHelper"/>）。
     /// 供 <see cref="BuildSpellPool"/> 与诊断日志（Entry.RegisterYoggPoolDiag）复用。
     /// </summary>
     internal static List<CardModel> GetSpellPoolCanonicals()
@@ -172,10 +173,6 @@ public sealed class YoggBoxCard : JainaSpellCardTemplate
         foreach (var canonical in ModelDb.AllCards)
         {
             if (canonical == null)
-            {
-                continue;
-            }
-            if (canonical.Type != CardType.Attack && canonical.Type != CardType.Skill)
             {
                 continue;
             }

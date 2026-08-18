@@ -100,12 +100,13 @@ public sealed class IcebloodTowerPower : PowerModel, IModPowerAssetOverrides
     }
 
     /// <summary>
-    /// 从抽牌堆中随机选一张法术牌（攻击/技能牌，不含英雄技能卡）；
+    /// 从抽牌堆中随机选一张法术牌（isSpellCard 定义：攻击/技能牌，或带"法术牌"关键词的
+    /// 能力牌；不含英雄技能卡与任务卡——任务卡不可被随机释放）；
     /// 抽牌堆中没有法术时，从弃牌堆中随机选一张法术牌。
     /// </summary>
     private static CardModel? PickSpellFromPiles(Player player)
     {
-        // 抽牌堆中的法术牌（攻击/技能牌，不含英雄技能卡）
+        // 抽牌堆中的法术牌（isSpellCard 定义，不含英雄技能卡与任务卡）
         var spells = player.PlayerCombatState?.DrawPile.Cards
             .Where(IsSpellCard)
             .ToList();
@@ -126,12 +127,15 @@ public sealed class IcebloodTowerPower : PowerModel, IModPowerAssetOverrides
     }
 
     /// <summary>
-    /// 是否为可被哨塔施放的法术牌（攻击/技能牌，不含英雄技能卡）
+    /// 是否为可被哨塔施放的法术牌（isSpellCard 定义：攻击/技能牌，或带"法术牌"关键词的
+    /// 能力牌；不含英雄技能卡与任务卡——任务卡不可被随机释放）
     /// </summary>
     private static bool IsSpellCard(CardModel card)
     {
         return card != null &&
-               (card.Type == CardType.Attack || card.Type == CardType.Skill) &&
-               !HeroPowerHandHelper.IsHeroPowerCard(card);
+               (card.Type == CardType.Attack || card.Type == CardType.Skill ||
+                card.Keywords.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Spell)) &&
+               !HeroPowerHandHelper.IsHeroPowerCard(card) &&
+               !card.Keywords.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Quest);
     }
 }

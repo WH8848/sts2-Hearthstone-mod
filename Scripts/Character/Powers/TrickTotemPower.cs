@@ -59,17 +59,13 @@ public sealed class TrickTotemPower : PowerModel, IModPowerAssetOverrides
         var combatState = player.Creature.CombatState;
         var rng = player.RunState.Rng.CombatTargets;
 
-        // 全角色卡牌候选：所有攻击/技能牌（不含英雄技能卡）且费用消耗 <= 1，
-        // 按可升级级别展开（未升级与升级形态都可能被施放）；
-        // 应用 Jaina 随机池统一排除（7 个非角色池/先古稀有度/多人专属）
+        // 全角色卡牌候选：所有类型（随从/英雄/地标/武器/法术，不含英雄技能卡）
+        // 且费用消耗 <= 1，按可升级级别展开（未升级与升级形态都可能被施放）；
+        // 应用 Jaina 随机池统一排除（8 个非角色/衍生池/任务卡/先古稀有度/多人专属）
         var candidates = new List<CardModel>();
         foreach (var canonical in ModelDb.AllCards)
         {
             if (canonical == null)
-            {
-                continue;
-            }
-            if (canonical.Type != CardType.Attack && canonical.Type != CardType.Skill)
             {
                 continue;
             }
