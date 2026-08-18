@@ -29,8 +29,8 @@ public static class JainaDiscoverHelper
 
     /// <summary>
     /// 从发现池中随机选若干张（不重复），可过滤费用上限。
-    /// 池：动态构建（全角色攻击/技能牌，含升级形态，排除英雄技能/任务线卡）。
-    /// 每种法术牌按可升级级别展开：未升级形态与全部升级形态（+）都可被发现。
+    /// 池：吉安娜卡池（JainaCardPool）中的攻击/技能牌，含升级形态，
+    /// 排除英雄技能卡与任务线卡。每种法术牌按可升级级别展开。
     /// </summary>
     public static List<CardModel> RollCandidates(Player player, int count = 3, int? maxCost = null)
     {
@@ -39,15 +39,37 @@ public static class JainaDiscoverHelper
         {
             return [];
         }
-        // 动态构建候选池：类型 + 升级级别一起展开
+        // 动态构建候选池：吉安娜卡池中的攻击/技能牌（类型 + 升级级别一起展开）
         var pool = new List<CardModel>();
-        foreach (var (type, level) in jaina.Scripts.Character.JainaCastTracker.BuildAllSpellPool(combatState, player))
+        foreach (var canonical in MegaCrit.Sts2.Core.Models.ModelDb.CardPool<JainaCardPool>().AllCards)
         {
-            var card = jaina.Scripts.Character.JainaCastTracker.CreateCardWithUpgrade(
-                combatState, player, type, level);
-            if (card != null)
+            if (canonical == null)
             {
-                pool.Add(card);
+                continue;
+            }
+            if (canonical.Type != CardType.Attack && canonical.Type != CardType.Skill)
+            {
+                continue;
+            }
+            // 英雄技能卡（火焰冲击等）不可被发现
+            if (jaina.Scripts.Character.Powers.HeroPowerHandHelper.IsHeroPowerCard(canonical))
+            {
+                continue;
+            }
+            // 任务线卡不可被发现
+            if (canonical.CanonicalKeywords?.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Quest) == true)
+            {
+                continue;
+            }
+            int maxLevel = jaina.Scripts.Character.JainaCastTracker.GetDiscoverPoolMaxUpgradeLevel(canonical.GetType());
+            for (int level = 0; level <= maxLevel; level++)
+            {
+                var card = jaina.Scripts.Character.JainaCastTracker.CreateCardWithUpgrade(
+                    combatState, player, canonical.GetType(), level);
+                if (card != null)
+                {
+                    pool.Add(card);
+                }
             }
         }
         if (maxCost is int max && max >= 0)

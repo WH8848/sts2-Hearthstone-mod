@@ -451,15 +451,17 @@ public static class JainaCastTracker
     }
 
     /// <summary>
-    /// 动态构建"吉安娜全部法术牌池"（攻击/技能牌，含升级形态展开）：
-    /// 遍历全角色卡池，取攻击/技能牌、非英雄技能卡、非任务线卡，
+    /// 动态构建"吉安娜法术牌池"（攻击/技能牌，含升级形态展开）：
+    /// 遍历<b>吉安娜卡池</b>（JainaCardPool），取攻击/技能牌、非英雄技能卡、非任务线卡，
     /// 按 <see cref="GetDiscoverPoolMaxUpgradeLevel"/> 展开未升级与升级形态。
     /// 取代各卡硬编码的 typeof 列表（硬编码会漏新增卡/错配升级形态派系）。
+    /// 注意：这是吉安娜语义的池（发现/随机施放吉安娜法术用）；
+    /// 全角色语义（匣中古神/惊奇卡牌/戏法图腾等卡面写明"全角色卡牌"的）不走此方法。
     /// </summary>
     public static List<(Type Type, int UpgradeLevel)> BuildAllSpellPool(ICombatState combatState, Player owner)
     {
         var result = new List<(Type, int)>();
-        foreach (var canonical in ModelDb.AllCards)
+        foreach (var canonical in ModelDb.CardPool<JainaCardPool>().AllCards)
         {
             if (canonical == null)
             {
@@ -487,10 +489,10 @@ public static class JainaCastTracker
     }
 
     /// <summary>
-    /// 动态构建指定派系的法术牌池（火焰/冰霜/奥术）：全角色攻击/技能牌中，
-    /// 按<b>每个形态实例</b>的本地派系关键词过滤（升级后派系变化的形态自动排除），
-    /// 排除英雄技能卡、任务线卡与指定排除类型（同名不可自发现）。
-    /// 取代各卡硬编码的 typeof 派系列表。
+    /// 动态构建指定派系的法术牌池（火焰/冰霜/奥术）：<b>吉安娜卡池</b>（JainaCardPool）
+    /// 的攻击/技能牌中，按<b>每个形态实例</b>的本地派系关键词过滤
+    /// （升级后派系变化的形态自动排除），排除英雄技能卡、任务线卡与指定排除类型
+    /// （同名不可自发现）。取代各卡硬编码的 typeof 派系列表。
     /// </summary>
     public static List<(Type Type, int UpgradeLevel)> BuildSchoolSpellPool(
         ICombatState combatState, Player owner, JainaSpellSchool school, Type? excludeType = null)
@@ -507,7 +509,7 @@ public static class JainaCastTracker
             return [];
         }
         var result = new List<(Type, int)>();
-        foreach (var canonical in ModelDb.AllCards)
+        foreach (var canonical in ModelDb.CardPool<JainaCardPool>().AllCards)
         {
             if (canonical == null)
             {
@@ -521,6 +523,7 @@ public static class JainaCastTracker
             {
                 continue;
             }
+            // 同名卡不可自发现：排除发起发现的卡自身
             if (excludeType != null && canonical.GetType() == excludeType)
             {
                 continue;
