@@ -12,7 +12,9 @@ namespace jaina.Scripts.Character;
 /// <summary>
 /// Jaina 随机卡牌池通用过滤（所有随机取卡统一使用）：
 /// 排除 7 个非角色卡池（无色/诅咒/先古/状态/任务/事件/衍生）、
-/// 先古稀有度（CardRarity.Ancient）与多人游戏专属卡（MultiplayerConstraint != None）。
+/// 先古稀有度（CardRarity.Ancient）、多人游戏专属卡（MultiplayerConstraint != None）
+/// 与<b>任务卡</b>（带 Quest 关键词的卡，如禁忌序列/打开时空之门/巫师的计策/拖延时间/抵达传送大厅——
+/// 不可被发现、不可被随机释放/随机生成）。
 /// 应用于：匣中古神/谜之匣、惊奇卡牌、戏法图腾、能量塑形师、惊奇套牌、旅社谍战等
 /// 从 ModelDb.AllCards / AllCharacterCardPools 随机取卡的所有位置。
 /// 另提供随机施放的目标放宽：AnyEnemy 单体攻击牌除非描述限定"对敌人"，
@@ -37,7 +39,8 @@ public static class JainaRandomPoolHelper
 
     /// <summary>
     /// 该 canonical 卡是否可进入 Jaina 随机卡牌池：
-    /// 不属于 7 个非角色池、不是先古稀有度、不是多人游戏专属卡。
+    /// 不属于 7 个非角色池、不是先古稀有度、不是多人游戏专属卡、
+    /// 不是任务卡（带 Quest 关键词——不可被随机释放/随机生成）。
     /// </summary>
     public static bool IsEligible(CardModel? canonical)
     {
@@ -54,6 +57,12 @@ public static class JainaRandomPoolHelper
             return false;
         }
         if (canonical.MultiplayerConstraint != CardMultiplayerConstraint.None)
+        {
+            return false;
+        }
+        // 任务卡（禁忌序列/打开时空之门/巫师的计策/拖延时间/抵达传送大厅等带 Quest 关键词的卡）
+        // 不可被随机释放/随机生成
+        if (canonical.CanonicalKeywords?.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Quest) == true)
         {
             return false;
         }

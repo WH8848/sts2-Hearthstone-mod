@@ -31,7 +31,8 @@ public static class JainaDiscoverHelper
     /// <summary>
     /// 从发现池中随机选若干张（不重复），可过滤费用上限。
     /// 池：吉安娜卡池（JainaCardPool）中的法术牌（攻击/技能牌，或带"法术牌"关键词的能力牌），
-    /// 含升级形态，排除英雄技能卡、任务线卡与黑名单能力牌（戏法图腾/炉石形态/禁忌序列/打开时空之门）。
+    /// 含升级形态，排除英雄技能卡、任务卡（带 Quest 关键词：禁忌序列/打开时空之门/巫师的计策/
+    /// 拖延时间/抵达传送大厅）与黑名单能力牌（戏法图腾/炉石形态）。
     /// 每种法术牌按可升级级别展开。
     /// </summary>
     public static List<CardModel> RollCandidates(Player player, int count = 3, int? maxCost = null)

@@ -454,8 +454,8 @@ public static class JainaCastTracker
     /// 该类型是否<b>不可</b>被法术发现/随机施放池检索（显式黑名单）：
     /// - 戏法图腾/炉石形态：能力牌，<b>不是法术牌</b>（卡面无"法术牌"关键词）——
     ///   不出现在法术池（与 <see cref="RecordPlayed"/> 的法术判定一致）；
-    /// - 禁忌序列/打开时空之门：任务卡，不可被发现（Quest 关键词过滤已排除，
-    ///   此处显式兜底，防止关键词调整后泄漏）。
+    /// - 5 张任务卡（禁忌序列/打开时空之门/巫师的计策/拖延时间/抵达传送大厅）：
+    ///   任务卡不可被发现（Quest 关键词过滤已排除，此处显式兜底，防止关键词调整后泄漏）。
     /// 法术牌统一定义（攻击/技能牌，或带"法术牌"关键词的能力牌）+ 此黑名单共同决定池成员。
     /// </summary>
     public static bool IsExcludedFromSpellPool(Type type)
@@ -463,7 +463,10 @@ public static class JainaCastTracker
         return type == typeof(TrickTotemCard) ||
                type == typeof(HearthstoneFormCard) ||
                type == typeof(ForbiddenSequenceCard) ||
-               type == typeof(OpenTimeGateCard);
+               type == typeof(OpenTimeGateCard) ||
+               type == typeof(SorcerersGambitCard) ||
+               type == typeof(StallingCard) ||
+               type == typeof(ReachPortalChamberCard);
     }
 
     /// <summary>
