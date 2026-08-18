@@ -48,8 +48,8 @@ public sealed class KhadgarOrbPower : PowerModel, IModPowerAssetOverrides
     public override async Task BeforeSideTurnEnd(PlayerChoiceContext choiceContext,
         MegaCrit.Sts2.Core.Combat.CombatSide side, IEnumerable<Creature> participants)
     {
-        MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaDiag] KhadgarOrb BeforeSideTurnEnd called: side={side} ownerNull={Owner == null}");
         var player = Owner?.Player;
+        MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaDiag] KhadgarOrb BeforeSideTurnEnd: side={side} ownerNull={Owner == null} playerNull={player == null} ownerName={(Owner != null ? Owner.Name : "?")}");
         if (player == null || side != MegaCrit.Sts2.Core.Combat.CombatSide.Player)
         {
             return;
