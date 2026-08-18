@@ -63,7 +63,17 @@ public sealed class AstromancerSolarianMinion : JainaMinionBase
         if (solarianPrime != null)
         {
             jaina.Scripts.Character.JainaCastTracker.MarkGenerated(solarianPrime);
-            await CardPileCmd.Add(solarianPrime, PileType.Draw, CardPilePosition.Random);
+            // 洗入抽牌堆动画 + 抽牌堆计数刷新（生成卡无 NCard 节点，原版流程无动画不刷计数）
+            var results = await CardPileCmd.AddGeneratedCardsToCombat(
+                [solarianPrime], PileType.Draw, owner, CardPilePosition.Random);
+            CardCmd.PreviewCardPileAdd(results);
+            foreach (var r in results)
+            {
+                if (r.success)
+                {
+                    r.cardAdded.Pile?.InvokeCardAddFinished();
+                }
+            }
         }
     }
 }

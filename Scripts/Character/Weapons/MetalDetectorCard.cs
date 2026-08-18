@@ -93,8 +93,17 @@ public sealed class MetalDetectorCard : JainaWeaponCardTemplate
         jaina.Scripts.Character.JainaCastTracker.MarkGenerated(coin);
         if (jaina.Scripts.Character.JainaHandHelper.IsHandFull(owner))
         {
-            // 手牌满：幸运币正确塞入弃牌堆
-            await CardPileCmd.AddGeneratedCardToCombat(coin, PileType.Discard, owner);
+            // 手牌满：幸运币正确塞入弃牌堆（含塞牌动画 + 弃牌堆计数刷新）
+            var results = await CardPileCmd.AddGeneratedCardsToCombat(
+                [coin], PileType.Discard, owner, CardPilePosition.Bottom);
+            CardCmd.PreviewCardPileAdd(results, 1.0f);
+            foreach (var r in results)
+            {
+                if (r.success)
+                {
+                    r.cardAdded.Pile?.InvokeCardAddFinished();
+                }
+            }
             return;
         }
         await CardPileCmd.AddGeneratedCardToCombat(coin, PileType.Hand, owner);
