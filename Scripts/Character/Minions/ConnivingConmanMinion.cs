@@ -65,21 +65,12 @@ public sealed class ConnivingConmanMinion : JainaMinionBase
             jaina.Scripts.Character.JainaCastTracker.MarkGenerated(card);
         }
 
-        // 单目标牌：从场上所有活物中随机选一个合法目标
-        Creature? target = null;
-        if (card.TargetType == TargetType.AnyEnemy || card.TargetType == TargetType.AnyPlayer ||
-            card.TargetType == TargetType.AnyAlly ||
-            (CustomTargetTypeManager.TryGetCustomTargetType(card.TargetType, out var customType) &&
-             customType.IsSingleTarget))
+        // 随机目标：AnyEnemy 单体攻击牌除非描述限定"对敌人"，目标放宽为全部存活生物
+        // （自己/队友角色、双方随从、敌人）；其余按卡合法性过滤（合法优先，回退全量）。
+        var target = jaina.Scripts.Character.JainaRandomPoolHelper.PickRandomTarget(owner, combatState, card);
+        if (card.TargetType != TargetType.None && target == null)
         {
-            var pool = combatState.Creatures
-                .Where(c => c != null && c.IsAlive && card.IsValidTarget(c))
-                .ToList();
-            target = pool.Count > 0 ? owner.RunState.Rng.CombatTargets.NextItem(pool) : null;
-            if (target == null)
-            {
-                return;
-            }
+            return;
         }
         // 重放的牌添加"消耗"：打出后进入消耗堆（不再进入弃牌堆，避免被反复重放）
         card.AddKeyword(CardKeyword.Exhaust);

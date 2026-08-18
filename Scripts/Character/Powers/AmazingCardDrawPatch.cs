@@ -74,21 +74,12 @@ public static class AmazingCardDrawPatch
             jaina.Scripts.Character.JainaCastTracker.MarkGenerated(spell);
             jaina.Scripts.Character.Powers.RommathReplayTracker.Mark(spell);
 
-            // 单目标牌：从场上所有活物中随机选一个合法目标
-            Creature? target = null;
-            if (spell.TargetType == TargetType.AnyEnemy || spell.TargetType == TargetType.AnyPlayer ||
-                spell.TargetType == TargetType.AnyAlly ||
-                (CustomTargetTypeManager.TryGetCustomTargetType(spell.TargetType, out var customType) &&
-                 customType.IsSingleTarget))
+            // 随机目标：AnyEnemy 单体攻击牌除非描述限定"对敌人"，目标放宽为全部存活生物
+            // （自己/队友角色、双方随从、敌人）；其余按卡合法性过滤（合法优先，回退全量）。
+            var target = jaina.Scripts.Character.JainaRandomPoolHelper.PickRandomTarget(player, combatState, spell);
+            if (spell.TargetType != TargetType.None && target == null)
             {
-                var pool = combatState.Creatures
-                    .Where(c => c != null && c.IsAlive && spell.IsValidTarget(c))
-                    .ToList();
-                target = pool.Count > 0 ? rng.NextItem(pool) : null;
-                if (target == null)
-                {
-                    return; // 无合法目标：不施放（惊奇卡牌也不消耗）
-                }
+                return; // 无合法目标：不施放（惊奇卡牌也不消耗）
             }
 
             // 施放节奏与"倾泻"等自动打出卡一致：先进入打出区，停顿后再施放效果

@@ -113,23 +113,12 @@ public sealed class YoggBoxCard : JainaSpellCardTemplate
 
         foreach (var card in picked)
         {
-            // 单目标法术：目标可从全部活物（自己/队友角色、双方随从、敌人）中随机选择——
-            // 合法目标优先（IsValidTarget）；其他角色的自定义目标类型无法判定时回退全部活物，
-            // 保证卡牌总能施放（联机可打队友）。
-            Creature? target = null;
-            if (card.TargetType != TargetType.None)
+            // 随机目标：AnyEnemy 单体攻击牌除非描述限定"对敌人"，目标放宽为全部存活生物
+            // （自己/队友角色、双方随从、敌人）；其余按卡合法性过滤（合法优先，回退全量）。
+            var target = jaina.Scripts.Character.JainaRandomPoolHelper.PickRandomTarget(base.Owner, combatState, card);
+            if (card.TargetType != TargetType.None && target == null)
             {
-                var allCreatures = combatState.Creatures
-                    .Concat(combatState.Players.SelectMany(p => p.PlayerCombatState?.Pets ?? []))
-                    .Where(c => c != null && c.IsAlive)
-                    .ToList();
-                var legal = allCreatures.Where(c => card.IsValidTarget(c)).ToList();
-                var targetPool = legal.Count > 0 ? legal : allCreatures;
-                target = targetPool.Count > 0 ? rng.NextItem(targetPool) : null;
-                if (target == null)
-                {
-                    continue;
-                }
+                continue;
             }
             MegaCrit.Sts2.Core.Logging.Log.Info($"[Jaina] Yogg cast: {card.Id} type={card.TargetType} " +
                                                 $"target={(target != null ? target.Name : "none")}");

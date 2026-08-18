@@ -1,6 +1,10 @@
 using System;
 using System.Collections.Generic;
+using Godot;
+using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Creatures;
+using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Models;
 
 namespace jaina.Scripts.Character;
@@ -11,6 +15,8 @@ namespace jaina.Scripts.Character;
 /// 先古稀有度（CardRarity.Ancient）与多人游戏专属卡（MultiplayerConstraint != None）。
 /// 应用于：匣中古神/谜之匣、惊奇卡牌、戏法图腾、能量塑形师、惊奇套牌、旅社谍战等
 /// 从 ModelDb.AllCards / AllCharacterCardPools 随机取卡的所有位置。
+/// 另提供随机施放的目标放宽：AnyEnemy 单体攻击牌除非描述限定"对敌人"，
+/// 否则随机施放时目标放宽为全部存活生物（自己/队友/双方随从/敌人）。
 /// </summary>
 public static class JainaRandomPoolHelper
 {
@@ -52,6 +58,123 @@ public static class JainaRandomPoolHelper
             return false;
         }
         return true;
+    }
+
+    // ==================== 随机施放目标放宽 ====================
+
+    /// <summary>
+    /// 描述中明确限定"对敌人"的卡牌 Id.Entry 集合（预计算缓存）。
+    /// 判断固定读 zhs 本地化（游戏 + 本 mod 两个文件）——与运行语言无关，联机两端一致。
+    /// </summary>
+    private static readonly HashSet<string> EnemyLimitedEntries = new HashSet<string>(StringComparer.Ordinal);
+
+    private static bool _enemyLimitedCacheLoaded;
+
+    /// <summary>
+    /// 该 AnyEnemy 单体攻击牌是否描述限定"对敌人"（是 → 随机施放保持敌人目标；
+    /// 否 → 放宽为全部存活生物）。非攻击牌/非 AnyEnemy 卡返回 false（不涉及放宽判定）。
+    /// </summary>
+    public static bool IsEnemyLimitedAttack(CardModel? canonical)
+    {
+        if (canonical == null || canonical.Type != CardType.Attack || canonical.TargetType != TargetType.AnyEnemy)
+        {
+            return false;
+        }
+        EnsureEnemyLimitedCache();
+        return EnemyLimitedEntries.Contains(canonical.Id.Entry);
+    }
+
+    /// <summary>
+    /// 随机施放目标选择（匣中古神/谜之匣、惊奇卡牌、戏法图腾、诈骗犯重放统一使用）：
+    /// - 无目标卡（TargetType.None）→ 返回 null；
+    /// - AnyEnemy 单体攻击牌且描述未限定"对敌人" → 目标放宽为全部存活生物
+    ///   （自己/队友角色、双方随从、敌人——像火球术一样可打任意活物）；
+    /// - 其余按卡自身合法性过滤（合法目标优先；自定义目标类型无法判定时回退全部活物，
+    ///   保证卡牌总能施放，联机可打队友）。
+    /// </summary>
+    public static Creature? PickRandomTarget(Player owner, ICombatState combatState, CardModel card)
+    {
+        if (card == null || card.TargetType == TargetType.None)
+        {
+            return null;
+        }
+        var rng = owner.RunState.Rng.CombatTargets;
+        var allCreatures = combatState.Creatures
+            .Concat(combatState.Players.SelectMany(p => p.PlayerCombatState?.Pets ?? []))
+            .Where(c => c != null && c.IsAlive)
+            .ToList();
+        if (allCreatures.Count == 0)
+        {
+            return null;
+        }
+        IEnumerable<Creature> pool;
+        if (card.TargetType == TargetType.AnyEnemy && !IsEnemyLimitedAttack(card))
+        {
+            // 原版攻击牌（描述未限定"对敌人"）：目标放宽为全部存活生物
+            pool = allCreatures;
+        }
+        else
+        {
+            var legal = allCreatures.Where(c => card.IsValidTarget(c)).ToList();
+            pool = legal.Count > 0 ? legal : allCreatures;
+        }
+        return rng.NextItem(pool);
+    }
+
+    /// <summary>
+    /// 惰性加载"描述限定敌人"缓存：读取 res://localization/zhs/cards.json（游戏原版）
+    /// 与 res://jaina/localization/zhs/cards.json（本 mod），收集所有描述含"敌人"的卡 Id.Entry。
+    /// 固定语言判断 → 与玩家运行语言无关，联机两端结果一致（确定性）。
+    /// </summary>
+    private static void EnsureEnemyLimitedCache()
+    {
+        if (_enemyLimitedCacheLoaded)
+        {
+            return;
+        }
+        _enemyLimitedCacheLoaded = true;
+        try
+        {
+            CollectEnemyLimitedFromFile("res://localization/zhs/cards.json");
+            CollectEnemyLimitedFromFile("res://jaina/localization/zhs/cards.json");
+        }
+        catch (Exception ex)
+        {
+            MegaCrit.Sts2.Core.Logging.Log.Error($"[Jaina] enemy-limited cache failed: {ex}");
+        }
+    }
+
+    private static void CollectEnemyLimitedFromFile(string path)
+    {
+        if (!Godot.FileAccess.FileExists(path))
+        {
+            return;
+        }
+        using var file = Godot.FileAccess.Open(path, Godot.FileAccess.ModeFlags.Read);
+        if (file == null)
+        {
+            return;
+        }
+        var parsed = Json.ParseString(file.GetAsText());
+        if (parsed.VariantType != Variant.Type.Dictionary)
+        {
+            return;
+        }
+        var dict = parsed.AsGodotDictionary();
+        const string suffix = ".description";
+        foreach (var key in dict.Keys)
+        {
+            var keyStr = key.AsString();
+            if (!keyStr.EndsWith(suffix, StringComparison.Ordinal))
+            {
+                continue;
+            }
+            var text = dict[key].AsString();
+            if (text.Contains("敌人", StringComparison.Ordinal))
+            {
+                EnemyLimitedEntries.Add(keyStr.Substring(0, keyStr.Length - suffix.Length));
+            }
+        }
     }
 
     private static bool IsInExcludedPool(CardModel canonical)

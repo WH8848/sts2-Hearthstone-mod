@@ -108,19 +108,12 @@ public sealed class TrickTotemPower : PowerModel, IModPowerAssetOverrides
             jaina.Scripts.Character.JainaCastTracker.MarkGenerated(spell);
             jaina.Scripts.Character.Powers.RommathReplayTracker.Mark(spell);
 
-            // 单目标牌：目标可从全部活物（自己/队友角色、双方随从、敌人）中随机选择——
-            // 合法目标优先（IsValidTarget）；自定义目标类型无法判定时回退全部活物
-            Creature? target = null;
-            if (spell.TargetType != TargetType.None)
+            // 随机目标：AnyEnemy 单体攻击牌除非描述限定"对敌人"，目标放宽为全部存活生物
+            // （自己/队友角色、双方随从、敌人）；其余按卡合法性过滤（合法优先，回退全量）。
+            var target = jaina.Scripts.Character.JainaRandomPoolHelper.PickRandomTarget(player, combatState, spell);
+            if (spell.TargetType != TargetType.None && target == null)
             {
-                var allCreatures = GetAllAliveCreatures(combatState).ToList();
-                var legal = allCreatures.Where(c => spell.IsValidTarget(c)).ToList();
-                var pool = legal.Count > 0 ? legal : allCreatures;
-                target = pool.Count > 0 ? rng.NextItem(pool) : null;
-                if (target == null)
-                {
-                    return;
-                }
+                return;
             }
             await CardCmd.AutoPlay(choiceContext, spell, target);
         }
