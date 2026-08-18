@@ -120,24 +120,64 @@ public static class ZeroCostMarkPatch
     }
 
     /// <summary>
-    /// 星星 X 费卡卡面费用显示：旅社谍战洗入的牌显示 0（原逻辑显示 X）
+    /// 星费用卡面显示：旅社谍战洗入的牌<b>完全隐藏星图标</b>
+    /// （原版逻辑 `GetStarCostWithModifiers() &gt;= 0` 会显示"0"星——费用已归零不应显示任何星图标）。
+    /// 覆盖普通星费用卡（洗入归零后显示"0"）与星星 X 卡（原逻辑显示 X）。
     /// </summary>
     [HarmonyPatch(typeof(NCard), "UpdateStarCostVisuals")]
-    private static class StarXVisualsPostfix
+    private static class StarVisualsPostfix
     {
         private static void Postfix(NCard __instance)
         {
             try
             {
                 var model = __instance.Model;
-                if (model == null || !model.HasStarCostX || !IsZeroCostMarked(model))
+                if (model == null || !IsZeroCostMarked(model))
                 {
                     return;
+                }
+                var icon = __instance.GetNode<Godot.Control>("%StarIcon");
+                if (icon != null)
+                {
+                    icon.Visible = false;
                 }
                 var label = __instance.GetNode<MegaLabel>("%StarLabel");
                 if (label != null)
                 {
-                    label.SetTextAutoSize("0");
+                    label.SetTextAutoSize(string.Empty);
+                }
+            }
+            catch
+            {
+                // 展示层补丁：异常不影响原版显示
+            }
+        }
+    }
+
+    /// <summary>
+    /// 星费用文字更新入口（费用变化时）：同样隐藏旅社谍战洗入牌的星图标
+    /// </summary>
+    [HarmonyPatch(typeof(NCard), "UpdateStarCostText")]
+    private static class StarTextPostfix
+    {
+        private static void Postfix(NCard __instance)
+        {
+            try
+            {
+                var model = __instance.Model;
+                if (model == null || !IsZeroCostMarked(model))
+                {
+                    return;
+                }
+                var icon = __instance.GetNode<Godot.Control>("%StarIcon");
+                if (icon != null)
+                {
+                    icon.Visible = false;
+                }
+                var label = __instance.GetNode<MegaLabel>("%StarLabel");
+                if (label != null)
+                {
+                    label.SetTextAutoSize(string.Empty);
                 }
             }
             catch
