@@ -204,12 +204,6 @@ public static class JainaCastTracker
         {
             return;
         }
-        bool isHeroCard = card is jaina.Scripts.Character.Cards.JainaHeroCardTemplate;
-        if (card.Type != CardType.Attack && card.Type != CardType.Skill &&
-            !card.Keywords.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Spell) && !isHeroCard)
-        {
-            return;
-        }
         // 英雄技能卡（火焰冲击/二级火焰冲击/奥术爆裂/冰冷触摸）不记录：
         // 不被记作诈骗犯的"上一张"、不会被倒带等发现、不视为施放的法术（炉石规则）
         if (Powers.HeroPowerHandHelper.IsHeroPowerCard(card))
@@ -220,12 +214,17 @@ public static class JainaCastTracker
         var type = card.GetType();
         var ownerId = card.Owner.NetId;
 
-        // 英雄卡（魔导师晨拥/冰霜女巫吉安娜）：只记录"上一张"（诈骗犯重放用——
-        // 重放英雄卡不触发战吼，只获得护盾与英雄技能替换），
-        // 不加入攻击/技能池（倒带/罗曼斯/西瓦拉/派系追踪不受影响）
-        if (isHeroCard)
+        // "上一张"（蓄谋诈骗犯战吼重放用）：记录玩家自己打出的<b>所有卡牌</b>
+        // （法术/随从/英雄/地标/武器，按玩家区分——联机每个玩家只重放自己施放的上一张；
+        // 英雄技能卡除外，上面已排除）
+        rec.LastPlayedCardByPlayer[ownerId] = (type, card.CurrentUpgradeLevel, IsGeneratedCard(card));
+
+        // 法术牌（攻击/技能，或挂"法术牌"关键词的卡）才进入攻击/技能池与派系/重放计数
+        // （倒带/罗曼斯/西瓦拉/派系追踪用）——随从/英雄/地标/武器卡只记录"上一张"
+        bool isSpellCard = card.Type == CardType.Attack || card.Type == CardType.Skill ||
+                           card.Keywords.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Spell);
+        if (!isSpellCard)
         {
-            rec.LastPlayedCardByPlayer[ownerId] = (type, card.CurrentUpgradeLevel, IsGeneratedCard(card));
             return;
         }
 

@@ -78,6 +78,9 @@ public abstract class JainaLandmarkCardTemplate : ModCardTemplate
     /// </summary>
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
+        // 记录施放（诈骗犯重放"上一张"用——地标卡可被诈骗犯重放）
+        jaina.Scripts.Character.JainaCastTracker.RecordPlayed(this);
+
         await JainaMinionPool.SummonMinionByType(
             choiceContext,
             base.Owner,

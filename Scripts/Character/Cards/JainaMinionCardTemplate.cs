@@ -170,6 +170,9 @@ public abstract class JainaMinionCardTemplate : ModCardTemplate,
     /// </summary>
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
+        // 记录施放（诈骗犯重放"上一张"用——随从卡可被诈骗犯重放，重放只召唤不触发战吼）
+        jaina.Scripts.Character.JainaCastTracker.RecordPlayed(this);
+
         LastSummonedMinion = await JainaMinionPool.SummonMinionByType(
             choiceContext,
             base.Owner,
