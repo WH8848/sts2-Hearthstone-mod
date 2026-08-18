@@ -97,39 +97,9 @@ public static class DiscoverTracker
                 Others = set.ToList(),
                 Seq = Interlocked.Increment(ref _seq),
                 // 随机释放（AutoPlay）流程中触发的发现：源生之石不响应
-                IsAuto = IsInAutoPlayCallStack()
+                IsAuto = AutoPlayGuard.IsInAutoPlay()
             });
             return true;
-        }
-        return false;
-    }
-
-    /// <summary>
-    /// 当前调用栈是否处于自动打出（AutoPlay）流程中。
-    /// C# async 方法在栈上显示为状态机帧（方法名 MoveNext、声明类型形如
-    /// &lt;AutoPlay&gt;d__xx），同时保留原方法名 AutoPlay 的同步帧——
-    /// 两种都检测。发现完成（AddGeneratedCardToCombat 前缀）时调用，
-    /// 频率低（每次发现一次），性能可接受。
-    /// </summary>
-    private static bool IsInAutoPlayCallStack()
-    {
-        var stack = new System.Diagnostics.StackTrace(2, false);
-        for (int i = 0; i < stack.FrameCount; i++)
-        {
-            var method = stack.GetFrame(i)?.GetMethod();
-            if (method == null)
-            {
-                continue;
-            }
-            if (method.Name == "AutoPlay")
-            {
-                return true;
-            }
-            var declaring = method.DeclaringType;
-            if (declaring != null && declaring.Name.Contains("AutoPlay", StringComparison.Ordinal))
-            {
-                return true;
-            }
         }
         return false;
     }
