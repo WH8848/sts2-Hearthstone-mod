@@ -66,7 +66,7 @@
 - **冰血哨塔重做**：改为回合结束从**抽牌堆**抽一张法术打出，抽牌堆没有则从**弃牌堆**抽；**施放的法术按自身规则结算**——带消耗词条的法术正常消耗（进消耗堆），不带消耗的进弃牌堆（不强行移除 Exhaust）；**可叠层**（StackType.Counter，每张哨塔各触发一次，OnPlay 不再顶替旧哨塔）。zhs/eng 卡+power 描述同步。
 - **同名卡不可自发现**：统一规则——发现/检索池排除"发起发现的卡自身"：倒带已排除 `typeof(JainasGiftCard)`（155 行）；拾荒清道夫 `DiscoverCardOfCostAndAddToHand` 新增 `excludeType` 参数排除自身卡类型；撕裂现实/能量之泉池本身不含自身。
 - **巅峰无限压轴回手无条件**：`PeakInfinityPower.BeforeSideTurnStart` 不再限定"只在弃牌堆回手"——无论卡在哪个牌堆（弃牌堆/消耗堆/抽牌堆等），只要压轴触发，回合开始都移回手牌（卡须仍在对局且不在手牌；已移出对局的无法回手）。
-- **操控时间发现池修复**：升级版撕裂现实（操控时间）原硬编码 `AllArcaneSpellTypes` 类型列表有误——把火焰的点燃（IgniteCard 基础=火焰派系）和埃匹希斯冲击升级形态（火焰之地传送门）误纳入奥术池，导致发现到非奥术法术。改为 `BuildArcanePool()` 动态构建：全角色攻击/技能牌中按**每个形态实例**的 Arcane 关键词过滤（升级后派系变化的形态自动排除），排除英雄技能/任务线卡/自身（同名不可自发现）。
+- **操控时间发现池修复**：升级版撕裂现实（操控时间）原硬编码 `AllArcaneSpellTypes` 类型列表有误——把火焰的点燃（IgniteCard 基础=火焰派系）和埃匹希斯冲击（**基础无派系、升级=火焰**，都不是奥术）误纳入奥术池，导致发现到非奥术法术。改为 `BuildArcanePool()` 动态构建：全角色攻击/技能牌中按**每个形态实例**的 Arcane 关键词过滤（`GetKeywordsWithSources(Local)` 只查本地关键词，防全局光环干扰；升级后派系变化的形态自动排除），排除英雄技能/任务线卡/自身（同名不可自发现）。
 - **联机回合结束按钮消失修复**：主机死亡后的玩家回合切换中，客机端 `NEndTurnButton` 可能停在 Hidden/Disabled（原版 `OnTurnStarted` 恢复路径在死亡玩家自动 SetReady 时序下被跳过）→ `EndTurnButtonRestorePatch`（Powers/）：patch `NEndTurnButton.OnTurnStarted` Postfix——玩家侧回合开始 + 本地玩家存活 + 未就绪时，若按钮非 Enabled 则 `AnimIn + Enable + 反射同步 _state=0`（纯本地 UI，联机安全）。
 - **联机断联（两处根因已定位）**：
   ① `DRAW_CARDS_NEXT_TURN_POWER` 只在一端存在（14:08 局 checksum 116/117）→ **万象辉星 mod 旧版导致**（已让队友更新版本，非本项目问题）；

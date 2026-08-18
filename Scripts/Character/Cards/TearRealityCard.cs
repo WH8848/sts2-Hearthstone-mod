@@ -264,8 +264,12 @@ public sealed class TearRealityCard : JainaSpellCardTemplate
             {
                 var card = jaina.Scripts.Character.JainaCastTracker.CreateCardWithUpgrade(
                     combatState, base.Owner, canonical.GetType(), level);
-                // 该形态实例挂奥术派系关键词才纳入（升级后派系变化的形态自动排除）
-                if (card != null && card.Keywords.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Arcane))
+                // 该形态实例挂奥术派系关键词才纳入（升级后派系变化的形态自动排除）。
+                // 只查 Local 关键词（GetKeywordsWithSources(Local)）：全局效果（如
+                // 场上光环给所有法术加派系）不影响奥术判定——埃匹希斯冲击基础无派系、
+                // 升级为火焰，两种形态都不会进入奥术池。
+                if (card != null && card.GetKeywordsWithSources(MegaCrit.Sts2.Core.Entities.Cards.KeywordSources.Local)
+                        .Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Arcane))
                 {
                     result.Add((canonical.GetType(), level));
                 }
