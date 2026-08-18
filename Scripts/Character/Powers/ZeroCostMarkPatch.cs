@@ -120,9 +120,11 @@ public static class ZeroCostMarkPatch
     }
 
     /// <summary>
-    /// 星费用卡面显示：旅社谍战洗入的牌<b>完全隐藏星图标</b>
-    /// （原版逻辑 `GetStarCostWithModifiers() &gt;= 0` 会显示"0"星——费用已归零不应显示任何星图标）。
-    /// 覆盖普通星费用卡（洗入归零后显示"0"）与星星 X 卡（原逻辑显示 X）。
+    /// 星费用卡面显示：旅社谍战洗入的牌——
+    /// <b>费星卡（原本有星费用或星星 X）显示"0"星（0费0星）</b>，
+    /// 无星卡保持隐藏（原版逻辑 BaseStarCost=-1 不显示）。
+    /// 覆盖原版 `GetStarCostWithModifiers() &gt;= 0` 对归零后费星卡显示"0"的行为（这正是需要的），
+    /// 同时避免星 X 卡显示 X。
     /// </summary>
     [HarmonyPatch(typeof(NCard), "UpdateStarCostVisuals")]
     private static class StarVisualsPostfix
@@ -137,14 +139,16 @@ public static class ZeroCostMarkPatch
                     return;
                 }
                 var icon = __instance.GetNode<Godot.Control>("%StarIcon");
-                if (icon != null)
-                {
-                    icon.Visible = false;
-                }
                 var label = __instance.GetNode<MegaLabel>("%StarLabel");
+                // 费星卡（基础星费用 >= 0 或星星 X）→ 显示 0 星；无星卡 → 隐藏
+                bool hasStarCost = model.HasStarCostX || model.BaseStarCost >= 0;
                 if (label != null)
                 {
-                    label.SetTextAutoSize(string.Empty);
+                    label.SetTextAutoSize(hasStarCost ? "0" : string.Empty);
+                }
+                if (icon != null)
+                {
+                    icon.Visible = hasStarCost;
                 }
             }
             catch
@@ -155,7 +159,7 @@ public static class ZeroCostMarkPatch
     }
 
     /// <summary>
-    /// 星费用文字更新入口（费用变化时）：同样隐藏旅社谍战洗入牌的星图标
+    /// 星费用文字更新入口（费用变化时）：同样按费星卡显示 0 星 / 无星卡隐藏
     /// </summary>
     [HarmonyPatch(typeof(NCard), "UpdateStarCostText")]
     private static class StarTextPostfix
@@ -170,14 +174,15 @@ public static class ZeroCostMarkPatch
                     return;
                 }
                 var icon = __instance.GetNode<Godot.Control>("%StarIcon");
-                if (icon != null)
-                {
-                    icon.Visible = false;
-                }
                 var label = __instance.GetNode<MegaLabel>("%StarLabel");
+                bool hasStarCost = model.HasStarCostX || model.BaseStarCost >= 0;
                 if (label != null)
                 {
-                    label.SetTextAutoSize(string.Empty);
+                    label.SetTextAutoSize(hasStarCost ? "0" : string.Empty);
+                }
+                if (icon != null)
+                {
+                    icon.Visible = hasStarCost;
                 }
             }
             catch
