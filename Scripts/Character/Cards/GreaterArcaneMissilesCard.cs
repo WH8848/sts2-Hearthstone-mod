@@ -28,11 +28,11 @@ public sealed class GreaterArcaneMissilesCard : JainaSpellCardTemplate
     public override int MaxUpgradeLevel => 1;
 
     /// <summary>
-    /// 关键词：基础版 法术 + 火焰；升级版（星辰能量）法术 + 奥术
+    /// 关键词：基础版 法术 + 奥术；升级版（星辰能量）法术 + 奥术
+    /// （强能奥术飞弹是奥术派系，不是火焰）
     /// </summary>
-    public override IEnumerable<CardKeyword> CanonicalKeywords => IsUpgraded
-        ? [JainaKeywords.Spell, JainaKeywords.Arcane]
-        : [JainaKeywords.Spell, JainaKeywords.Fire];
+    public override IEnumerable<CardKeyword> CanonicalKeywords =>
+        [JainaKeywords.Spell, JainaKeywords.Arcane];
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [];
 

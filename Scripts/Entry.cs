@@ -1,8 +1,10 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using HarmonyLib;
 using jaina.Scripts.Character.Cards;
 using jaina.Scripts.Character.Minions;
+using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Modding;
 using MinionLib.Layout;
@@ -94,11 +96,43 @@ public class Entry
                 var ctx = new MegaCrit.Sts2.Core.GameActions.Multiplayer.ThrowingPlayerChoiceContext();
                 _ = MegaCrit.Sts2.Core.Helpers.TaskHelper.RunSafely(
                     jaina.Scripts.Character.Weapons.JainaWeaponSlot.EnsureAttackAction(ctx, player));
+                // 联机：角色死亡时清空其随从槽（参考故障机器人/亡灵契约师）。
+                // 玩家角色死亡是确定性事件，两端各自触发 → 两端随从清理一致。
+                player.Creature.Died -= OnPlayerCreatureDied;
+                player.Creature.Died += OnPlayerCreatureDied;
             }
         }
         catch (System.Exception ex)
         {
             Logger.Info($"[JainaWeapon] combat-began attack action failed: {ex}");
+        }
+    }
+
+    /// <summary>
+    /// 玩家角色死亡：清空其随从槽（逐个击杀随从——宠物死亡自动从
+    /// PlayerCombatState.Pets 移除，随从槽清空）。
+    /// </summary>
+    private static void OnPlayerCreatureDied(Creature playerCreature)
+    {
+        try
+        {
+            var player = playerCreature.Player;
+            if (player?.PlayerCombatState == null)
+            {
+                return;
+            }
+            foreach (var pet in player.PlayerCombatState.Pets.ToList())
+            {
+                if (pet != null && pet.IsAlive)
+                {
+                    _ = MegaCrit.Sts2.Core.Helpers.TaskHelper.RunSafely(
+                        MegaCrit.Sts2.Core.Commands.CreatureCmd.Kill(pet));
+                }
+            }
+        }
+        catch (System.Exception ex)
+        {
+            Logger.Info($"[Jaina] clear pets on player death failed: {ex}");
         }
     }
 

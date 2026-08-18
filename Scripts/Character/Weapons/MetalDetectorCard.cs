@@ -73,17 +73,13 @@ public sealed class MetalDetectorCard : JainaWeaponCardTemplate
     }
 
     /// <summary>
-    /// 获取一张幸运币（0费：获得 1 点能量，保留）加入手牌；手牌满时不入手。
+    /// 获取一张幸运币（0费：获得 1 点能量，保留）加入手牌；
+    /// 手牌满时正确塞入弃牌堆（不再直接消失）。
     /// </summary>
     private async Task AddCoin(PlayerChoiceContext choiceContext)
     {
         var owner = base.Owner;
         if (owner == null || owner.Creature == null || owner.Creature.CombatState == null)
-        {
-            return;
-        }
-        // 手牌满时不入手（0.111.1 满手时 Add 会把牌静默改道弃牌堆）
-        if (jaina.Scripts.Character.JainaHandHelper.IsHandFull(owner))
         {
             return;
         }
@@ -95,6 +91,12 @@ public sealed class MetalDetectorCard : JainaWeaponCardTemplate
         }
         var coin = combatState.CreateCard(canonical, owner);
         jaina.Scripts.Character.JainaCastTracker.MarkGenerated(coin);
+        if (jaina.Scripts.Character.JainaHandHelper.IsHandFull(owner))
+        {
+            // 手牌满：幸运币正确塞入弃牌堆
+            await CardPileCmd.AddGeneratedCardToCombat(coin, PileType.Discard, owner);
+            return;
+        }
         await CardPileCmd.AddGeneratedCardToCombat(coin, PileType.Hand, owner);
     }
 }

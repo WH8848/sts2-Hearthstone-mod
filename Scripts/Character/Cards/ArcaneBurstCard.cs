@@ -8,6 +8,8 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.ValueProps;
+using jaina.Scripts.Character.Powers;
+using STS2RitsuLib.Cards.DynamicVars;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -28,7 +30,25 @@ public sealed class ArcaneBurstCard : JainaSpellCardTemplate
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
         [jaina.Scripts.Character.Keywords.JainaKeywords.HeroPower];
 
-    protected override IEnumerable<DynamicVar> CanonicalVars => [];
+    /// <summary>
+    /// 动态伤害显示：当前伤害 = 2 + 本局已打出次数×2 + 野火加成（与 OnPlay 实际结算一致，
+    /// 按玩家区分；非战斗中显示基础 2 点）。
+    /// </summary>
+    protected override IEnumerable<DynamicVar> CanonicalVars =>
+    [
+        ModCardVars.Computed("Damage", 2m, card =>
+        {
+            if (card is ArcaneBurstCard arcane && card.Owner?.Creature?.CombatState != null)
+            {
+                var combatState = card.Owner.Creature.CombatState;
+                var rec = jaina.Scripts.Character.JainaCastTracker.For(combatState);
+                rec.ArcaneBurstCastsByPlayer.TryGetValue(card.Owner.NetId, out var casts);
+                var wildfire = card.Owner.Creature.GetPower<WildfirePower>();
+                return 2 + casts * 2 + (wildfire?.WildfireStacks ?? 0);
+            }
+            return 2m;
+        })
+    ];
 
     public override string CustomPortraitPath => "res://assets/card_art/arcane_burst.png";
 

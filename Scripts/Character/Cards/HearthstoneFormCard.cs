@@ -23,13 +23,22 @@ namespace jaina.Scripts.Character.Cards;
 public sealed class HearthstoneFormCard : JainaSpellCardTemplate
 {
     /// <summary>
-    /// 关键词：疲劳（mod 关键词不渲染到描述，仅悬停注释）。
-    /// 虚无/保留/消耗不挂 Keywords（原版关键词会渲染到描述顶部/底部）——
-    /// 虚无写在本卡描述文本中；保留/消耗/虚无的悬停注释由
+    /// 关键词：疲劳（mod 关键词不渲染到描述，仅悬停注释）+ 虚无（真实虚无：
+    /// 回合结束留在手牌则消耗；升级后移除虚无）。
+    /// 保留/消耗不挂 Keywords（原版关键词会渲染到描述顶部/底部）——
+    /// 保留/消耗写在本卡描述文本中；其悬停注释由
     /// <see cref="AdditionalHoverTips"/> 提供（HoverTipFactory.FromKeyword）。
     /// </summary>
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
-        [jaina.Scripts.Character.Keywords.JainaKeywords.Fatigue];
+        [jaina.Scripts.Character.Keywords.JainaKeywords.Fatigue, CardKeyword.Ethereal];
+
+    /// <summary>
+    /// 升级：移除真实虚无（升级后本卡不再消耗）
+    /// </summary>
+    protected override void OnUpgrade()
+    {
+        RemoveKeyword(CardKeyword.Ethereal);
+    }
 
     /// <summary>
     /// 悬停提示（关键词注释，不产生渲染行）：

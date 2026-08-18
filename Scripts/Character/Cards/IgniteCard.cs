@@ -63,8 +63,19 @@ public sealed class IgniteCard : JainaSpellCardTemplate
             return;
         }
         jaina.Scripts.Character.JainaCastTracker.MarkGenerated(upgraded);
-        this.DynamicVars["Upgraded"].BaseValue=this.CurrentUpgradeLevel;
-        await CardPileCmd.Add(upgraded, PileType.Discard);
+        this.DynamicVars["Upgraded"].BaseValue = this.CurrentUpgradeLevel;
+        // 塞入弃牌堆动画 + 弃牌堆计数刷新（生成卡没有 NCard 节点，原版 tween 流程
+        // 不会为它们创建动画/触发 CardAddFinished → 这里用原版生成卡塞堆流程 + 手动刷计数）
+        var results = await CardPileCmd.AddGeneratedCardsToCombat(
+            [upgraded], PileType.Discard, base.Owner, CardPilePosition.Bottom);
+        CardCmd.PreviewCardPileAdd(results, 1.0f);
+        foreach (var r in results)
+        {
+            if (r.success)
+            {
+                r.cardAdded.Pile?.InvokeCardAddFinished();
+            }
+        }
     }
 
     protected override void OnUpgrade()
