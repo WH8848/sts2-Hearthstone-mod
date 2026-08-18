@@ -49,11 +49,15 @@ public static class AmazingCardDrawPatch
             var combatState = player.Creature.CombatState;
             var rng = player.RunState.Rng.CombatTargets;
 
-            // 全角色卡牌候选：所有类型（随从/英雄/地标/武器/法术，不含英雄技能卡），
+            // 全角色攻击/技能/能力牌候选（Attack/Skill/Power——含吉安娜法术牌：
+            // 攻击/技能牌及带"法术牌"关键词的能力牌；吉安娜的非法术能力牌
+            // 如戏法图腾/炉石形态不在范围内；不含英雄技能卡），
             // 按可升级级别展开（应用 Jaina 随机池统一排除：
             // 8 个非角色/衍生池/任务卡/先古稀有度/多人专属）
             var candidates = ModelDb.AllCards
                 .Where(c => c != null &&
+                            (c.Type == CardType.Attack || c.Type == CardType.Skill || c.Type == CardType.Power) &&
+                            !jaina.Scripts.Character.JainaCastTracker.IsExcludedFromSpellPool(c.GetType()) &&
                             !HeroPowerHandHelper.IsHeroPowerCard(c) &&
                             jaina.Scripts.Character.JainaRandomPoolHelper.IsEligible(c))
                 .ToList();

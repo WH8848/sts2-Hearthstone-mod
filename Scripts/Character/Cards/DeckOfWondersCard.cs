@@ -15,7 +15,9 @@ namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
 /// 愚人套牌 (Deck of Lunacy) - 0费技能牌（稀有，奥术派系）。
-/// 将你抽牌堆和弃牌堆中的法术牌变形成为费用消耗增加1点的全角色卡牌。（保留其原始费用消耗。）
+/// 将你抽牌堆和弃牌堆中的法术牌变形成为费用消耗增加1点的全角色攻击/技能/能力牌
+/// （Attack/Skill/Power——含吉安娜法术牌，吉安娜的非法术能力牌
+/// 如戏法图腾/炉石形态不在范围内）。（保留其原始费用消耗。）
 /// 基础版消耗；升级后不再消耗。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
@@ -94,11 +96,16 @@ public sealed class DeckOfWondersCard : JainaSpellCardTemplate
             }
             // 原牌原始费用
             int originalCost = spell.EnergyCost.Canonical;
-            // 目标池：全角色卡牌（所有类型，不含英雄技能卡）中原始费用 = 原费用 + 1 的牌，
-            // 每种按可升级级别展开（未升级形态与升级形态（+）都可作为变形目标）；
+            // 目标池：全角色攻击/技能/能力牌（Attack/Skill/Power——含吉安娜法术牌：
+            // 攻击/技能牌及带"法术牌"关键词的能力牌；吉安娜的非法术能力牌
+            // 如戏法图腾/炉石形态不在范围内，不含英雄技能卡）中
+            // 原始费用 = 原费用 + 1 的牌，每种按可升级级别展开
+            // （未升级形态与升级形态（+）都可作为变形目标）；
             // 应用 Jaina 随机池统一排除（8 个非角色/衍生池/任务卡/先古稀有度/多人专属）
             var candidateTypes = ModelDb.AllCards
                 .Where(c => c != null &&
+                            (c.Type == CardType.Attack || c.Type == CardType.Skill || c.Type == CardType.Power) &&
+                            !jaina.Scripts.Character.JainaCastTracker.IsExcludedFromSpellPool(c.GetType()) &&
                             c.EnergyCost.Canonical == originalCost + 1 &&
                             !HeroPowerHandHelper.IsHeroPowerCard(c) &&
                             jaina.Scripts.Character.JainaRandomPoolHelper.IsEligible(c))

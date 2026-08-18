@@ -129,7 +129,9 @@ public sealed class YoggBoxCard : JainaSpellCardTemplate
     }
 
     /// <summary>
-    /// 全角色卡牌池：全角色所有类型（随从/英雄/地标/武器/法术，按费用过滤，含升级形态）。
+    /// 全角色攻击/技能/能力牌池（Attack/Skill/Power——含吉安娜法术牌：
+    /// 攻击/技能牌及带"法术牌"关键词的能力牌；吉安娜的非法术能力牌
+    /// 如戏法图腾/炉石形态不在范围内，按费用过滤，含升级形态）。
     /// 排除英雄技能卡（火焰冲击等）——英雄技能不是卡牌。
     /// 排除非角色卡池（无色/诅咒/先古/状态/任务/事件/衍生 + 吉安娜中立衍生池）、
     /// 任务卡（Quest 关键词）、先古稀有度卡与多人游戏专属卡。
@@ -161,10 +163,11 @@ public sealed class YoggBoxCard : JainaSpellCardTemplate
     }
 
     /// <summary>
-    /// 全角色卡牌池的 canonical 卡列表（不含升级形态展开）：
-    /// 全角色<b>所有类型</b>（随从/英雄/地标/武器/法术），排除英雄技能卡与所有
-    /// Jaina 随机池排除项（8 个非角色/衍生池/任务卡/先古稀有度/多人专属，
-    /// 见 <see cref="JainaRandomPoolHelper"/>）。
+    /// 全角色攻击/技能/能力牌池的 canonical 卡列表（不含升级形态展开）：
+    /// 全角色 Attack/Skill/Power（含吉安娜法术牌：攻击/技能牌及带"法术牌"关键词的
+    /// 能力牌；吉安娜的非法术能力牌如戏法图腾/炉石形态不在范围内），
+    /// 排除英雄技能卡与所有 Jaina 随机池排除项
+    /// （8 个非角色/衍生池/任务卡/先古稀有度/多人专属，见 <see cref="JainaRandomPoolHelper"/>）。
     /// 供 <see cref="BuildSpellPool"/> 与诊断日志（Entry.RegisterYoggPoolDiag）复用。
     /// </summary>
     internal static List<CardModel> GetSpellPoolCanonicals()
@@ -173,6 +176,16 @@ public sealed class YoggBoxCard : JainaSpellCardTemplate
         foreach (var canonical in ModelDb.AllCards)
         {
             if (canonical == null)
+            {
+                continue;
+            }
+            if (canonical.Type != CardType.Attack && canonical.Type != CardType.Skill &&
+                canonical.Type != CardType.Power)
+            {
+                continue;
+            }
+            // 吉安娜非法术能力牌（戏法图腾/炉石形态）不在范围内
+            if (jaina.Scripts.Character.JainaCastTracker.IsExcludedFromSpellPool(canonical.GetType()))
             {
                 continue;
             }

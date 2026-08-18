@@ -59,13 +59,25 @@ public sealed class TrickTotemPower : PowerModel, IModPowerAssetOverrides
         var combatState = player.Creature.CombatState;
         var rng = player.RunState.Rng.CombatTargets;
 
-        // 全角色卡牌候选：所有类型（随从/英雄/地标/武器/法术，不含英雄技能卡）
+        // 全角色攻击/技能/能力牌候选（Attack/Skill/Power——含吉安娜法术牌：
+        // 攻击/技能牌及带"法术牌"关键词的能力牌；吉安娜的非法术能力牌
+        // 如戏法图腾/炉石形态不在范围内；不含英雄技能卡）
         // 且费用消耗 <= 1，按可升级级别展开（未升级与升级形态都可能被施放）；
         // 应用 Jaina 随机池统一排除（8 个非角色/衍生池/任务卡/先古稀有度/多人专属）
         var candidates = new List<CardModel>();
         foreach (var canonical in ModelDb.AllCards)
         {
             if (canonical == null)
+            {
+                continue;
+            }
+            if (canonical.Type != CardType.Attack && canonical.Type != CardType.Skill &&
+                canonical.Type != CardType.Power)
+            {
+                continue;
+            }
+            // 吉安娜非法术能力牌（戏法图腾/炉石形态）不在范围内
+            if (jaina.Scripts.Character.JainaCastTracker.IsExcludedFromSpellPool(canonical.GetType()))
             {
                 continue;
             }
