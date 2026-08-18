@@ -451,13 +451,30 @@ public static class JainaCastTracker
     }
 
     /// <summary>
+    /// 该类型是否<b>不可</b>被法术发现/随机施放池检索（显式黑名单）：
+    /// - 戏法图腾/炉石形态：能力牌，<b>不是法术牌</b>（卡面无"法术牌"关键词）——
+    ///   不出现在法术池（与 <see cref="RecordPlayed"/> 的法术判定一致）；
+    /// - 禁忌序列/打开时空之门：任务卡，不可被发现（Quest 关键词过滤已排除，
+    ///   此处显式兜底，防止关键词调整后泄漏）。
+    /// 法术牌统一定义（攻击/技能牌，或带"法术牌"关键词的能力牌）+ 此黑名单共同决定池成员。
+    /// </summary>
+    public static bool IsExcludedFromSpellPool(Type type)
+    {
+        return type == typeof(TrickTotemCard) ||
+               type == typeof(HearthstoneFormCard) ||
+               type == typeof(ForbiddenSequenceCard) ||
+               type == typeof(OpenTimeGateCard);
+    }
+
+    /// <summary>
     /// 动态构建"吉安娜法术牌池"（含升级形态展开）：
     /// 遍历<b>吉安娜卡池</b>（JainaCardPool），取法术牌——攻击/技能牌，
-    /// 或带"法术牌"关键词的能力牌（寒冰屏障/冰血哨塔/戏法图腾/禁忌序列等 Power 型法术，
-    /// 与 <see cref="RecordPlayed"/> 的法术判定一致），排除英雄技能卡与任务线卡，
+    /// 或带"法术牌"关键词的能力牌（寒冰屏障/冰血哨塔等 Power 型法术，
+    /// 与 <see cref="RecordPlayed"/> 的法术判定一致），
+    /// 排除英雄技能卡、任务线卡与 <see cref="IsExcludedFromSpellPool"/> 黑名单卡，
     /// 按 <see cref="GetDiscoverPoolMaxUpgradeLevel"/> 展开未升级与升级形态。
     /// 取代各卡硬编码的 typeof 列表（硬编码会漏新增卡/错配升级形态派系）。
-    /// 注意：这是吉安娜语义的池（发现/随机施放吉安娜法术用）；
+    /// 注意：这是<b>吉安娜法术池</b>（唤醒/卡雷苟斯/撕裂现实等发现吉安娜法术用）；
     /// 全角色语义（匣中古神/惊奇卡牌/戏法图腾等卡面写明"全角色卡牌"的）不走此方法。
     /// </summary>
     public static List<(Type Type, int UpgradeLevel)> BuildAllSpellPool(ICombatState combatState, Player owner)
@@ -473,6 +490,11 @@ public static class JainaCastTracker
             bool isSpellCard = canonical.Type == CardType.Attack || canonical.Type == CardType.Skill ||
                                canonical.CanonicalKeywords?.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Spell) == true;
             if (!isSpellCard)
+            {
+                continue;
+            }
+            // 显式黑名单：戏法图腾/炉石形态不是法术牌；禁忌序列/打开时空之门任务卡不可被发现
+            if (IsExcludedFromSpellPool(canonical.GetType()))
             {
                 continue;
             }
@@ -524,6 +546,11 @@ public static class JainaCastTracker
             bool isSpellCard = canonical.Type == CardType.Attack || canonical.Type == CardType.Skill ||
                                canonical.CanonicalKeywords?.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Spell) == true;
             if (!isSpellCard)
+            {
+                continue;
+            }
+            // 显式黑名单：戏法图腾/炉石形态不是法术牌；禁忌序列/打开时空之门任务卡不可被发现
+            if (IsExcludedFromSpellPool(canonical.GetType()))
             {
                 continue;
             }

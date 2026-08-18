@@ -11,8 +11,9 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
-/// 吉安娜发现（Discover）工具：从吉安娜的攻击/技能牌池中随机抽取若干张供玩家选择。
-/// 发现池动态构建（BuildAllSpellPool：全角色攻击/技能牌含升级形态，排除英雄技能/任务线卡）。
+/// 吉安娜发现（Discover）工具：从吉安娜法术池中随机抽取若干张供玩家选择。
+/// 发现池动态构建（BuildAllSpellPool：吉安娜卡池中的法术牌含升级形态，
+/// 排除英雄技能/任务线卡与黑名单能力牌）。
 /// </summary>
 public static class JainaDiscoverHelper
 {
@@ -29,8 +30,9 @@ public static class JainaDiscoverHelper
 
     /// <summary>
     /// 从发现池中随机选若干张（不重复），可过滤费用上限。
-    /// 池：吉安娜卡池（JainaCardPool）中的法术牌（攻击/技能牌，或带"法术牌"关键词的 Power 型能力牌），
-    /// 含升级形态，排除英雄技能卡与任务线卡。每种法术牌按可升级级别展开。
+    /// 池：吉安娜卡池（JainaCardPool）中的法术牌（攻击/技能牌，或带"法术牌"关键词的能力牌），
+    /// 含升级形态，排除英雄技能卡、任务线卡与黑名单能力牌（戏法图腾/炉石形态/禁忌序列/打开时空之门）。
+    /// 每种法术牌按可升级级别展开。
     /// </summary>
     public static List<CardModel> RollCandidates(Player player, int count = 3, int? maxCost = null)
     {
@@ -51,6 +53,11 @@ public static class JainaDiscoverHelper
             bool isSpellCard = canonical.Type == CardType.Attack || canonical.Type == CardType.Skill ||
                                canonical.CanonicalKeywords?.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Spell) == true;
             if (!isSpellCard)
+            {
+                continue;
+            }
+            // 显式黑名单：戏法图腾/炉石形态不是法术牌；禁忌序列/打开时空之门任务卡不可被发现
+            if (jaina.Scripts.Character.JainaCastTracker.IsExcludedFromSpellPool(canonical.GetType()))
             {
                 continue;
             }
