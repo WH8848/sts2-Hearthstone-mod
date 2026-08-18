@@ -81,14 +81,11 @@ public sealed class OpenTimeGatePower : PowerModel, IModPowerAssetOverrides
         {
             return;
         }
-        // 达到 8 个：奖励时空扭曲（升级后为时空扭曲+）直接置入手牌
+        // 达到 8 个：奖励时空扭曲（升级后为时空扭曲+）直接置入手牌；
+        // 手牌满时不丢失——排队等待空位（炉石任务奖励语义）
         var canonical = ModelDb.GetByIdOrNull<CardModel>(
             ModelDb.GetId(typeof(jaina.Scripts.Character.Cards.TimeWarpCard)));
         if (canonical == null)
-        {
-            return;
-        }
-        if (jaina.Scripts.Character.JainaHandHelper.IsHandFull(player))
         {
             return;
         }
@@ -101,7 +98,7 @@ public sealed class OpenTimeGatePower : PowerModel, IModPowerAssetOverrides
         }
         jaina.Scripts.Character.JainaCastTracker.MarkGenerated(warp);
         MegaCrit.Sts2.Core.Logging.Log.Info("[JainaDebug] OpenTimeGate reward granted");
-        await CardPileCmd.AddGeneratedCardToCombat(warp, PileType.Hand, player);
+        await JainaPendingRewardQueue.GrantOrQueue(choiceContext, player, warp);
         await PowerCmd.Remove(this);
     }
 }

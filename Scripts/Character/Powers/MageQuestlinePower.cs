@@ -158,6 +158,7 @@ public sealed class MageQuestlinePower : PowerModel, IModPowerAssetOverrides
     /// <summary>
     /// 抽一张法术牌：从抽牌堆中找第一张攻击/技能牌（或带"法术牌"关键词的能力牌）
     /// 置入手牌；抽牌堆中没有则普通抽一张。
+    /// 手牌满时抽牌奖励排队等待空位（炉石任务奖励语义）。
     /// </summary>
     private static async Task GrantDrawSpell(PlayerChoiceContext choiceContext, Player player)
     {
@@ -170,25 +171,18 @@ public sealed class MageQuestlinePower : PowerModel, IModPowerAssetOverrides
             await CardPileCmd.Draw(choiceContext, 1, player);
             return;
         }
-        if (jaina.Scripts.Character.JainaHandHelper.IsHandFull(player))
-        {
-            return;
-        }
-        await CardPileCmd.Add(spell, PileType.Hand);
+        await JainaPendingRewardQueue.GrantOrQueue(choiceContext, player, spell);
     }
 
     /// <summary>
     /// 将指定类型卡的实例置入手牌（下一阶段任务卡 / 奥术师晨拥），
     /// 按 upgradeLevel 恢复升级形态（1 = 升级版 +）。
+    /// 手牌满时不丢失——排队等待空位（炉石任务奖励语义）。
     /// </summary>
     private static async Task GrantCardToHand(PlayerChoiceContext choiceContext, Player player, System.Type cardType, int upgradeLevel, bool markGenerated)
     {
         var canonical = ModelDb.GetByIdOrNull<CardModel>(ModelDb.GetId(cardType));
         if (canonical == null)
-        {
-            return;
-        }
-        if (jaina.Scripts.Character.JainaHandHelper.IsHandFull(player))
         {
             return;
         }
@@ -203,6 +197,6 @@ public sealed class MageQuestlinePower : PowerModel, IModPowerAssetOverrides
         {
             jaina.Scripts.Character.JainaCastTracker.MarkGenerated(card);
         }
-        await CardPileCmd.AddGeneratedCardToCombat(card, PileType.Hand, player);
+        await JainaPendingRewardQueue.GrantOrQueue(choiceContext, player, card);
     }
 }

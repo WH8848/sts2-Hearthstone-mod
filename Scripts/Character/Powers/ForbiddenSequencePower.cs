@@ -84,20 +84,17 @@ public sealed class ForbiddenSequencePower : PowerModel, IModPowerAssetOverrides
             {
                 continue;
             }
-            // 达到阈值：奖励 = 源生之石直接置入手牌
+            // 达到阈值：奖励 = 源生之石直接置入手牌；
+            // 手牌满时不丢失——排队等待空位（炉石任务奖励语义）
             var canonical = ModelDb.GetByIdOrNull<CardModel>(ModelDb.GetId(typeof(jaina.Scripts.Character.Cards.ForbiddenStoneCard)));
             if (canonical == null)
-            {
-                return;
-            }
-            if (jaina.Scripts.Character.JainaHandHelper.IsHandFull(player))
             {
                 return;
             }
             var combatState = player.Creature.CombatState;
             var stone = combatState.CreateCard(canonical, player);
             jaina.Scripts.Character.JainaCastTracker.MarkGenerated(stone);
-            await CardPileCmd.AddGeneratedCardToCombat(stone, PileType.Hand, player);
+            await JainaPendingRewardQueue.GrantOrQueue(choiceContext, player, stone);
             await PowerCmd.Remove(this);
             return;
         }
