@@ -51,27 +51,8 @@ public sealed class EvocationCard : JainaSpellCardTemplate
     }
 
     /// <summary>
-    /// 吉安娜法师法术牌池（与匣中古神随机施放池一致，排除英雄技能卡）
+    /// 吉安娜法师法术牌池：动态构建（攻击/技能牌，含升级形态，排除英雄技能/任务线卡）。
     /// </summary>
-    private static readonly System.Type[] MageSpellPool =
-    [
-        typeof(Fireball),
-        typeof(Frostbolt),
-        typeof(ArcaneIntellect),
-        typeof(RayOfFrostCard),
-        typeof(IceBarrier),
-        typeof(Trick),
-        typeof(Awaken),
-        typeof(NorgannonWisdom),
-        typeof(DeepFreezeCard),
-        typeof(FlameWard),
-        typeof(DeathborneCard),
-        typeof(FrostNova),
-        typeof(ArcaneBarrage),
-        typeof(ApexisBlast),
-        typeof(IgniteCard)
-    ];
-
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
         // 记录施放（倒带/罗曼斯/三派系追踪）
@@ -86,21 +67,7 @@ public sealed class EvocationCard : JainaSpellCardTemplate
 
         // 用随机法师法术牌填满手牌（不占手牌位的英雄技能卡不影响容量）。
         // 每种法术牌按可升级级别展开：未升级形态与升级形态（+）都可能被填入手牌。
-        var pool = new List<(System.Type Type, int UpgradeLevel)>();
-        foreach (var t in MageSpellPool)
-        {
-            var canonical = MegaCrit.Sts2.Core.Models.ModelDb.GetByIdOrNull<MegaCrit.Sts2.Core.Models.CardModel>(
-                MegaCrit.Sts2.Core.Models.ModelDb.GetId(t));
-            if (canonical == null)
-            {
-                continue;
-            }
-            int maxLevel = jaina.Scripts.Character.JainaCastTracker.GetDiscoverPoolMaxUpgradeLevel(t);
-            for (int level = 0; level <= maxLevel; level++)
-            {
-                pool.Add((t, level));
-            }
-        }
+        var pool = jaina.Scripts.Character.JainaCastTracker.BuildAllSpellPool(combatState, base.Owner);
 
         while (!jaina.Scripts.Character.JainaHandHelper.IsHandFull(base.Owner))
         {

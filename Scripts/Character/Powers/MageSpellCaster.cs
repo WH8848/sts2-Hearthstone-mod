@@ -36,29 +36,6 @@ public static class MageSpellCaster
     ];
 
     /// <summary>
-    /// 吉安娜全部法术牌池（与匣中古神随机施放池一致；终极索兰莉安用，
-    /// 按可升级级别展开——未升级与升级形态都可能被施放）
-    /// </summary>
-    private static readonly Type[] AllMageSpellTypes =
-    [
-        typeof(Fireball),
-        typeof(Frostbolt),
-        typeof(ArcaneIntellect),
-        typeof(RayOfFrostCard),
-        typeof(IceBarrier),
-        typeof(Trick),
-        typeof(Awaken),
-        typeof(NorgannonWisdom),
-        typeof(DeepFreezeCard),
-        typeof(FlameWard),
-        typeof(DeathborneCard),
-        typeof(FrostNova),
-        typeof(ArcaneBarrage),
-        typeof(ApexisBlast),
-        typeof(IgniteCard)
-    ];
-
-    /// <summary>
     /// 随机施放一个有用的法师法术（魔法智慧之球固定六张池：
     /// 免费自动打出，随机目标；单目标法术优先选敌人）。
     /// 火焰冲击等英雄技能卡不是法术牌，绝不会被施放（池内无 + 实例过滤兜底）。
@@ -93,9 +70,8 @@ public static class MageSpellCaster
     }
 
     /// <summary>
-    /// 随机施放一个法师法术（终极索兰莉安用：从吉安娜全部法术牌池
-    /// 按可升级级别展开，未升级与升级形态都可能被施放）。
-    /// 火焰冲击等英雄技能卡不是法术牌，绝不会被施放（池内无 + 实例过滤兜底）。
+    /// 吉安娜全部法术牌池（终极索兰莉安用）：动态构建（攻击/技能牌，含升级形态，
+    /// 排除英雄技能/任务线卡），取代硬编码 typeof 列表。
     /// </summary>
     public static async Task CastRandomMageSpellFromAll(PlayerChoiceContext choiceContext, Player player, bool preferEnemies = true)
     {
@@ -105,7 +81,13 @@ public static class MageSpellCaster
             return;
         }
         var rng = player.RunState.Rng.CombatCardSelection;
-        var type = rng.NextItem(AllMageSpellTypes);
+        // 动态池：类型 + 升级级别一起随机（未升级与升级形态都可能被施放）
+        var pool = jaina.Scripts.Character.JainaCastTracker.BuildAllSpellPool(combatState, player);
+        if (pool.Count == 0)
+        {
+            return;
+        }
+        var (type, upgradeLevel) = rng.NextItem(pool);
         if (type == null)
         {
             return;
@@ -121,8 +103,6 @@ public static class MageSpellCaster
         {
             return;
         }
-        int maxLevel = jaina.Scripts.Character.JainaCastTracker.GetDiscoverPoolMaxUpgradeLevel(type);
-        int upgradeLevel = rng.NextInt(0, maxLevel + 1);
         var card = jaina.Scripts.Character.JainaCastTracker.CreateCardWithUpgrade(
             combatState, player, type, upgradeLevel);
         if (card == null)

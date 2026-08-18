@@ -67,6 +67,7 @@
 - **同名卡不可自发现**：统一规则——发现/检索池排除"发起发现的卡自身"：倒带已排除 `typeof(JainasGiftCard)`（155 行）；拾荒清道夫 `DiscoverCardOfCostAndAddToHand` 新增 `excludeType` 参数排除自身卡类型；撕裂现实/能量之泉池本身不含自身。
 - **巅峰无限压轴回手无条件**：`PeakInfinityPower.BeforeSideTurnStart` 不再限定"只在弃牌堆回手"——无论卡在哪个牌堆（弃牌堆/消耗堆/抽牌堆等），只要压轴触发，回合开始都移回手牌（卡须仍在对局且不在手牌；已移出对局的无法回手）。
 - **操控时间发现池修复**：升级版撕裂现实（操控时间）原硬编码 `AllArcaneSpellTypes` 类型列表有误——把火焰的点燃（IgniteCard 基础=火焰派系）和埃匹希斯冲击（**基础无派系、升级=火焰**，都不是奥术）误纳入奥术池，导致发现到非奥术法术。改为 `BuildArcanePool()` 动态构建：全角色攻击/技能牌中按**每个形态实例**的 Arcane 关键词过滤（`GetKeywordsWithSources(Local)` 只查本地关键词，防全局光环干扰；升级后派系变化的形态自动排除），排除英雄技能/任务线卡/自身（同名不可自发现）。
+- **法术派系硬编码全部动态化**：`JainaCastTracker` 新增共享动态池——`GetSchoolOf(card)`（按实例本地 Fire/Frost/Arcane 关键词动态判定派系，取代 `SchoolByCardType` 硬编码映射）、`BuildAllSpellPool(combatState, owner)`（全角色攻击/技能牌含升级形态，排除英雄技能/任务线卡）、`BuildSchoolSpellPool(combatState, owner, school, excludeType)`（按派系关键词过滤，每个形态实例判定）；`EvocationCard`/`ForbiddenShrineCard`/`TearRealityCard`（全法术池+奥术池）/`MageSpellCaster.CastRandomMageSpellFromAll`（终极索兰莉安）全部改用动态池。保留的固定池（非派系语义）：`MageSpellCaster.UsefulMageSpells`（魔法智慧之球卡面写明六张）、`JainaDiscoverHelper.AttackSkillPool`/吉安娜的礼物三张（卡面写明）、`AntonidasPower` 火球术生成、IgniteCard 升级特判。
 - **联机回合结束按钮消失修复**：主机死亡后的玩家回合切换中，客机端 `NEndTurnButton` 可能停在 Hidden/Disabled（原版 `OnTurnStarted` 恢复路径在死亡玩家自动 SetReady 时序下被跳过）→ `EndTurnButtonRestorePatch`（Powers/）：patch `NEndTurnButton.OnTurnStarted` Postfix——玩家侧回合开始 + 本地玩家存活 + 未就绪时，若按钮非 Enabled 则 `AnimIn + Enable + 反射同步 _state=0`（纯本地 UI，联机安全）。
 - **联机断联（两处根因已定位）**：
   ① `DRAW_CARDS_NEXT_TURN_POWER` 只在一端存在（14:08 局 checksum 116/117）→ **万象辉星 mod 旧版导致**（已让队友更新版本，非本项目问题）；

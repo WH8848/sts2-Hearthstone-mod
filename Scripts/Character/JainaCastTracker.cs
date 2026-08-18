@@ -165,27 +165,33 @@ public static class JainaCastTracker
     }
 
     /// <summary>
-    /// 卡牌类型 → 法术派系（未列出的攻击/技能牌无派系）。
-    /// 注意：火焰冲击是英雄技能，不属于法术牌，不计入派系。
+    /// 动态判定一张卡的派系（火焰/冰霜/奥术）：按该卡实例的<b>本地</b>关键词
+    /// （GetKeywordsWithSources(Local)，排除全局光环干扰）判断 Fire/Frost/Arcane。
+    /// 每张卡只可能有一个派系（关键词互斥），按 Fire → Frost → Arcane 顺序取第一个。
+    /// 无派系返回 null。升级形态按实例关键词动态判定（如埃匹希斯冲击基础无派系、
+    /// 升级为火焰——硬编码列表无法表达）。
     /// </summary>
-    private static readonly Dictionary<Type, JainaSpellSchool> SchoolByCardType = new()
+    public static JainaSpellSchool? GetSchoolOf(CardModel card)
     {
-        [typeof(Fireball)] = JainaSpellSchool.Fire,
-        [typeof(IgniteCard)] = JainaSpellSchool.Fire,
-        [typeof(Frostbolt)] = JainaSpellSchool.Frost,
-        [typeof(RayOfFrostCard)] = JainaSpellSchool.Frost,
-        [typeof(IceBlockCard)] = JainaSpellSchool.Frost,
-        [typeof(AmazingDeckCard)] = JainaSpellSchool.Arcane,
-        [typeof(IceBarrier)] = JainaSpellSchool.Frost,
-        [typeof(DeepFreezeCard)] = JainaSpellSchool.Frost,
-        [typeof(ArcaneIntellect)] = JainaSpellSchool.Arcane,
-        [typeof(IncantersFlowCard)] = JainaSpellSchool.Arcane,
-        [typeof(JainasGiftCard)] = JainaSpellSchool.Arcane,
-        [typeof(Trick)] = JainaSpellSchool.Arcane,
-        [typeof(Awaken)] = JainaSpellSchool.Arcane,
-        [typeof(NorgannonWisdom)] = JainaSpellSchool.Arcane,
-        [typeof(Objection)] = JainaSpellSchool.Arcane
-    };
+        if (card == null)
+        {
+            return null;
+        }
+        var keywords = card.GetKeywordsWithSources(MegaCrit.Sts2.Core.Entities.Cards.KeywordSources.Local);
+        if (keywords.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Fire))
+        {
+            return JainaSpellSchool.Fire;
+        }
+        if (keywords.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Frost))
+        {
+            return JainaSpellSchool.Frost;
+        }
+        if (keywords.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Arcane))
+        {
+            return JainaSpellSchool.Arcane;
+        }
+        return null;
+    }
 
     /// <summary>
     /// 取本场战斗的追踪记录
@@ -251,7 +257,8 @@ public static class JainaCastTracker
             counts.TryGetValue(type, out var n);
             counts[type] = n + 1;
         }
-        if (SchoolByCardType.TryGetValue(type, out var school))
+        // 派系：动态按卡实例关键词判定（Fire/Frost/Arcane，升级形态跟随实例）
+        if (GetSchoolOf(card) is { } school)
         {
             rec.Schools.Add(school);
             // 记录该派系最近施放的法术（魔导师晨拥战吼重放用）——按玩家区分
@@ -441,5 +448,101 @@ public static class JainaCastTracker
             return 0;
         }
         return Math.Min(canonical.MaxUpgradeLevel, 2);
+    }
+
+    /// <summary>
+    /// 动态构建"吉安娜全部法术牌池"（攻击/技能牌，含升级形态展开）：
+    /// 遍历全角色卡池，取攻击/技能牌、非英雄技能卡、非任务线卡，
+    /// 按 <see cref="GetDiscoverPoolMaxUpgradeLevel"/> 展开未升级与升级形态。
+    /// 取代各卡硬编码的 typeof 列表（硬编码会漏新增卡/错配升级形态派系）。
+    /// </summary>
+    public static List<(Type Type, int UpgradeLevel)> BuildAllSpellPool(ICombatState combatState, Player owner)
+    {
+        var result = new List<(Type, int)>();
+        foreach (var canonical in ModelDb.AllCards)
+        {
+            if (canonical == null)
+            {
+                continue;
+            }
+            if (canonical.Type != CardType.Attack && canonical.Type != CardType.Skill)
+            {
+                continue;
+            }
+            if (Powers.HeroPowerHandHelper.IsHeroPowerCard(canonical))
+            {
+                continue;
+            }
+            if (canonical.CanonicalKeywords?.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Quest) == true)
+            {
+                continue;
+            }
+            int maxLevel = GetDiscoverPoolMaxUpgradeLevel(canonical.GetType());
+            for (int level = 0; level <= maxLevel; level++)
+            {
+                result.Add((canonical.GetType(), level));
+            }
+        }
+        return result;
+    }
+
+    /// <summary>
+    /// 动态构建指定派系的法术牌池（火焰/冰霜/奥术）：全角色攻击/技能牌中，
+    /// 按<b>每个形态实例</b>的本地派系关键词过滤（升级后派系变化的形态自动排除），
+    /// 排除英雄技能卡、任务线卡与指定排除类型（同名不可自发现）。
+    /// 取代各卡硬编码的 typeof 派系列表。
+    /// </summary>
+    public static List<(Type Type, int UpgradeLevel)> BuildSchoolSpellPool(
+        ICombatState combatState, Player owner, JainaSpellSchool school, Type? excludeType = null)
+    {
+        CardKeyword? keyword = school switch
+        {
+            JainaSpellSchool.Fire => jaina.Scripts.Character.Keywords.JainaKeywords.Fire,
+            JainaSpellSchool.Frost => jaina.Scripts.Character.Keywords.JainaKeywords.Frost,
+            JainaSpellSchool.Arcane => jaina.Scripts.Character.Keywords.JainaKeywords.Arcane,
+            _ => null
+        };
+        if (keyword == null)
+        {
+            return [];
+        }
+        var result = new List<(Type, int)>();
+        foreach (var canonical in ModelDb.AllCards)
+        {
+            if (canonical == null)
+            {
+                continue;
+            }
+            if (canonical.Type != CardType.Attack && canonical.Type != CardType.Skill)
+            {
+                continue;
+            }
+            if (Powers.HeroPowerHandHelper.IsHeroPowerCard(canonical))
+            {
+                continue;
+            }
+            if (excludeType != null && canonical.GetType() == excludeType)
+            {
+                continue;
+            }
+            if (canonical.CanonicalKeywords?.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Quest) == true)
+            {
+                continue;
+            }
+            int maxLevel = GetDiscoverPoolMaxUpgradeLevel(canonical.GetType());
+            for (int level = 0; level <= maxLevel; level++)
+            {
+                var card = CreateCardWithUpgrade(combatState, owner, canonical.GetType(), level);
+                // 该形态实例挂对应派系关键词才纳入（升级后派系变化的形态自动排除）
+                // keyword 非空（上面已 return）
+                if (card != null && keyword != null &&
+                    card.GetKeywordsWithSources(MegaCrit.Sts2.Core.Entities.Cards.KeywordSources.Local)
+                        .Contains(keyword.Value))
+                {
+                    result.Add((canonical.GetType(), level));
+                }
+            }
+        }
+        return result;
     }
 }

@@ -60,27 +60,9 @@ public sealed class ForbiddenShrineCard : JainaSpellCardTemplate
     }
 
     /// <summary>
-    /// 吉安娜全部法术牌池（随机施放用，排除英雄技能卡与自身；与匣中古神一致）
+    /// 吉安娜全部法术牌池（随机施放用）：动态构建（攻击/技能牌，含升级形态，
+    /// 排除英雄技能卡、任务线卡与自身——BuildAllSpellPool 后过滤自身）。
     /// </summary>
-    private static readonly System.Type[] SpellTypes =
-    [
-        typeof(Fireball),
-        typeof(Frostbolt),
-        typeof(ArcaneIntellect),
-        typeof(RayOfFrostCard),
-        typeof(IceBarrier),
-        typeof(Trick),
-        typeof(Awaken),
-        typeof(NorgannonWisdom),
-        typeof(DeepFreezeCard),
-        typeof(FlameWard),
-        typeof(DeathborneCard),
-        typeof(FrostNova),
-        typeof(ArcaneBarrage),
-        typeof(ApexisBlast),
-        typeof(IgniteCard)
-    ];
-
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
         // 记录施放（倒带/罗曼斯/三派系追踪）
@@ -97,30 +79,25 @@ public sealed class ForbiddenShrineCard : JainaSpellCardTemplate
         int targetCost = IsUpgraded ? x + 1 : x;
         targetCost = System.Math.Min(targetCost, 3);
 
-        // 收集原始费用 = targetCost 的吉安娜法术牌（含升级形态）
+        // 收集原始费用 = targetCost 的吉安娜法术牌（含升级形态），排除自身（同名不可自发现）
         var pool = new List<CardModel>();
-        foreach (var type in SpellTypes)
+        foreach (var (type, level) in jaina.Scripts.Character.JainaCastTracker.BuildAllSpellPool(combatState, base.Owner))
         {
-            var canonical = ModelDb.GetByIdOrNull<CardModel>(ModelDb.GetId(type));
-            if (canonical == null)
+            if (type == typeof(ForbiddenShrineCard))
             {
                 continue;
             }
-            int maxLevel = jaina.Scripts.Character.JainaCastTracker.GetDiscoverPoolMaxUpgradeLevel(type);
-            for (int level = 0; level <= maxLevel; level++)
+            var card = jaina.Scripts.Character.JainaCastTracker.CreateCardWithUpgrade(
+                combatState, base.Owner, type, level);
+            if (card == null)
             {
-                var card = jaina.Scripts.Character.JainaCastTracker.CreateCardWithUpgrade(
-                    combatState, base.Owner, type, level);
-                if (card == null)
-                {
-                    continue;
-                }
-                if (card.EnergyCost.Canonical != targetCost)
-                {
-                    continue;
-                }
-                pool.Add(card);
+                continue;
             }
+            if (card.EnergyCost.Canonical != targetCost)
+            {
+                continue;
+            }
+            pool.Add(card);
         }
         if (pool.Count == 0)
         {

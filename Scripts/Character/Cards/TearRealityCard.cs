@@ -63,53 +63,9 @@ public sealed class TearRealityCard : JainaSpellCardTemplate
     }
 
     /// <summary>
-    /// 吉安娜全部法术牌池（攻击/技能牌，排除自身与英雄技能卡）。
-    /// 与匣中古神随机施放池保持一致（YoggBoxCard.SpellTypes）。
-    /// 每种法术牌的升级形态（+）也作为独立候选（升级后的法术牌可被检索）。
+    /// 吉安娜全部法术牌池（攻击/技能牌，含升级形态，排除英雄技能/任务线卡）：
+    /// 动态构建（BuildAllSpellPool），取代硬编码 typeof 列表。
     /// </summary>
-    private static readonly System.Type[] AllSpellTypes =
-    [
-        typeof(Fireball),
-        typeof(Frostbolt),
-        typeof(ArcaneIntellect),
-        typeof(RayOfFrostCard),
-        typeof(IceBarrier),
-        typeof(Trick),
-        typeof(Awaken),
-        typeof(NorgannonWisdom),
-        typeof(DeepFreezeCard),
-        typeof(FlameWard),
-        typeof(DeathborneCard),
-        typeof(FrostNova),
-        typeof(ArcaneBarrage),
-        typeof(ApexisBlast),
-        typeof(IgniteCard)
-    ];
-
-    /// <summary>
-    /// 展开候选池：每种法术牌按其允许的升级级别生成 (类型, 升级级别) 候选
-    /// （未升级 + 升级形态，升级后的法术牌同样可被检索；点燃只能未升级形态）。
-    /// </summary>
-    private static List<(System.Type Type, int UpgradeLevel)> ExpandPool(System.Type[] types)
-    {
-        var result = new List<(System.Type, int)>();
-        foreach (var t in types)
-        {
-            result.Add((t, 0));
-            var canonical = ModelDb.GetByIdOrNull<CardModel>(ModelDb.GetId(t));
-            if (canonical == null)
-            {
-                continue;
-            }
-            int maxLevel = jaina.Scripts.Character.JainaCastTracker.GetDiscoverPoolMaxUpgradeLevel(t);
-            for (int level = 1; level <= maxLevel; level++)
-            {
-                result.Add((t, level));
-            }
-        }
-        return result;
-    }
-
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
         // 记录施放（倒带/罗曼斯/三派系追踪）
@@ -128,9 +84,12 @@ public sealed class TearRealityCard : JainaSpellCardTemplate
             return;
         }
 
-        // 撕裂现实：从所有吉安娜法术牌（含升级形态）中随机将 2 张置入手牌，费用减少 1 点
+        // 撕裂现实：从所有吉安娜法术牌（含升级形态）中随机将 2 张置入手牌，费用减少 1 点。
+        // 排除自身（同名不可自发现）。
         var rng = base.Owner.RunState.Rng.CombatCardSelection;
-        var pool = ExpandPool(AllSpellTypes);
+        var pool = jaina.Scripts.Character.JainaCastTracker.BuildAllSpellPool(combatState, base.Owner)
+            .Where(e => e.Type != typeof(TearRealityCard))
+            .ToList();
         for (int i = 0; i < 2; i++)
         {
             if (pool.Count == 0)
@@ -223,9 +182,9 @@ public sealed class TearRealityCard : JainaSpellCardTemplate
     }
 
     /// <summary>
-    /// 动态构建奥术法术候选池：全角色攻击/技能牌中挂"奥术派系"关键词的卡，
-    /// 按每个升级形态展开（该形态实例挂奥术关键词才纳入——升级后派系变化的形态
-    /// 如火焰之地传送门自动排除）；排除英雄技能卡、任务线卡与自身。
+    /// 动态构建奥术法术候选池：全角色攻击/技能牌中按<b>每个形态实例</b>的本地
+    /// 奥术派系关键词过滤（升级后派系变化的形态如火焰之地传送门自动排除）；
+    /// 排除英雄技能卡、任务线卡与自身（同名不可自发现）。
     /// </summary>
     private List<(System.Type Type, int UpgradeLevel)> BuildArcanePool()
     {
@@ -234,47 +193,8 @@ public sealed class TearRealityCard : JainaSpellCardTemplate
         {
             return [];
         }
-        var result = new List<(System.Type Type, int UpgradeLevel)>();
-        foreach (var canonical in ModelDb.AllCards)
-        {
-            if (canonical == null)
-            {
-                continue;
-            }
-            if (canonical.Type != CardType.Attack && canonical.Type != CardType.Skill)
-            {
-                continue;
-            }
-            if (jaina.Scripts.Character.Powers.HeroPowerHandHelper.IsHeroPowerCard(canonical))
-            {
-                continue;
-            }
-            // 同名卡不可自发现：排除自身
-            if (canonical.GetType() == typeof(TearRealityCard))
-            {
-                continue;
-            }
-            // 任务线卡不可被发现
-            if (canonical.CanonicalKeywords?.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Quest) == true)
-            {
-                continue;
-            }
-            int maxLevel = jaina.Scripts.Character.JainaCastTracker.GetDiscoverPoolMaxUpgradeLevel(canonical.GetType());
-            for (int level = 0; level <= maxLevel; level++)
-            {
-                var card = jaina.Scripts.Character.JainaCastTracker.CreateCardWithUpgrade(
-                    combatState, base.Owner, canonical.GetType(), level);
-                // 该形态实例挂奥术派系关键词才纳入（升级后派系变化的形态自动排除）。
-                // 只查 Local 关键词（GetKeywordsWithSources(Local)）：全局效果（如
-                // 场上光环给所有法术加派系）不影响奥术判定——埃匹希斯冲击基础无派系、
-                // 升级为火焰，两种形态都不会进入奥术池。
-                if (card != null && card.GetKeywordsWithSources(MegaCrit.Sts2.Core.Entities.Cards.KeywordSources.Local)
-                        .Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Arcane))
-                {
-                    result.Add((canonical.GetType(), level));
-                }
-            }
-        }
-        return result;
+        return jaina.Scripts.Character.JainaCastTracker.BuildSchoolSpellPool(
+            combatState, base.Owner, jaina.Scripts.Character.JainaSpellSchool.Arcane,
+            excludeType: typeof(TearRealityCard));
     }
 }
