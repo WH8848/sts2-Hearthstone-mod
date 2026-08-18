@@ -27,8 +27,11 @@ public static class AmazingCardDrawPatch
         {
             return;
         }
-        // 抽牌任务之后异步执行（LifecyclePatchTaskBridge 是 internal，这里直接启动异步触发）
-        _ = Trigger(__1, card);
+        // 串行执行：回合开始可能同时抽到多张惊奇卡牌，多个并发异步任务
+        // 的 await 恢复时序在两端机器上不同 → 随机施放顺序两端相反 →
+        // Pile Play 顺序分歧 + PlayerChoiceContext 栈交错 → StateDivergence 断联。
+        // 按抽牌顺序排队逐个执行（抽牌顺序两端确定一致）。
+        JainaSerialExecutor.Enqueue(__1, card, Trigger);
     }
 
     /// <summary>

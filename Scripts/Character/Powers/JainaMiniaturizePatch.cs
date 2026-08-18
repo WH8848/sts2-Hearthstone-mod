@@ -35,7 +35,11 @@ public static class JainaMiniaturizePatch
         {
             return;
         }
-        _ = Trigger(__1, card);
+        // 串行执行：同一时刻可能打出多张带微缩的随从牌，多个并发异步任务的
+        // await 恢复时序在两端机器上可能不同 → 微型复制品入手的顺序两端相反
+        // → 手牌顺序分歧 → StateDivergence 断联。按打出顺序排队逐个执行
+        // （打出顺序两端确定一致）。
+        JainaSerialExecutor.Enqueue(__1, card, Trigger);
     }
 
     private static async Task Trigger(PlayerChoiceContext choiceContext, CardModel card)
