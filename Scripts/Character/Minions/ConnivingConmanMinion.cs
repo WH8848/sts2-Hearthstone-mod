@@ -81,6 +81,8 @@ public sealed class ConnivingConmanMinion : JainaMinionBase
                 return;
             }
         }
+        // 重放的牌添加"消耗"：打出后进入消耗堆（不再进入弃牌堆，避免被反复重放）
+        card.AddKeyword(CardKeyword.Exhaust);
         // 标记自动打出（不计入"手打"计数，避免重放自身膨胀）
         jaina.Scripts.Character.Powers.RommathReplayTracker.Mark(card);
         await CardCmd.AutoPlay(choiceContext, card, target);

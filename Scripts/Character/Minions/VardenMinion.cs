@@ -46,8 +46,16 @@ public sealed class VardenMinion : JainaMinionBase
             {
                 await CreatureCmd.Damage(choiceContext, [enemy], existing.Amount * 4m, ValueProp.Unpowered, Creature);
             }
-            // 给予 7 层冻结
-            await PowerCmd.Apply<FreezePower>(choiceContext, [enemy], 7m, owner.Creature, null);
+            // 给予 7 层冻结（无视人工制品：瓦尔登的冻结不被人工制品阻挡）
+            FreezePower.BypassArtifactNextApply = true;
+            try
+            {
+                await PowerCmd.Apply<FreezePower>(choiceContext, [enemy], 7m, owner.Creature, null);
+            }
+            finally
+            {
+                FreezePower.BypassArtifactNextApply = false;
+            }
         }
     }
 }

@@ -3,11 +3,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
+using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Nodes.Vfx;
 using jaina.Scripts.Character.Keywords;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -97,6 +100,7 @@ public sealed class AmazingDeckCard : JainaSpellCardTemplate
             // 旅社谍战：将每个其他角色的各一张牌洗入抽牌堆（随机位置），费用变为 0，抽取其中一张
             var rng = owner.RunState.Rng.CombatTargets;
             var jainaPool = ModelDb.CardPool<jaina.Scripts.Character.JainaCardPool>();
+            var shuffled = new List<CardModel>();
             foreach (var pool in ModelDb.AllCharacterCardPools)
             {
                 if (pool == jainaPool)
@@ -120,11 +124,22 @@ public sealed class AmazingDeckCard : JainaSpellCardTemplate
                 }
                 copy.EnergyCost.SetCustomBaseCost(0);
                 jaina.Scripts.Character.JainaCastTracker.MarkGenerated(copy);
-                await CardPileCmd.Add(copy, PileType.Draw, CardPilePosition.Random);
+                shuffled.Add(copy);
             }
 
-            // 抽取其中一张
-            await CardPileCmd.Draw(choiceContext, 1, owner);
+            var results = await CardPileCmd.AddGeneratedCardsToCombat(shuffled, PileType.Draw, owner, CardPilePosition.Random);
+            PlayShuffleVfx(owner, results);
+
+            // 抽取其中一张（洗入抽牌堆的其它角色的卡牌之一入手）
+            var shuffledCards = results.Where(r => r.success).Select(r => r.cardAdded).ToList();
+            if (shuffledCards.Count > 0)
+            {
+                var picked = rng.NextItem(shuffledCards);
+                if (picked != null)
+                {
+                    await CardPileCmd.Add(picked, PileType.Hand);
+                }
+            }
             return;
         }
 
@@ -134,11 +149,48 @@ public sealed class AmazingDeckCard : JainaSpellCardTemplate
         {
             return;
         }
+        var cards = new List<CardModel>();
         for (int i = 0; i < 5; i++)
         {
             var card = combatState.CreateCard(canonical, owner);
             jaina.Scripts.Character.JainaCastTracker.MarkGenerated(card);
-            await CardPileCmd.Add(card, PileType.Draw, CardPilePosition.Random);
+            cards.Add(card);
+        }
+        var addResults = await CardPileCmd.AddGeneratedCardsToCombat(cards, PileType.Draw, owner, CardPilePosition.Random);
+        PlayShuffleVfx(owner, addResults);
+    }
+
+    /// <summary>
+    /// 洗入抽牌堆动画：从打出区飞向抽牌堆，动画完成自动刷新抽牌堆计数。
+    /// 新生成的洗入牌没有 NCard 节点，原版 tween 流程不会为它们创建动画
+    /// （CardAddFinished 不触发 → 抽牌堆数字不刷新）；这里手动创建洗入飞行 VFX
+    /// （与原版 CardPileCmd 生成卡洗入同一 VFX），飞行完成即触发计数 +1。
+    /// </summary>
+    private static void PlayShuffleVfx(Player owner, IReadOnlyList<CardPileAddResult> results)
+    {
+        if (results.Count == 0)
+        {
+            return;
+        }
+        try
+        {
+            var drawPile = PileType.Draw.GetPile(owner);
+            var playPile = PileType.Play.GetPile(owner);
+            var trailPath = owner.Character.TrailPath;
+            var vfxContainer = owner.Creature.GetVfxContainer();
+            foreach (var r in results)
+            {
+                if (!r.success)
+                {
+                    continue;
+                }
+                var vfx = NCardFlyShuffleVfx.Create(playPile, drawPile, trailPath);
+                vfxContainer?.AddChildSafely(vfx);
+            }
+        }
+        catch (System.Exception ex)
+        {
+            MegaCrit.Sts2.Core.Logging.Log.Error($"[Jaina] shuffle vfx failed: {ex}");
         }
     }
 }

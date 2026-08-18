@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
@@ -34,7 +35,16 @@ public sealed class ManaBiscuitCard : JainaSpellCardTemplate
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
-        // 复原两费：获得 2 点能量
-        await PlayerCmd.GainEnergy(2m, base.Owner);
+        // 复原两费：回复能量但不超过能量上限（不能突破上限回复能量）
+        var pcs = base.Owner.PlayerCombatState;
+        if (pcs == null)
+        {
+            return;
+        }
+        var gain = Math.Min(2m, pcs.MaxEnergy - pcs.Energy);
+        if (gain > 0)
+        {
+            await PlayerCmd.GainEnergy(gain, base.Owner);
+        }
     }
 }

@@ -88,7 +88,15 @@ public static class AmazingCardDrawPatch
                     return; // 无合法目标：不施放（惊奇卡牌也不消耗）
                 }
             }
-            await CardCmd.AutoPlay(choiceContext, spell, target);
+
+            // 施放节奏与"倾泻"等自动打出卡一致：先进入打出区，停顿后再施放效果
+            // （原版 AutoPlayFromDrawPile 先逐张 Add 到打出区再逐个 AutoPlay）
+            if (spell.Pile == null)
+            {
+                await CardPileCmd.Add(spell, PileType.Play);
+            }
+            await Cmd.Wait(0.5f);
+            await CardCmd.AutoPlay(choiceContext, spell, target, skipCardPileVisuals: true);
 
             // 释放后此卡消耗
             if (amazingCard.Pile != null && amazingCard.Pile.Type == PileType.Hand)

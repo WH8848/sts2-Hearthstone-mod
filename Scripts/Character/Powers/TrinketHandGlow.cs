@@ -19,9 +19,9 @@ namespace jaina.Scripts.Character.Powers;
 public static class TrinketHandGlow
 {
     /// <summary>
-    /// 小玩物小屋抽到的牌发光颜色（亮蓝色，与衍生卡金色区分）
+    /// 小玩物小屋抽到的牌发光颜色（深蓝色，与衍生卡金色区分）
     /// </summary>
-    public static readonly Color GlowColor = new Color(0.25f, 0.65f, 1f);
+    public static readonly Color GlowColor = new Color(0.1f, 0.25f, 0.85f);
 
     /// <summary>
     /// 必须在内容注册冻结前调用（ModCardHandOutlineRegistry 冻结后禁止注册）。

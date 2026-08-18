@@ -77,7 +77,8 @@ public abstract class JainaMinionCardTemplate : ModCardTemplate,
 
     /// <summary>
     /// 描述后处理（MinionLib IDescriptionPostProcessCard）：
-    /// 覆写属性时把卡面描述中的"攻击/生命"替换为覆写值（如 3/4 → 1/1）
+    /// 覆写属性时把卡面描述中的"攻击/生命"替换为覆写值（如 3/4 → 1/1）；
+    /// 微型复制卡（带"微型"关键词）去掉描述中的"微缩"词条（微缩不再触发，卡面不应显示）。
     /// </summary>
     public string PostProcessDescription(string description, MegaCrit.Sts2.Core.Entities.Cards.PileType pileType,
         MinionLib.Utilities.BetterExtraArgs.DescriptionPreviewType previewType,
@@ -86,6 +87,15 @@ public abstract class JainaMinionCardTemplate : ModCardTemplate,
         if (_overrideAttack is int atk && _overrideHealth is int hp)
         {
             description = description.Replace($"{MinionAttack}/{MinionHealth}", $"{atk}/{hp}");
+        }
+        if (Keywords.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Mini))
+        {
+            // 微型复制不再带"微缩"，描述中不再显示微缩词条（zhs/eng 两种格式）
+            description = description
+                .Replace("[gold]微缩[/gold]。\n", "")
+                .Replace("[gold]Miniaturize[/gold].\n", "")
+                .Replace("[gold]微缩[/gold]。", "")
+                .Replace("[gold]Miniaturize[/gold].", "");
         }
         return description;
     }

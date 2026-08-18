@@ -36,6 +36,14 @@ public sealed class FreezePower : PowerModel, IModPowerAssetOverrides
     /// </summary>
     public const int MaxStacks = 8;
 
+    /// <summary>
+    /// 下一次施加冻结时无视人工制品（ArtifactPower）阻挡。
+    /// 由滑冰元素/瓦尔登·晨拥在施加前置位、施加后清除（try/finally），
+    /// 用于实现"冻结不被人工制品阻挡"（见 ArtifactFreezeBypassPatch）。
+    /// 联机：两端各自在战吼中置位/清除（命令确定性执行），行为一致。
+    /// </summary>
+    internal static bool BypassArtifactNextApply;
+
     public override PowerType Type => PowerType.Debuff;
 
     public override PowerStackType StackType => PowerStackType.Counter;
