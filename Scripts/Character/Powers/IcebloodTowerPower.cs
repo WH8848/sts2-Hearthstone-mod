@@ -20,6 +20,7 @@ namespace jaina.Scripts.Character.Powers;
 /// 冰血哨塔：在你的回合结束时，从抽牌堆中抽一张法术牌并打出；
 /// 抽牌堆中没有法术时，从弃牌堆中抽一张法术牌并打出。
 /// 可叠层：每张冰血哨塔在回合结束各触发一次（Amount = 哨塔数量）。
+/// 施放的法术按自身规则结算：带消耗词条的正常消耗，不带消耗的进弃牌堆。
 /// 挂在吉安娜玩家身上（可见）。
 /// </summary>
 [RegisterPower]
@@ -92,14 +93,8 @@ public sealed class IcebloodTowerPower : PowerModel, IModPowerAssetOverrides
                 }
             }
 
-            // 哨塔打出的法术不被消耗：移除消耗词条（如有），打出后进弃牌堆
-            // （GetResultLocationForCardPlay 按 Exhaust 关键词决定去向）。
-            // 注意：从抽牌堆/弃牌堆选的是原卡实例——移除 Exhaust 会永久改变该卡，
-            // 符合"哨塔释放的法术不消耗、可再次被抽到"的语义。
-            if (card.Keywords.Contains(CardKeyword.Exhaust))
-            {
-                card.RemoveKeyword(CardKeyword.Exhaust);
-            }
+            // 哨塔施放的法术按自身规则结算：带消耗词条的法术正常消耗（进消耗堆），
+            // 不带消耗的法术进弃牌堆（可再次被抽到）。
             await CardCmd.AutoPlay(choiceContext, card, target);
         }
     }

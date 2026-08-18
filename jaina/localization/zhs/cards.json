@@ -27,7 +27,7 @@
   "JAINA_CARD_RAY_OF_FROST_CARD.titleUpgraded": "顺水漂流",
   "JAINA_CARD_RAY_OF_FROST_CARD.description": "{IfUpgraded:show:选择一个角色。如果是敌方，给予其1层[gold]冻结[/gold]；如果是友方随从，使其获得力量+1。|[gold]双生法术[/gold]。\n[gold]冻结[/gold]一个随从或敌人。}",
   "JAINA_CARD_ICEBLOOD_TOWER_CARD.title": "冰血哨塔",
-  "JAINA_CARD_ICEBLOOD_TOWER_CARD.description": "在你的回合结束时，从你的抽牌堆中抽一张法术牌并打出（抽牌堆没有法术时从弃牌堆抽）。打出的法术不被消耗。可叠层：每张冰血哨塔各触发一次。",
+  "JAINA_CARD_ICEBLOOD_TOWER_CARD.description": "在你的回合结束时，从你的抽牌堆中抽一张法术牌并打出（抽牌堆没有法术时从弃牌堆抽）。可叠层：每张冰血哨塔各触发一次。",
   "JAINA_CARD_COLDARRA_DRAKE_CARD.title": "考达拉幼龙",
   "JAINA_CARD_COLDARRA_DRAKE_CARD.description": "召唤一个[blue]6/7[/blue]的[red]考达拉幼龙[/red]。你的英雄技能变为1费，你可以使用任意次数的英雄技能。",
   "JAINA_CARD_TRICK_TOTEM_CARD.title": "戏法图腾",

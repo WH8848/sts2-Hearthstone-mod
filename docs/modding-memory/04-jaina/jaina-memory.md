@@ -63,7 +63,7 @@
 - **诈骗犯"上一张"只计手打**：`RecordPlayed` 中 `LastPlayedCardByPlayer` 仅在 `!RommathReplayTracker.IsMarked(card)`（非 AutoPlay）时更新——匣中古神/惊奇卡牌/戏法图腾随机施放、罗曼斯/鹦鹉/诈骗犯重放都不覆盖"上一张"；手打的随从/英雄/地标/武器仍记录（英雄技能卡除外）。
 - **灰贤鹦鹉**：卡悬停 `ExtraMinionHoverTips` 动态显示"自己施放的上一个费用≥2法术"卡面（读 `LastCastSpellCost2PlusByPlayer`，按玩家区分）；重放的卡先 `AddKeyword(CardKeyword.Exhaust)` 再 AutoPlay（带消耗，不进弃牌堆）。
 - **再次释放的卡统一语义**：所有"再次释放玩家打过的牌"的重放路径（鹦鹉/诈骗犯/罗曼斯/魔导师晨拥/大法师的符文/维克萨勒斯）——① 不算玩家手打：`CardCmd.AutoPlay` 统一经 `AutoPlayMarkPatch` Prefix 打 `RommathReplayTracker.Mark`，`RecordPlayed` 对 Marked 卡不更新"上一张"/手打计数；② 自动带消耗：显式 `AddKeyword(CardKeyword.Exhaust)`（诈骗犯/鹦鹉/罗曼斯/魔导师晨拥显式，符文/维克萨勒斯/惊奇/Yogg/图腾/冰血塔经 `MarkGenerated` 隐式）。
-- **冰血哨塔重做**：改为回合结束从**抽牌堆**抽一张法术打出，抽牌堆没有则从**弃牌堆**抽；**打出的法术不被消耗**（AutoPlay 前 `RemoveKeyword(Exhaust)`——`GetResultLocationForCardPlay` 按 Exhaust 决定进弃牌堆/消耗堆）；**可叠层**（StackType.Counter，每张哨塔各触发一次，OnPlay 不再顶替旧哨塔）。zhs/eng 卡+power 描述同步。
+- **冰血哨塔重做**：改为回合结束从**抽牌堆**抽一张法术打出，抽牌堆没有则从**弃牌堆**抽；**施放的法术按自身规则结算**——带消耗词条的法术正常消耗（进消耗堆），不带消耗的进弃牌堆（不强行移除 Exhaust）；**可叠层**（StackType.Counter，每张哨塔各触发一次，OnPlay 不再顶替旧哨塔）。zhs/eng 卡+power 描述同步。
 - **同名卡不可自发现**：统一规则——发现/检索池排除"发起发现的卡自身"：倒带已排除 `typeof(JainasGiftCard)`（155 行）；拾荒清道夫 `DiscoverCardOfCostAndAddToHand` 新增 `excludeType` 参数排除自身卡类型；撕裂现实/能量之泉池本身不含自身。
 - **联机回合结束按钮消失修复**：主机死亡后的玩家回合切换中，客机端 `NEndTurnButton` 可能停在 Hidden/Disabled（原版 `OnTurnStarted` 恢复路径在死亡玩家自动 SetReady 时序下被跳过）→ `EndTurnButtonRestorePatch`（Powers/）：patch `NEndTurnButton.OnTurnStarted` Postfix——玩家侧回合开始 + 本地玩家存活 + 未就绪时，若按钮非 Enabled 则 `AnimIn + Enable + 反射同步 _state=0`（纯本地 UI，联机安全）。
 - **联机断联（两处根因已定位）**：
