@@ -46,6 +46,7 @@
 - **⚠ RemoveFromCombat 视觉坑**：`RemoveFromCombat(cards, skipVisuals: true)` 会跳过 NCard 手牌节点的查找与移除（模型移除但 UI 仍显示）→ 必须用默认视觉移除。
 - **英雄卡悬停关键词**：英雄卡挂 `Battlecry` 关键词 → 悬停右侧显示战吼词条注释。
 - **法术牌不作为关键词**：`JainaKeywords.Spell` 注册加 `IncludeInCardHoverTip = false`（内部标记，逻辑识别不变，悬停不再显示"法术牌"词条）；卡面类型标签由 `SpellCardTypePlaquePatch`（NCard.UpdateTypePlaque Postfix）改为 `攻击|法术`/`技能|法术`/`能力|法术`（后缀走 gameplay_ui.json `CARD_TYPE.SPELL`，zhs=法术/eng=Spell）；英雄技能卡（火焰冲击）无 Spell 关键词不受影响。
+- **fork 合并（MoLuuuu605/sts2-Hearthstone-mod 7e9569d）**：`git fetch <fork-url> main:refs/remotes/fork-mo/main` + `git cherry-pick 7e9569d`（与 455c29b 自动合并成功，两边改动都保留）。内容：①火/冰/奥/暗影+交易关键词注册加 `CardDescriptionPlacement = BeforeCardDescription`（自动注入卡面描述首行 `[gold]火焰[/gold]。`，zhs/cards.json 删除手工前缀并重写部分描述）；②新增 `DescriptionKeywords.cs`（`[RegisterOwnedCardKeyword]`：随从/灌注技能，zhs 键 JAINA_KEYWORD_MINION/SPECIAL_HERO_SKILL）；③12+ 张发现卡 `AdditionalHoverTips` 加 `HoverTipFactory.FromKeyword(Discover)`；④点燃加 `DynamicVar("Upgraded")` 显示无限升级等级、删符文/点燃 Title override（无 titleUpgraded 键，默认行为相同）；⑤**跳过 fork 的 .gitignore +Jaina.csproj 行**（会埋雷：csproj 一旦移出索引将永久被忽略）；⑥eng 需同步：cards.json 删 43 处手工派系前缀（自动注入避免重复）、card_keywords.json 补 MINION/SPECIAL_HERO_SKILL 英文翻译。
 - 其他环境噪音（非本项目问题）：`[MPL] Error`、`card_hover_tip.tscn Asset not cached`、`Missing epoch 'JAINA_CHARACTER_JAINA2_EPOCH'`、CardReplaceMod1/MonsterPredictorLite 第三方 mod 日志。
 
 ## 5. 用户确认过的卡牌数值（炉石原版→Mod）

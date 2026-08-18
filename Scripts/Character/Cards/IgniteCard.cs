@@ -40,10 +40,6 @@ public sealed class IgniteCard : JainaSpellCardTemplate
     {
     }
 
-    /// <summary>
-    /// 卡名不变（可无限升级，不改变名称）
-    /// </summary>
-
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
         // 记录施放（倒带/罗曼斯/三派系追踪）

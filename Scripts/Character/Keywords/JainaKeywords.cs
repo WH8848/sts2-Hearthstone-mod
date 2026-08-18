@@ -25,8 +25,8 @@ namespace jaina.Scripts.Character.Keywords;
 // 仅用于游戏逻辑识别；攻击牌、技能牌和能力牌都视为法术牌）。
 // 卡面上通过类型标签"攻击|法术"等方式展示，见 SpellCardTypePlaquePatch。
 [RegisterOwnedKeyword(nameof(Spell), IconPath = "res://icon.svg", IncludeInCardHoverTip = false)]
-// 法术派系关键词（不注入卡面描述，描述文本中以金色词条样式出现，悬停显示解释）
-[RegisterOwnedKeyword(nameof(Fire), IconPath = "res://icon.svg",CardDescriptionPlacement = ModKeywordCardDescriptionPlacement.BeforeCardDescription)]
+// 法术派系关键词（自动注入卡面描述之前，悬停显示解释；描述文本中不再手工书写词条）
+[RegisterOwnedKeyword(nameof(Fire), IconPath = "res://icon.svg", CardDescriptionPlacement = ModKeywordCardDescriptionPlacement.BeforeCardDescription)]
 [RegisterOwnedKeyword(nameof(Frost), IconPath = "res://icon.svg",CardDescriptionPlacement = ModKeywordCardDescriptionPlacement.BeforeCardDescription)]
 [RegisterOwnedKeyword(nameof(Arcane), IconPath = "res://icon.svg",CardDescriptionPlacement = ModKeywordCardDescriptionPlacement.BeforeCardDescription)]
 [RegisterOwnedKeyword(nameof(Shadow), IconPath = "res://icon.svg",CardDescriptionPlacement = ModKeywordCardDescriptionPlacement.BeforeCardDescription)]
