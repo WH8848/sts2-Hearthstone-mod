@@ -131,6 +131,8 @@ public sealed class YoggBoxCard : JainaSpellCardTemplate
                     continue;
                 }
             }
+            MegaCrit.Sts2.Core.Logging.Log.Info($"[Jaina] Yogg cast: {card.Id} type={card.TargetType} " +
+                                                $"target={(target != null ? target.Name : "none")}");
             jaina.Scripts.Character.JainaCastTracker.MarkGenerated(card);
             jaina.Scripts.Character.Powers.RommathReplayTracker.Mark(card);
             await CardCmd.AutoPlay(choiceContext, card, target);
