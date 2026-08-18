@@ -23,9 +23,9 @@ public sealed class KhadgarMinion : JainaMinionBase
     public override int MaxInitialHp => 5;
 
     /// <summary>
-    /// 战斗视觉：卡德加卡图原画场景
+    /// 战斗视觉：卡德加卡图原画场景（puzzlemaster_khadgar.png——卡图与随从视觉共用）
     /// </summary>
-    protected override string MinionVisualsPath => "res://assets/card_art/khadgar.png";
+    protected override string MinionVisualsPath => "res://assets/card_art/puzzlemaster_khadgar.png";
 
     /// <summary>
     /// 战吼：装备魔法智慧之球（0/6 武器 + 回合结束施法效果）。仅手牌打出时触发。
