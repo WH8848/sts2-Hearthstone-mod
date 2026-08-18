@@ -60,6 +60,13 @@ public sealed class AlunethCard : JainaWeaponCardTemplate
         // 装备武器（顶替旧武器能力）
         await JainaWeaponSlot.Equip(choiceContext, base.Owner, WeaponAttack, WeaponDurability, this);
 
+        // 武器能力栏只显示特殊效果（攻击力在角色攻击意图、耐久度在图标右下角标）
+        var weapon = base.Owner.Creature.Powers.OfType<JainaWeaponPower>().FirstOrDefault();
+        if (weapon != null)
+        {
+            weapon.EffectLocKey = "JAINA_POWER_ALUNETH_EFFECT.description";
+        }
+
         // 挂载"每回合开始抽3张"效果
         await PowerCmd.Apply<AlunethPower>(choiceContext, [base.Owner.Creature], 1m, base.Owner.Creature, this);
     }

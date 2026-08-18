@@ -68,16 +68,25 @@ public sealed class JainaWeaponPower : PowerModel, IModPowerAssetOverrides
     }
 
     /// <summary>
-    /// 描述：动态注入武器攻击力变量 {Attack}（耐久度由游戏自动注入 {Amount}）。
-    /// 注意：不使用 smartDescription（该路径非 virtual 无法注入自定义变量）。
+    /// 武器特殊效果描述键（powers 表完整键，如 "JAINA_POWER_ALUNETH_EFFECT.description"）。
+    /// 由武器能力卡装备时设置；能力栏悬停只显示特殊效果（攻击力显示在角色攻击意图，
+    /// 耐久度显示在能力图标右下角标——都不出现在能力栏）。
+    /// </summary>
+    public string? EffectLocKey { get; set; }
+
+    /// <summary>
+    /// 描述：有特殊效果时只显示特殊效果文本（攻击力/耐久度不显示在能力栏）；
+    /// 无特殊效果时显示基础"武器"说明（同样不含攻击力/耐久度数字）。
     /// </summary>
     public override LocString Description
     {
         get
         {
-            var loc = new LocString("powers", base.Id.Entry + ".description");
-            loc.Add("Attack", Attack);
-            return loc;
+            if (EffectLocKey != null)
+            {
+                return new LocString("powers", EffectLocKey);
+            }
+            return new LocString("powers", base.Id.Entry + ".description");
         }
     }
 
@@ -89,9 +98,25 @@ public sealed class JainaWeaponPower : PowerModel, IModPowerAssetOverrides
     public override PowerStackType StackType => PowerStackType.Single;
 
     /// <summary>
-    /// 可见：能力栏显示武器图标与剩余耐久
+    /// 可见：能力栏显示武器图标
     /// </summary>
     protected override bool IsVisibleInternal => true;
+
+    /// <summary>
+    /// 能力图标右下角标：显示武器耐久度（Amount）。
+    /// 攻击力显示在角色攻击意图（PlayerAttackIntentPatch），耐久度显示在此角标——
+    /// 两者都不出现在能力栏描述（只显示特殊效果）。
+    /// </summary>
+    public IReadOnlyList<STS2RitsuLib.Combat.Ui.ExtraCornerAmountLabels.ExtraIconAmountLabelSlot>
+        GetPowerExtraIconAmountLabelSlots()
+    {
+        return
+        [
+            STS2RitsuLib.Combat.Ui.ExtraCornerAmountLabels.ExtraIconAmountLabelSlot.At(
+                STS2RitsuLib.Combat.Ui.ExtraCornerAmountLabels.ExtraIconAmountLabelCorner.BottomRight,
+                ((int)Amount).ToString())
+        ];
+    }
 
     /// <summary>
     /// 玩家回合开始：耐久已耗尽时兜底移除（正常流程在攻击后即移除）。

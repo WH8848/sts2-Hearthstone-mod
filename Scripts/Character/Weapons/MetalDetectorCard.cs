@@ -56,7 +56,7 @@ public sealed class MetalDetectorCard : JainaWeaponCardTemplate
         // 装备武器（顶替旧武器；若旧武器带亡语会先触发其亡语）
         await JainaWeaponSlot.Equip(choiceContext, base.Owner, WeaponAttack, WeaponDurability, this);
 
-        // 给新武器挂载效果回调
+        // 给新武器挂载效果回调 + 能力栏效果描述（武器能力栏只显示特殊效果）
         var weapon = base.Owner.Creature.Powers.OfType<JainaWeaponPower>().FirstOrDefault();
         if (weapon == null)
         {
@@ -65,10 +65,12 @@ public sealed class MetalDetectorCard : JainaWeaponCardTemplate
         if (IsUpgraded)
         {
             weapon.OnAttack = ctx => AddCoin(ctx);
+            weapon.EffectLocKey = "JAINA_POWER_METAL_DETECTOR_ATTACK_EFFECT.description";
         }
         else
         {
             weapon.OnDestroyed = ctx => AddCoin(ctx);
+            weapon.EffectLocKey = "JAINA_POWER_METAL_DETECTOR_DEATHRATTLE_EFFECT.description";
         }
     }
 
