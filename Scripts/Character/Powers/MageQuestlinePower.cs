@@ -8,6 +8,7 @@ using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Saves.Runs;
 using jaina.Scripts.Character.Cards;
 using jaina.Scripts.Character.Keywords;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -37,16 +38,34 @@ public sealed class MageQuestlinePower : PowerModel, IModPowerAssetOverrides
     /// <inheritdoc />
     public string? CustomBigIconPath => AssetProfile.BigIconPath;
 
-    /// <summary>任务阶段：1=巫师的计策，2=拖延时间，3=抵达传送大厅</summary>
+    /// <summary>
+    /// 任务阶段：1=巫师的计策，2=拖延时间，3=抵达传送大厅。
+    /// [SavedProperty]：联机状态同步/战斗存档读档会重建 Power 实例，
+    /// 普通属性不参与序列化、重建后丢失为默认值——阶段会退回 1 导致任务线错乱。
+    /// </summary>
+    [SavedProperty]
     public int Stage { get; set; } = 1;
 
     /// <summary>
     /// 本任务卡是否升级（+）：升级后的任务卡完成任务时，
     /// 奖励的是下一阶段的升级版（拖延时间+ / 抵达传送大厅+ / 奥术师晨拥+）。
+    /// [SavedProperty]：同上，重建后丢失会导致升级任务奖励错发为未升级版。
     /// </summary>
+    [SavedProperty]
     public bool RewardUpgraded { get; set; }
 
-    private readonly HashSet<JainaSpellSchool> _schools = [];
+    private HashSet<JainaSpellSchool> _schools = [];
+
+    /// <summary>
+    /// 克隆时必须重置引用类型字段：MutableClone 是 MemberwiseClone 浅拷贝，
+    /// 若共享 HashSet，阶段 1 集齐的派系会污染 canonical 单例，
+    /// 导致阶段 2/3（乃至下一局）一挂任务就 3/3 立即发奖。
+    /// </summary>
+    protected override void DeepCloneFields()
+    {
+        base.DeepCloneFields();
+        _schools = [];
+    }
 
     public override PowerType Type => PowerType.Buff;
 

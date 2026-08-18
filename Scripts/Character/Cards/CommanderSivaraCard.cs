@@ -24,7 +24,18 @@ public sealed class CommanderSivaraCard : JainaMinionCardTemplate
     /// <summary>
     /// 本卡在手牌期间施放过的法术（类型 + 施放时的升级级别，最多 3 个）
     /// </summary>
-    private readonly List<(Type Type, int UpgradeLevel)> _recordedSpells = [];
+    private List<(Type Type, int UpgradeLevel)> _recordedSpells = [];
+
+    /// <summary>
+    /// 克隆时必须重置引用类型字段：MutableClone 是 MemberwiseClone 浅拷贝，
+    /// 若共享 List，上一局记录的法术会污染 canonical 单例，
+    /// 导致本局打出西瓦拉时直接复制到历史法术（跨局残留）。
+    /// </summary>
+    protected override void DeepCloneFields()
+    {
+        base.DeepCloneFields();
+        _recordedSpells = [];
+    }
 
     /// <summary>
     /// 卡牌原画：炉石传说"指挥官西瓦拉"（Commander Sivara, TSC_087）官方原画
