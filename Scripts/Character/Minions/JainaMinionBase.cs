@@ -421,10 +421,11 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
     }
 
     /// <summary>
-    /// 显示血条（存活时），与奥斯提一致：主人与联机队友都可以查看随从生命值。
-    /// （原设计隐藏血条，联机时队友看不到随从生命值）
+    /// 随从平时不显示血条（保持场面简洁）；鼠标悬停其主人（玩家角色，自己或队友）时
+    /// 才显示血条（参考亡灵契约师奥斯提：悬停队友可查看其随从生命值），
+    /// 见 PlayerHoverPetsHealthBarPatch。
     /// </summary>
-    public override bool IsHealthBarVisible => Creature.IsAlive;
+    public override bool IsHealthBarVisible => false;
 
     /// <summary>
     /// 血条视觉缩短一半：MinionLib 强制随从可交互使血条显示，
