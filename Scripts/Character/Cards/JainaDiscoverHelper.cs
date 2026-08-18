@@ -12,54 +12,42 @@ namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
 /// 吉安娜发现（Discover）工具：从吉安娜的攻击/技能牌池中随机抽取若干张供玩家选择。
-/// 发现池：火球术、寒冰箭、火焰冲击、奥术智慧、霜冻射线、寒冰护盾。
+/// 发现池动态构建（BuildAllSpellPool：全角色攻击/技能牌含升级形态，排除英雄技能/任务线卡）。
 /// </summary>
 public static class JainaDiscoverHelper
 {
     /// <summary>
-    /// 吉安娜攻击/技能牌池（可被发现）。
-    /// 注意：火焰冲击是英雄技能，不可被衍生发现。
+    /// 吉安娜的礼物（未升级）卡面写明的固定发现池：寒冰箭、奥术智慧、火球术。
+    /// 仅吉安娜的礼物（未升级形态）使用；其他发现的池子动态构建。
     /// </summary>
-    private static readonly Type[] AttackSkillPool =
+    private static readonly Type[] JainasGiftFixedPool =
     [
-        typeof(Fireball),
         typeof(Frostbolt),
         typeof(ArcaneIntellect),
-        typeof(RayOfFrostCard),
-        typeof(IceBarrier)
+        typeof(Fireball)
     ];
 
     /// <summary>
     /// 从发现池中随机选若干张（不重复），可过滤费用上限。
+    /// 池：动态构建（全角色攻击/技能牌，含升级形态，排除英雄技能/任务线卡）。
     /// 每种法术牌按可升级级别展开：未升级形态与全部升级形态（+）都可被发现。
     /// </summary>
     public static List<CardModel> RollCandidates(Player player, int count = 3, int? maxCost = null)
     {
-        // 用 CreateCard 生成带 Owner 的实例（MutableClone 的卡无 Owner，AddGeneratedCardToCombat 会 NRE）
         var combatState = player.Creature.CombatState;
-        var pool = new List<CardModel>();
-        foreach (var t in AttackSkillPool)
+        if (combatState == null)
         {
-            var canonical = ModelDb.GetByIdOrNull<CardModel>(ModelDb.GetId(t));
-            if (canonical == null)
+            return [];
+        }
+        // 动态构建候选池：类型 + 升级级别一起展开
+        var pool = new List<CardModel>();
+        foreach (var (type, level) in jaina.Scripts.Character.JainaCastTracker.BuildAllSpellPool(combatState, player))
+        {
+            var card = jaina.Scripts.Character.JainaCastTracker.CreateCardWithUpgrade(
+                combatState, player, type, level);
+            if (card != null)
             {
-                continue;
-            }
-            // 英雄技能卡不可被发现（兜底；发现池本身不含英雄技能）
-            if (jaina.Scripts.Character.Powers.HeroPowerHandHelper.IsHeroPowerCard(canonical))
-            {
-                continue;
-            }
-            // 展开升级形态：未升级 + 允许的升级级别（点燃只能未升级形态）
-            int maxLevel = jaina.Scripts.Character.JainaCastTracker.GetDiscoverPoolMaxUpgradeLevel(t);
-            for (int level = 0; level <= maxLevel; level++)
-            {
-                var card = jaina.Scripts.Character.JainaCastTracker.CreateCardWithUpgrade(
-                    combatState, player, t, level);
-                if (card != null)
-                {
-                    pool.Add(card);
-                }
+                pool.Add(card);
             }
         }
         if (maxCost is int max && max >= 0)
@@ -78,6 +66,51 @@ public static class JainaDiscoverHelper
             pool.Remove(card);
         }
         return picked;
+    }
+
+    /// <summary>
+    /// 吉安娜的礼物（未升级）专用：三选一发现（卡面写明寒冰箭/奥术智慧/火球术，均带虚无）。
+    /// 从固定三张池中生成候选（不含升级形态），选中的牌加入手牌。
+    /// </summary>
+    public static async Task<CardModel?> DiscoverJainasGift(PlayerChoiceContext choiceContext, Player player)
+    {
+        var combatState = player?.Creature?.CombatState;
+        if (combatState == null)
+        {
+            return null;
+        }
+        var pool = new List<CardModel>();
+        foreach (var t in JainasGiftFixedPool)
+        {
+            var canonical = ModelDb.GetByIdOrNull<CardModel>(ModelDb.GetId(t));
+            if (canonical == null)
+            {
+                continue;
+            }
+            // 附加虚无：回合结束时留在手牌则消耗
+            var card = jaina.Scripts.Character.JainaCastTracker.CreateCardWithUpgrade(
+                combatState, player, t, 0);
+            if (card != null)
+            {
+                MegaCrit.Sts2.Core.Commands.CardCmd.ApplyKeyword(card, CardKeyword.Ethereal);
+                pool.Add(card);
+            }
+        }
+        if (pool.Count == 0)
+        {
+            return null;
+        }
+        var chosen = await CardSelectCmd.FromChooseACardScreen(choiceContext, pool.AsReadOnly(), player, canSkip: true);
+        if (chosen != null)
+        {
+            if (jaina.Scripts.Character.JainaHandHelper.IsHandFull(player))
+            {
+                return null;
+            }
+            jaina.Scripts.Character.JainaCastTracker.MarkGenerated(chosen);
+            await CardPileCmd.AddGeneratedCardToCombat(chosen, PileType.Hand, player);
+        }
+        return chosen;
     }
 
     /// <summary>

@@ -70,7 +70,8 @@
 - **法术派系硬编码全部动态化**：`JainaCastTracker` 新增共享动态池——`GetSchoolOf(card)`（按实例本地 Fire/Frost/Arcane 关键词动态判定派系，取代 `SchoolByCardType` 硬编码映射）、`BuildAllSpellPool(combatState, owner)`（全角色攻击/技能牌含升级形态，排除英雄技能/任务线卡）、`BuildSchoolSpellPool(combatState, owner, school, excludeType)`（按派系关键词过滤，每个形态实例判定）；`EvocationCard`/`ForbiddenShrineCard`/`TearRealityCard`（全法术池+奥术池）/`MageSpellCaster.CastRandomMageSpellFromAll`（终极索兰莉安）全部改用动态池。保留的固定池（非派系语义）：`MageSpellCaster.UsefulMageSpells`（魔法智慧之球卡面写明六张）、`JainaDiscoverHelper.AttackSkillPool`/吉安娜的礼物三张（卡面写明）、`AntonidasPower` 火球术生成、IgniteCard 升级特判。
 - **咒术洪流/露娜的口袋银河加消耗**：IncantersFlowCard 基础/升级都挂 Exhaust。
 - **移除法术派系**（这些卡无派系，之前被错误加 Arcane）：巅峰无限（Awaken 升级，OnUpgrade 移除 Arcane）、愚人套牌（DeckOfWondersCard 基础/升级）、清凉的泉水（NorgannonWisdom 升级，OnUpgrade 移除 Arcane）、旅社谍战（AmazingDeckCard 升级，OnUpgrade 移除 Arcane）、广阔智慧（Trick 升级，OnUpgrade 移除 Arcane，**基础魔术戏法=奥术保留**）、吉安娜的礼物（JainasGiftCard 基础无派系，**升级倒带=奥术**，OnUpgrade AddKeyword(Arcane)）——升级形态需在 OnUpgrade 显式增删关键词（LocalKeywords 懒缓存自基础状态）。
-- **烈焰风暴本地化**：MeteorCard 升级（烈焰风暴）描述 `{Blast:diff()}` 改为 `{Blast}`——Blast 变量只在升级形态存在，diff() 对不存在的基础变量显示异常。
+- **烈焰风暴本地化**：MeteorCard 升级（烈焰风暴）描述用 `{Blast:diff()}`——Blast 变量只在升级形态存在，但卡面上能正常显示（用户确认），不要改成 `{Blast}`。
+- **JainaDiscoverHelper 动态化**：删除硬编码 `AttackSkillPool`（5 张）——`RollCandidates` 改用 `JainaCastTracker.BuildAllSpellPool` 动态构建（全角色攻击/技能牌含升级形态，排除英雄技能/任务线卡），魔术戏法/唤醒/卡雷苟斯/戏法图腾/潮池地标/任务线阶段2 自动获得完整发现池；吉安娜的礼物（未升级）卡面写明寒冰箭/奥术智慧/火球术——新建固定三张池 `JainasGiftFixedPool` + `DiscoverJainasGift`（含虚无），JainasGiftCard 未升级分支改用（旧 `CreateGiftCard` 已删）。
 - **二级火焰冲击重放换行**：FireblastAncient zhs 描述 `造成{Damage:diff()}点伤害。\n[gold]重放1[/gold]。`（重放1 换行）。
 - **联机回合结束按钮消失修复**：主机死亡后的玩家回合切换中，客机端 `NEndTurnButton` 可能停在 Hidden/Disabled（原版 `OnTurnStarted` 恢复路径在死亡玩家自动 SetReady 时序下被跳过）→ `EndTurnButtonRestorePatch`（Powers/）：patch `NEndTurnButton.OnTurnStarted` Postfix——玩家侧回合开始 + 本地玩家存活 + 未就绪时，若按钮非 Enabled 则 `AnimIn + Enable + 反射同步 _state=0`（纯本地 UI，联机安全）。
 - **联机断联（两处根因已定位）**：

@@ -99,50 +99,10 @@ public sealed class JainasGiftCard : JainaSpellCardTemplate
         }
         else
         {
-            // 发现一张带有虚无的寒冰箭、奥术智慧或火球术（描述明确写三张卡名，不含升级形态）
-            var combatState = base.Owner.Creature.CombatState;
-            if (combatState == null)
-            {
-                return;
-            }
-            var pool = new List<CardModel>
-            {
-                CreateGiftCard(combatState, typeof(Frostbolt), 0),
-                CreateGiftCard(combatState, typeof(ArcaneIntellect), 0),
-                CreateGiftCard(combatState, typeof(Fireball), 0)
-            };
-            pool.RemoveAll(c => c == null);
-
-            var chosen = await CardSelectCmd.FromChooseACardScreen(choiceContext, pool.AsReadOnly(), base.Owner, canSkip: true);
-            if (chosen != null)
-            {
-                jaina.Scripts.Character.JainaCastTracker.MarkGenerated(chosen);
-                if (!jaina.Scripts.Character.JainaHandHelper.IsHandFull(base.Owner))
-                {
-                    await CardPileCmd.AddGeneratedCardToCombat(chosen, PileType.Hand, base.Owner);
-                }
-            }
+            // 发现一张带有虚无的寒冰箭、奥术智慧或火球术
+            // （描述明确写三张卡名，固定池见 JainaDiscoverHelper.JainasGiftFixedPool）
+            await JainaDiscoverHelper.DiscoverJainasGift(choiceContext, base.Owner);
         }
-    }
-
-    /// <summary>
-    /// 创建带虚无关键词的礼物候选卡（寒冰箭/奥术智慧/火球术，按升级级别恢复形态）
-    /// </summary>
-    private CardModel? CreateGiftCard(ICombatState combatState, System.Type cardType, int upgradeLevel)
-    {
-        var canonical = ModelDb.GetByIdOrNull<CardModel>(ModelDb.GetId(cardType));
-        if (canonical == null)
-        {
-            return null;
-        }
-        var card = combatState.CreateCard(canonical, base.Owner);
-        for (int i = 0; i < upgradeLevel && card.CurrentUpgradeLevel < card.MaxUpgradeLevel; i++)
-        {
-            card.UpgradeInternal();
-        }
-        // 附加虚无：回合结束时留在手牌则消耗
-        CardCmd.ApplyKeyword(card, CardKeyword.Ethereal);
-        return card;
     }
 
     /// <summary>
