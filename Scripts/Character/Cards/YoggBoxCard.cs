@@ -148,6 +148,36 @@ public sealed class YoggBoxCard : JainaSpellCardTemplate
     private List<CardModel> BuildSpellPool(ICombatState combatState, bool cost2PlusOnly)
     {
         var result = new List<CardModel>();
+        foreach (var canonical in GetSpellPoolCanonicals())
+        {
+            int maxLevel = jaina.Scripts.Character.JainaCastTracker.GetDiscoverPoolMaxUpgradeLevel(canonical.GetType());
+            for (int level = 0; level <= maxLevel; level++)
+            {
+                var card = jaina.Scripts.Character.JainaCastTracker.CreateCardWithUpgrade(
+                    combatState, base.Owner, canonical.GetType(), level);
+                if (card == null)
+                {
+                    continue;
+                }
+                if (cost2PlusOnly && card.EnergyCost.Canonical < 2)
+                {
+                    continue;
+                }
+                result.Add(card);
+            }
+        }
+        return result;
+    }
+
+    /// <summary>
+    /// 法术池的 canonical 卡列表（不含升级形态展开）：
+    /// 全角色攻击/技能牌，排除英雄技能卡、非角色卡池（无色/诅咒/先古/状态/任务/事件/衍生池）、
+    /// 先古稀有度卡与多人游戏专属卡。
+    /// 供 <see cref="BuildSpellPool"/> 与诊断日志（Entry.RegisterYoggPoolDiag）复用。
+    /// </summary>
+    internal static List<CardModel> GetSpellPoolCanonicals()
+    {
+        var result = new List<CardModel>();
         foreach (var canonical in ModelDb.AllCards)
         {
             if (canonical == null)
@@ -173,21 +203,7 @@ public sealed class YoggBoxCard : JainaSpellCardTemplate
             {
                 continue;
             }
-            int maxLevel = jaina.Scripts.Character.JainaCastTracker.GetDiscoverPoolMaxUpgradeLevel(canonical.GetType());
-            for (int level = 0; level <= maxLevel; level++)
-            {
-                var card = jaina.Scripts.Character.JainaCastTracker.CreateCardWithUpgrade(
-                    combatState, base.Owner, canonical.GetType(), level);
-                if (card == null)
-                {
-                    continue;
-                }
-                if (cost2PlusOnly && card.EnergyCost.Canonical < 2)
-                {
-                    continue;
-                }
-                result.Add(card);
-            }
+            result.Add(canonical);
         }
         return result;
     }

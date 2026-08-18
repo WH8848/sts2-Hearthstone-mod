@@ -69,6 +69,9 @@ public class Entry
 
         // 【临时诊断】游戏就绪后打印 JainaCardPool 实际内容（排查寒冰箭不在商店候选问题）
         RegisterMerchantDiag();
+
+        // 【诊断】打印匣中古神/谜之匣的释放卡池实际内容（模型注册就绪后）
+        RegisterYoggPoolDiag();
     }
 
     /// <summary>
@@ -130,6 +133,46 @@ public class Entry
         catch (System.Exception ex)
         {
             Logger.Info($"[JainaDiag] hand-glow register failed: {ex}");
+        }
+    }
+
+    /// <summary>
+    /// 【诊断】匣中古神/谜之匣释放卡池内容打印：
+    /// 模型注册就绪后枚举 YoggBoxCard.GetSpellPoolCanonicals()，
+    /// 按费用排序打印每张卡的 Id/标题/费用/可升级级别数，供排查卡池构成。
+    /// </summary>
+    private static void RegisterYoggPoolDiag()
+    {
+        try
+        {
+            Logger.Info("[JainaDiag] subscribing yogg pool diag...");
+            STS2RitsuLib.RitsuLibFramework.SubscribeLifecycle<STS2RitsuLib.ModelRegistryInitializedEvent>(static _ =>
+            {
+                try
+                {
+                    var pool = jaina.Scripts.Character.Cards.YoggBoxCard.GetSpellPoolCanonicals();
+                    Logger.Info($"[JainaDiag] Yogg spell pool canonical count={pool.Count}");
+                    foreach (var c in pool
+                                 .OrderBy(c => c.EnergyCost.Canonical)
+                                 .ThenBy(c => c.Id.Entry))
+                    {
+                        int maxLevel = jaina.Scripts.Character.JainaCastTracker.GetDiscoverPoolMaxUpgradeLevel(c.GetType());
+                        Logger.Info($"[JainaDiag] yogg pool: cost={c.EnergyCost.Canonical} lvl0..{maxLevel} {c.Id} | {c.Title}");
+                    }
+                    // 基础版"抽牌堆无随从时费用≥2"过滤后的池
+                    var cost2Plus = pool.Where(c => c.EnergyCost.Canonical >= 2).ToList();
+                    Logger.Info($"[JainaDiag] Yogg pool (cost>=2 only) count={cost2Plus.Count}");
+                }
+                catch (System.Exception ex)
+                {
+                    Logger.Info($"[JainaDiag] yogg pool diag error: {ex}");
+                }
+            });
+            Logger.Info("[JainaDiag] yogg pool diag subscribed.");
+        }
+        catch (System.Exception ex)
+        {
+            Logger.Info($"[JainaDiag] yogg pool diag subscribe failed: {ex}");
         }
     }
 
