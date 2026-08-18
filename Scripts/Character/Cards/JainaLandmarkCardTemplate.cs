@@ -31,6 +31,11 @@ public abstract class JainaLandmarkCardTemplate : ModCardTemplate
     protected abstract Type LandmarkType { get; }
 
     /// <summary>
+    /// 公开访问器（JainaMinionCardMap 动态构建地标→卡映射用）
+    /// </summary>
+    public Type SummonedLandmarkType => LandmarkType;
+
+    /// <summary>
     /// 卡牌类型：动态注册的"地标"类型
     /// </summary>
     public override CardType Type => JainaCardTypes.Landmark;

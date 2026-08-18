@@ -27,6 +27,11 @@ public abstract class JainaMinionCardTemplate : ModCardTemplate,
     protected abstract Type MinionType { get; }
 
     /// <summary>
+    /// 公开访问器（JainaMinionCardMap 动态构建随从→卡映射用）
+    /// </summary>
+    public Type SummonedMinionType => MinionType;
+
+    /// <summary>
     /// 随从攻击力
     /// </summary>
     protected abstract int MinionAttack { get; }
