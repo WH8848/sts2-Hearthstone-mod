@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Models;
 using jaina.Scripts.Character.Minions;
 using STS2RitsuLib.Interop.AutoRegistration;
 
@@ -26,6 +28,27 @@ public sealed class GreySageParrotCard : JainaMinionCardTemplate
     protected override int MinionAttack => 4;
 
     protected override int MinionHealth => 5;
+
+    /// <summary>
+    /// 悬停额外提示：战斗中显示"自己施放的上一个费用 ≥ 2 的法术"卡面（动态；
+    /// 无记录/非战斗时不显示；按玩家区分，联机只显示自己的）。
+    /// </summary>
+    protected override IEnumerable<IHoverTip> ExtraMinionHoverTips
+    {
+        get
+        {
+            if (base.Owner?.Creature?.CombatState is { } combatState &&
+                jaina.Scripts.Character.JainaCastTracker.For(combatState).LastCastSpellCost2PlusByPlayer.TryGetValue(
+                    base.Owner.NetId, out var last) && last is { } played)
+            {
+                var canonical = ModelDb.GetByIdOrNull<CardModel>(ModelDb.GetId(played.Type));
+                if (canonical != null)
+                {
+                    yield return new CardHoverTip(canonical);
+                }
+            }
+        }
+    }
 
     public GreySageParrotCard()
         : base(2, CardRarity.Uncommon)

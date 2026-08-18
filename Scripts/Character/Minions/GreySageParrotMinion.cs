@@ -79,6 +79,8 @@ public sealed class GreySageParrotMinion : JainaMinionBase
                 return;
             }
         }
+        // 重放的牌添加"消耗"：打出后进入消耗堆（不再进入弃牌堆，避免被反复重放）
+        card.AddKeyword(CardKeyword.Exhaust);
         // AutoPlay：免费自动打出（不消耗能量），标记为自动打出（不计入"手打"计数）
         jaina.Scripts.Character.Powers.RommathReplayTracker.Mark(card);
         await CardCmd.AutoPlay(choiceContext, card, target);

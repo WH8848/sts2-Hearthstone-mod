@@ -213,11 +213,17 @@ public static class JainaCastTracker
         var rec = For(state);
         var type = card.GetType();
         var ownerId = card.Owner.NetId;
+        // 自动打出（AutoPlay）的卡不算"玩家手打"：匣中古神/惊奇卡牌/戏法图腾随机施放、
+        // 罗曼斯/灰贤鹦鹉/诈骗犯重放等都不更新"上一张"（诈骗犯只重放玩家自己手打的卡）。
+        bool isHandPlayed = !Powers.RommathReplayTracker.IsMarked(card);
 
-        // "上一张"（蓄谋诈骗犯战吼重放用）：记录玩家自己打出的<b>所有卡牌</b>
+        // "上一张"（蓄谋诈骗犯战吼重放用）：只记录玩家自己手打的<b>所有卡牌</b>
         // （法术/随从/英雄/地标/武器，按玩家区分——联机每个玩家只重放自己施放的上一张；
-        // 英雄技能卡除外，上面已排除）
-        rec.LastPlayedCardByPlayer[ownerId] = (type, card.CurrentUpgradeLevel, IsGeneratedCard(card));
+        // 英雄技能卡除外，上面已排除；随机/自动打出的卡不计入）
+        if (isHandPlayed)
+        {
+            rec.LastPlayedCardByPlayer[ownerId] = (type, card.CurrentUpgradeLevel, IsGeneratedCard(card));
+        }
 
         // 法术牌（攻击/技能，或挂"法术牌"关键词的卡）才进入攻击/技能池与派系/重放计数
         // （倒带/罗曼斯/西瓦拉/派系追踪用）——随从/英雄/地标/武器卡只记录"上一张"
@@ -230,8 +236,7 @@ public static class JainaCastTracker
 
         rec.SetFor(rec.PlayedAttackSkillsByPlayer, ownerId).Add(type);
         // 记录"上一张施放的攻击/技能牌"（蓄谋诈骗犯战吼重放用）——按玩家区分，
-        // 联机时每个玩家只重放自己施放的上一张牌
-        rec.LastPlayedCardByPlayer[ownerId] = (type, card.CurrentUpgradeLevel, IsGeneratedCard(card));
+        // 联机时每个玩家只重放自己施放的上一张牌；只计手打（上面已记录，这里不再重复）
         var playedUpgrades = rec.MapFor(rec.PlayedUpgradeLevelsByPlayer, ownerId);
         if (card.CurrentUpgradeLevel > 0 &&
             (!playedUpgrades.TryGetValue(type, out var prev) || card.CurrentUpgradeLevel > prev))
