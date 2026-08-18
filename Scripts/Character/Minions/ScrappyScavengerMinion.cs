@@ -34,6 +34,8 @@ public sealed class ScrappyScavengerMinion : JainaMinionBase
             return;
         }
         var energy = owner.PlayerCombatState?.Energy ?? 0;
-        await JainaDiscoverHelper.DiscoverCardOfCostAndAddToHand(choiceContext, owner, energy);
+        // 同名卡不可自发现：排除拾荒清道夫自身
+        var ownCardType = jaina.Scripts.Character.Minions.JainaMinionCardMap.GetCardType(GetType());
+        await JainaDiscoverHelper.DiscoverCardOfCostAndAddToHand(choiceContext, owner, energy, ownCardType);
     }
 }

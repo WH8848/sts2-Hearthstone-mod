@@ -117,9 +117,10 @@ public static class JainaDiscoverHelper
     /// 池：JainaCardPool 全部卡（法术/随从/地标），每种按可升级级别展开；
     /// 排除英雄技能卡（火焰冲击等）、英雄卡（魔导师晨拥）与任务线卡（不可被发现）；
     /// X 费卡（禁忌烈焰/禁忌神龛）费用不定，不管剩余费用多少总是作为候选。
+    /// 同名卡不可自发现：排除 <paramref name="excludeType"/>（发起发现的卡自身）。
     /// </summary>
     public static async Task<CardModel?> DiscoverCardOfCostAndAddToHand(
-        PlayerChoiceContext choiceContext, Player player, int cost)
+        PlayerChoiceContext choiceContext, Player player, int cost, System.Type? excludeType = null)
     {
         if (player?.Creature?.CombatState == null)
         {
@@ -130,6 +131,11 @@ public static class JainaDiscoverHelper
 
         void AddCandidates(Type cardType)
         {
+            // 同名卡不可自发现：排除发起发现的卡自身
+            if (excludeType != null && cardType == excludeType)
+            {
+                return;
+            }
             var canonical = ModelDb.GetByIdOrNull<CardModel>(ModelDb.GetId(cardType));
             if (canonical == null)
             {

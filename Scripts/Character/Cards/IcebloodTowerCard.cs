@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -13,7 +12,8 @@ namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
 /// 冰血哨塔 (Iceblood Tower) - 3费能力牌（罕见）。
-/// 在你的回合结束时，随机从你的抽牌堆中施放另一个法术。
+/// 在你的回合结束时，从你的抽牌堆中抽一张法术牌并打出（抽牌堆没有法术时从弃牌堆抽）。
+/// 可叠层：每张冰血哨塔在回合结束各触发一次。打出的法术不被消耗（进弃牌堆）。
 /// 升级后费用变为 2。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
@@ -51,14 +51,8 @@ public sealed class IcebloodTowerCard : JainaSpellCardTemplate
         // 记录施放（倒带/罗曼斯/三派系追踪）
         jaina.Scripts.Character.JainaCastTracker.RecordPlayed(this);
 
-        // 顶替旧的冰血哨塔效果（打出新哨塔替换旧效果）
-        var old = base.Owner.Creature.Powers.OfType<IcebloodTowerPower>().FirstOrDefault();
-        if (old != null)
-        {
-            await PowerCmd.Remove(old);
-        }
-
-        // 挂冰血哨塔（回合结束时随机施放抽牌堆法术）
+        // 挂冰血哨塔（可叠层：每张哨塔在回合结束各触发一次，
+        // 从抽牌堆抽一张法术打出，抽牌堆没有则从弃牌堆抽；打出的法术不被消耗）
         await PowerCmd.Apply<IcebloodTowerPower>(
             choiceContext, [base.Owner.Creature], 1m, base.Owner.Creature, this);
     }
