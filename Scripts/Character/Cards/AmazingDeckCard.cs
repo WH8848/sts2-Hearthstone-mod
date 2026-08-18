@@ -8,9 +8,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
-using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Models;
-using MegaCrit.Sts2.Core.Nodes.Vfx;
 using jaina.Scripts.Character.Keywords;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -128,7 +126,9 @@ public sealed class AmazingDeckCard : JainaSpellCardTemplate
             }
 
             var results = await CardPileCmd.AddGeneratedCardsToCombat(shuffled, PileType.Draw, owner, CardPilePosition.Random);
-            PlayShuffleVfx(owner, results);
+            // 原版洗入动画（牌面预览展示，速度与原版一致）+ 刷新抽牌堆计数
+            CardCmd.PreviewCardPileAdd(results);
+            RefreshDrawPileCount(owner, results);
 
             // 抽取其中一张（洗入抽牌堆的其它角色的卡牌之一入手）
             var shuffledCards = results.Where(r => r.success).Select(r => r.cardAdded).ToList();
@@ -157,16 +157,17 @@ public sealed class AmazingDeckCard : JainaSpellCardTemplate
             cards.Add(card);
         }
         var addResults = await CardPileCmd.AddGeneratedCardsToCombat(cards, PileType.Draw, owner, CardPilePosition.Random);
-        PlayShuffleVfx(owner, addResults);
+        // 原版洗入动画（牌面预览展示，速度与原版一致）+ 刷新抽牌堆计数
+        CardCmd.PreviewCardPileAdd(addResults);
+        RefreshDrawPileCount(owner, addResults);
     }
 
     /// <summary>
-    /// 洗入抽牌堆动画：从打出区飞向抽牌堆，动画完成自动刷新抽牌堆计数。
-    /// 新生成的洗入牌没有 NCard 节点，原版 tween 流程不会为它们创建动画
-    /// （CardAddFinished 不触发 → 抽牌堆数字不刷新）；这里手动创建洗入飞行 VFX
-    /// （与原版 CardPileCmd 生成卡洗入同一 VFX），飞行完成即触发计数 +1。
+    /// 洗入后刷新抽牌堆计数：新生成的洗入牌没有 NCard 节点，原版 tween 流程
+    /// 不会为它们触发 CardAddFinished（→ 抽牌堆数字不刷新），这里手动触发，
+    /// 与原版洗入预览动画并行（计数 +1 bump 动画与原版一致）。
     /// </summary>
-    private static void PlayShuffleVfx(Player owner, IReadOnlyList<CardPileAddResult> results)
+    private static void RefreshDrawPileCount(Player owner, IReadOnlyList<CardPileAddResult> results)
     {
         if (results.Count == 0)
         {
@@ -174,23 +175,17 @@ public sealed class AmazingDeckCard : JainaSpellCardTemplate
         }
         try
         {
-            var drawPile = PileType.Draw.GetPile(owner);
-            var playPile = PileType.Play.GetPile(owner);
-            var trailPath = owner.Character.TrailPath;
-            var vfxContainer = owner.Creature.GetVfxContainer();
             foreach (var r in results)
             {
-                if (!r.success)
+                if (r.success)
                 {
-                    continue;
+                    r.cardAdded.Pile?.InvokeCardAddFinished();
                 }
-                var vfx = NCardFlyShuffleVfx.Create(playPile, drawPile, trailPath);
-                vfxContainer?.AddChildSafely(vfx);
             }
         }
         catch (System.Exception ex)
         {
-            MegaCrit.Sts2.Core.Logging.Log.Error($"[Jaina] shuffle vfx failed: {ex}");
+            MegaCrit.Sts2.Core.Logging.Log.Error($"[Jaina] refresh draw count failed: {ex}");
         }
     }
 }
