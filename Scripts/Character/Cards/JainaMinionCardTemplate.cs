@@ -178,6 +178,7 @@ public abstract class JainaMinionCardTemplate : ModCardTemplate,
         // 记录施放（诈骗犯重放"上一张"用——随从卡可被诈骗犯重放，重放只召唤不触发战吼）
         jaina.Scripts.Character.JainaCastTracker.RecordPlayed(this);
 
+        MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaDiag] MinionCard OnPlay: {GetType().Name} autoPlay={cardPlay.IsAutoPlay} minionType={MinionType.Name}");
         LastSummonedMinion = await JainaMinionPool.SummonMinionByType(
             choiceContext,
             base.Owner,
@@ -186,5 +187,6 @@ public abstract class JainaMinionCardTemplate : ModCardTemplate,
             attack: StandardMinionAttack,
             position: MinionPosition,
             source: cardPlay.IsAutoPlay ? null : this);
+        MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaDiag] MinionCard summon result: {GetType().Name} summoned={(LastSummonedMinion != null)}");
     }
 }

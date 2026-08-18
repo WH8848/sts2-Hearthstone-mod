@@ -29,9 +29,11 @@ public sealed class WinterspringWhelpMinion : JainaMinionBase
     /// </summary>
     public override async Task OnBattlecry(PlayerChoiceContext choiceContext)
     {
+        MegaCrit.Sts2.Core.Logging.Log.Info("[JainaDiag] WinterspringWhelp OnBattlecry triggered");
         var owner = Creature.PetOwner;
         if (owner == null)
         {
+            MegaCrit.Sts2.Core.Logging.Log.Warn("[JainaDiag] WinterspringWhelp PetOwner null");
             return;
         }
         var ownCardType = jaina.Scripts.Character.Minions.JainaMinionCardMap.GetCardType(GetType());
