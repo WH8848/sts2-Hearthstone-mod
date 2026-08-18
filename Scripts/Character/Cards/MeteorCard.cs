@@ -30,10 +30,15 @@ public sealed class MeteorCard : JainaSpellCardTemplate
     /// <summary>
     /// 动态伤害变量（STS2 原版机制：指向目标时 {Damage} 预览实际伤害，含力量/虚弱/易伤）：
     /// 基础 = 15 点主伤害 + 2 次 4 点溅射；升级（烈焰风暴）= 7 次 5 点。
+    /// 注意：Blast 变量<b>基础形态也声明</b>（值 5）——升级分支的描述 {Blast:diff()}
+    /// 在基础形态的升级预览/悬停中也要能解析（变量不存在会导致整个 IfUpgraded 模板
+    /// 显示为字面文本，卡面出现 {Blast:diff()} 不替换）。
     /// </summary>
     protected override IEnumerable<DynamicVar> CanonicalVars => IsUpgraded
         ? [new DamageVar("Blast", 5m, ValueProp.Move)]
-        : [new DamageVar("Damage", 15m, ValueProp.Move), new DamageVar("Splash", 4m, ValueProp.Move)];
+        : [new DamageVar("Blast", 5m, ValueProp.Move),
+           new DamageVar("Damage", 15m, ValueProp.Move),
+           new DamageVar("Splash", 4m, ValueProp.Move)];
 
     /// <summary>
     /// 卡牌原画：陨石术 / 升级后（烈焰风暴）切换原画
