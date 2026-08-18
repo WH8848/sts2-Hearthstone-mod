@@ -11,7 +11,8 @@ namespace jaina.Scripts.Character;
 
 /// <summary>
 /// Jaina 随机卡牌池通用过滤（所有随机取卡统一使用）：
-/// 排除 7 个非角色卡池（无色/诅咒/先古/状态/任务/事件/衍生）、
+/// 排除 8 个非角色/衍生卡池（无色/诅咒/先古/状态/任务/事件/衍生 +
+/// 吉安娜中立衍生池 JainaNeutralCardPool——含任务奖励卡与全部衍生牌）、
 /// 先古稀有度（CardRarity.Ancient）、多人游戏专属卡（MultiplayerConstraint != None）
 /// 与<b>任务卡</b>（带 Quest 关键词的卡，如禁忌序列/打开时空之门/巫师的计策/拖延时间/抵达传送大厅——
 /// 不可被发现、不可被随机释放/随机生成）。
@@ -24,7 +25,9 @@ public static class JainaRandomPoolHelper
 {
     /// <summary>
     /// 被排除的非角色卡池类型
-    /// （无色/诅咒/先古/状态/任务/事件/衍生池）
+    /// （无色/诅咒/先古/状态/任务/事件/衍生池 + 吉安娜中立/衍生池
+    /// ——JainaNeutralCardPool 含任务奖励卡（时空扭曲/源生之石/奥术师晨拥）与全部衍生牌，
+    /// 不可被发现、不可被随机释放/随机生成）。
     /// </summary>
     private static readonly HashSet<Type> ExcludedPoolTypes =
     [
@@ -34,7 +37,8 @@ public static class JainaRandomPoolHelper
         typeof(MegaCrit.Sts2.Core.Models.CardPools.StatusCardPool),
         typeof(MegaCrit.Sts2.Core.Models.CardPools.QuestCardPool),
         typeof(MegaCrit.Sts2.Core.Models.CardPools.EventCardPool),
-        typeof(MegaCrit.Sts2.Core.Models.CardPools.TokenCardPool)
+        typeof(MegaCrit.Sts2.Core.Models.CardPools.TokenCardPool),
+        typeof(JainaNeutralCardPool)
     ];
 
     /// <summary>
