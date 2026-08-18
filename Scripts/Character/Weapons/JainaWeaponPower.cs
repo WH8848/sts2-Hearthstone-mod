@@ -9,6 +9,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Rooms;
+using MegaCrit.Sts2.Core.Saves.Runs;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 using STS2RitsuLib.Scaffolding.Content.Patches;
@@ -36,8 +37,13 @@ public sealed class JainaWeaponPower : PowerModel, IModPowerAssetOverrides
     public string? CustomBigIconPath => AssetProfile.BigIconPath;
 
     /// <summary>
-    /// 武器攻击力（顶替时随武器卡更新）
+    /// 武器攻击力（顶替时随武器卡更新）。
+    /// [SavedProperty]：联机状态同步/战斗存档读档会重建 Power 实例，
+    /// 普通属性不参与序列化、重建后丢失为 0——武器攻击行动
+    /// （JainaWeaponAttackAction.CanAct 判定 Attack &gt; 0）会因此失效，
+    /// 表现为"装备武器后点击自己无法攻击敌人"。
     /// </summary>
+    [SavedProperty]
     public int Attack { get; private set; }
 
     /// <summary>
