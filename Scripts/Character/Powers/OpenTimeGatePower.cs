@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -43,6 +44,20 @@ public sealed class OpenTimeGatePower : PowerModel, IModPowerAssetOverrides
     public override PowerStackType StackType => PowerStackType.Single;
 
     protected override bool IsVisibleInternal => true;
+
+    /// <summary>
+    /// 悬停描述：动态显示当前任务进度（已施放 {Count}/8 个牌组之外的法术牌）。
+    /// 覆写 Description（smartDescription 非 virtual 无法注入变量）。
+    /// </summary>
+    public override LocString Description
+    {
+        get
+        {
+            var loc = new LocString("powers", base.Id.Entry + ".description");
+            loc.Add("Count", _count);
+            return loc;
+        }
+    }
 
     /// <summary>
     /// 打出此能力后才开始计数：清空已统计的施放次数

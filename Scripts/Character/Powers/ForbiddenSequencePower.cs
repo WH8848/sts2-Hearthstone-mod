@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -42,6 +43,21 @@ public sealed class ForbiddenSequencePower : PowerModel, IModPowerAssetOverrides
     public override PowerStackType StackType => PowerStackType.Single;
 
     protected override bool IsVisibleInternal => true;
+
+    /// <summary>
+    /// 悬停描述：动态显示当前任务进度（发现 {Count}/{Threshold} 张）。
+    /// 覆写 Description（smartDescription 非 virtual 无法注入变量）。
+    /// </summary>
+    public override LocString Description
+    {
+        get
+        {
+            var loc = new LocString("powers", base.Id.Entry + ".description");
+            loc.Add("Count", _count);
+            loc.Add("Threshold", Threshold);
+            return loc;
+        }
+    }
 
     /// <summary>
     /// 打出禁忌序列后才开始计数：把计数起点设为当前最新发现 Seq，

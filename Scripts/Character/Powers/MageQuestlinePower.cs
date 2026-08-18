@@ -7,6 +7,7 @@ using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Saves.Runs;
 using jaina.Scripts.Character.Cards;
@@ -55,6 +56,34 @@ public sealed class MageQuestlinePower : PowerModel, IModPowerAssetOverrides
     public bool RewardUpgraded { get; set; }
 
     private HashSet<JainaSpellSchool> _schools = [];
+
+    /// <summary>
+    /// 悬停描述：动态显示派系任务进度（已完成什么派系、未完成什么派系）。
+    /// 覆写 Description（smartDescription 非 virtual 无法注入变量）。
+    /// </summary>
+    public override LocString Description
+    {
+        get
+        {
+            var loc = new LocString("powers", base.Id.Entry + ".description");
+            var done = string.Join("、", AllSchools.Where(_schools.Contains).Select(SchoolName));
+            var missing = string.Join("、", AllSchools.Where(s => !_schools.Contains(s)).Select(SchoolName));
+            loc.Add("Done", done.Length > 0 ? done : "无");
+            loc.Add("Missing", missing.Length > 0 ? missing : "无");
+            return loc;
+        }
+    }
+
+    private static readonly JainaSpellSchool[] AllSchools =
+        [JainaSpellSchool.Fire, JainaSpellSchool.Frost, JainaSpellSchool.Arcane];
+
+    private static string SchoolName(JainaSpellSchool school) => school switch
+    {
+        JainaSpellSchool.Fire => "火焰",
+        JainaSpellSchool.Frost => "冰霜",
+        JainaSpellSchool.Arcane => "奥术",
+        _ => "未知"
+    };
 
     /// <summary>
     /// 克隆时必须重置引用类型字段：MutableClone 是 MemberwiseClone 浅拷贝，
