@@ -56,6 +56,10 @@ public class Entry
         // Jaina 法术/随从卡在手牌中金色发光；非衍生卡保持原版行为
         RegisterCardHandGlow(assembly);
 
+        // 小玩物小屋抽到的牌：手牌蓝色描边发光（与衍生卡金色区分，提示本回合打出可重新开启小屋）
+        // 规则注册到 CardModel 基类，抽到的任意卡（含中立卡）都生效；必须在内容注册冻结前调用
+        jaina.Scripts.Character.Powers.TrinketHandGlow.Register();
+
         // 注册吉安娜随从布局：将随从摆放在玩家（充能球区域）周围
         MinionLayoutManager.Register(new OrbStyleMinionLayout(), priority: 100);
 
