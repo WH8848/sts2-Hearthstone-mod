@@ -60,7 +60,8 @@ public sealed class TrickTotemPower : PowerModel, IModPowerAssetOverrides
         var rng = player.RunState.Rng.CombatTargets;
 
         // 全角色卡牌候选：所有攻击/技能牌（不含英雄技能卡）且费用消耗 <= 1，
-        // 按可升级级别展开（未升级与升级形态都可能被施放）
+        // 按可升级级别展开（未升级与升级形态都可能被施放）；
+        // 应用 Jaina 随机池统一排除（7 个非角色池/先古稀有度/多人专属）
         var candidates = new List<CardModel>();
         foreach (var canonical in ModelDb.AllCards)
         {
@@ -73,6 +74,10 @@ public sealed class TrickTotemPower : PowerModel, IModPowerAssetOverrides
                 continue;
             }
             if (HeroPowerHandHelper.IsHeroPowerCard(canonical))
+            {
+                continue;
+            }
+            if (!jaina.Scripts.Character.JainaRandomPoolHelper.IsEligible(canonical))
             {
                 continue;
             }

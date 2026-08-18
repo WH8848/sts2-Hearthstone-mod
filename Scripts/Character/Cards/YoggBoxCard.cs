@@ -171,8 +171,8 @@ public sealed class YoggBoxCard : JainaSpellCardTemplate
 
     /// <summary>
     /// 法术池的 canonical 卡列表（不含升级形态展开）：
-    /// 全角色攻击/技能牌，排除英雄技能卡、非角色卡池（无色/诅咒/先古/状态/任务/事件/衍生池）、
-    /// 先古稀有度卡与多人游戏专属卡。
+    /// 全角色攻击/技能牌，排除英雄技能卡与所有 Jaina 随机池排除项
+    /// （7 个非角色池/先古稀有度/多人专属，见 <see cref="JainaRandomPoolHelper"/>）。
     /// 供 <see cref="BuildSpellPool"/> 与诊断日志（Entry.RegisterYoggPoolDiag）复用。
     /// </summary>
     internal static List<CardModel> GetSpellPoolCanonicals()
@@ -192,50 +192,12 @@ public sealed class YoggBoxCard : JainaSpellCardTemplate
             {
                 continue;
             }
-            // 排除非角色卡池（无色/诅咒/先古/状态/任务/事件/衍生池）
-            if (IsInExcludedPool(canonical))
-            {
-                continue;
-            }
-            // 排除先古稀有度卡与多人游戏专属卡
-            if (canonical.Rarity == CardRarity.Ancient ||
-                canonical.MultiplayerConstraint != CardMultiplayerConstraint.None)
+            if (!jaina.Scripts.Character.JainaRandomPoolHelper.IsEligible(canonical))
             {
                 continue;
             }
             result.Add(canonical);
         }
         return result;
-    }
-
-    /// <summary>
-    /// 该卡是否属于被排除的非角色卡池
-    /// （无色/诅咒/先古/状态/任务/事件/衍生池）
-    /// </summary>
-    private static readonly HashSet<Type> ExcludedPoolTypes =
-    [
-        typeof(MegaCrit.Sts2.Core.Models.CardPools.ColorlessCardPool),
-        typeof(MegaCrit.Sts2.Core.Models.CardPools.CurseCardPool),
-        typeof(MegaCrit.Sts2.Core.Models.CardPools.DeprecatedCardPool),
-        typeof(MegaCrit.Sts2.Core.Models.CardPools.StatusCardPool),
-        typeof(MegaCrit.Sts2.Core.Models.CardPools.QuestCardPool),
-        typeof(MegaCrit.Sts2.Core.Models.CardPools.EventCardPool),
-        typeof(MegaCrit.Sts2.Core.Models.CardPools.TokenCardPool)
-    ];
-
-    private static bool IsInExcludedPool(CardModel canonical)
-    {
-        foreach (var pool in ModelDb.AllCardPools)
-        {
-            if (pool == null || !ExcludedPoolTypes.Contains(pool.GetType()))
-            {
-                continue;
-            }
-            if (pool.AllCards.Contains(canonical))
-            {
-                return true;
-            }
-        }
-        return false;
     }
 }

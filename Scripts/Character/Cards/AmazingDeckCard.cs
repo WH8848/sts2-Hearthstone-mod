@@ -105,7 +105,9 @@ public sealed class AmazingDeckCard : JainaSpellCardTemplate
                 {
                     continue; // 排除自己（吉安娜）
                 }
-                var candidates = pool.AllCards.Where(c => c != null).ToList();
+                var candidates = pool.AllCards
+                    .Where(c => c != null && jaina.Scripts.Character.JainaRandomPoolHelper.IsEligible(c))
+                    .ToList();
                 if (candidates.Count == 0)
                 {
                     continue;

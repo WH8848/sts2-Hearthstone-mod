@@ -47,10 +47,12 @@ public static class AmazingCardDrawPatch
             var rng = player.RunState.Rng.CombatTargets;
 
             // 全角色卡牌候选：所有攻击/技能牌（不含英雄技能卡），按可升级级别展开
+            // （应用 Jaina 随机池统一排除：7 个非角色池/先古稀有度/多人专属）
             var candidates = ModelDb.AllCards
                 .Where(c => c != null &&
                             (c.Type == CardType.Attack || c.Type == CardType.Skill) &&
-                            !HeroPowerHandHelper.IsHeroPowerCard(c))
+                            !HeroPowerHandHelper.IsHeroPowerCard(c) &&
+                            jaina.Scripts.Character.JainaRandomPoolHelper.IsEligible(c))
                 .ToList();
             if (candidates.Count == 0)
             {

@@ -92,12 +92,14 @@ public sealed class DeckOfWondersCard : JainaSpellCardTemplate
             // 原牌原始费用
             int originalCost = spell.EnergyCost.Canonical;
             // 目标池：所有法术牌（攻击/技能牌）中原始费用 = 原费用 + 1 的牌，
-            // 每种按可升级级别展开（未升级形态与升级形态（+）都可作为变形目标）
+            // 每种按可升级级别展开（未升级形态与升级形态（+）都可作为变形目标）；
+            // 应用 Jaina 随机池统一排除（7 个非角色池/先古稀有度/多人专属）
             var candidateTypes = ModelDb.AllCards
                 .Where(c => c != null &&
                             (c.Type == CardType.Attack || c.Type == CardType.Skill) &&
                             c.EnergyCost.Canonical == originalCost + 1 &&
-                            !HeroPowerHandHelper.IsHeroPowerCard(c))
+                            !HeroPowerHandHelper.IsHeroPowerCard(c) &&
+                            jaina.Scripts.Character.JainaRandomPoolHelper.IsEligible(c))
                 .ToList();
             if (candidateTypes.Count == 0)
             {
