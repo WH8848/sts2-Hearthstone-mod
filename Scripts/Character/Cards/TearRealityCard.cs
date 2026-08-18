@@ -87,20 +87,6 @@ public sealed class TearRealityCard : JainaSpellCardTemplate
     ];
 
     /// <summary>
-    /// 吉安娜全部奥术法术牌池（攻击/技能牌中挂奥术派系关键词的）。
-    /// </summary>
-    private static readonly System.Type[] AllArcaneSpellTypes =
-    [
-        typeof(ArcaneIntellect),
-        typeof(Trick),
-        typeof(Awaken),
-        typeof(NorgannonWisdom),
-        typeof(ArcaneBarrage),
-        typeof(ApexisBlast),
-        typeof(IgniteCard)
-    ];
-
-    /// <summary>
     /// 展开候选池：每种法术牌按其允许的升级级别生成 (类型, 升级级别) 候选
     /// （未升级 + 升级形态，升级后的法术牌同样可被检索；点燃只能未升级形态）。
     /// </summary>
@@ -189,19 +175,17 @@ public sealed class TearRealityCard : JainaSpellCardTemplate
     /// <summary>
     /// 操控时间：从吉安娜全部奥术法术牌（含升级形态）中随机取，两次三选一发现，
     /// 选中的费用减少 1 点置入手牌。
+    /// 奥术判定按每个形态实例的关键词动态过滤（挂奥术派系关键词的攻击/技能牌）：
+    /// 火焰的点燃、升级后变火焰之地的埃匹希斯冲击形态都不会进入奥术池；
+    /// 同名卡不可自发现（排除撕裂现实自身）。
     /// </summary>
     private async Task DiscoverTwoArcane(PlayerChoiceContext choiceContext)
     {
-        if (AllArcaneSpellTypes.Length == 0)
-        {
-            return;
-        }
-
         var rng = base.Owner.RunState.Rng.CombatCardSelection;
         for (int i = 0; i < 2; i++)
         {
             // 随机取最多 3 个候选（不重复，含升级形态）
-            var pool = ExpandPool(AllArcaneSpellTypes);
+            var pool = BuildArcanePool();
             var candidates = new List<CardModel>();
             while (candidates.Count < 3 && pool.Count > 0)
             {
@@ -236,5 +220,57 @@ public sealed class TearRealityCard : JainaSpellCardTemplate
                 await CardPileCmd.AddGeneratedCardToCombat(chosen, PileType.Hand, base.Owner);
             }
         }
+    }
+
+    /// <summary>
+    /// 动态构建奥术法术候选池：全角色攻击/技能牌中挂"奥术派系"关键词的卡，
+    /// 按每个升级形态展开（该形态实例挂奥术关键词才纳入——升级后派系变化的形态
+    /// 如火焰之地传送门自动排除）；排除英雄技能卡、任务线卡与自身。
+    /// </summary>
+    private List<(System.Type Type, int UpgradeLevel)> BuildArcanePool()
+    {
+        var combatState = base.Owner?.Creature?.CombatState;
+        if (combatState == null)
+        {
+            return [];
+        }
+        var result = new List<(System.Type Type, int UpgradeLevel)>();
+        foreach (var canonical in ModelDb.AllCards)
+        {
+            if (canonical == null)
+            {
+                continue;
+            }
+            if (canonical.Type != CardType.Attack && canonical.Type != CardType.Skill)
+            {
+                continue;
+            }
+            if (jaina.Scripts.Character.Powers.HeroPowerHandHelper.IsHeroPowerCard(canonical))
+            {
+                continue;
+            }
+            // 同名卡不可自发现：排除自身
+            if (canonical.GetType() == typeof(TearRealityCard))
+            {
+                continue;
+            }
+            // 任务线卡不可被发现
+            if (canonical.CanonicalKeywords?.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Quest) == true)
+            {
+                continue;
+            }
+            int maxLevel = jaina.Scripts.Character.JainaCastTracker.GetDiscoverPoolMaxUpgradeLevel(canonical.GetType());
+            for (int level = 0; level <= maxLevel; level++)
+            {
+                var card = jaina.Scripts.Character.JainaCastTracker.CreateCardWithUpgrade(
+                    combatState, base.Owner, canonical.GetType(), level);
+                // 该形态实例挂奥术派系关键词才纳入（升级后派系变化的形态自动排除）
+                if (card != null && card.Keywords.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Arcane))
+                {
+                    result.Add((canonical.GetType(), level));
+                }
+            }
+        }
+        return result;
     }
 }
