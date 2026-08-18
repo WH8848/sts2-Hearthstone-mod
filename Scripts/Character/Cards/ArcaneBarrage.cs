@@ -16,8 +16,8 @@ namespace jaina.Scripts.Character.Cards;
 /// <summary>
 /// 奥术弹幕 (Arcane Barrage) - 1费攻击（普通，奥术派系）。
 /// 对一个敌人造成 3 点伤害，再随机对所有敌人造成 2 次 2 点伤害。
-/// 升级后变为"灯光表演 (Lightshow)"：对随机敌人造成 2 次 2 点伤害，
-/// 同名牌每释放 1 次次数 +1（光束数随本局施放次数递增）。
+/// 升级后变为"灯光表演 (Lightshow)"（0费）：对随机敌人造成 2 次 2 点伤害，
+/// 每次释放攻击次数 +1（本局内，按玩家区分）；每次升级攻击次数 +1；可无限升级。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
 public sealed class ArcaneBarrage : JainaSpellCardTemplate
@@ -34,6 +34,11 @@ public sealed class ArcaneBarrage : JainaSpellCardTemplate
     ];
 
     /// <summary>
+    /// 可无限升级（灯光表演每次升级攻击次数 +1；费用只在升级到灯光表演时减 1 次）
+    /// </summary>
+    public override int MaxUpgradeLevel => int.MaxValue;
+
+    /// <summary>
     /// 卡牌原画：奥术弹幕 / 升级后（灯光表演）切换原画
     /// </summary>
     public override string CustomPortraitPath =>
@@ -42,6 +47,17 @@ public sealed class ArcaneBarrage : JainaSpellCardTemplate
     public ArcaneBarrage()
         : base(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy, true)
     {
+    }
+
+    /// <summary>
+    /// 升级：第一次升级（→灯光表演）费用 1 → 0（只减一次）；后续升级只增加攻击次数不减费。
+    /// </summary>
+    protected override void OnUpgrade()
+    {
+        if (CurrentUpgradeLevel == 1)
+        {
+            EnergyCost.UpgradeBy(-1);
+        }
     }
 
     /// <summary>
@@ -62,13 +78,15 @@ public sealed class ArcaneBarrage : JainaSpellCardTemplate
     }
 
     /// <summary>
-    /// 灯光表演光束数：2 + 本局已施放过的灯光表演次数（施放本张前计数，按玩家区分）
+    /// 灯光表演光束数：2（基础）+ 本局已施放的灯光表演次数（每次释放 +1，按玩家区分）
+    /// + 升级次数（灯光表演之后每次升级 +1）。
     /// </summary>
     private int LightshowBeamCount(ICombatState combatState)
     {
         var rec = jaina.Scripts.Character.JainaCastTracker.For(combatState);
         rec.LightshowCastsByPlayer.TryGetValue(base.Owner.NetId, out var casts);
-        return 2 + casts;
+        int upgrades = Math.Max(0, CurrentUpgradeLevel - 1);
+        return 2 + casts + upgrades;
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
