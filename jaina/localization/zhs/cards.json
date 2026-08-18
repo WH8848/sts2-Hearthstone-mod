@@ -116,7 +116,7 @@
   "JAINA_CARD_METEOR_CARD.description": "{IfUpgraded:show:造成7次{Blast:diff()}点伤害，随机分配到所有敌人身上。|对一个敌人造成{Damage:diff()}点伤害，再对随机敌人造成2次{Splash:diff()}点伤害。}",
   "JAINA_CARD_ARCANE_BARRAGE.title": "灯光表演",
   
-  "JAINA_CARD_ARCANE_BARRAGE.description": "对随机敌人造成{Beams:diff()}次2点伤害。\n将一张[gold]灯光表演+{Upgraded}[/gold]加入你的[gold]弃牌堆[/gold]。\n可无限升级。",
+  "JAINA_CARD_ARCANE_BARRAGE.description": "对随机敌人造成{Beams:diff()}次2点伤害。\n每次释放攻击次数+1。\n每次升级攻击次数+1。\n可无限升级。",
   "JAINA_CARD_FORBIDDEN_SEQUENCE_CARD.title": "禁忌序列",
   "JAINA_CARD_FORBIDDEN_SEQUENCE_CARD.description": "[gold]任务[/gold]:[gold]发现[/gold]{IfUpgraded:show:7|8}张牌。\n[gold]奖励:源生之石[/gold]。",
   "JAINA_CARD_FORBIDDEN_STONE_CARD.title": "源生之石",

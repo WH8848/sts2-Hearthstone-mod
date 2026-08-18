@@ -116,7 +116,7 @@
   "JAINA_CARD_METEOR_CARD.description": "{IfUpgraded:show:Deal 7 instances of {Blast:diff()} damage, split randomly among all enemies.|Deal {Damage:diff()} damage to an enemy, then deal 2 instances of {Splash:diff()} damage to random enemies.}",
   "JAINA_CARD_ARCANE_BARRAGE.title": "Lightshow",
   
-  "JAINA_CARD_ARCANE_BARRAGE.description": "Deal {Beams:diff()} instances of 2 damage to random enemies.\nAdd a [gold]Lightshow+{Upgraded}[/gold] to your [gold]discard pile[/gold].\nCan be upgraded infinitely.",
+  "JAINA_CARD_ARCANE_BARRAGE.description": "Deal {Beams:diff()} instances of 2 damage to random enemies.\nEach time you cast this card, it shoots one more beam.\nEach upgrade shoots one more beam.\nCan be upgraded infinitely.",
   "JAINA_CARD_FORBIDDEN_SEQUENCE_CARD.title": "Forbidden Sequence",
   "JAINA_CARD_FORBIDDEN_SEQUENCE_CARD.description": "[gold]Quest[/gold]: After you [gold]Discover[/gold] {IfUpgraded:show:7|8} cards.\n[gold]Reward: Forbidden Stone[/gold].",
   "JAINA_CARD_FORBIDDEN_STONE_CARD.title": "Forbidden Stone",
