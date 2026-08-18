@@ -22,10 +22,11 @@ namespace jaina.Scripts.Character.Cards;
 public sealed class JainasGiftCard : JainaSpellCardTemplate
 {
     /// <summary>
-    /// 法术牌（无派系）：攻击牌和技能牌都视为法术牌
+    /// 法术牌：基础版（吉安娜的礼物）无派系；升级版（倒带）为奥术派系
     /// </summary>
-    public override IEnumerable<CardKeyword> CanonicalKeywords =>
-        [jaina.Scripts.Character.Keywords.JainaKeywords.Spell];
+    public override IEnumerable<CardKeyword> CanonicalKeywords => IsUpgraded
+        ? [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Arcane]
+        : [jaina.Scripts.Character.Keywords.JainaKeywords.Spell];
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [];
 
@@ -75,6 +76,15 @@ public sealed class JainasGiftCard : JainaSpellCardTemplate
             yield return new CardHoverTip(ModelDb.Card<ArcaneIntellect>());
             yield return new CardHoverTip(ModelDb.Card<Fireball>());
         }
+    }
+
+    /// <summary>
+    /// 升级为倒带：加入奥术派系（升级形态无派系→奥术）。
+    /// LocalKeywords 懒缓存可能已在未升级状态初始化——需显式 AddKeyword(Arcane)。
+    /// </summary>
+    protected override void OnUpgrade()
+    {
+        AddKeyword(jaina.Scripts.Character.Keywords.JainaKeywords.Arcane);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)

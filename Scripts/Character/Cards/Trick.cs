@@ -19,10 +19,11 @@ namespace jaina.Scripts.Character.Cards;
 public sealed class Trick : JainaSpellCardTemplate
 {
     /// <summary>
-    /// 法术牌（无派系）：攻击牌和技能牌都视为法术牌
+    /// 法术牌：基础版（魔术戏法）为奥术派系；升级版（广阔智慧）无派系
     /// </summary>
-    public override IEnumerable<CardKeyword> CanonicalKeywords =>
-        [jaina.Scripts.Character.Keywords.JainaKeywords.Spell];
+    public override IEnumerable<CardKeyword> CanonicalKeywords => IsUpgraded
+        ? [jaina.Scripts.Character.Keywords.JainaKeywords.Spell]
+        : [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Arcane];
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [];
 
@@ -48,6 +49,15 @@ public sealed class Trick : JainaSpellCardTemplate
             LocString? upgraded = LocString.GetIfExists("cards", base.Id.Entry + ".titleUpgraded");
             return upgraded?.GetFormattedText() ?? title.GetFormattedText() + "+";
         }
+    }
+
+    /// <summary>
+    /// 升级为广阔智慧：移除奥术派系（升级形态无派系）。
+    /// LocalKeywords 懒缓存可能已在未升级状态初始化——需显式 RemoveKeyword(Arcane)。
+    /// </summary>
+    protected override void OnUpgrade()
+    {
+        RemoveKeyword(jaina.Scripts.Character.Keywords.JainaKeywords.Arcane);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
