@@ -76,6 +76,8 @@ public static class PlayerHoverPetsHealthBarPatch
             {
                 return;
             }
+            // 队友角色自身的攻击意图（武器攻击力）也在悬停时刷新
+            jaina.Scripts.Character.Weapons.PlayerAttackIntentPatch.Refresh(player.Creature);
             foreach (var pet in player.PlayerCombatState.Pets.ToList())
             {
                 if (pet == null || !pet.IsAlive)

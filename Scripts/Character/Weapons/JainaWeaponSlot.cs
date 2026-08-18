@@ -49,6 +49,9 @@ public static class JainaWeaponSlot
         var power = (JainaWeaponPower)ModelDb.Power<JainaWeaponPower>().ToMutable();
         power.SetWeaponStats(attack);
         await PowerCmd.Apply(choiceContext, power, player.Creature, durability, player.Creature, weaponCard);
+
+        // 装备武器后刷新玩家攻击意图（可攻击时显示等同于攻击力的攻击意图）
+        PlayerAttackIntentPatch.Refresh(player.Creature);
     }
 
     /// <summary>
@@ -91,8 +94,12 @@ public static class JainaWeaponSlot
                 await weapon.OnDestroyed(choiceContext);
             }
             await PowerCmd.Remove(weapon);
+            // 武器消失：刷新玩家攻击意图（攻击力归 0，意图消失）
+            PlayerAttackIntentPatch.Refresh(owner);
             return;
         }
         await PowerCmd.Decrement(weapon);
+        // 耐久变化后刷新玩家攻击意图
+        PlayerAttackIntentPatch.Refresh(owner);
     }
 }

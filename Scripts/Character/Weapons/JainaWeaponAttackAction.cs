@@ -71,6 +71,8 @@ public sealed class JainaWeaponAttackAction : ActionModel, IModPowerAssetOverrid
         {
             SetAmount(1);
         }
+        // 行动点恢复后刷新玩家攻击意图（可攻击时显示等同于攻击力的攻击意图）
+        PlayerAttackIntentPatch.Refresh(Owner);
         await Task.CompletedTask;
     }
 
@@ -113,6 +115,9 @@ public sealed class JainaWeaponAttackAction : ActionModel, IModPowerAssetOverrid
         {
             SetAmount((int)Amount - 1);
         }
+
+        // 攻击后刷新玩家攻击意图（行动点耗尽 → 意图消失）
+        PlayerAttackIntentPatch.Refresh(Owner);
 
         // 每攻击一次，武器耐久度 -1；归零时武器能力消失
         await JainaWeaponSlot.ConsumeDurability(choiceContext, Owner, weapon);
