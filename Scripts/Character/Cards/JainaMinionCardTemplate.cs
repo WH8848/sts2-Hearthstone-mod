@@ -165,6 +165,8 @@ public abstract class JainaMinionCardTemplate : ModCardTemplate,
     /// 打出：召唤随从生物站场。随从由 MinionLib 管理，回合结束自动攻击敌人。
     /// source 传本卡实例——随从 OnSummon 据此判断"从手牌打出"，触发战吼
     /// （随机召唤/效果召唤不传 source，不触发战吼，炉石规则）。
+    /// 自动打出（如诈骗犯重放随从牌）同样只召唤、不触发战吼——炉石规则：
+    /// 非从手牌打出不触发战吼（cardPlay.IsAutoPlay 时不传 source）。
     /// </summary>
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
@@ -175,6 +177,6 @@ public abstract class JainaMinionCardTemplate : ModCardTemplate,
             maxHp: StandardMinionHealth,
             attack: StandardMinionAttack,
             position: MinionPosition,
-            source: this);
+            source: cardPlay.IsAutoPlay ? null : this);
     }
 }
