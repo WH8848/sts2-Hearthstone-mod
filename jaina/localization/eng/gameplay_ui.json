@@ -2,5 +2,6 @@
   "CARD_TYPE.MINION": "Minion",
   "CARD_TYPE.HERO": "Hero",
   "CARD_TYPE.LANDMARK": "Landmark",
+  "CARD_TYPE.SPELL": "Spell",
   "CARD_TYPE.UNKNOWN": "Card"
 }

@@ -22,8 +22,10 @@ namespace jaina.Scripts.Character.Keywords;
 [RegisterOwnedKeyword(nameof(Replay), IconPath = "res://icon.svg")]
 // 英雄技能：英雄技能卡（如火焰冲击）专属关键词，不注入卡面描述，仅提供悬停解释
 [RegisterOwnedKeyword(nameof(HeroPower), IconPath = "res://icon.svg")]
-// 法术牌：术语关键词（不注入卡面描述，仅提供悬停解释；攻击牌和技能牌都视为法术牌）
-[RegisterOwnedKeyword(nameof(Spell), IconPath = "res://icon.svg")]
+// 法术牌：内部标记关键词（不作为关键词展示——不注入卡面描述、不提供悬停解释，
+// 仅用于游戏逻辑识别；攻击牌、技能牌和能力牌都视为法术牌）。
+// 卡面上通过类型标签"攻击|法术"等方式展示，见 SpellCardTypePlaquePatch。
+[RegisterOwnedKeyword(nameof(Spell), IconPath = "res://icon.svg", IncludeInCardHoverTip = false)]
 // 法术派系关键词（不注入卡面描述，描述文本中以金色词条样式出现，悬停显示解释）
 [RegisterOwnedKeyword(nameof(Fire), IconPath = "res://icon.svg")]
 [RegisterOwnedKeyword(nameof(Frost), IconPath = "res://icon.svg")]
@@ -92,7 +94,8 @@ public class JainaKeywords
     public static readonly CardKeyword Finisher = ModContentRegistry.GetQualifiedKeywordId(Entry.ModId, nameof(Finisher)).GetModCardKeyword();
 
     /// <summary>
-    /// 法术牌：攻击牌和技能牌都视为法术牌。
+    /// 法术牌：内部标记关键词（不显示在卡面/悬停提示中，仅用于游戏逻辑识别；
+    /// 攻击牌、技能牌和能力牌都视为法术牌）。
     /// </summary>
     public static readonly CardKeyword Spell = ModContentRegistry.GetQualifiedKeywordId(Entry.ModId, nameof(Spell)).GetModCardKeyword();
 

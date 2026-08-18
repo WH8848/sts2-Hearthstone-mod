@@ -45,6 +45,7 @@
 - **打出英雄卡替换英雄技能**：`JainaHeroCardTemplate.OnPlay` 先从所有战斗牌堆（Hand/Draw/Discard/Exhaust/Play）移除旧英雄技能卡（含 HeroPower 关键词），再置入新技能；FireblastAncient.BeforeHandDraw 补替换检查。
 - **⚠ RemoveFromCombat 视觉坑**：`RemoveFromCombat(cards, skipVisuals: true)` 会跳过 NCard 手牌节点的查找与移除（模型移除但 UI 仍显示）→ 必须用默认视觉移除。
 - **英雄卡悬停关键词**：英雄卡挂 `Battlecry` 关键词 → 悬停右侧显示战吼词条注释。
+- **法术牌不作为关键词**：`JainaKeywords.Spell` 注册加 `IncludeInCardHoverTip = false`（内部标记，逻辑识别不变，悬停不再显示"法术牌"词条）；卡面类型标签由 `SpellCardTypePlaquePatch`（NCard.UpdateTypePlaque Postfix）改为 `攻击|法术`/`技能|法术`/`能力|法术`（后缀走 gameplay_ui.json `CARD_TYPE.SPELL`，zhs=法术/eng=Spell）；英雄技能卡（火焰冲击）无 Spell 关键词不受影响。
 - 其他环境噪音（非本项目问题）：`[MPL] Error`、`card_hover_tip.tscn Asset not cached`、`Missing epoch 'JAINA_CHARACTER_JAINA2_EPOCH'`、CardReplaceMod1/MonsterPredictorLite 第三方 mod 日志。
 
 ## 5. 用户确认过的卡牌数值（炉石原版→Mod）

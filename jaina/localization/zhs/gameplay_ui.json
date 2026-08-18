@@ -2,5 +2,6 @@
   "CARD_TYPE.MINION": "随从",
   "CARD_TYPE.HERO": "英雄",
   "CARD_TYPE.LANDMARK": "地标",
+  "CARD_TYPE.SPELL": "法术",
   "CARD_TYPE.UNKNOWN": "卡牌"
 }
