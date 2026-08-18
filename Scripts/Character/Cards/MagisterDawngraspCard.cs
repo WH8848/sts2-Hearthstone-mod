@@ -94,6 +94,8 @@ public sealed class MagisterDawngraspCard : JainaHeroCardTemplate
             {
                 jaina.Scripts.Character.JainaCastTracker.MarkGenerated(card);
             }
+            // 被再次释放的卡自动带消耗词条：打出后进消耗堆（不进弃牌堆）
+            card.AddKeyword(CardKeyword.Exhaust);
 
             // 单目标法术：从场上所有活物（含队友/自己）随机选合法目标
             Creature? target = null;
