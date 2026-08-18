@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.CardSelection;
 using MegaCrit.Sts2.Core.Commands;
@@ -17,6 +18,9 @@ namespace jaina.Scripts.Character.Powers;
 /// <b>自动随机选择</b>，不弹界面、不暂停等待玩家。
 /// 所有选择入口统一 patch：AutoPlay 上下文（调用栈检测 <see cref="AutoPlayGuard.IsInAutoPlay"/>）
 /// 下 Prefix 直接随机选并跳过原方法。
+/// 注意：这些方法都是 <b>async</b>——Harmony 对 async 方法的 __result 类型是 Task&lt;T&gt;，
+/// Prefix 必须用 Task&lt;T&gt; 类型并通过 Task.FromResult 返回（否则 PatchAll 抛
+/// "Cannot assign method return type Task... to __result"）。
 /// 联机确定性：随机用 CombatTargets RNG，两端同步执行同一 AutoPlay 流程 → 结果一致。
 /// </summary>
 public static class AutoPickSelectionPatch
@@ -27,13 +31,14 @@ public static class AutoPickSelectionPatch
     [HarmonyPatch(typeof(CardSelectCmd), nameof(CardSelectCmd.FromChooseACardScreen))]
     public static class DiscoverPatch
     {
-        private static bool Prefix(Player player, IReadOnlyList<CardModel> cards, ref CardModel? __result)
+        private static bool Prefix(Player player, IReadOnlyList<CardModel> cards,
+            ref Task<CardModel?> __result)
         {
             if (!AutoPlayGuard.IsInAutoPlay())
             {
                 return true;
             }
-            __result = AutoPlayGuard.PickRandom(player, cards);
+            __result = Task.FromResult(AutoPlayGuard.PickRandom(player, cards));
             return false;
         }
     }
@@ -45,14 +50,14 @@ public static class AutoPickSelectionPatch
     public static class FromHandPatch
     {
         private static bool Prefix(Player player, CardSelectorPrefs prefs,
-            Func<CardModel, bool>? filter, ref IEnumerable<CardModel> __result)
+            Func<CardModel, bool>? filter, ref Task<IEnumerable<CardModel>> __result)
         {
             if (!AutoPlayGuard.IsInAutoPlay())
             {
                 return true;
             }
-            __result = AutoPlayGuard.PickRandomN(
-                player, player.PlayerCombatState?.Hand?.Cards, prefs.MinSelect, filter);
+            __result = Task.FromResult<IEnumerable<CardModel>>(AutoPlayGuard.PickRandomN(
+                player, player.PlayerCombatState?.Hand?.Cards, prefs.MinSelect, filter));
             return false;
         }
     }
@@ -64,14 +69,14 @@ public static class AutoPickSelectionPatch
     public static class FromHandForDiscardPatch
     {
         private static bool Prefix(Player player, CardSelectorPrefs prefs,
-            Func<CardModel, bool>? filter, ref IEnumerable<CardModel> __result)
+            Func<CardModel, bool>? filter, ref Task<IEnumerable<CardModel>> __result)
         {
             if (!AutoPlayGuard.IsInAutoPlay())
             {
                 return true;
             }
-            __result = AutoPlayGuard.PickRandomN(
-                player, player.PlayerCombatState?.Hand?.Cards, prefs.MinSelect, filter);
+            __result = Task.FromResult<IEnumerable<CardModel>>(AutoPlayGuard.PickRandomN(
+                player, player.PlayerCombatState?.Hand?.Cards, prefs.MinSelect, filter));
             return false;
         }
     }
@@ -82,13 +87,13 @@ public static class AutoPickSelectionPatch
     [HarmonyPatch(typeof(CardSelectCmd), nameof(CardSelectCmd.FromHandForUpgrade))]
     public static class FromHandForUpgradePatch
     {
-        private static bool Prefix(Player player, ref CardModel? __result)
+        private static bool Prefix(Player player, ref Task<CardModel?> __result)
         {
             if (!AutoPlayGuard.IsInAutoPlay())
             {
                 return true;
             }
-            __result = AutoPlayGuard.PickRandom(player, player.PlayerCombatState?.Hand?.Cards);
+            __result = Task.FromResult(AutoPlayGuard.PickRandom(player, player.PlayerCombatState?.Hand?.Cards));
             return false;
         }
     }
@@ -101,13 +106,14 @@ public static class AutoPickSelectionPatch
     public static class FromCombatPilePatch
     {
         private static bool Prefix(CardPile pile, Player player, CardSelectorPrefs prefs,
-            Func<CardModel, bool>? filter, ref IEnumerable<CardModel> __result)
+            Func<CardModel, bool>? filter, ref Task<IEnumerable<CardModel>> __result)
         {
             if (!AutoPlayGuard.IsInAutoPlay())
             {
                 return true;
             }
-            __result = AutoPlayGuard.PickRandomN(player, pile?.Cards, prefs.MinSelect, filter);
+            __result = Task.FromResult<IEnumerable<CardModel>>(AutoPlayGuard.PickRandomN(
+                player, pile?.Cards, prefs.MinSelect, filter));
             return false;
         }
     }
@@ -119,7 +125,7 @@ public static class AutoPickSelectionPatch
     public static class FromChooseABundleScreenPatch
     {
         private static bool Prefix(Player player, IReadOnlyList<IReadOnlyList<CardModel>> bundles,
-            ref IEnumerable<CardModel> __result)
+            ref Task<IEnumerable<CardModel>> __result)
         {
             if (!AutoPlayGuard.IsInAutoPlay())
             {
@@ -137,7 +143,7 @@ public static class AutoPickSelectionPatch
                     }
                 }
             }
-            __result = picked;
+            __result = Task.FromResult<IEnumerable<CardModel>>(picked);
             return false;
         }
     }
@@ -149,13 +155,14 @@ public static class AutoPickSelectionPatch
     public static class FromSimpleGridPatch
     {
         private static bool Prefix(IReadOnlyList<CardModel> cardsIn, Player player,
-            CardSelectorPrefs prefs, ref IEnumerable<CardModel> __result)
+            CardSelectorPrefs prefs, ref Task<IEnumerable<CardModel>> __result)
         {
             if (!AutoPlayGuard.IsInAutoPlay())
             {
                 return true;
             }
-            __result = AutoPlayGuard.PickRandomN(player, cardsIn, prefs.MinSelect);
+            __result = Task.FromResult<IEnumerable<CardModel>>(AutoPlayGuard.PickRandomN(
+                player, cardsIn, prefs.MinSelect));
             return false;
         }
     }
