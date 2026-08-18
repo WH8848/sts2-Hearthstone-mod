@@ -23,7 +23,14 @@ public static class AutoPlayTargetPatch
     {
         private static void Prefix(CardModel card, ref Creature? target)
         {
-            if (target != null || card == null || card.TargetType == TargetType.None)
+            if (card == null)
+            {
+                return;
+            }
+            // 实例标记：记录最近 AutoPlay 的卡（AutoPickSelectionPatch 用实例引用兜底判断
+            // "当前选择是否来自随机释放"——调用栈检测在 async 包装下可能失效）
+            AutoPlayGuard.CurrentAutoPlayCard = card;
+            if (target != null || card.TargetType == TargetType.None)
             {
                 return;
             }

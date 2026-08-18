@@ -18,6 +18,27 @@ namespace jaina.Scripts.Character.Powers;
 public static class AutoPlayGuard
 {
     /// <summary>
+    /// 最近一次 AutoPlay 的卡实例（实例标记）：
+    /// 调用栈检测在 RitsuLib/RegentFX 的 async 包装下可能失效（OnPlay 延续脱离 AutoPlay 帧），
+    /// 用"发起选择的卡 == 最近 AutoPlay 的卡"实例引用对比兜底。
+    /// 由 CardCmd.AutoPlay 的 Prefix 更新（手打不经过 AutoPlay → 不更新）。
+    /// </summary>
+    public static CardModel? CurrentAutoPlayCard;
+
+    /// <summary>
+    /// 当前是否处于 AutoPlay 上下文（调用栈检测 + 实例标记双保险）。
+    /// <paramref name="source"/> = 发起选择的卡（如 CardSelectCmd.FromHand 的 source 参数）。
+    /// </summary>
+    public static bool IsAutoPlayContext(CardModel? source)
+    {
+        if (IsInAutoPlay())
+        {
+            return true;
+        }
+        return source != null && CurrentAutoPlayCard != null && ReferenceEquals(source, CurrentAutoPlayCard);
+    }
+
+    /// <summary>
     /// 当前调用栈是否处于自动打出（AutoPlay）流程中。
     /// C# async 方法在栈上显示为状态机帧（方法名 MoveNext、声明类型形如
     /// &lt;AutoPlay&gt;d__xx），同时保留原方法名 AutoPlay 的同步帧——两种都检测。
