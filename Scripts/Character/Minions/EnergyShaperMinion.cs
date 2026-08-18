@@ -83,32 +83,55 @@ public sealed class EnergyShaperMinion : JainaMinionBase
             // 目标池：全角色攻击/技能/能力牌（Attack/Skill/Power——含吉安娜法术牌：
             // 攻击/技能牌及带"法术牌"关键词的能力牌；吉安娜的非法术能力牌
             // 如戏法图腾/炉石形态不在范围内，不含英雄技能卡）中
-            // 原始费用 = 原费用 + 1 的牌
-            // （应用 Jaina 随机池统一排除：8 个非角色/衍生池/任务卡/先古稀有度/多人专属）
-            var candidates = ModelDb.AllCards
-                .Where(c => c != null &&
-                            (c.Type == CardType.Attack || c.Type == CardType.Skill || c.Type == CardType.Power) &&
-                            !jaina.Scripts.Character.JainaCastTracker.IsExcludedFromSpellPool(c.GetType()) &&
-                            c.EnergyCost.Canonical == originalCost + 1 &&
-                            !HeroPowerHandHelper.IsHeroPowerCard(c) &&
-                            jaina.Scripts.Character.JainaRandomPoolHelper.IsEligible(c))
-                .ToList();
+            // 原始费用 = 原费用 + 1 的牌，按可升级级别展开
+            // （未升级与升级形态（+）都是独立变形目标）；
+            // 应用 Jaina 随机池统一排除（8 个非角色/衍生池/任务卡/先古稀有度/多人专属）
+            var candidates = new List<CardModel>();
+            foreach (var canonical in ModelDb.AllCards)
+            {
+                if (canonical == null)
+                {
+                    continue;
+                }
+                if (canonical.Type != CardType.Attack && canonical.Type != CardType.Skill &&
+                    canonical.Type != CardType.Power)
+                {
+                    continue;
+                }
+                // 吉安娜非法术能力牌（戏法图腾/炉石形态）不在范围内
+                if (jaina.Scripts.Character.JainaCastTracker.IsExcludedFromSpellPool(canonical.GetType()))
+                {
+                    continue;
+                }
+                if (canonical.EnergyCost.Canonical != originalCost + 1)
+                {
+                    continue;
+                }
+                if (HeroPowerHandHelper.IsHeroPowerCard(canonical))
+                {
+                    continue;
+                }
+                if (!jaina.Scripts.Character.JainaRandomPoolHelper.IsEligible(canonical))
+                {
+                    continue;
+                }
+                int maxLevel = jaina.Scripts.Character.JainaCastTracker.GetDiscoverPoolMaxUpgradeLevel(canonical.GetType());
+                for (int level = 0; level <= maxLevel; level++)
+                {
+                    var card = jaina.Scripts.Character.JainaCastTracker.CreateCardWithUpgrade(
+                        combatState, owner, canonical.GetType(), level);
+                    if (card != null)
+                    {
+                        candidates.Add(card);
+                    }
+                }
+            }
             if (candidates.Count == 0)
             {
                 continue;
             }
-            var chosen = rng.NextItem(candidates);
-            if (chosen == null)
-            {
-                continue;
-            }
-            // 按可升级级别展开（含升级形态，上限与随机池一致：GetDiscoverPoolMaxUpgradeLevel）
-            int maxLevel = jaina.Scripts.Character.JainaCastTracker.GetDiscoverPoolMaxUpgradeLevel(chosen.GetType());
-            int upgradeLevel = rng.NextInt(0, maxLevel + 1);
-
-            // 生成带 Owner 的变形目标实例（Transform 要求 replacement.Owner == original.Owner）
-            var replacement = jaina.Scripts.Character.JainaCastTracker.CreateCardWithUpgrade(
-                combatState, owner, chosen.GetType(), upgradeLevel);
+            // 随机选一个形态实例（含升级形态）作为变形目标
+            var replacement = rng.NextItem(candidates);
             if (replacement == null)
             {
                 continue;

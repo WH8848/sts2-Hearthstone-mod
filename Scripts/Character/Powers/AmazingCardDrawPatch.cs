@@ -52,28 +52,50 @@ public static class AmazingCardDrawPatch
             // 全角色攻击/技能/能力牌候选（Attack/Skill/Power——含吉安娜法术牌：
             // 攻击/技能牌及带"法术牌"关键词的能力牌；吉安娜的非法术能力牌
             // 如戏法图腾/炉石形态不在范围内；不含英雄技能卡），
-            // 按可升级级别展开（应用 Jaina 随机池统一排除：
+            // 按可升级级别展开：每种牌的未升级与升级形态（+）都是独立候选
+            // （应用 Jaina 随机池统一排除：
             // 8 个非角色/衍生池/任务卡/先古稀有度/多人专属）
-            var candidates = ModelDb.AllCards
-                .Where(c => c != null &&
-                            (c.Type == CardType.Attack || c.Type == CardType.Skill || c.Type == CardType.Power) &&
-                            !jaina.Scripts.Character.JainaCastTracker.IsExcludedFromSpellPool(c.GetType()) &&
-                            !HeroPowerHandHelper.IsHeroPowerCard(c) &&
-                            jaina.Scripts.Character.JainaRandomPoolHelper.IsEligible(c))
-                .ToList();
+            var candidates = new List<CardModel>();
+            foreach (var canonical in ModelDb.AllCards)
+            {
+                if (canonical == null)
+                {
+                    continue;
+                }
+                if (canonical.Type != CardType.Attack && canonical.Type != CardType.Skill &&
+                    canonical.Type != CardType.Power)
+                {
+                    continue;
+                }
+                // 吉安娜非法术能力牌（戏法图腾/炉石形态）不在范围内
+                if (jaina.Scripts.Character.JainaCastTracker.IsExcludedFromSpellPool(canonical.GetType()))
+                {
+                    continue;
+                }
+                if (HeroPowerHandHelper.IsHeroPowerCard(canonical))
+                {
+                    continue;
+                }
+                if (!jaina.Scripts.Character.JainaRandomPoolHelper.IsEligible(canonical))
+                {
+                    continue;
+                }
+                int maxLevel = jaina.Scripts.Character.JainaCastTracker.GetDiscoverPoolMaxUpgradeLevel(canonical.GetType());
+                for (int level = 0; level <= maxLevel; level++)
+                {
+                    var card = jaina.Scripts.Character.JainaCastTracker.CreateCardWithUpgrade(
+                        combatState, player, canonical.GetType(), level);
+                    if (card != null)
+                    {
+                        candidates.Add(card);
+                    }
+                }
+            }
             if (candidates.Count == 0)
             {
                 return;
             }
-            var chosen = rng.NextItem(candidates);
-            if (chosen == null)
-            {
-                return;
-            }
-            int maxLevel = jaina.Scripts.Character.JainaCastTracker.GetDiscoverPoolMaxUpgradeLevel(chosen.GetType());
-            int upgradeLevel = rng.NextInt(0, maxLevel + 1);
-            var spell = jaina.Scripts.Character.JainaCastTracker.CreateCardWithUpgrade(
-                combatState, player, chosen.GetType(), upgradeLevel);
+            var spell = rng.NextItem(candidates);
             if (spell == null)
             {
                 return;
