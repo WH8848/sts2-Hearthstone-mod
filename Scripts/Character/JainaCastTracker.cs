@@ -451,8 +451,10 @@ public static class JainaCastTracker
     }
 
     /// <summary>
-    /// 动态构建"吉安娜法术牌池"（攻击/技能牌，含升级形态展开）：
-    /// 遍历<b>吉安娜卡池</b>（JainaCardPool），取攻击/技能牌、非英雄技能卡、非任务线卡，
+    /// 动态构建"吉安娜法术牌池"（含升级形态展开）：
+    /// 遍历<b>吉安娜卡池</b>（JainaCardPool），取法术牌——攻击/技能牌，
+    /// 或带"法术牌"关键词的能力牌（寒冰屏障/冰血哨塔/戏法图腾/禁忌序列等 Power 型法术，
+    /// 与 <see cref="RecordPlayed"/> 的法术判定一致），排除英雄技能卡与任务线卡，
     /// 按 <see cref="GetDiscoverPoolMaxUpgradeLevel"/> 展开未升级与升级形态。
     /// 取代各卡硬编码的 typeof 列表（硬编码会漏新增卡/错配升级形态派系）。
     /// 注意：这是吉安娜语义的池（发现/随机施放吉安娜法术用）；
@@ -467,7 +469,10 @@ public static class JainaCastTracker
             {
                 continue;
             }
-            if (canonical.Type != CardType.Attack && canonical.Type != CardType.Skill)
+            // 法术牌 = 攻击/技能牌，或带"法术牌"关键词的卡（Power 型能力牌）
+            bool isSpellCard = canonical.Type == CardType.Attack || canonical.Type == CardType.Skill ||
+                               canonical.CanonicalKeywords?.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Spell) == true;
+            if (!isSpellCard)
             {
                 continue;
             }
@@ -515,7 +520,10 @@ public static class JainaCastTracker
             {
                 continue;
             }
-            if (canonical.Type != CardType.Attack && canonical.Type != CardType.Skill)
+            // 法术牌 = 攻击/技能牌，或带"法术牌"关键词的卡（Power 型能力牌）
+            bool isSpellCard = canonical.Type == CardType.Attack || canonical.Type == CardType.Skill ||
+                               canonical.CanonicalKeywords?.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Spell) == true;
+            if (!isSpellCard)
             {
                 continue;
             }

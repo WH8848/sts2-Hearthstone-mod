@@ -29,8 +29,8 @@ public static class JainaDiscoverHelper
 
     /// <summary>
     /// 从发现池中随机选若干张（不重复），可过滤费用上限。
-    /// 池：吉安娜卡池（JainaCardPool）中的攻击/技能牌，含升级形态，
-    /// 排除英雄技能卡与任务线卡。每种法术牌按可升级级别展开。
+    /// 池：吉安娜卡池（JainaCardPool）中的法术牌（攻击/技能牌，或带"法术牌"关键词的 Power 型能力牌），
+    /// 含升级形态，排除英雄技能卡与任务线卡。每种法术牌按可升级级别展开。
     /// </summary>
     public static List<CardModel> RollCandidates(Player player, int count = 3, int? maxCost = null)
     {
@@ -39,7 +39,7 @@ public static class JainaDiscoverHelper
         {
             return [];
         }
-        // 动态构建候选池：吉安娜卡池中的攻击/技能牌（类型 + 升级级别一起展开）
+        // 动态构建候选池：吉安娜卡池中的法术牌（类型 + 升级级别一起展开）
         var pool = new List<CardModel>();
         foreach (var canonical in MegaCrit.Sts2.Core.Models.ModelDb.CardPool<JainaCardPool>().AllCards)
         {
@@ -47,7 +47,10 @@ public static class JainaDiscoverHelper
             {
                 continue;
             }
-            if (canonical.Type != CardType.Attack && canonical.Type != CardType.Skill)
+            // 法术牌 = 攻击/技能牌，或带"法术牌"关键词的卡（Power 型能力牌）
+            bool isSpellCard = canonical.Type == CardType.Attack || canonical.Type == CardType.Skill ||
+                               canonical.CanonicalKeywords?.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Spell) == true;
+            if (!isSpellCard)
             {
                 continue;
             }
