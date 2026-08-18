@@ -209,6 +209,12 @@ public static class JainaCastTracker
         {
             return;
         }
+        // 英雄技能卡（火焰冲击/二级火焰冲击/奥术爆裂/冰冷触摸）不记录：
+        // 不被记作诈骗犯的"上一张"、不会被倒带等发现、不视为施放的法术（炉石规则）
+        if (Powers.HeroPowerHandHelper.IsHeroPowerCard(card))
+        {
+            return;
+        }
         var rec = For(state);
         var type = card.GetType();
         var ownerId = card.Owner.NetId;
