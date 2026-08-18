@@ -21,11 +21,11 @@ namespace jaina.Scripts.Character.Cards;
 public sealed class Awaken : JainaSpellCardTemplate
 {
     /// <summary>
-    /// 法术牌 + 奥术派系；升级后获得压轴关键词（无消耗）
+    /// 法术牌 + 奥术派系（基础版远古雕文）；升级后（巅峰无限）无派系，只有压轴
     /// </summary>
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
         IsUpgraded
-            ? [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Finisher, jaina.Scripts.Character.Keywords.JainaKeywords.Arcane]
+            ? [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Finisher]
             : [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Arcane];
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [];
@@ -84,7 +84,10 @@ public sealed class Awaken : JainaSpellCardTemplate
 
     protected override void OnUpgrade()
     {
-        // 升级为巅峰无限：加入压轴关键词（LocalKeywords 懒缓存可能已在未升级状态初始化）
+        // 升级为巅峰无限：加入压轴关键词、移除奥术派系（升级形态无派系）。
+        // LocalKeywords 懒缓存可能已在未升级状态初始化——需显式移除 Arcane，
+        // 否则升级后卡面/派系判定仍带奥术。
         AddKeyword(jaina.Scripts.Character.Keywords.JainaKeywords.Finisher);
+        RemoveKeyword(jaina.Scripts.Character.Keywords.JainaKeywords.Arcane);
     }
 }

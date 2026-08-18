@@ -19,9 +19,12 @@ namespace jaina.Scripts.Character.Cards;
 public sealed class NorgannonWisdom : JainaSpellCardTemplate
 {
     /// <summary>
-    /// 法术牌：攻击牌和技能牌都视为法术牌
+    /// 法术牌（攻击牌和技能牌都视为法术牌）；基础版奥术派系，
+    /// 升级后（清凉的泉水）无派系。
     /// </summary>
-    public override IEnumerable<CardKeyword> CanonicalKeywords => [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Arcane];
+    public override IEnumerable<CardKeyword> CanonicalKeywords => IsUpgraded
+        ? [jaina.Scripts.Character.Keywords.JainaKeywords.Spell]
+        : [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Arcane];
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [];
 
@@ -80,5 +83,14 @@ public sealed class NorgannonWisdom : JainaSpellCardTemplate
                 }
             }
         }
+    }
+
+    /// <summary>
+    /// 升级为清凉的泉水：移除奥术派系（升级形态无派系）。
+    /// LocalKeywords 懒缓存可能已在未升级状态初始化——需显式移除。
+    /// </summary>
+    protected override void OnUpgrade()
+    {
+        RemoveKeyword(jaina.Scripts.Character.Keywords.JainaKeywords.Arcane);
     }
 }

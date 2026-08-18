@@ -21,10 +21,11 @@ namespace jaina.Scripts.Character.Cards;
 public sealed class IncantersFlowCard : JainaSpellCardTemplate
 {
     /// <summary>
-    /// 法术牌 + 奥术派系（原版无消耗，不挂 Exhaust）
+    /// 法术牌 + 奥术派系 + 消耗（基础版与升级版都消耗）
     /// </summary>
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
-        [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Arcane];
+        [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Arcane,
+         CardKeyword.Exhaust];
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [];
 

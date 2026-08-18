@@ -22,12 +22,11 @@ namespace jaina.Scripts.Character.Cards;
 public sealed class DeckOfWondersCard : JainaSpellCardTemplate
 {
     /// <summary>
-    /// 法术牌 + 奥术派系；基础版消耗（升级后不再消耗）
+    /// 法术牌（无派系）；基础版消耗（升级后不再消耗）
     /// </summary>
     public override IEnumerable<CardKeyword> CanonicalKeywords => IsUpgraded
-        ? [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Arcane]
-        : [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Arcane,
-           CardKeyword.Exhaust];
+        ? [jaina.Scripts.Character.Keywords.JainaKeywords.Spell]
+        : [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, CardKeyword.Exhaust];
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [];
 
@@ -49,6 +48,7 @@ public sealed class DeckOfWondersCard : JainaSpellCardTemplate
     /// <summary>
     /// 升级：移除消耗（LocalKeywords 懒初始化只算一次，升级形态的 Keywords
     /// 缓存自基础状态——需显式移除 Exhaust，否则升级后卡面仍显示"消耗"）。
+    /// 无派系卡，升级不需要派系处理（基础/升级都不带 Arcane）。
     /// </summary>
     protected override void OnUpgrade()
     {

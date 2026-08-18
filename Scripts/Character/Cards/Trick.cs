@@ -19,9 +19,10 @@ namespace jaina.Scripts.Character.Cards;
 public sealed class Trick : JainaSpellCardTemplate
 {
     /// <summary>
-    /// 法术牌：攻击牌和技能牌都视为法术牌
+    /// 法术牌（无派系）：攻击牌和技能牌都视为法术牌
     /// </summary>
-    public override IEnumerable<CardKeyword> CanonicalKeywords => [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Arcane];
+    public override IEnumerable<CardKeyword> CanonicalKeywords =>
+        [jaina.Scripts.Character.Keywords.JainaKeywords.Spell];
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [];
 

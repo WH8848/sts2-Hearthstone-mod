@@ -113,7 +113,7 @@
   "JAINA_CARD_FORBIDDEN_SHRINE_CARD.description": "Cast a random {IfUpgraded:show:x+1|x}-cost spell. (Max 3.)",
   "JAINA_CARD_METEOR_CARD.title": "Meteor",
   "JAINA_CARD_METEOR_CARD.titleUpgraded": "Flamestrike",
-  "JAINA_CARD_METEOR_CARD.description": "{IfUpgraded:show:Deal 7 instances of {Blast:diff()} damage, split randomly among all enemies.|Deal {Damage:diff()} damage to an enemy, then deal 2 instances of {Splash:diff()} damage to random enemies.}",
+  "JAINA_CARD_METEOR_CARD.description": "{IfUpgraded:show:Deal 7 instances of {Blast} damage, split randomly among all enemies.|Deal {Damage:diff()} damage to an enemy, then deal 2 instances of {Splash:diff()} damage to random enemies.}",
   "JAINA_CARD_ARCANE_BARRAGE.title": "Arcane Barrage",
   "JAINA_CARD_ARCANE_BARRAGE.titleUpgraded": "Lightshow",
   "JAINA_CARD_ARCANE_BARRAGE.description": "{IfUpgraded:show:Deal 2 instances of 2 damage to random enemies. Each time you cast this card, it shoots one more beam.|Deal {Damage:diff()} damage to an enemy, then deal 2 instances of [blue]2[/blue] damage to random enemies.}",

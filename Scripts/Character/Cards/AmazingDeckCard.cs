@@ -174,6 +174,15 @@ public sealed class AmazingDeckCard : JainaSpellCardTemplate
     }
 
     /// <summary>
+    /// 升级为旅社谍战：移除奥术派系（升级形态无派系）。
+    /// LocalKeywords 懒缓存可能已在未升级状态初始化——需显式移除 Arcane。
+    /// </summary>
+    protected override void OnUpgrade()
+    {
+        RemoveKeyword(jaina.Scripts.Character.Keywords.JainaKeywords.Arcane);
+    }
+
+    /// <summary>
     /// 洗入后刷新抽牌堆计数：新生成的洗入牌没有 NCard 节点，原版 tween 流程
     /// 不会为它们触发 CardAddFinished（→ 抽牌堆数字不刷新），这里手动触发，
     /// 与原版洗入预览动画并行（计数 +1 bump 动画与原版一致）。
