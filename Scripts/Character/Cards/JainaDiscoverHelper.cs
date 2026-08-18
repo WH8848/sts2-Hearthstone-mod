@@ -315,6 +315,7 @@ public static class JainaDiscoverHelper
                 AddCandidates(canonical.GetType());
             }
         }
+        MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaDiag] DiscoverCardOfCost cost={cost} allClasses={allClasses} pool={pool.Count}");
 
         if (pool.Count == 0)
         {
