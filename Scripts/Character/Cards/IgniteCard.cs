@@ -1,6 +1,7 @@
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.ValueProps;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -8,15 +9,15 @@ using STS2RitsuLib.Interop.AutoRegistration;
 namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
-/// 点燃 (Ignite) - 0费攻击牌（普通，火焰派系）。
-/// 造成 2 点伤害，将一张升级过的"点燃"洗入你的弃牌堆。
-/// 可无限升级，每次升级伤害 +1。消耗。
+/// 点燃 (Ignite) - 1费攻击牌（普通，火焰派系）。
+/// 造成 8 点伤害，将一张升级过的"点燃"洗入你的弃牌堆。
+/// 可无限升级，每次升级伤害 +4。消耗。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
 public sealed class IgniteCard : JainaSpellCardTemplate
 {
     /// <summary>
-    /// 无限升级 - 允许无限次升级（每次升级伤害 +1）
+    /// 无限升级 - 允许无限次升级（每次升级伤害 +4）
     /// </summary>
     public override int MaxUpgradeLevel => int.MaxValue;
 
@@ -29,15 +30,31 @@ public sealed class IgniteCard : JainaSpellCardTemplate
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new DamageVar(2m, ValueProp.Move),
-        new DynamicVar("Upgraded",1)
+        new DamageVar(8m, ValueProp.Move),
+        new DynamicVar("Upgraded", 1)
     ];
 
     public override string CustomPortraitPath => "res://assets/card_art/ignite.png";
 
     public IgniteCard()
-        : base(0, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy, true)
+        : base(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy, true)
     {
+    }
+
+    /// <summary>
+    /// 升级后卡牌名称变为"点燃+{级别}"（可无限升级，级别递增）
+    /// </summary>
+    public override string Title
+    {
+        get
+        {
+            var title = new LocString("cards", base.Id.Entry + ".title");
+            if (!IsUpgraded)
+            {
+                return title.GetFormattedText();
+            }
+            return title.GetFormattedText() + "+" + CurrentUpgradeLevel;
+        }
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
@@ -63,7 +80,6 @@ public sealed class IgniteCard : JainaSpellCardTemplate
             return;
         }
         jaina.Scripts.Character.JainaCastTracker.MarkGenerated(upgraded);
-        this.DynamicVars["Upgraded"].BaseValue = this.CurrentUpgradeLevel;
         // 塞入弃牌堆动画 + 弃牌堆计数刷新（生成卡没有 NCard 节点，原版 tween 流程
         // 不会为它们创建动画/触发 CardAddFinished → 这里用原版生成卡塞堆流程 + 手动刷计数）
         var results = await CardPileCmd.AddGeneratedCardsToCombat(
@@ -80,8 +96,10 @@ public sealed class IgniteCard : JainaSpellCardTemplate
 
     protected override void OnUpgrade()
     {
-        // 每次升级伤害 +1（UpgradeValueBy 设置 WasJustUpgraded，升级预览数值绿色高亮）
-        base.DynamicVars.Damage.UpgradeValueBy(1m);
+        // 每次升级伤害 +4（UpgradeValueBy 设置 WasJustUpgraded，升级预览数值绿色高亮）；
+        // Upgraded 升级修正 +1：卡面显示值 = 基础 1 + 升级次数 = 当前级别 + 1
+        // （"将一张点燃+{Upgraded}加入弃牌堆"——生成的卡等级 = 当前级别 + 1）
+        base.DynamicVars.Damage.UpgradeValueBy(4m);
         this.DynamicVars["Upgraded"].UpgradeValueBy(1);
     }
 }
