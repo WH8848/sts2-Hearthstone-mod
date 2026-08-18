@@ -44,6 +44,8 @@ namespace jaina.Scripts.Character.Keywords;
 [RegisterOwnedKeyword(nameof(Demon), IconPath = "res://icon.svg")]
 [RegisterOwnedKeyword(nameof(Draenei), IconPath = "res://icon.svg")]
 [RegisterOwnedKeyword(nameof(Naga), IconPath = "res://icon.svg")]
+[RegisterOwnedKeyword(nameof(Pirate), IconPath = "res://icon.svg")]
+[RegisterOwnedKeyword(nameof(Mech), IconPath = "res://icon.svg")]
 // 吸血：造成伤害时回复等量生命（冰霜女巫吉安娜光环，元素随从拥有）
 [RegisterOwnedKeyword(nameof(Lifesteal), IconPath = "res://icon.svg")]
 // 发现：从若干张随机卡牌中选择一张置入手牌
@@ -185,6 +187,16 @@ public class JainaKeywords
     /// 纳迦：随从种族
     /// </summary>
     public static readonly CardKeyword Naga = ModContentRegistry.GetQualifiedKeywordId(Entry.ModId, nameof(Naga)).GetModCardKeyword();
+
+    /// <summary>
+    /// 海盗：随从种族
+    /// </summary>
+    public static readonly CardKeyword Pirate = ModContentRegistry.GetQualifiedKeywordId(Entry.ModId, nameof(Pirate)).GetModCardKeyword();
+
+    /// <summary>
+    /// 机械：随从种族
+    /// </summary>
+    public static readonly CardKeyword Mech = ModContentRegistry.GetQualifiedKeywordId(Entry.ModId, nameof(Mech)).GetModCardKeyword();
 
     /// <summary>
     /// 吸血：造成伤害时回复等量生命

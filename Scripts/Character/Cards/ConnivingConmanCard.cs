@@ -28,10 +28,10 @@ public sealed class ConnivingConmanCard : JainaMinionCardTemplate
     protected override int MinionHealth => 4;
 
     /// <summary>
-    /// 战吼（悬停解释）+ 消耗（随从卡打出后消耗，模板默认）
+    /// 海盗种族 + 战吼（悬停解释）+ 消耗（随从卡打出后消耗，模板默认）
     /// </summary>
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
-        [JainaKeywords.Battlecry, CardKeyword.Exhaust];
+        [JainaKeywords.Pirate, JainaKeywords.Battlecry, CardKeyword.Exhaust];
 
     /// <summary>
     /// 悬停额外提示：战斗中显示"自己打出的上一张卡"卡面（动态；

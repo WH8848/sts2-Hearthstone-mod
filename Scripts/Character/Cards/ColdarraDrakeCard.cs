@@ -25,8 +25,11 @@ public sealed class ColdarraDrakeCard : JainaMinionCardTemplate
     protected override int MinionHealth => 7;
 
     /// <summary>
-    /// 无种族（模板默认：随从卡打出后消耗）
+    /// 龙种族 + 消耗（随从卡打出后消耗，模板默认）
     /// </summary>
+    public override IEnumerable<CardKeyword> CanonicalKeywords =>
+        [jaina.Scripts.Character.Keywords.JainaKeywords.Dragon, CardKeyword.Exhaust];
+
     public ColdarraDrakeCard()
         : base(2, CardRarity.Uncommon)
     {

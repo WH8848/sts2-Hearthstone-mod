@@ -31,10 +31,10 @@ public sealed class RobocallerCard : JainaMinionCardTemplate
     public override string CustomPortraitPath => "res://assets/card_art/robocaller.png";
 
     /// <summary>
-    /// 战吼（悬停解释）+ 保留（手牌不弃置）+ 消耗（随从卡打出后消耗，模板默认）
+    /// 机械种族 + 战吼（悬停解释）+ 保留（手牌不弃置）+ 消耗（随从卡打出后消耗，模板默认）
     /// </summary>
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
-        [JainaKeywords.Battlecry, CardKeyword.Retain, CardKeyword.Exhaust];
+        [JainaKeywords.Mech, JainaKeywords.Battlecry, CardKeyword.Retain, CardKeyword.Exhaust];
 
     /// <summary>
     /// 拨号数字动态变量：卡面 {Roll0}/{Roll1}/{Roll2} 跟随当前拨号结果变化
