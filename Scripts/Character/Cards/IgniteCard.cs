@@ -37,7 +37,7 @@ public sealed class IgniteCard : JainaSpellCardTemplate
     public override string CustomPortraitPath => "res://assets/card_art/ignite.png";
 
     public IgniteCard()
-        : base(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy, true)
+        : base(1, CardType.Attack, CardRarity.Common, JainaTargetTypes.AnyTargetable, true)
     {
     }
 
