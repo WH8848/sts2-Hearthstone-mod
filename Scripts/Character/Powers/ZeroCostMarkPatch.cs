@@ -52,14 +52,37 @@ public static class ZeroCostMarkPatch
     }
 
     /// <summary>
-    /// 星星 X 费卡：打出花费强制 0（原逻辑 = 玩家当前星星）
+    /// 能量费用（含本地/全局修改器）：带标记的牌强制 0。
+    /// 覆盖其他 mod 通过 Hook.ModifyEnergyCostInCombat 等全局费用修改实现的自定义能量系统——
+    /// 基础费归零后 Hook 仍会在其上叠加费用，这里把费用计算整体锁 0。
+    /// 同时保证 CanPlay 检查（GetWithModifiers &gt; 0）与卡面显示一致为 0。
+    /// </summary>
+    [HarmonyPatch(typeof(CardEnergyCost), "GetWithModifiers")]
+    private static class EnergyCostLockPrefix
+    {
+        private static bool Prefix(CardEnergyCost __instance, ref int __result)
+        {
+            var card = AccessTools.Field(typeof(CardEnergyCost), "_card").GetValue(__instance) as CardModel;
+            if (card != null && IsZeroCostMarked(card))
+            {
+                __result = 0;
+                return false;
+            }
+            return true;
+        }
+    }
+
+    /// <summary>
+    /// 星星费用（含全局修改器）：带标记的牌强制 0。
+    /// 覆盖其他 mod 通过 Hook.ModifyStarCost 等全局星星费用修改实现的自定义能量系统；
+    /// 普通星星卡（BaseStarCost 归零后 Hook 可能再加）与星星 X 卡（原逻辑 = 当前星星）一并锁 0。
     /// </summary>
     [HarmonyPatch(typeof(CardModel), "GetStarCostWithModifiers")]
     private static class StarXSpendPrefix
     {
         private static bool Prefix(CardModel __instance, ref int __result)
         {
-            if (__instance.HasStarCostX && IsZeroCostMarked(__instance))
+            if (IsZeroCostMarked(__instance))
             {
                 __result = 0;
                 return false;
