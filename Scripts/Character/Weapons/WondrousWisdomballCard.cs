@@ -92,6 +92,7 @@ public static class KhadgarOrbHelper
 
         // 武器能力栏只显示特殊效果（攻击力在角色攻击意图、耐久度在图标右下角标）
         var weapon = player.Creature.Powers.OfType<JainaWeaponPower>().FirstOrDefault();
+        MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaDiag] EquipOrb: weaponNull={weapon == null} attack={(weapon != null ? weapon.Attack : -1)} durability={(weapon != null ? (int)weapon.Amount : -1)}");
         if (weapon != null)
         {
             weapon.EffectLocKey = "JAINA_POWER_WISDOMBALL_EFFECT.description";

@@ -55,6 +55,7 @@ public sealed class KhadgarOrbPower : PowerModel, IModPowerAssetOverrides
             return;
         }
         var weapon = Owner.Powers.OfType<JainaWeaponPower>().FirstOrDefault();
+        MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaDiag] KhadgarOrb weaponNull={weapon == null} powerCount={Owner.Powers.Count}");
         if (weapon == null)
         {
             // 武器已消失（被顶替/耐久耗尽）：球效果一并移除
