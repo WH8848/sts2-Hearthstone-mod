@@ -85,7 +85,8 @@ public static class JainaDiscoverHelper
         }
         if (maxCost is int max && max >= 0)
         {
-            pool = pool.Where(c => c.EnergyCost.Canonical <= max).ToList();
+            // 用当前基础费用（含升级减费，不含临时修正）：升级后减费到 <=max 的形态也会入选
+            pool = pool.Where(c => c.EnergyCost.GetWithModifiers(MegaCrit.Sts2.Core.Entities.Cards.CostModifiers.None) <= max).ToList();
         }
         var picked = new List<CardModel>();
         while (picked.Count < count && pool.Count > 0)
@@ -283,7 +284,10 @@ public static class JainaDiscoverHelper
             {
                 var card = jaina.Scripts.Character.JainaCastTracker.CreateCardWithUpgrade(
                     combatState, player, cardType, level);
-                if (card != null && (isXCost || card.EnergyCost.Canonical == cost))
+                // 费用过滤用当前基础费用（含升级减费）：升级后减费的形态按实际费用匹配，
+                // 不会以未升级的纸面费用混入更高费用的发现池（如拾荒清道夫按剩余费用发现）
+                if (card != null && (isXCost ||
+                    card.EnergyCost.GetWithModifiers(MegaCrit.Sts2.Core.Entities.Cards.CostModifiers.None) == cost))
                 {
                     pool.Add(card);
                 }

@@ -107,7 +107,8 @@ public sealed class ArchmagesRuneCard : JainaSpellCardTemplate
         while (budget > 0)
         {
             var affordable = pool
-                .Where(c => c.EnergyCost.Canonical > 0 && c.EnergyCost.Canonical <= budget)
+                .Where(c => c.EnergyCost.GetWithModifiers(MegaCrit.Sts2.Core.Entities.Cards.CostModifiers.None) > 0 &&
+                            c.EnergyCost.GetWithModifiers(MegaCrit.Sts2.Core.Entities.Cards.CostModifiers.None) <= budget)
                 .ToList();
             if (affordable.Count == 0)
             {
@@ -138,7 +139,7 @@ public sealed class ArchmagesRuneCard : JainaSpellCardTemplate
             }
 
             pool.Remove(card);
-            budget -= (int)card.EnergyCost.Canonical;
+            budget -= (int)card.EnergyCost.GetWithModifiers(MegaCrit.Sts2.Core.Entities.Cards.CostModifiers.None);
             jaina.Scripts.Character.JainaCastTracker.MarkGenerated(card);
             jaina.Scripts.Character.Powers.RommathReplayTracker.Mark(card);
             await CardCmd.AutoPlay(choiceContext, card, target);

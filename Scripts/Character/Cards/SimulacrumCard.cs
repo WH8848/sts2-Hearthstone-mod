@@ -65,13 +65,13 @@ public sealed class SimulacrumCard : JainaSpellCardTemplate
             return;
         }
 
-        // 手牌中法力值消耗最低的随从牌（不含英雄技能卡）
+        // 手牌中法力值消耗最低的随从牌（不含英雄技能卡；按当前基础费用——含升级减费）
         var hand = PileType.Hand.GetPile(player);
         var cheapest = hand?.Cards
             .Where(c => c != null &&
                         c.Type == JainaCardTypes.Minion &&
                         !jaina.Scripts.Character.Powers.HeroPowerHandHelper.IsHeroPowerCard(c))
-            .OrderBy(c => c.EnergyCost.Canonical)
+            .OrderBy(c => c.EnergyCost.GetWithModifiers(MegaCrit.Sts2.Core.Entities.Cards.CostModifiers.None))
             .FirstOrDefault();
         if (cheapest == null)
         {

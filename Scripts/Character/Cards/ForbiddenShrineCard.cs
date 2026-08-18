@@ -93,7 +93,8 @@ public sealed class ForbiddenShrineCard : JainaSpellCardTemplate
             {
                 continue;
             }
-            if (card.EnergyCost.Canonical != targetCost)
+            // 费用匹配用当前基础费用（含升级减费）：升级后减费到目标费用的形态也入选
+            if (card.EnergyCost.GetWithModifiers(MegaCrit.Sts2.Core.Entities.Cards.CostModifiers.None) != targetCost)
             {
                 continue;
             }

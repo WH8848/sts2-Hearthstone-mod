@@ -61,10 +61,11 @@ public sealed class Awaken : JainaSpellCardTemplate
 
         // 远古雕文/巅峰无限：发现一张法术牌，使其费用减少 1 点
         var chosen = await JainaDiscoverHelper.DiscoverAndAddToHand(choiceContext, base.Owner, maxCost: 9);
-        if (chosen != null && chosen.EnergyCost.Canonical > 0)
+        if (chosen != null && chosen.EnergyCost.GetWithModifiers(MegaCrit.Sts2.Core.Entities.Cards.CostModifiers.None) > 0)
         {
-            // 直接减少 1 点展示费用（mutable 实例）
-            chosen.EnergyCost.SetUntilPlayed((int)chosen.EnergyCost.Canonical - 1);
+            // 直接减少 1 点展示费用（mutable 实例；按当前基础费用减——升级后已减费的形态在此基础上再 -1）
+            chosen.EnergyCost.SetUntilPlayed(
+                (int)chosen.EnergyCost.GetWithModifiers(MegaCrit.Sts2.Core.Entities.Cards.CostModifiers.None) - 1);
         }
 
         // 巅峰无限（升级后）压轴：刚好消耗完能量时，回合结束将本牌移回手牌

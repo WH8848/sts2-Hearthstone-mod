@@ -94,7 +94,7 @@ public sealed class TrickTotemPower : PowerModel, IModPowerAssetOverrides
             {
                 var card = jaina.Scripts.Character.JainaCastTracker.CreateCardWithUpgrade(
                     combatState, player, canonical.GetType(), level);
-                if (card != null && card.EnergyCost.Canonical <= 1)
+                if (card != null && card.EnergyCost.GetWithModifiers(MegaCrit.Sts2.Core.Entities.Cards.CostModifiers.None) <= 1)
                 {
                     candidates.Add(card);
                 }

@@ -265,8 +265,9 @@ public static class JainaCastTracker
             rec.MapFor(rec.LastCastBySchoolByPlayer, ownerId)[school] = (type, card.CurrentUpgradeLevel, IsGeneratedCard(card));
         }
         // 灰贤鹦鹉：记录最近施放的"费用消耗 ≥ 2"的法术牌（按施放时的升级级别与本局衍生状态）
-        // 用 Canonical（基础费用，含升级调整）判定——临时减费（巫师学徒等）不改变"≥2"语义的稳定性
-        if (card.EnergyCost.Canonical >= 2)
+        // 用当前基础费用（含升级减费）判定——升级后减费到 <2 的形态不算"费用≥2"；
+        // 临时减费（巫师学徒等）不改变判定（临时修正不影响 None）
+        if (card.EnergyCost.GetWithModifiers(MegaCrit.Sts2.Core.Entities.Cards.CostModifiers.None) >= 2)
         {
             rec.LastCastSpellCost2PlusByPlayer[ownerId] = (type, card.CurrentUpgradeLevel, IsGeneratedCard(card));
         }

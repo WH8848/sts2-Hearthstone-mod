@@ -71,9 +71,11 @@ public sealed class RobocallerMinion : JainaMinionBase
             {
                 break;
             }
-            // 从抽牌堆定向抽取一张费用消耗 == 拨号数字的牌（X 费卡费用不定，排除）
+            // 从抽牌堆定向抽取一张费用消耗 == 拨号数字的牌（X 费卡费用不定，排除；
+            // 用当前基础费用——升级后减费的牌按实际费用匹配）
             var card = drawPile.Cards.FirstOrDefault(c =>
-                c != null && !c.EnergyCost.CostsX && c.EnergyCost.Canonical == digit);
+                c != null && !c.EnergyCost.CostsX &&
+                c.EnergyCost.GetWithModifiers(MegaCrit.Sts2.Core.Entities.Cards.CostModifiers.None) == digit);
             if (card == null)
             {
                 continue;

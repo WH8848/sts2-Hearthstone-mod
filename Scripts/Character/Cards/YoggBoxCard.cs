@@ -152,7 +152,7 @@ public sealed class YoggBoxCard : JainaSpellCardTemplate
                 {
                     continue;
                 }
-                if (cost2PlusOnly && card.EnergyCost.Canonical < 2)
+                if (cost2PlusOnly && card.EnergyCost.GetWithModifiers(MegaCrit.Sts2.Core.Entities.Cards.CostModifiers.None) < 2)
                 {
                     continue;
                 }

@@ -94,8 +94,8 @@ public sealed class DeckOfWondersCard : JainaSpellCardTemplate
             {
                 continue;
             }
-            // 原牌原始费用
-            int originalCost = spell.EnergyCost.Canonical;
+            // 原牌当前基础费用（含升级减费——变形后保留的是卡面上显示的费用）
+            int originalCost = spell.EnergyCost.GetWithModifiers(MegaCrit.Sts2.Core.Entities.Cards.CostModifiers.None);
             // 目标池：全角色攻击/技能/能力牌（Attack/Skill/Power——含吉安娜法术牌：
             // 攻击/技能牌及带"法术牌"关键词的能力牌；吉安娜的非法术能力牌
             // 如戏法图腾/炉石形态不在范围内，不含英雄技能卡）中
