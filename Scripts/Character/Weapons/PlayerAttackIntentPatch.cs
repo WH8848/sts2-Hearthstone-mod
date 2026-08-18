@@ -78,30 +78,37 @@ public static class PlayerAttackIntentPatch
     {
         private static bool Prefix(NCreature __instance, IEnumerable<Creature> targets)
         {
-            var entity = __instance.Entity;
-            if (entity == null || entity.Monster != null || entity.Player == null)
+            try
             {
-                return true; // 非玩家角色（怪物/随从）：走原版路径
+                var entity = __instance.Entity;
+                if (entity == null || entity.Monster != null || entity.Player == null)
+                {
+                    return true; // 非玩家角色（怪物/随从）：走原版路径
+                }
+                // 玩家角色：清空旧意图，按条件显示攻击意图（等同于武器攻击力）
+                foreach (var item in __instance.IntentContainer.GetChildren().OfType<NIntent>().ToList())
+                {
+                    __instance.IntentContainer.RemoveChildSafely(item);
+                    item.QueueFreeSafely();
+                }
+                if (!CanShowAttackIntent(entity))
+                {
+                    return false;
+                }
+                var weapon = entity.Powers.OfType<JainaWeaponPower>().FirstOrDefault();
+                if (weapon == null)
+                {
+                    return false;
+                }
+                // 延迟读取武器攻击力（武器切换/耐久变化后意图数值即时跟随）
+                var nIntent = NIntent.Create(0f);
+                __instance.IntentContainer.AddChildSafely(nIntent);
+                nIntent.UpdateIntent(new SingleAttackIntent(() => weapon.Attack), targets, entity);
             }
-            // 玩家角色：清空旧意图，按条件显示攻击意图（等同于武器攻击力）
-            foreach (var item in __instance.IntentContainer.GetChildren().OfType<NIntent>().ToList())
+            catch
             {
-                __instance.IntentContainer.RemoveChildSafely(item);
-                item.QueueFreeSafely();
+                // 意图渲染失败不影响原流程（也不能中断装备等调用链）
             }
-            if (!CanShowAttackIntent(entity))
-            {
-                return false;
-            }
-            var weapon = entity.Powers.OfType<JainaWeaponPower>().FirstOrDefault();
-            if (weapon == null)
-            {
-                return false;
-            }
-            // 延迟读取武器攻击力（武器切换/耐久变化后意图数值即时跟随）
-            var nIntent = NIntent.Create(0f);
-            __instance.IntentContainer.AddChildSafely(nIntent);
-            nIntent.UpdateIntent(new SingleAttackIntent(() => weapon.Attack), targets, entity);
             return false;
         }
     }

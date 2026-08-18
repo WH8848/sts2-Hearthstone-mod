@@ -77,10 +77,18 @@ public static class KhadgarOrbHelper
             await PowerCmd.Remove(oldOrb);
         }
 
-        // 装备 0/6 武器（顶替旧武器）
-        await JainaWeaponSlot.Equip(choiceContext, player, 0, 6, source);
+        // 装备 0/6 武器（顶替旧武器）；装备失败不阻塞球效果挂载（球效果是回合结束施法，不依赖武器挂载成功）
+        try
+        {
+            await JainaWeaponSlot.Equip(choiceContext, player, 0, 6, source);
+        }
+        catch (System.Exception ex)
+        {
+            MegaCrit.Sts2.Core.Logging.Log.Warn($"[Jaina] EquipOrb weapon equip failed: {ex}");
+        }
 
         // 挂"回合结束随机施放法师法术 + 失去1点耐久度"
         await PowerCmd.Apply<KhadgarOrbPower>(choiceContext, [player.Creature], 1m, player.Creature, source);
+        MegaCrit.Sts2.Core.Logging.Log.Info("[JainaDiag] EquipOrb: KhadgarOrbPower applied");
     }
 }

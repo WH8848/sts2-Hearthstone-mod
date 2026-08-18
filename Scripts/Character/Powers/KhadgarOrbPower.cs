@@ -61,6 +61,7 @@ public sealed class KhadgarOrbPower : PowerModel, IModPowerAssetOverrides
             return;
         }
 
+        MegaCrit.Sts2.Core.Logging.Log.Info("[JainaDiag] KhadgarOrb BeforeSideTurnEnd: casting mage spell");
         // 随机施放一个有用的法师法术
         await MageSpellCaster.CastRandomMageSpell(choiceContext, player);
 
