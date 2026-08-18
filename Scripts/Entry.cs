@@ -60,6 +60,10 @@ public class Entry
         // 规则注册到 CardModel 基类，抽到的任意卡（含中立卡）都生效；必须在内容注册冻结前调用
         jaina.Scripts.Character.Powers.TrinketHandGlow.Register();
 
+        // 条件触发卡（匣中古神/埃匹希斯冲击/不公平游戏/能量之泉）：条件满足时手牌深白描边发光
+        // （抽牌堆无随从牌 → 打出触发额外效果）；必须在内容注册冻结前调用
+        jaina.Scripts.Character.Powers.JainaConditionGlow.Register();
+
         // 注册吉安娜随从布局：将随从摆放在玩家（充能球区域）周围
         MinionLayoutManager.Register(new OrbStyleMinionLayout(), priority: 100);
 
