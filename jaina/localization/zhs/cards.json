@@ -220,7 +220,11 @@
   "JAINA_CARD_TRINKET_SHOP_CARD.description": "[gold]地标[/gold]。\n抽一张牌。如果你在本回合中使用抽到的这张牌，重新开启本地标。\n[gold]耐久度[/gold]:{Durability}。",
   "JAINA_CARD_TIDE_POOL_CARD.title": "潮汐之池",
   "JAINA_CARD_TIDE_POOL_CARD.description": "[gold]地标[/gold]。\n[gold]发现[/gold]一张费用小于或等于1点的[blue]法术牌[/blue]。\n在你施放一个法术后，重新开启本地标。\n[gold]耐久度[/gold]:{Durability}。",
-  "JAINA_CARD_SCRAPPY_SCAVENGER_CARD.title": "拾荒清道夫",
+  "JAINA_CARD_WINTERSPRING_WHELP_CARD.title": "冬泉雏龙",
+  "JAINA_CARD_WINTERSPRING_WHELP_CARD.description": "[gold]龙[/gold]。
+召唤一个[blue]1/2[/blue]的[red]冬泉雏龙[/red]。
+[gold]战吼[/gold]:[gold]发现[/gold]一张任意角色的费用为0的卡牌。
+", "JAINA_CARD_SCRAPPY_SCAVENGER_CARD.title": "拾荒清道夫",
   "JAINA_CARD_SCRAPPY_SCAVENGER_CARD.description": "召唤一个[blue]1/1[/blue]的[red]拾荒清道夫[/red]。\n[gold]战吼[/gold]:[gold]发现[/gold]一张费用等同于你剩余费用的卡牌。",
   "JAINA_CARD_KEL_THUZAD_CARD.title": "天定之灾克尔苏加德",
   "JAINA_CARD_KEL_THUZAD_CARD.description": "[gold]亡灵[/gold]。\n召唤一个[blue]6/8[/blue]的[red]天定之灾克尔苏加德[/red]。\n[gold]战吼[/gold]:复活你的不稳定的骷髅。战场上放不下的骷髅会立即爆炸。",

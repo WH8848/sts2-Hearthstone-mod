@@ -241,14 +241,18 @@ public static class JainaDiscoverHelper
     }
 
     /// <summary>
-    /// 从吉安娜全卡池中发现一张"费用消耗精确等于指定值"的卡牌（拾荒清道夫战吼用）。
-    /// 池：JainaCardPool 全部卡（法术/随从/地标），每种按可升级级别展开；
-    /// 排除英雄技能卡（火焰冲击等）、英雄卡（魔导师晨拥）与任务线卡（不可被发现）；
-    /// X 费卡（禁忌烈焰/禁忌神龛）费用不定，不管剩余费用多少总是作为候选。
+    /// 发现一张"费用消耗精确等于指定值"的卡牌（拾荒清道夫/冬泉雏龙战吼用）。
+    /// 池：默认 <paramref name="allClasses"/>=false 时取 JainaCardPool 全部卡
+    /// （法术/随从/地标）；<paramref name="allClasses"/>=true 时取<b>任意角色</b>全部卡
+    /// （ModelDb.AllCards，应用 Jaina 随机池统一排除：非角色池/任务卡/先古稀有度/多人专属）。
+    /// 每种按可升级级别展开；排除英雄技能卡（火焰冲击等）、英雄卡（魔导师晨拥）与任务线卡；
+    /// X 费卡（禁忌烈焰/禁忌神龛）费用不定，不管费用多少总是作为候选。
     /// 同名卡不可自发现：排除 <paramref name="excludeType"/>（发起发现的卡自身）。
+    /// 费用过滤用当前基础费用（GetWithModifiers(None)，含升级减费）。
     /// </summary>
     public static async Task<CardModel?> DiscoverCardOfCostAndAddToHand(
-        PlayerChoiceContext choiceContext, Player player, int cost, System.Type? excludeType = null)
+        PlayerChoiceContext choiceContext, Player player, int cost, System.Type? excludeType = null,
+        bool allClasses = false)
     {
         if (player?.Creature?.CombatState == null)
         {
@@ -266,6 +270,12 @@ public static class JainaDiscoverHelper
             }
             var canonical = ModelDb.GetByIdOrNull<CardModel>(ModelDb.GetId(cardType));
             if (canonical == null)
+            {
+                return;
+            }
+            // 任意角色模式：应用 Jaina 随机池统一排除
+            // （8 个非角色/衍生池/任务卡/先古稀有度/多人专属——见 JainaRandomPoolHelper.IsEligible）
+            if (allClasses && !jaina.Scripts.Character.JainaRandomPoolHelper.IsEligible(canonical))
             {
                 return;
             }
@@ -294,8 +304,11 @@ public static class JainaDiscoverHelper
             }
         }
 
-        // 吉安娜主卡池全部卡
-        foreach (var canonical in ModelDb.CardPool<JainaCardPool>().AllCards)
+        // 卡池：默认吉安娜主卡池；任意角色模式用全部卡（ModelDb.AllCards）
+        var sourcePool = allClasses
+            ? MegaCrit.Sts2.Core.Models.ModelDb.AllCards
+            : ModelDb.CardPool<JainaCardPool>().AllCards;
+        foreach (var canonical in sourcePool)
         {
             if (canonical != null)
             {
