@@ -8,6 +8,7 @@ using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.ValueProps;
 using jaina.Scripts.Character.Keywords;
+using STS2RitsuLib.Cards.DynamicVars;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -34,7 +35,20 @@ public sealed class GreaterArcaneMissilesCard : JainaSpellCardTemplate
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
         [JainaKeywords.Spell, JainaKeywords.Arcane];
 
-    protected override IEnumerable<DynamicVar> CanonicalVars => [];
+    /// <summary>
+    /// 动态伤害变量（STS2 原版机制：指向目标时 {Damage} 预览实际伤害，含力量/虚弱/易伤）：
+    /// 基础 = 3 次 3 点；升级（星辰能量）= 5 + 力量（起始值，随后每次递减 1）。
+    /// </summary>
+    protected override IEnumerable<DynamicVar> CanonicalVars => IsUpgraded
+        ? [STS2RitsuLib.Cards.DynamicVars.ModCardVars.Computed("Damage", 5m, card =>
+        {
+            if (card.Owner?.Creature?.CombatState != null)
+            {
+                return 5m + card.Owner.Creature.GetPowerAmount<MegaCrit.Sts2.Core.Models.Powers.StrengthPower>();
+            }
+            return 5m;
+        })]
+        : [new DamageVar(3m, ValueProp.Move)];
 
     /// <summary>
     /// 卡牌原画：强能奥术飞弹 / 升级后（星辰能量）切换原画
@@ -124,7 +138,8 @@ public sealed class GreaterArcaneMissilesCard : JainaSpellCardTemplate
             {
                 break;
             }
-            await CreatureCmd.Damage(choiceContext, [target], 3m, ValueProp.Move, base.Owner.Creature, this, cardPlay);
+            await CreatureCmd.Damage(choiceContext, [target], base.DynamicVars.Damage.BaseValue,
+                ValueProp.Move, base.Owner.Creature, this, cardPlay);
         }
     }
 }

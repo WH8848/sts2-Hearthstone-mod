@@ -30,7 +30,11 @@ public sealed class DeathborneCard : JainaSpellCardTemplate
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
         [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Frost];
 
-    protected override IEnumerable<DynamicVar> CanonicalVars => [];
+    /// <summary>
+    /// 动态伤害变量（STS2 原版机制：指向目标时 {Damage} 预览实际伤害，含力量/虚弱/易伤）
+    /// </summary>
+    protected override IEnumerable<DynamicVar> CanonicalVars =>
+        [new DamageVar(2m, ValueProp.Move)];
 
     /// <summary>
     /// 卡牌原画：死神之躯 / 升级后（暴风雪）切换原画
@@ -104,7 +108,8 @@ public sealed class DeathborneCard : JainaSpellCardTemplate
         // 1) 对所有随从造成 2 点伤害（记录消灭数）
         int killed = 0;
         var beforeAlive = victims.Where(c => c.IsAlive).ToHashSet();
-        await CreatureCmd.Damage(choiceContext, victims, 2m, ValueProp.Move, base.Owner.Creature, this, cardPlay);
+        await CreatureCmd.Damage(choiceContext, victims, base.DynamicVars.Damage.BaseValue,
+            ValueProp.Move, base.Owner.Creature, this, cardPlay);
         killed += beforeAlive.Count(c => !c.IsAlive);
 
         // 2) 对敌人造成 7 次 2 点伤害（随机分配到所有敌人，每次伤害都检查消灭）
@@ -124,7 +129,8 @@ public sealed class DeathborneCard : JainaSpellCardTemplate
                 break;
             }
             bool aliveBefore = target.IsAlive;
-            await CreatureCmd.Damage(choiceContext, [target], 2m, ValueProp.Move, base.Owner.Creature, this, cardPlay);
+            await CreatureCmd.Damage(choiceContext, [target], base.DynamicVars.Damage.BaseValue,
+                ValueProp.Move, base.Owner.Creature, this, cardPlay);
             if (aliveBefore && !target.IsAlive)
             {
                 killed++;
@@ -160,7 +166,8 @@ public sealed class DeathborneCard : JainaSpellCardTemplate
             }
             // 攻击伤害：吃力量加成（与原版多次攻击牌一致，每次命中都计算力量）；
             // 传 cardSource/cardPlay（蜷身等依赖 cardSource 的敌方 Power 才能触发）
-            await CreatureCmd.Damage(choiceContext, [target], 2m, ValueProp.Move, base.Owner.Creature, this, cardPlay);
+            await CreatureCmd.Damage(choiceContext, [target], base.DynamicVars.Damage.BaseValue,
+                ValueProp.Move, base.Owner.Creature, this, cardPlay);
         }
 
         // 给予敌方全体 7 层冻结

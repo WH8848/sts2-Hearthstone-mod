@@ -9,6 +9,7 @@ using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.ValueProps;
 using jaina.Scripts.Character.Minions;
+using STS2RitsuLib.Cards.DynamicVars;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -29,7 +30,23 @@ public sealed class IcyTouchCard : JainaSpellCardTemplate
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
         [jaina.Scripts.Character.Keywords.JainaKeywords.HeroPower];
 
-    protected override IEnumerable<DynamicVar> CanonicalVars => [];
+    /// <summary>
+    /// 动态伤害变量（STS2 原版机制：指向目标时 {Damage} 预览实际伤害）：
+    /// 当前伤害 = 1 + 灌注层数 + 野火加成（与 OnPlay 实际结算一致）。
+    /// </summary>
+    protected override IEnumerable<DynamicVar> CanonicalVars =>
+    [
+        STS2RitsuLib.Cards.DynamicVars.ModCardVars.Computed("Damage", 1m, card =>
+        {
+            if (card.Owner?.Creature?.CombatState != null)
+            {
+                var empower = card.Owner.Creature.GetPower<jaina.Scripts.Character.Powers.EmpowerPower>();
+                var wildfire = card.Owner.Creature.GetPower<jaina.Scripts.Character.Powers.WildfirePower>();
+                return 1m + (empower?.EmpowerStacks ?? 0) + (wildfire?.WildfireStacks ?? 0);
+            }
+            return 1m;
+        })
+    ];
 
     public override string CustomPortraitPath => "res://assets/card_art/icy_touch.png";
 

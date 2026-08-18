@@ -27,7 +27,13 @@ public sealed class MeteorCard : JainaSpellCardTemplate
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
         [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Fire];
 
-    protected override IEnumerable<DynamicVar> CanonicalVars => [];
+    /// <summary>
+    /// 动态伤害变量（STS2 原版机制：指向目标时 {Damage} 预览实际伤害，含力量/虚弱/易伤）：
+    /// 基础 = 15 点主伤害 + 2 次 4 点溅射；升级（烈焰风暴）= 7 次 5 点。
+    /// </summary>
+    protected override IEnumerable<DynamicVar> CanonicalVars => IsUpgraded
+        ? [new DamageVar("Blast", 5m, ValueProp.Move)]
+        : [new DamageVar("Damage", 15m, ValueProp.Move), new DamageVar("Splash", 4m, ValueProp.Move)];
 
     /// <summary>
     /// 卡牌原画：陨石术 / 升级后（烈焰风暴）切换原画
@@ -85,7 +91,8 @@ public sealed class MeteorCard : JainaSpellCardTemplate
                 {
                     break;
                 }
-                await CreatureCmd.Damage(choiceContext, [target], 5m, ValueProp.Move, base.Owner.Creature, this, cardPlay);
+                await CreatureCmd.Damage(choiceContext, [target], base.DynamicVars["Blast"].BaseValue,
+                    ValueProp.Move, base.Owner.Creature, this, cardPlay);
             }
             return;
         }
@@ -93,7 +100,8 @@ public sealed class MeteorCard : JainaSpellCardTemplate
         // 陨石术：对一个敌人造成 15 点伤害
         if (cardPlay.Target is { IsAlive: true } mainTarget)
         {
-            await CreatureCmd.Damage(choiceContext, [mainTarget], 15m, ValueProp.Move, base.Owner.Creature, this, cardPlay);
+            await CreatureCmd.Damage(choiceContext, [mainTarget], base.DynamicVars["Damage"].BaseValue,
+                ValueProp.Move, base.Owner.Creature, this, cardPlay);
         }
 
         // 再对随机敌人造成 2 次 4 点伤害
@@ -111,7 +119,8 @@ public sealed class MeteorCard : JainaSpellCardTemplate
             {
                 break;
             }
-            await CreatureCmd.Damage(choiceContext, [target], 4m, ValueProp.Move, base.Owner.Creature, this, cardPlay);
+            await CreatureCmd.Damage(choiceContext, [target], base.DynamicVars["Splash"].BaseValue,
+                ValueProp.Move, base.Owner.Creature, this, cardPlay);
         }
     }
 }

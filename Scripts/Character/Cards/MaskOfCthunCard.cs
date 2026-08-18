@@ -28,7 +28,12 @@ public sealed class MaskOfCthunCard : JainaSpellCardTemplate
         ? [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Fire]
         : [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Shadow];
 
-    protected override IEnumerable<DynamicVar> CanonicalVars => [];
+    /// <summary>
+    /// 动态伤害变量（STS2 原版机制：指向目标时 {Damage} 预览实际伤害，含力量/虚弱/易伤）。
+    /// 总伤害 10 点随机分配（逐点结算，力量加成每点生效）。
+    /// </summary>
+    protected override IEnumerable<DynamicVar> CanonicalVars =>
+        [new DamageVar(10m, ValueProp.Move)];
 
     /// <summary>
     /// 卡牌原画：克苏恩面具 / 升级后（夕阳漫射）切换原画
