@@ -53,6 +53,7 @@
 - **Jaina 随机卡牌池统一过滤**：`JainaRandomPoolHelper.IsEligible(canonical)`（Scripts/Character/）——排除 7 个非角色池（无色/诅咒/先古/状态/任务/事件/衍生）+ 先古稀有度 Ancient + 多人专属 MultiplayerConstraint!=None；应用于所有从 ModelDb.AllCards/AllCharacterCardPools 随机取卡处：匣中古神/谜之匣（GetSpellPoolCanonicals 重构复用）、惊奇卡牌（AmazingCardDrawPatch）、戏法图腾（TrickTotemPower）、能量塑形师/惊奇套牌变形池（EnergyShaperMinion/DeckOfWondersCard）、旅社谍战角色池（AmazingDeckCard）；硬编码 Jaina 池（魔法智慧之球/唤起/撕裂现实/能量之泉/大法师的符文等）天然干净无需过滤。
 - **随机施放目标放宽**：`JainaRandomPoolHelper.PickRandomTarget(owner, combatState, card)` 统一随机目标选择——**AnyEnemy 单体攻击牌除非描述限定"对敌人"，目标放宽为全部存活生物**（自己/队友/双方随从/敌人，像火球术可打任意活物）；"描述限定敌人"判断 = 预计算缓存（`EnsureEnemyLimitedCache` 惰性读 `res://localization/zhs/cards.json`（原版）+ `res://jaina/localization/zhs/cards.json`（本 mod），收集描述含"敌人"的卡 Id.Entry——**固定 zhs 判断与运行语言无关，联机两端一致**；其他 mod 卡判断不到默认放宽）；应用于匣中古神/谜之匣、惊奇卡牌、戏法图腾、诈骗犯重放；其余目标类型保持合法优先+回退全量。放宽跟随 Jaina 卡本身（原版角色使用 Jaina 随机卡同样放宽；原版角色自己的随机机制/手打不受影响）。
 - **条件触发卡手牌深白发光**：`JainaConditionGlow`（Powers/）——条件满足（抽牌堆无随从牌）时手牌**深白描边** `(0.85,0.9,1)`（与衍生卡金色/小玩物小屋深蓝区分），每帧评估；覆盖 4 张条件卡：匣中古神（基础版）、埃匹希斯冲击（基础版）、不公平游戏（基础版）、能量之泉（全部形态）；注册到 CardModel 基类 + Entry.Init 冻结前；纯本地 UI 判断联机安全。
+- **任务线卡类型标签**：`SpellCardTypePlaquePatch` 扩展——带 Quest 关键词的任务线卡（禁忌序列/打开时空之门/巫师的计策/拖延时间/抵达传送大厅）卡面类型标签显示"任务|法术"（底层是 Power 类型原显示"能力"）；法术牌分支不变（攻击|法术 等）。
 - 其他环境噪音（非本项目问题）：`[MPL] Error`、`card_hover_tip.tscn Asset not cached`、`Missing epoch 'JAINA_CHARACTER_JAINA2_EPOCH'`、CardReplaceMod1/MonsterPredictorLite 第三方 mod 日志。
 
 ## 5. 用户确认过的卡牌数值（炉石原版→Mod）
