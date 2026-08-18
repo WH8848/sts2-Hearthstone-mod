@@ -126,8 +126,8 @@ public sealed class MageQuestlinePower : PowerModel, IModPowerAssetOverrides
                 await GrantCardToHand(choiceContext, player, typeof(StallingCard), upgradeLevel, markGenerated: true);
                 break;
             case 2:
-                // 奖励：发现上述派系中的一张法术牌
-                await jaina.Scripts.Character.Cards.JainaDiscoverHelper.DiscoverAndAddToHand(choiceContext, player);
+                // 奖励：发现一张火焰/冰霜/奥术派系法术牌（三派系动态池）
+                await jaina.Scripts.Character.Cards.JainaDiscoverHelper.DiscoverSchoolSpellAndAddToHand(choiceContext, player);
                 await GrantCardToHand(choiceContext, player, typeof(ReachPortalChamberCard), upgradeLevel, markGenerated: true);
                 break;
             case 3:

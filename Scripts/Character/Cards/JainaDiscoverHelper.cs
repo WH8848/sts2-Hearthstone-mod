@@ -146,6 +146,67 @@ public static class JainaDiscoverHelper
     }
 
     /// <summary>
+    /// 发现一张火焰/冰霜/奥术派系法术牌（任务线阶段 2 奖励用）：
+    /// 三派系动态池合并（BuildSchoolSpellPool × Fire/Frost/Arcane），
+    /// 三选一，选中的牌加入手牌。
+    /// </summary>
+    public static async Task<CardModel?> DiscoverSchoolSpellAndAddToHand(
+        PlayerChoiceContext choiceContext, Player player)
+    {
+        var combatState = player?.Creature?.CombatState;
+        if (combatState == null)
+        {
+            return null;
+        }
+        // 合并火焰/冰霜/奥术三派系的动态池（类型+升级级别）
+        var entries = new List<(System.Type Type, int UpgradeLevel)>();
+        entries.AddRange(jaina.Scripts.Character.JainaCastTracker.BuildSchoolSpellPool(
+            combatState, player, jaina.Scripts.Character.JainaSpellSchool.Fire));
+        entries.AddRange(jaina.Scripts.Character.JainaCastTracker.BuildSchoolSpellPool(
+            combatState, player, jaina.Scripts.Character.JainaSpellSchool.Frost));
+        entries.AddRange(jaina.Scripts.Character.JainaCastTracker.BuildSchoolSpellPool(
+            combatState, player, jaina.Scripts.Character.JainaSpellSchool.Arcane));
+        if (entries.Count == 0)
+        {
+            return null;
+        }
+        // 随机三选一（不重复）
+        var rng = player.RunState.Rng.CombatTargets;
+        var pool = new List<(System.Type Type, int UpgradeLevel)>(entries);
+        var candidates = new List<CardModel>();
+        while (candidates.Count < 3 && pool.Count > 0)
+        {
+            var entry = rng.NextItem(pool);
+            if (entry.Type == null)
+            {
+                break;
+            }
+            pool.Remove(entry);
+            var card = jaina.Scripts.Character.JainaCastTracker.CreateCardWithUpgrade(
+                combatState, player, entry.Type, entry.UpgradeLevel);
+            if (card != null)
+            {
+                candidates.Add(card);
+            }
+        }
+        if (candidates.Count == 0)
+        {
+            return null;
+        }
+        var chosen = await CardSelectCmd.FromChooseACardScreen(choiceContext, candidates, player, canSkip: true);
+        if (chosen != null)
+        {
+            if (jaina.Scripts.Character.JainaHandHelper.IsHandFull(player))
+            {
+                return null;
+            }
+            jaina.Scripts.Character.JainaCastTracker.MarkGenerated(chosen);
+            await CardPileCmd.AddGeneratedCardToCombat(chosen, PileType.Hand, player);
+        }
+        return chosen;
+    }
+
+    /// <summary>
     /// 从吉安娜全卡池中发现一张"费用消耗精确等于指定值"的卡牌（拾荒清道夫战吼用）。
     /// 池：JainaCardPool 全部卡（法术/随从/地标），每种按可升级级别展开；
     /// 排除英雄技能卡（火焰冲击等）、英雄卡（魔导师晨拥）与任务线卡（不可被发现）；
