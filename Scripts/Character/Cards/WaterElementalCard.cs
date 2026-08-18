@@ -7,10 +7,11 @@ using STS2RitsuLib.Interop.AutoRegistration;
 namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
-/// 水元素 (Water Elemental) - 吉安娜随从卡。召唤 3/6 的 WaterElementalMinion。
+/// 水元素 (Water Elemental) - 吉安娜衍生随从卡（Token）。召唤 3/6 的 WaterElementalMinion。
 /// 冻结：任何受到本随从伤害的角色获得 1 层冻结。
+/// 衍生卡：不进入吉安娜卡池，不出现在卡牌奖励与图鉴中（由冰霜女巫吉安娜/深度冻结/冰冷触摸召唤）。
 /// </summary>
-[RegisterCard(typeof(JainaCardPool))]
+[RegisterCard(typeof(JainaNeutralCardPool))]
 public sealed class WaterElementalCard : JainaMinionCardTemplate
 {
     /// <summary>
