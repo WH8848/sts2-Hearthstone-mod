@@ -31,8 +31,8 @@ public sealed class ArcaneBurstCard : JainaSpellCardTemplate
         [jaina.Scripts.Character.Keywords.JainaKeywords.HeroPower];
 
     /// <summary>
-    /// 动态伤害显示：当前伤害 = 2 + 本局已打出次数×2 + 野火加成（与 OnPlay 实际结算一致，
-    /// 按玩家区分；非战斗中显示基础 2 点）。
+    /// 动态伤害显示：当前伤害 = 2 + 本局已打出次数×2 + 灌注层数 + 野火加成
+    /// （与 OnPlay 实际结算一致，按玩家区分；非战斗中显示基础 2 点）。
     /// </summary>
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
@@ -43,8 +43,9 @@ public sealed class ArcaneBurstCard : JainaSpellCardTemplate
                 var combatState = card.Owner.Creature.CombatState;
                 var rec = jaina.Scripts.Character.JainaCastTracker.For(combatState);
                 rec.ArcaneBurstCastsByPlayer.TryGetValue(card.Owner.NetId, out var casts);
+                var empower = card.Owner.Creature.GetPower<EmpowerPower>();
                 var wildfire = card.Owner.Creature.GetPower<WildfirePower>();
-                return 2 + casts * 2 + (wildfire?.WildfireStacks ?? 0);
+                return 2 + casts * 2 + (empower?.EmpowerStacks ?? 0) + (wildfire?.WildfireStacks ?? 0);
             }
             return 2m;
         })
@@ -86,23 +87,51 @@ public sealed class ArcaneBurstCard : JainaSpellCardTemplate
         }
         // 每次打出获得 +2 伤害（本局内递增，第 1 次 2 点、第 2 次 4 点……，按玩家区分）
         var rec = jaina.Scripts.Character.JainaCastTracker.For(combatState);
+        rec.ArcaneBurstCastsByPlayer.TryGetValue(base.Owner.NetId, out var burstCasts);
+        rec.ArcaneBurstCastsByPlayer[base.Owner.NetId] = burstCasts + 1;
+
+        // 灌注：每一层灌注增加一点英雄技能伤害；灌注后伤害从 n*1（高伤单段）
+        // 变为 1*n（1 伤多段），段数 = 总伤害（参考火焰冲击）
+        var empower = base.Owner.Creature.GetPower<jaina.Scripts.Character.Powers.EmpowerPower>();
+        var empowerStacks = empower?.EmpowerStacks ?? 0;
         // 野火：英雄技能伤害永久加成（可叠加，本局对战）
         var wildfire = base.Owner.Creature.GetPower<jaina.Scripts.Character.Powers.WildfirePower>();
         var wildfireStacks = wildfire?.WildfireStacks ?? 0;
-        rec.ArcaneBurstCastsByPlayer.TryGetValue(base.Owner.NetId, out var burstCasts);
-        int damage = 2 + burstCasts * 2 + wildfireStacks;
-        rec.ArcaneBurstCastsByPlayer[base.Owner.NetId] = burstCasts + 1;
+        var totalDamage = 2 + burstCasts * 2 + empowerStacks + wildfireStacks;
+
+        // 灌注：每一层灌注额外召唤一个 1/1 的小精灵（先召唤，再造成伤害）
+        for (int i = 0; i < empowerStacks; i++)
+        {
+            await jaina.Scripts.Character.Minions.JainaMinionPool.SummonMinion<jaina.Scripts.Character.Minions.ImpMinion>(
+                choiceContext, base.Owner, maxHp: 1m, attack: 1m);
+        }
 
         if (cardPlay.Target is { IsAlive: true } target)
         {
-            await DamageCmd.Attack(damage)
-                .FromCard(this, cardPlay)
-                .Targeting(target)
-                .WithHitFx("vfx/vfx_attack_blunt")
-                .Execute(choiceContext);
+            if (empowerStacks <= 0)
+            {
+                // 无灌注：单段总伤害
+                await DamageCmd.Attack(totalDamage)
+                    .FromCard(this, cardPlay)
+                    .Targeting(target)
+                    .WithHitFx("vfx/vfx_attack_blunt")
+                    .Execute(choiceContext);
+            }
+            else
+            {
+                // 灌注：1*n 多段攻击（每段 1 点伤害，段数 = 总伤害）
+                for (int i = 0; i < totalDamage; i++)
+                {
+                    await DamageCmd.Attack(1m)
+                        .FromCard(this, cardPlay)
+                        .Targeting(target)
+                        .WithHitFx("vfx/vfx_attack_blunt")
+                        .Execute(choiceContext);
+                }
+            }
 
             // 记录英雄技能伤害（火眼莫德雷斯战吼条件用）
-            jaina.Scripts.Character.JainaCastTracker.RecordHeroPowerDamage(this, damage);
+            jaina.Scripts.Character.JainaCastTracker.RecordHeroPowerDamage(this, totalDamage);
         }
     }
 

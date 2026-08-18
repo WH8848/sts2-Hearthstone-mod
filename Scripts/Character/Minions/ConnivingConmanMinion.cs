@@ -55,15 +55,12 @@ public sealed class ConnivingConmanMinion : JainaMinionBase
         }
         var (type, upgradeLevel, isGenerated) = played;
 
-        // 只可重放法术牌与随从牌：英雄技能卡（火焰冲击/奥术爆裂等）不可被诈骗犯再次使用。
+        // 只可重放法术牌与随从牌：英雄技能卡（火焰冲击/二级火焰冲击/奥术爆裂/冰冷触摸等）
+        // 不可被诈骗犯再次使用（炉石规则：诈骗犯只重放法术）。
         // 随从牌可以重放——重放只召唤随从、不触发战吼（炉石规则：非手牌打出不触发战吼，
         // 见 JainaMinionCardTemplate.OnPlay 对 AutoPlay 的处理）。
         var canonical = ModelDb.GetByIdOrNull<CardModel>(ModelDb.GetId(type));
-        if (canonical == null)
-        {
-            return;
-        }
-        if (HeroPowerHandHelper.IsHeroPowerCard(canonical))
+        if (canonical != null && HeroPowerHandHelper.IsHeroPowerCard(canonical))
         {
             return;
         }
@@ -72,6 +69,11 @@ public sealed class ConnivingConmanMinion : JainaMinionBase
         var card = jaina.Scripts.Character.JainaCastTracker.CreateCardWithUpgrade(
             combatState, owner, type, upgradeLevel);
         if (card == null)
+        {
+            return;
+        }
+        // 实例级兜底：英雄技能卡不可重放（按实例关键词检查，覆盖所有带 HeroPower 关键词的卡）
+        if (card.Keywords.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.HeroPower))
         {
             return;
         }
