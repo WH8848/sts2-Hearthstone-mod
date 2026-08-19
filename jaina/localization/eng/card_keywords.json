@@ -66,7 +66,7 @@
   "JAINA_KEYWORD_MINI.title": "Mini",
   "JAINA_KEYWORD_MINI.description": "Mini: The 0-Cost 1/1 copy created by Miniaturize (a generated keyword that can only be obtained through Miniaturize). It keeps all text effects of the original card.",
   "JAINA_KEYWORD_TRADEABLE.title": "Tradeable",
-  "JAINA_KEYWORD_TRADEABLE.description": "Tradeable: Drag this card over your Discard Pile and release to shuffle it into your Discard Pile, then draw a card from your Draw Pile.",
+  "JAINA_KEYWORD_TRADEABLE.description": "Tradeable: Drag this card over your Discard Pile and release, then click the Discard Pile to shuffle it in and draw a card from your Draw Pile.",
   "JAINA_KEYWORD_MINION.title": "Minion",
   "JAINA_KEYWORD_MINION.description": "When played, summon a minion with Attack and Health to your [gold]Minion Bar[/gold]. Starting from the turn after it is summoned, you can click it to attack. Unblocked damage you take hits your [gold]minions[/gold] first.\nYou can have up to 7 [gold]minions[/gold].",
   "JAINA_KEYWORD_SPECIAL_HERO_SKILL.title": "Empowered Skill",
