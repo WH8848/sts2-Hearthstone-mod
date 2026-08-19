@@ -7,6 +7,7 @@ using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Saves.Runs;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 using STS2RitsuLib.Scaffolding.Content.Patches;
@@ -37,7 +38,13 @@ public sealed class OpenTimeGatePower : PowerModel, IModPowerAssetOverrides
     /// <summary>奖励的时空扭曲是否为升级版（时空扭曲+）</summary>
     public bool RewardUpgraded { get; set; }
 
-    private int _count;
+    /// <summary>
+    /// 当前施放进度。
+    /// [SavedProperty]：联机状态同步/战斗存档读档会重建 Power 实例，
+    /// 普通字段丢失为默认值——进度会退回 0 导致任务线错乱。
+    /// </summary>
+    [SavedProperty]
+    public int Count { get; set; }
 
     public override PowerType Type => PowerType.Buff;
 
@@ -54,7 +61,7 @@ public sealed class OpenTimeGatePower : PowerModel, IModPowerAssetOverrides
         get
         {
             var loc = new LocString("powers", base.Id.Entry + ".description");
-            loc.Add("Count", _count);
+            loc.Add("Count", Count);
             return loc;
         }
     }
@@ -65,7 +72,7 @@ public sealed class OpenTimeGatePower : PowerModel, IModPowerAssetOverrides
     /// </summary>
     public void StartCountingAfterPlay()
     {
-        _count = 0;
+        Count = 0;
     }
 
     public override async Task AfterCardPlayed(PlayerChoiceContext choiceContext, CardPlay cardPlay)
@@ -90,9 +97,9 @@ public sealed class OpenTimeGatePower : PowerModel, IModPowerAssetOverrides
         {
             return;
         }
-        _count++;
-        MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaDebug] OpenTimeGate count={_count}/8 card={card.Id.Entry}");
-        if (_count < RequiredCasts)
+        Count++;
+        MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaDebug] OpenTimeGate count={Count}/8 card={card.Id.Entry}");
+        if (Count < RequiredCasts)
         {
             return;
         }

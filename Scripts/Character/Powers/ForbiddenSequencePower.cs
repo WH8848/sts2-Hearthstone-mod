@@ -7,6 +7,7 @@ using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Saves.Runs;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 using STS2RitsuLib.Scaffolding.Content.Patches;
@@ -34,7 +35,13 @@ public sealed class ForbiddenSequencePower : PowerModel, IModPowerAssetOverrides
     /// <summary>达到该发现次数即获得奖励（升级前 8，升级后 7）</summary>
     public int Threshold { get; set; } = 8;
 
-    private int _count;
+    /// <summary>
+    /// 当前发现进度。
+    /// [SavedProperty]：联机状态同步/战斗存档读档会重建 Power 实例，
+    /// 普通字段丢失为默认值——进度会退回 0 导致任务线错乱。
+    /// </summary>
+    [SavedProperty]
+    public int Count { get; set; }
 
     private long _lastSeq;
 
@@ -53,7 +60,7 @@ public sealed class ForbiddenSequencePower : PowerModel, IModPowerAssetOverrides
         get
         {
             var loc = new LocString("powers", base.Id.Entry + ".description");
-            loc.Add("Count", _count);
+            loc.Add("Count", Count);
             loc.Add("Threshold", Threshold);
             return loc;
         }
@@ -95,8 +102,8 @@ public sealed class ForbiddenSequencePower : PowerModel, IModPowerAssetOverrides
         while (DiscoverTracker.TryGetPending(player, _lastSeq) is { } pending)
         {
             _lastSeq = pending.Seq;
-            _count++;
-            if (_count < Threshold)
+            Count++;
+            if (Count < Threshold)
             {
                 continue;
             }

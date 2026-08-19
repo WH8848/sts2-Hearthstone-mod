@@ -104,6 +104,7 @@ public sealed class ArchmagesRuneCard : JainaSpellCardTemplate
 
         // 随机施放法术直到总费用耗尽（只选费用 <= 剩余预算的正费用法术；0费法术不贡献跳过）
         int budget = base.DynamicVars.GetIntOrDefault("TotalCost", 6);
+        MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaDiag] Rune OnPlay: budget={budget} pool={pool.Count} rngSeed 不可打印");
         while (budget > 0)
         {
             var affordable = pool
@@ -119,6 +120,7 @@ public sealed class ArchmagesRuneCard : JainaSpellCardTemplate
             {
                 break;
             }
+            MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaDiag] Rune step: budget={budget} affordable={affordable.Count} picked={card.Id} lvl={card.CurrentUpgradeLevel} cost={(int)card.EnergyCost.GetWithModifiers(MegaCrit.Sts2.Core.Entities.Cards.CostModifiers.None)}");
 
             // 目标：敌人（单目标法术从场上所有敌人中随机选合法目标）
             Creature? target = null;
