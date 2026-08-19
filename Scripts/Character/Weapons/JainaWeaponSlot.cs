@@ -25,10 +25,12 @@ public static class JainaWeaponSlot
     /// </summary>
     /// <param name="attack">武器攻击力</param>
     /// <param name="durability">武器初始耐久度</param>
+    /// <param name="weaponCard">武器来源卡（仅记录用途；战吼等无卡实例的场合可为 null，
+    /// 不影响装备——卡德加战吼曾因传 null 导致武器静默不装备）</param>
     public static async Task Equip(PlayerChoiceContext choiceContext, Player player, int attack, int durability,
-        CardModel weaponCard)
+        CardModel? weaponCard)
     {
-        if (player == null || weaponCard == null || durability <= 0)
+        if (player == null || durability <= 0)
         {
             return;
         }

@@ -37,7 +37,10 @@ public sealed class KhadgarMinion : JainaMinionBase
         {
             return;
         }
-        // 战吼层无卡牌实例，source 传 null（仅用于记录，无卡牌依赖）
-        await KhadgarOrbHelper.EquipOrb(choiceContext, owner, null);
+        // 战吼层无卡牌实例：传魔法智慧之球卡的 canonical 模板作为装备来源。
+        // 不能传 null——JainaWeaponSlot.Equip 会因 weaponCard==null 静默不装备，
+        // 导致球武器缺失：回合结束不施法、且 KhadgarOrbPower 因武器缺失被自移除（球消失）。
+        var ballCard = MegaCrit.Sts2.Core.Models.ModelDb.Card<WondrousWisdomballCard>();
+        await KhadgarOrbHelper.EquipOrb(choiceContext, owner, ballCard);
     }
 }
