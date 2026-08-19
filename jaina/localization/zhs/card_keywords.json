@@ -66,7 +66,7 @@
   "JAINA_KEYWORD_MINI.title": "微型",
   "JAINA_KEYWORD_MINI.description": "微型：通过“微缩”效果产生的0费1/1复制卡牌本身（衍生关键词，只能通过“微缩”获得），完整保留原卡牌的所有文字效果。",
   "JAINA_KEYWORD_TRADEABLE.title": "交易",
-  "JAINA_KEYWORD_TRADEABLE.description": "交易：将此卡牌拖到弃牌堆上方松手后，点击弃牌堆会洗入你的弃牌堆，然后你从抽牌堆抽一张牌。",
+  "JAINA_KEYWORD_TRADEABLE.description": "交易：左键点击此卡牌（右键取消），3 秒内点击弃牌堆触发交易——此卡牌进入弃牌堆，抽一张牌。",
   "JAINA_KEYWORD_MINION.title":"随从",
   "JAINA_KEYWORD_MINION.description":"使用时召唤一个具有攻击力和生命值的[gold]随从[/gold]，进入你的[gold]随从栏[/gold]。从召唤后的第二回合开始，点击其可以进行攻击。你受到的未被[gold]格挡[/gold]的伤害会优先命中你的[gold]随从[/gold]。\n你最多可以拥有7个[gold]随从[/gold]。",
   "JAINA_KEYWORD_SPECIAL_HERO_SKILL.title":"灌注技能",
