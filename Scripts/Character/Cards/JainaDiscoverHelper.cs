@@ -251,13 +251,15 @@ public static class JainaDiscoverHelper
     /// （法术/随从/地标）；<paramref name="allClasses"/>=true 时取<b>任意角色</b>全部卡
     /// （ModelDb.AllCards，应用 Jaina 随机池统一排除：非角色池/任务卡/先古稀有度/多人专属）。
     /// 每种按可升级级别展开；排除英雄技能卡（火焰冲击等）、英雄卡（魔导师晨拥）与任务线卡；
-    /// X 费卡（禁忌烈焰/禁忌神龛）费用不定，不管费用多少总是作为候选。
+    /// X 费卡（禁忌烈焰/禁忌神龛）费用不定：默认总是作为候选；
+    /// <paramref name="excludeXCost"/>=true 时排除（冬泉雏龙按 0 费发现——X 费卡实际
+    /// 打出时消耗全部能量，不是 0 费，不应出现在其发现池中）。
     /// 同名卡不可自发现：排除 <paramref name="excludeType"/>（发起发现的卡自身）。
     /// 费用过滤用当前基础费用（GetWithModifiers(None)，含升级减费）。
     /// </summary>
     public static async Task<CardModel?> DiscoverCardOfCostAndAddToHand(
         PlayerChoiceContext choiceContext, Player player, int cost, System.Type? excludeType = null,
-        bool allClasses = false)
+        bool allClasses = false, bool excludeXCost = false)
     {
         if (player?.Creature?.CombatState == null)
         {
@@ -291,8 +293,10 @@ public static class JainaDiscoverHelper
             {
                 return;
             }
-            // X 费卡（CostsX）费用不定：不管剩余费用多少，总是作为候选出现在发现池里
-            bool isXCost = canonical.EnergyCost.CostsX;
+            // X 费卡（CostsX）费用不定：默认总是作为候选出现在发现池里；
+            // excludeXCost=true 时排除（冬泉雏龙按 0 费发现——X 费卡打出时
+            // 消耗全部能量，不是 0 费，不应出现在其发现池中）
+            bool isXCost = canonical.EnergyCost.CostsX && !excludeXCost;
             // 展开升级形态（未升级 + 允许的升级级别）
             int maxLevel = jaina.Scripts.Character.JainaCastTracker.GetDiscoverPoolMaxUpgradeLevel(cardType);
             for (int level = 0; level <= maxLevel; level++)

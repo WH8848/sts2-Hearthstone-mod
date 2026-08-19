@@ -37,7 +37,9 @@ public sealed class WinterspringWhelpMinion : JainaMinionBase
             return;
         }
         var ownCardType = jaina.Scripts.Character.Minions.JainaMinionCardMap.GetCardType(GetType());
+        // excludeXCost：发现池中不出现 X 费卡（禁忌烈焰/禁忌神龛等）——它们打出时
+        // 消耗全部能量，不是 0 费卡，不应出现在"0 费卡"发现池中
         await JainaDiscoverHelper.DiscoverCardOfCostAndAddToHand(
-            choiceContext, owner, 0, ownCardType, allClasses: true);
+            choiceContext, owner, 0, ownCardType, allClasses: true, excludeXCost: true);
     }
 }
