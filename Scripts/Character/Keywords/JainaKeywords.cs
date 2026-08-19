@@ -11,62 +11,62 @@ namespace jaina.Scripts.Character.Keywords;
 // 词条（战吼/亡语/冲锋/冻结/双生法术/灌注/压轴）不注入卡面描述上方，
 // 改为直接以金色词条样式出现在描述文本中（见各卡 description）。
 // 注册仍保留 Keywords 列表，悬停卡时显示词条解释。
-[RegisterOwnedKeyword(nameof(Deathrattle), IconPath = "res://icon.svg")]
-[RegisterOwnedKeyword(nameof(Charge), IconPath = "res://icon.svg")]
+[RegisterOwnedKeyword(nameof(Deathrattle), IconPath = "res://assets/keyword_icons/keyword_Deathrattle.png")]
+[RegisterOwnedKeyword(nameof(Charge), IconPath = "res://assets/keyword_icons/keyword_Charge.png")]
 // 冻结：随从给予敌人的冻结无视人工制品（滑冰元素/瓦尔登·晨拥的战吼冻结
 // 不被人工制品抵挡，见 ArtifactFreezeBypassPatch / FreezePower.BypassArtifactNextApply）
-[RegisterOwnedKeyword(nameof(Freeze), IconPath = "res://icon.svg")]
-[RegisterOwnedKeyword(nameof(Twinspell), IconPath = "res://icon.svg")]
-[RegisterOwnedKeyword(nameof(Empower), IconPath = "res://icon.svg")]
-[RegisterOwnedKeyword(nameof(Finisher), IconPath = "res://icon.svg")]
-[RegisterOwnedKeyword(nameof(Battlecry), IconPath = "res://icon.svg")]
-[RegisterOwnedKeyword(nameof(Replay), IconPath = "res://icon.svg")]
+[RegisterOwnedKeyword(nameof(Freeze), IconPath = "res://assets/keyword_icons/keyword_Freeze.png")]
+[RegisterOwnedKeyword(nameof(Twinspell), IconPath = "res://assets/keyword_icons/keyword_Twinspell.png")]
+[RegisterOwnedKeyword(nameof(Empower), IconPath = "res://assets/keyword_icons/keyword_Empower.png")]
+[RegisterOwnedKeyword(nameof(Finisher), IconPath = "res://assets/keyword_icons/keyword_Finisher.png")]
+[RegisterOwnedKeyword(nameof(Battlecry), IconPath = "res://assets/keyword_icons/keyword_Battlecry.png")]
+[RegisterOwnedKeyword(nameof(Replay), IconPath = "res://assets/keyword_icons/keyword_Replay.png")]
 // 英雄技能：英雄技能卡（如火焰冲击）专属关键词，不注入卡面描述，仅提供悬停解释
-[RegisterOwnedKeyword(nameof(HeroPower), IconPath = "res://icon.svg")]
+[RegisterOwnedKeyword(nameof(HeroPower), IconPath = "res://assets/keyword_icons/keyword_HeroPower.png")]
 // 法术牌：内部标记关键词（不作为关键词展示——不注入卡面描述、不提供悬停解释，
 // 仅用于游戏逻辑识别；攻击牌、技能牌和能力牌都视为法术牌）。
 // 卡面上通过类型标签"攻击丨法术"等方式展示，见 SpellCardTypePlaquePatch。
-[RegisterOwnedKeyword(nameof(Spell), IconPath = "res://icon.svg", IncludeInCardHoverTip = false)]
+[RegisterOwnedKeyword(nameof(Spell), IconPath = "res://assets/keyword_icons/keyword_Spell.png", IncludeInCardHoverTip = false)]
 // 法术派系关键词（自动注入卡面描述之前，悬停显示解释；描述文本中不再手工书写词条）
-[RegisterOwnedKeyword(nameof(Fire), IconPath = "res://icon.svg", CardDescriptionPlacement = ModKeywordCardDescriptionPlacement.BeforeCardDescription)]
-[RegisterOwnedKeyword(nameof(Frost), IconPath = "res://icon.svg",CardDescriptionPlacement = ModKeywordCardDescriptionPlacement.BeforeCardDescription)]
-[RegisterOwnedKeyword(nameof(Arcane), IconPath = "res://icon.svg",CardDescriptionPlacement = ModKeywordCardDescriptionPlacement.BeforeCardDescription)]
-[RegisterOwnedKeyword(nameof(Shadow), IconPath = "res://icon.svg",CardDescriptionPlacement = ModKeywordCardDescriptionPlacement.BeforeCardDescription)]
+[RegisterOwnedKeyword(nameof(Fire), IconPath = "res://assets/keyword_icons/keyword_Fire.png", CardDescriptionPlacement = ModKeywordCardDescriptionPlacement.BeforeCardDescription)]
+[RegisterOwnedKeyword(nameof(Frost), IconPath = "res://assets/keyword_icons/keyword_Frost.png",CardDescriptionPlacement = ModKeywordCardDescriptionPlacement.BeforeCardDescription)]
+[RegisterOwnedKeyword(nameof(Arcane), IconPath = "res://assets/keyword_icons/keyword_Arcane.png",CardDescriptionPlacement = ModKeywordCardDescriptionPlacement.BeforeCardDescription)]
+[RegisterOwnedKeyword(nameof(Shadow), IconPath = "res://assets/keyword_icons/keyword_Shadow.png",CardDescriptionPlacement = ModKeywordCardDescriptionPlacement.BeforeCardDescription)]
 // 任务：任务卡专属关键词（不注入卡面描述，仅提供悬停解释）
-[RegisterOwnedKeyword(nameof(Quest), IconPath = "res://icon.svg")]
+[RegisterOwnedKeyword(nameof(Quest), IconPath = "res://assets/keyword_icons/keyword_Quest.png")]
 // 耐久度：拥有耐久度的卡牌，耐久度为0时卡牌被消耗（不注入卡面描述，仅提供悬停解释）
-[RegisterOwnedKeyword(nameof(Durability), IconPath = "res://icon.svg")]
+[RegisterOwnedKeyword(nameof(Durability), IconPath = "res://assets/keyword_icons/keyword_Durability.png")]
 // 武器：武器只可装备1把，装备第2把会爆掉第1把（不注入卡面描述，仅提供悬停解释）
-[RegisterOwnedKeyword(nameof(Weapon), IconPath = "res://icon.svg")]
+[RegisterOwnedKeyword(nameof(Weapon), IconPath = "res://assets/keyword_icons/keyword_Weapon.png")]
 // 种族：随从种族（不注入卡面描述，描述文本中以金色词条样式出现，悬停显示解释）
-[RegisterOwnedKeyword(nameof(Elemental), IconPath = "res://icon.svg")]
-[RegisterOwnedKeyword(nameof(Beast), IconPath = "res://icon.svg")]
-[RegisterOwnedKeyword(nameof(Dragon), IconPath = "res://icon.svg")]
-[RegisterOwnedKeyword(nameof(Undead), IconPath = "res://icon.svg")]
-[RegisterOwnedKeyword(nameof(Demon), IconPath = "res://icon.svg")]
-[RegisterOwnedKeyword(nameof(Draenei), IconPath = "res://icon.svg")]
-[RegisterOwnedKeyword(nameof(Naga), IconPath = "res://icon.svg")]
-[RegisterOwnedKeyword(nameof(Pirate), IconPath = "res://icon.svg")]
-[RegisterOwnedKeyword(nameof(Mech), IconPath = "res://icon.svg")]
+[RegisterOwnedKeyword(nameof(Elemental), IconPath = "res://assets/keyword_icons/keyword_Elemental.png")]
+[RegisterOwnedKeyword(nameof(Beast), IconPath = "res://assets/keyword_icons/keyword_Beast.png")]
+[RegisterOwnedKeyword(nameof(Dragon), IconPath = "res://assets/keyword_icons/keyword_Dragon.png")]
+[RegisterOwnedKeyword(nameof(Undead), IconPath = "res://assets/keyword_icons/keyword_Undead.png")]
+[RegisterOwnedKeyword(nameof(Demon), IconPath = "res://assets/keyword_icons/keyword_Demon.png")]
+[RegisterOwnedKeyword(nameof(Draenei), IconPath = "res://assets/keyword_icons/keyword_Draenei.png")]
+[RegisterOwnedKeyword(nameof(Naga), IconPath = "res://assets/keyword_icons/keyword_Naga.png")]
+[RegisterOwnedKeyword(nameof(Pirate), IconPath = "res://assets/keyword_icons/keyword_Pirate.png")]
+[RegisterOwnedKeyword(nameof(Mech), IconPath = "res://assets/keyword_icons/keyword_Mech.png")]
 // 吸血：造成伤害时回复等量生命（冰霜女巫吉安娜光环，元素随从拥有）
-[RegisterOwnedKeyword(nameof(Lifesteal), IconPath = "res://icon.svg")]
+[RegisterOwnedKeyword(nameof(Lifesteal), IconPath = "res://assets/keyword_icons/keyword_Lifesteal.png")]
 // 发现：从若干张随机卡牌中选择一张置入手牌
-[RegisterOwnedKeyword(nameof(Discover), IconPath = "res://icon.svg")]
+[RegisterOwnedKeyword(nameof(Discover), IconPath = "res://assets/keyword_icons/keyword_Discover.png")]
 // 免疫：不会受到任何伤害
-[RegisterOwnedKeyword(nameof(Immune), IconPath = "res://icon.svg")]
+[RegisterOwnedKeyword(nameof(Immune), IconPath = "res://assets/keyword_icons/keyword_Immune.png")]
 // 地标：占随从槽，每两个回合可点击使用一次触发效果，拥有耐久度（不注入卡面描述，仅提供悬停解释）
-[RegisterOwnedKeyword(nameof(Landmark), IconPath = "res://icon.svg")]
+[RegisterOwnedKeyword(nameof(Landmark), IconPath = "res://assets/keyword_icons/keyword_Landmark.png")]
 // 疲劳：当你抽牌堆和弃牌堆无牌可抽时，抽第1张牌失去1点生命，抽第2张牌失去2点生命，以此类推
-[RegisterOwnedKeyword(nameof(Fatigue), IconPath = "res://icon.svg")]
+[RegisterOwnedKeyword(nameof(Fatigue), IconPath = "res://assets/keyword_icons/keyword_Fatigue.png")]
 // 微缩：使用（从手牌打出）带微缩的随从牌后，立即将一张0费1/1的复制置入手牌
-[RegisterOwnedKeyword(nameof(Miniaturize), IconPath = "res://icon.svg")]
+[RegisterOwnedKeyword(nameof(Miniaturize), IconPath = "res://assets/keyword_icons/keyword_Miniaturize.png")]
 // 微型：微缩效果产生的0费1/1复制卡牌本身（衍生关键词，只能通过微缩获得）
-[RegisterOwnedKeyword(nameof(Mini), IconPath = "res://icon.svg")]
+[RegisterOwnedKeyword(nameof(Mini), IconPath = "res://assets/keyword_icons/keyword_Mini.png")]
 // 交易：左键点击此卡牌（右键取消），3 秒内点击弃牌堆触发交易——此卡牌进入弃牌堆，抽一张牌
-[RegisterOwnedKeyword(nameof(Tradeable), IconPath = "res://icon.svg",CardDescriptionPlacement = ModKeywordCardDescriptionPlacement.BeforeCardDescription)]
+[RegisterOwnedKeyword(nameof(Tradeable), IconPath = "res://assets/keyword_icons/keyword_Tradeable.png",CardDescriptionPlacement = ModKeywordCardDescriptionPlacement.BeforeCardDescription)]
 // 零费标记：旅社谍战洗入的其它角色卡牌内部标记（能量/星星/X 全部费用归零用；
 // 不作为关键词展示，仅用于 ZeroCostMarkPatch 识别）
-[RegisterOwnedKeyword(nameof(ZeroCostMark), IconPath = "res://icon.svg", IncludeInCardHoverTip = false)]
+[RegisterOwnedKeyword(nameof(ZeroCostMark), IconPath = "res://assets/keyword_icons/keyword_ZeroCostMark.png", IncludeInCardHoverTip = false)]
 public class JainaKeywords
 {
     /// <summary>
