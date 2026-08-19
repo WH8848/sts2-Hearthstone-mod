@@ -118,7 +118,8 @@ public sealed class GreaterArcaneMissilesCard : JainaSpellCardTemplate
                 {
                     break;
                 }
-                await CreatureCmd.Damage(choiceContext, [target], damage, ValueProp.Move, base.Owner.Creature, this, cardPlay);
+                // 走 AttackCommand（DamageCmd.Attack）：触发"被攻击命中"类效果（如胆小）
+                await DamageCmd.Attack(damage).FromCard(this, cardPlay).Targeting(target).Execute(choiceContext);
             }
             return;
         }
@@ -138,8 +139,10 @@ public sealed class GreaterArcaneMissilesCard : JainaSpellCardTemplate
             {
                 break;
             }
-            await CreatureCmd.Damage(choiceContext, [target], base.DynamicVars.Damage.BaseValue,
-                ValueProp.Move, base.Owner.Creature, this, cardPlay);
+            await DamageCmd.Attack(base.DynamicVars.Damage.BaseValue)
+                .FromCard(this, cardPlay)
+                .Targeting(target)
+                .Execute(choiceContext);
         }
     }
 }

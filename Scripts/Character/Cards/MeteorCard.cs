@@ -96,8 +96,11 @@ public sealed class MeteorCard : JainaSpellCardTemplate
                 {
                     break;
                 }
-                await CreatureCmd.Damage(choiceContext, [target], base.DynamicVars["Blast"].BaseValue,
-                    ValueProp.Move, base.Owner.Creature, this, cardPlay);
+                // 走 AttackCommand（DamageCmd.Attack）：触发"被攻击命中"类效果（如胆小）
+                await DamageCmd.Attack(base.DynamicVars["Blast"].BaseValue)
+                    .FromCard(this, cardPlay)
+                    .Targeting(target)
+                    .Execute(choiceContext);
             }
             return;
         }
@@ -105,8 +108,10 @@ public sealed class MeteorCard : JainaSpellCardTemplate
         // 陨石术：对一个敌人造成 15 点伤害
         if (cardPlay.Target is { IsAlive: true } mainTarget)
         {
-            await CreatureCmd.Damage(choiceContext, [mainTarget], base.DynamicVars["Damage"].BaseValue,
-                ValueProp.Move, base.Owner.Creature, this, cardPlay);
+            await DamageCmd.Attack(base.DynamicVars["Damage"].BaseValue)
+                .FromCard(this, cardPlay)
+                .Targeting(mainTarget)
+                .Execute(choiceContext);
         }
 
         // 再对随机敌人造成 2 次 4 点伤害
@@ -124,8 +129,10 @@ public sealed class MeteorCard : JainaSpellCardTemplate
             {
                 break;
             }
-            await CreatureCmd.Damage(choiceContext, [target], base.DynamicVars["Splash"].BaseValue,
-                ValueProp.Move, base.Owner.Creature, this, cardPlay);
+            await DamageCmd.Attack(base.DynamicVars["Splash"].BaseValue)
+                .FromCard(this, cardPlay)
+                .Targeting(target)
+                .Execute(choiceContext);
         }
     }
 }

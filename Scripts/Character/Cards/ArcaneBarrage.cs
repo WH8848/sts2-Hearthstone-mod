@@ -79,8 +79,9 @@ public sealed class ArcaneBarrage : JainaSpellCardTemplate
                 break;
             }
             // Move 标记：每段伤害都触发振翅（Flutter）层数减少（IsPoweredAttack）；
-            // 传 cardSource/cardPlay（蜷身等依赖 cardSource 的敌方 Power 才能触发）
-            await CreatureCmd.Damage(choiceContext, [randomEnemy], 2m, ValueProp.Move, base.Owner.Creature, this, cardPlay);
+            // 走 AttackCommand（DamageCmd.Attack）：触发"被攻击命中"类效果
+            // （如胆小 SkittishPower——攻击牌造成的伤害应算攻击命中）
+            await DamageCmd.Attack(2m).FromCard(this, cardPlay).Targeting(randomEnemy).Execute(choiceContext);
         }
 
         // 施放本张后计数 +1（供下一次灯光表演递增，按玩家区分）

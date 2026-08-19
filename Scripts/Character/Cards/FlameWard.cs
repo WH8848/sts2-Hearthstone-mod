@@ -102,8 +102,11 @@ public sealed class FlameWard : JainaSpellCardTemplate
             }
             var target = combatState.RunState.Rng.CombatTargets.NextItem(enemies);
             // 攻击伤害：吃力量加成（与原版多次攻击牌一致，每次命中都计算力量）；
-            // 传 cardSource/cardPlay（蜷身等依赖 cardSource 的敌方 Power 才能触发）
-            await CreatureCmd.Damage(choiceContext, [target], base.DynamicVars.Damage.BaseValue, ValueProp.Move, base.Owner.Creature, this, cardPlay);
+            // 走 AttackCommand（DamageCmd.Attack）：触发"被攻击命中"类效果（如胆小）
+            await DamageCmd.Attack(base.DynamicVars.Damage.BaseValue)
+                .FromCard(this, cardPlay)
+                .Targeting(target)
+                .Execute(choiceContext);
         }
     }
 

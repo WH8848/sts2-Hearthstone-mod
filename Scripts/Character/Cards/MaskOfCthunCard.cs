@@ -97,7 +97,8 @@ public sealed class MaskOfCthunCard : JainaSpellCardTemplate
                 {
                     break;
                 }
-                await CreatureCmd.Damage(choiceContext, [target], 1m, ValueProp.Move, base.Owner.Creature, this, cardPlay);
+                // 走 AttackCommand（DamageCmd.Attack）：触发"被攻击命中"类效果（如胆小）
+                await DamageCmd.Attack(1m).FromCard(this, cardPlay).Targeting(target).Execute(choiceContext);
             }
         }
 
