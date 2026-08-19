@@ -28,10 +28,18 @@ public static class AutoPlayGuard
     /// <summary>
     /// 当前是否处于 AutoPlay 上下文（调用栈检测 + 实例标记双保险）。
     /// <paramref name="source"/> = 发起选择的卡（如 CardSelectCmd.FromHand 的 source 参数）。
+    /// 栈检测在 JIT 内联/调度包装下可能失效（async 状态机帧被优化掉，实测 stackAutoPlay=False）——
+    /// 用 <see cref="CurrentAutoPlayCard"/> 非空兜底：最近一次 AutoPlay 正在进行即视为随机释放
+    /// （标记在玩家手打 TryManualPlay 时清空，手打流程不受影响）。
     /// </summary>
     public static bool IsAutoPlayContext(CardModel? source)
     {
         if (IsInAutoPlay())
+        {
+            return true;
+        }
+        // 栈检测失效兜底：AutoPlay 进行中（实例标记非空）
+        if (CurrentAutoPlayCard != null)
         {
             return true;
         }

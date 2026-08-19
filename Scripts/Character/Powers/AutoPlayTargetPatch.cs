@@ -47,4 +47,19 @@ public static class AutoPlayTargetPatch
             target = JainaRandomPoolHelper.PickRandomTarget(card.Owner, combatState, card);
         }
     }
+
+    /// <summary>
+    /// 玩家手打（手动打出）入口：清空 AutoPlay 实例标记——
+    /// 手打流程中触发选择（发现三选一/选牌等）时应正常弹界面等待玩家（不是随机释放）。
+    /// AutoPlay 的 Prefix 会重新设置标记；嵌套随机施放（符文循环 AutoPlay）期间标记
+    /// 始终非空 → 自动选择；手打清空后选择正常弹出。
+    /// </summary>
+    [HarmonyPatch(typeof(CardModel), nameof(CardModel.TryManualPlay))]
+    public static class ManualPlayClearPrefix
+    {
+        private static void Prefix()
+        {
+            AutoPlayGuard.CurrentAutoPlayCard = null;
+        }
+    }
 }
