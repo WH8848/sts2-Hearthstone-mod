@@ -44,12 +44,12 @@ public static class TemporaryStrengthPetTurnEndFix
         CombatSide side, IEnumerable<Creature> participants)
     {
         var owner = __instance.Owner;
-        if (owner == null || owner.IsDead || participants.Contains(owner))
+        if (owner == null || owner.IsDead || participants.Any(c => c == owner))
         {
             return true; // 原逻辑（含主人）
         }
         // 随从：主人的回合结束 → 临时力量同样消失
-        if (owner.PetOwner != null && participants.Contains(owner.PetOwner))
+        if (owner.PetOwner != null && participants.Any(c => c == owner.PetOwner.Creature))
         {
             var amount = __instance.Amount;
             bool positive = TemporaryPowerPetTurnEndHelper.IsPositive(__instance);
@@ -82,11 +82,11 @@ public static class TemporaryFocusPetTurnEndFix
         CombatSide side, IEnumerable<Creature> participants)
     {
         var owner = __instance.Owner;
-        if (owner == null || owner.IsDead || participants.Contains(owner))
+        if (owner == null || owner.IsDead || participants.Any(c => c == owner))
         {
             return true;
         }
-        if (owner.PetOwner != null && participants.Contains(owner.PetOwner))
+        if (owner.PetOwner != null && participants.Any(c => c == owner.PetOwner.Creature))
         {
             var amount = __instance.Amount;
             bool positive = TemporaryPowerPetTurnEndHelper.IsPositive(__instance);
@@ -119,11 +119,11 @@ public static class TemporaryDexterityPetTurnEndFix
         CombatSide side, IEnumerable<Creature> participants)
     {
         var owner = __instance.Owner;
-        if (owner == null || owner.IsDead || participants.Contains(owner))
+        if (owner == null || owner.IsDead || participants.Any(c => c == owner))
         {
             return true;
         }
-        if (owner.PetOwner != null && participants.Contains(owner.PetOwner))
+        if (owner.PetOwner != null && participants.Any(c => c == owner.PetOwner.Creature))
         {
             var amount = __instance.Amount;
             bool positive = TemporaryPowerPetTurnEndHelper.IsPositive(__instance);
