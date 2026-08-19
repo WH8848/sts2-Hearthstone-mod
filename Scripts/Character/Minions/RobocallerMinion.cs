@@ -62,11 +62,7 @@ public sealed class RobocallerMinion : JainaMinionBase
 
         foreach (var digit in dial)
         {
-            // 手牌满则不抽（避免满手改道弃牌堆）
-            if (jaina.Scripts.Character.JainaHandHelper.IsHandFull(owner))
-            {
-                break;
-            }
+            // 手牌满时抽到的牌直接进弃牌堆（Add 到满手手牌自动改道弃牌堆，牌不消失不消耗）
             // 从抽牌堆定向抽取一张费用消耗 == 拨号数字的牌（X 费卡费用不定，排除；
             // 用当前基础费用——升级后减费的牌按实际费用匹配）；
             // 抽牌堆没有 → 从弃牌堆找（统一语义见 JainaDrawHelper）

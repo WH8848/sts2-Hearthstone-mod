@@ -48,7 +48,8 @@ public sealed class SanctumCandlesellerMinion : JainaMinionBase
         }
 
         var player = Creature.PetOwner;
-        if (jaina.Scripts.Character.JainaHandHelper.IsHandFull(player))
+        // 手牌满时抽到的法术牌直接进弃牌堆（Add 到满手手牌自动改道弃牌堆，牌不消失不消耗）
+        if (player == null)
         {
             return;
         }
