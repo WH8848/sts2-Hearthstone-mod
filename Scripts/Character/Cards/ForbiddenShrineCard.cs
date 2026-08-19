@@ -20,7 +20,8 @@ namespace jaina.Scripts.Character.Cards;
 /// 随机施放一个 x 费卡牌（x = 消耗的能量，无上限）。
 /// 升级后（禁忌神龛+）：随机施放一个 x+1 费卡牌（无上限）。
 /// 卡牌 = <b>全角色</b>可打出卡牌（法术/能力牌，Attack/Skill/Power 类型，含升级形态；
-/// 不保留随从/地标/武器），排除英雄技能卡、任务卡、先古/衍生池（IsEligible）与自身。
+/// 不保留随从/地标/武器/吉安娜非法术能力牌），排除英雄技能卡、任务卡、先古/衍生池
+/// （IsEligible）与自身。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
 public sealed class ForbiddenShrineCard : JainaSpellCardTemplate
@@ -98,6 +99,12 @@ public sealed class ForbiddenShrineCard : JainaSpellCardTemplate
                 continue;
             }
             if (jaina.Scripts.Character.Powers.HeroPowerHandHelper.IsHeroPowerCard(canonical))
+            {
+                continue;
+            }
+            // 吉安娜非法术能力牌（戏法图腾/炉石形态——吉安娜池 Power 无"法术牌"关键词）
+            // 不施放；其他角色/原版能力牌不在吉安娜池，保留（IsExcludedFromSpellPool 动态判定）
+            if (jaina.Scripts.Character.JainaCastTracker.IsExcludedFromSpellPool(canonical.GetType()))
             {
                 continue;
             }
