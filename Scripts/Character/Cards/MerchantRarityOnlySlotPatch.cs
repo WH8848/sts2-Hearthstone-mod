@@ -14,6 +14,7 @@ namespace jaina.Scripts.Character.Cards;
 /// [Attack, Attack, Skill, Skill, Power] 5 个类型槽），改为只按稀有度
 /// 从角色卡池中选卡（与原版无色卡槽同一机制：掷 Shop 稀有度 → 按稀有度取卡，
 /// 不限类型）。无色卡槽保留原逻辑。
+/// <b>只对吉安娜生效</b>（其他角色的商店保持原版按类型分槽逻辑，不受影响）。
 /// 用 Prefix 完全替换 PopulateCharacterCardEntries（该方法是私有实例方法，
 /// 直接替换实现最简单；原版稀有度回退 GetNextAllowedRarity 逻辑在
 /// CardFactory.CreateForMerchant(Player, IEnumerable, CardRarity) 中缺失，
@@ -32,6 +33,11 @@ public static class MerchantRarityOnlySlotPatch
 
     private static bool Prefix(MerchantInventory __instance)
     {
+        // 只对吉安娜生效：其他角色的商店保持原版按类型分槽逻辑
+        if (__instance.Player?.Character is not jaina.Scripts.Character.Jaina)
+        {
+            return true; // 走原方法
+        }
         var player = __instance.Player;
         var cardPool = player.Character.CardPool
             .GetUnlockedCards(player.UnlockState, player.RunState.CardMultiplayerConstraint)

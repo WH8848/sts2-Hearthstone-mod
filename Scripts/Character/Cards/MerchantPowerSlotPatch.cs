@@ -16,6 +16,7 @@ namespace jaina.Scripts.Character.Cards;
 /// 注意：候选里即使有 Power 卡，若全是先古（Ancient）/Token 等不在商店
 /// 稀有度池的卡，GetNextAllowedRarity 仍会抛 InvalidOperationException——
 /// 因此按"可售稀有度"（Common/Uncommon/Rare/Shop）判断，而非只看类型。
+/// <b>只对吉安娜生效</b>（其他角色保持原版行为，不受影响）。
 /// 纯本地确定性逻辑，不影响多人联机同步。
 /// </summary>
 [HarmonyPatch(typeof(CardFactory), nameof(CardFactory.CreateForMerchant),
@@ -31,8 +32,13 @@ public static class MerchantPowerSlotPatch
         return card.Rarity is CardRarity.Common or CardRarity.Uncommon or CardRarity.Rare;
     }
 
-    private static void Prefix(ref CardType type, IEnumerable<CardModel> options)
+    private static void Prefix(Player player, ref CardType type, IEnumerable<CardModel> options)
     {
+        // 只对吉安娜生效（其他角色保持原版商店逻辑）
+        if (player?.Character is not jaina.Scripts.Character.Jaina)
+        {
+            return;
+        }
         // 仅处理能力槽
         if (type != CardType.Power)
         {
