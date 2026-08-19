@@ -16,8 +16,9 @@ using STS2RitsuLib.Scaffolding.Content.Patches;
 namespace jaina.Scripts.Character.Powers;
 
 /// <summary>
-/// 冻结：被冻结的角色攻击造成的伤害减少 12.5%，可叠加。
-/// 最大可叠加 8 层，回合结束全部消失。
+/// 冻结：被冻结的角色攻击造成的伤害减少12.5%，可叠加。
+/// 最大可叠加8层，回合结束全部消失。
+/// 随从给予的冻结不会被人工制品阻挡（滑冰元素/瓦尔登·晨拥，见 ArtifactFreezeBypassPatch）。
 /// </summary>
 [RegisterPower]
 public sealed class FreezePower : PowerModel, IModPowerAssetOverrides

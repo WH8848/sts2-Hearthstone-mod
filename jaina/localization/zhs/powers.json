@@ -3,7 +3,7 @@
   "JAINA_POWER_MINION_SQUAD_POWER.description": "当吉安娜的格挡无法阻挡伤害时，随从按打出顺序代为承受伤害。",
   "JAINA_POWER_MINION_SQUAD_POWER.smartDescription": "当格挡无法阻挡伤害时，随从按打出顺序代为承受伤害。",
   "JAINA_POWER_FREEZE_POWER.title": "冻结",
-  "JAINA_POWER_FREEZE_POWER.description": "被冻结的角色攻击造成的伤害减少12.5%，可叠加。最大可叠加8层，回合结束全部消失。",
+  "JAINA_POWER_FREEZE_POWER.description": "被冻结的角色攻击造成的伤害减少12.5%，可叠加。最大可叠加8层，回合结束全部消失。随从给予的冻结不会被人工制品阻挡。",
   "JAINA_POWER_FREEZE_POWER.smartDescription": "攻击造成的伤害减少12.5%，可叠加，最大8层。",
   "JAINA_POWER_JAINA_ATTACK_ACTION.title": "攻击",
   "JAINA_POWER_JAINA_ATTACK_ACTION.description": "[gold]行动[/gold]：选择1名敌人。造成等同于该随从攻击力的伤害。消耗1点。",

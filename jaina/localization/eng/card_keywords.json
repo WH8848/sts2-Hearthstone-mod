@@ -4,7 +4,7 @@
   "JAINA_KEYWORD_CHARGE.title": "Charge",
   "JAINA_KEYWORD_CHARGE.description": "Can attack immediately after being summoned.",
   "JAINA_KEYWORD_FREEZE.title": "Freeze",
-  "JAINA_KEYWORD_FREEZE.description": "Frozen characters deal 12.5% less damage with attacks. Stacks up to 8 times. All stacks are removed at end of turn.",
+  "JAINA_KEYWORD_FREEZE.description": "Frozen characters deal 12.5% less damage with attacks. Stacks up to 8 times. All stacks are removed at end of turn. Freeze applied by minions is not blocked by Artifacts.",
   "JAINA_KEYWORD_TWINSPELL.title": "Twinspell",
   "JAINA_KEYWORD_TWINSPELL.description": "When you cast a spell with Twinspell, add a copy of that spell to your hand. The copy does not have Twinspell.",
   "JAINA_KEYWORD_EMPOWER.title": "Empower",

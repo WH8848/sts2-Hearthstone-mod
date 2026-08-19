@@ -4,7 +4,7 @@
   "JAINA_KEYWORD_CHARGE.title": "冲锋",
   "JAINA_KEYWORD_CHARGE.description": "随从在登场的回合即可立即发起攻击。",
   "JAINA_KEYWORD_FREEZE.title": "冻结",
-  "JAINA_KEYWORD_FREEZE.description": "被冻结的角色攻击造成的伤害减少12.5%，可叠加。最大可叠加8层，回合结束全部消失。",
+  "JAINA_KEYWORD_FREEZE.description": "被冻结的角色攻击造成的伤害减少12.5%，可叠加。最大可叠加8层，回合结束全部消失。随从给予的冻结不会被人工制品阻挡。",
   "JAINA_KEYWORD_TWINSPELL.title": "双生法术",
   "JAINA_KEYWORD_TWINSPELL.description": "当你施放一个具有“双生法术”关键词的法术时，会立即将一张该法术的复制置入你的手牌。复制出的这张牌不再具有“双生法术”关键词。",
   "JAINA_KEYWORD_EMPOWER.title": "灌注",

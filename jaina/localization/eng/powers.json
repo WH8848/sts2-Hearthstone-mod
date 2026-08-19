@@ -3,7 +3,7 @@
   "JAINA_POWER_MINION_SQUAD_POWER.description": "When Jaina's Block cannot absorb damage, minions take damage in summon order.",
   "JAINA_POWER_MINION_SQUAD_POWER.smartDescription": "When Block cannot absorb damage, minions take damage in summon order.",
   "JAINA_POWER_FREEZE_POWER.title": "Freeze",
-  "JAINA_POWER_FREEZE_POWER.description": "Frozen characters deal 12.5% less damage with attacks. Stacks up to 8 times. All stacks are removed at end of turn.",
+  "JAINA_POWER_FREEZE_POWER.description": "Frozen characters deal 12.5% less damage with attacks. Stacks up to 8 times. All stacks are removed at end of turn. Freeze applied by minions is not blocked by Artifacts.",
   "JAINA_POWER_FREEZE_POWER.smartDescription": "Deals 12.5% less damage with attacks. Stacks up to 8 times.",
   "JAINA_POWER_JAINA_ATTACK_ACTION.title": "Attack",
   "JAINA_POWER_JAINA_ATTACK_ACTION.description": "[gold]Action[/gold]: Choose 1 enemy. Deal damage equal to this minion's attack. Spend 1 point.",
