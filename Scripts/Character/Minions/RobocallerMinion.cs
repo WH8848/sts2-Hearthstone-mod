@@ -43,18 +43,14 @@ public sealed class RobocallerMinion : JainaMinionBase
     }
 
     /// <summary>
-    /// 战吼：按卡面当前拨号数字（三个 0~5），从抽牌堆各抽取一张费用匹配的牌。
+    /// 战吼：按卡面当前拨号数字（三个 0~5），从抽牌堆各抽取一张费用匹配的牌
+    /// （抽牌堆没有 → 从弃牌堆找）。
     /// 非手牌打出（随机召唤等）不触发战吼。
     /// </summary>
     public override async Task OnBattlecry(PlayerChoiceContext choiceContext)
     {
         var owner = Creature.PetOwner;
         if (owner == null)
-        {
-            return;
-        }
-        var drawPile = owner.PlayerCombatState?.DrawPile;
-        if (drawPile == null)
         {
             return;
         }
@@ -72,10 +68,13 @@ public sealed class RobocallerMinion : JainaMinionBase
                 break;
             }
             // 从抽牌堆定向抽取一张费用消耗 == 拨号数字的牌（X 费卡费用不定，排除；
-            // 用当前基础费用——升级后减费的牌按实际费用匹配）
-            var card = drawPile.Cards.FirstOrDefault(c =>
-                c != null && !c.EnergyCost.CostsX &&
-                c.EnergyCost.GetWithModifiers(MegaCrit.Sts2.Core.Entities.Cards.CostModifiers.None) == digit);
+            // 用当前基础费用——升级后减费的牌按实际费用匹配）；
+            // 抽牌堆没有 → 从弃牌堆找（统一语义见 JainaDrawHelper）
+            var card = jaina.Scripts.Character.JainaDrawHelper.PickMatchingFromDrawThenDiscard(
+                    owner, 1,
+                    c => !c.EnergyCost.CostsX &&
+                         c.EnergyCost.GetWithModifiers(MegaCrit.Sts2.Core.Entities.Cards.CostModifiers.None) == digit)
+                .FirstOrDefault();
             if (card == null)
             {
                 continue;

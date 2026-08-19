@@ -186,15 +186,17 @@ public sealed class MageQuestlinePower : PowerModel, IModPowerAssetOverrides
 
     /// <summary>
     /// 抽一张法术牌：从抽牌堆中找第一张攻击/技能牌（或带"法术牌"关键词的能力牌）
-    /// 置入手牌；抽牌堆中没有则普通抽一张。
+    /// 置入手牌；抽牌堆没有 → 从弃牌堆找（统一语义见 JainaDrawHelper）；
+    /// 两堆都没有则普通抽一张。
     /// 手牌满时抽牌奖励排队等待空位（炉石任务奖励语义）。
     /// </summary>
     private static async Task GrantDrawSpell(PlayerChoiceContext choiceContext, Player player)
     {
-        var drawPile = player.PlayerCombatState?.DrawPile;
-        var spell = drawPile?.Cards.FirstOrDefault(c =>
-            c != null && (c.Type == CardType.Attack || c.Type == CardType.Skill ||
-                          c.Keywords.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Spell)));
+        var spell = jaina.Scripts.Character.JainaDrawHelper.PickMatchingFromDrawThenDiscard(
+                player, 1,
+                c => c.Type == CardType.Attack || c.Type == CardType.Skill ||
+                     c.Keywords.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Spell))
+            .FirstOrDefault();
         if (spell == null)
         {
             await CardPileCmd.Draw(choiceContext, 1, player);
