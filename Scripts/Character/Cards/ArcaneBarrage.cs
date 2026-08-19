@@ -5,7 +5,7 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
-using MegaCrit.Sts2.Core.ValueProps;
+using STS2RitsuLib.Cards.DynamicVars;
 using STS2RitsuLib.Interop.AutoRegistration;
 
 namespace jaina.Scripts.Character.Cards;
@@ -35,9 +35,30 @@ public sealed class ArcaneBarrage : JainaSpellCardTemplate
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
         [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Arcane];
 
+    /// <summary>
+    /// 动态光束数显示：当前光束数 = 2（基础）+ 本局已施放的灯光表演次数 + 升级次数
+    /// （与 OnPlay 实际结算一致；非战斗中仅显示基础 + 升级）。
+    /// </summary>
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new DynamicVar("Beams", 2)
+        ModCardVars.Computed("Beams", 2m, card =>
+        {
+            if (card is not ArcaneBarrage barrage)
+            {
+                return 2m;
+            }
+            // 基础 + 升级（CurrentUpgradeLevel 每次升级 +1）
+            decimal beams = 2 + barrage.CurrentUpgradeLevel;
+            // 本局已施放次数（按玩家区分；战斗外无记录）
+            var combatState = card.Owner?.Creature?.CombatState;
+            if (combatState != null)
+            {
+                var rec = jaina.Scripts.Character.JainaCastTracker.For(combatState);
+                rec.LightshowCastsByPlayer.TryGetValue(card.Owner.NetId, out var casts);
+                beams += casts;
+            }
+            return beams;
+        })
     ];
 
     public override string CustomPortraitPath => "res://assets/card_art/lightshow.png";
@@ -90,7 +111,8 @@ public sealed class ArcaneBarrage : JainaSpellCardTemplate
 
     protected override void OnUpgrade()
     {
-        // 每次升级攻击次数 +1（UpgradeValueBy 设置 WasJustUpgraded，升级预览数值绿色高亮）
+        // 每次升级攻击次数 +1：显示值由 Computed 实时计算（CurrentUpgradeLevel 已 +1），
+        // UpgradeValueBy 仅用于设置 WasJustUpgraded（升级预览数值绿色高亮）
         base.DynamicVars["Beams"].UpgradeValueBy(1);
     }
 }
