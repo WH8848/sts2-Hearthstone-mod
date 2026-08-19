@@ -452,27 +452,95 @@ public static class JainaCastTracker
     }
 
     /// <summary>
-    /// 该类型是否<b>不可</b>被法术发现/随机施放池检索（显式黑名单）：
-    /// - 戏法图腾/炉石形态：能力牌，<b>不是法术牌</b>（卡面无"法术牌"关键词）——
-    ///   不出现在法术池（与 <see cref="RecordPlayed"/> 的法术判定一致）；
-    /// - 5 张任务卡（禁忌序列/打开时空之门/巫师的计策/拖延时间/抵达传送大厅）：
-    ///   任务卡不可被发现（Quest 关键词过滤已排除，此处显式兜底，防止关键词调整后泄漏）；
-    /// - 任务奖励卡（时空扭曲/源生之石/奥术师晨拥）：任务卡的任务奖励不可被发现
-    ///   （注册在 JainaNeutralCardPool，发现池天然不含；此处显式兜底，防止注册池调整后泄漏）。
-    /// 法术牌统一定义（攻击/技能牌，或带"法术牌"关键词的能力牌）+ 此黑名单共同决定池成员。
+    /// 吉安娜卡池（JainaCardPool）全部卡的类型集合（惰性构建；卡池注册冻结后不变）。
+    /// </summary>
+    private static HashSet<Type>? _jainaPoolCardTypes;
+
+    /// <summary>
+    /// 吉安娜中立/衍生池（JainaNeutralCardPool）全部卡的类型集合（惰性构建）。
+    /// 含任务奖励卡（时空扭曲/源生之石/奥术师晨拥）与全部衍生牌。
+    /// </summary>
+    private static HashSet<Type>? _neutralPoolCardTypes;
+
+    /// <summary>
+    /// 惰性构建吉安娜两个卡池的类型集合（ModelDb 卡池注册完成后首次调用时构建一次）。
+    /// </summary>
+    private static void EnsurePoolTypeCache()
+    {
+        if (_jainaPoolCardTypes != null)
+        {
+            return;
+        }
+        var jaina = new HashSet<Type>();
+        var neutral = new HashSet<Type>();
+        var jainaPool = ModelDb.CardPool<JainaCardPool>();
+        if (jainaPool != null)
+        {
+            foreach (var c in jainaPool.AllCards)
+            {
+                if (c != null)
+                {
+                    jaina.Add(c.GetType());
+                }
+            }
+        }
+        var neutralPool = ModelDb.CardPool<JainaNeutralCardPool>();
+        if (neutralPool != null)
+        {
+            foreach (var c in neutralPool.AllCards)
+            {
+                if (c != null)
+                {
+                    neutral.Add(c.GetType());
+                }
+            }
+        }
+        _jainaPoolCardTypes = jaina;
+        _neutralPoolCardTypes = neutral;
+    }
+
+    /// <summary>
+    /// 该类型是否<b>不可</b>被法术发现/随机施放池检索（<b>动态判定，无需手动注册</b>）：
+    /// - 任务奖励卡/衍生牌：注册在 JainaNeutralCardPool（时空扭曲/源生之石/奥术师晨拥
+    ///   等任务奖励卡与全部衍生牌）——新增任务奖励/衍生卡自动排除；
+    /// - 任务卡：带 Quest 关键词（禁忌序列/打开时空之门/巫师的计策/拖延时间/抵达传送大厅）——
+    ///   新增任务卡自动排除；
+    /// - 吉安娜非法术能力牌：吉安娜卡池（JainaCardPool）中的 Power 类型且不带"法术牌"关键词
+    ///   （戏法图腾/炉石形态；寒冰屏障/冰血哨塔带"法术牌"关键词 → 是法术牌，保留；
+    ///   原版/其他 mod 的能力牌不在吉安娜卡池 → 保留，惊奇卡牌等全角色池仍可施放原版能力牌）。
+    /// 取代原 10 张卡的显式黑名单。
     /// </summary>
     public static bool IsExcludedFromSpellPool(Type type)
     {
-        return type == typeof(TrickTotemCard) ||
-               type == typeof(HearthstoneFormCard) ||
-               type == typeof(ForbiddenSequenceCard) ||
-               type == typeof(OpenTimeGateCard) ||
-               type == typeof(SorcerersGambitCard) ||
-               type == typeof(StallingCard) ||
-               type == typeof(ReachPortalChamberCard) ||
-               type == typeof(TimeWarpCard) ||
-               type == typeof(ForbiddenStoneCard) ||
-               type == typeof(DawngraspCard);
+        if (type == null)
+        {
+            return false;
+        }
+        EnsurePoolTypeCache();
+        // 任务奖励卡/衍生牌：JainaNeutralCardPool（新增任务奖励/衍生卡自动排除）
+        if (_neutralPoolCardTypes!.Contains(type))
+        {
+            return true;
+        }
+        var canonical = ModelDb.GetByIdOrNull<CardModel>(ModelDb.GetId(type));
+        if (canonical == null)
+        {
+            return false;
+        }
+        // 任务卡：带 Quest 关键词（新增任务卡自动排除）
+        if (canonical.CanonicalKeywords?.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Quest) == true)
+        {
+            return true;
+        }
+        // 吉安娜非法术能力牌：吉安娜卡池中的 Power 类型且无"法术牌"关键词
+        // （寒冰屏障/冰血哨塔带"法术牌"关键词 → 是法术牌，不在排除范围）
+        if (_jainaPoolCardTypes!.Contains(type) &&
+            canonical.Type == CardType.Power &&
+            canonical.CanonicalKeywords?.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Spell) != true)
+        {
+            return true;
+        }
+        return false;
     }
 
     /// <summary>
