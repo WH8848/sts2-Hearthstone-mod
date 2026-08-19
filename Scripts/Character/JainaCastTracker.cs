@@ -608,6 +608,12 @@ public static class JainaCastTracker
             {
                 continue;
             }
+            // 随机池统一排除（先古稀有度——米尔豪斯·法力风暴等、多人专属卡）：
+            // 先古卡不可被唤醒/发现等效果开出来
+            if (!jaina.Scripts.Character.JainaRandomPoolHelper.IsEligible(canonical))
+            {
+                continue;
+            }
             if (Powers.HeroPowerHandHelper.IsHeroPowerCard(canonical))
             {
                 continue;
@@ -660,6 +666,12 @@ public static class JainaCastTracker
             }
             // 显式黑名单：戏法图腾/炉石形态不是法术牌；禁忌序列/打开时空之门任务卡不可被发现
             if (IsExcludedFromSpellPool(canonical.GetType()))
+            {
+                continue;
+            }
+            // 随机池统一排除（先古稀有度——米尔豪斯·法力风暴等、多人专属卡）：
+            // 先古卡不可被发现/唤醒等效果开出来
+            if (!jaina.Scripts.Character.JainaRandomPoolHelper.IsEligible(canonical))
             {
                 continue;
             }
