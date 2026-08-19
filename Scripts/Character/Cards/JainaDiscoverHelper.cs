@@ -88,6 +88,10 @@ public static class JainaDiscoverHelper
             // 用当前基础费用（含升级减费，不含临时修正）：升级后减费到 <=max 的形态也会入选
             pool = pool.Where(c => c.EnergyCost.GetWithModifiers(MegaCrit.Sts2.Core.Entities.Cards.CostModifiers.None) <= max).ToList();
         }
+        // 【诊断】打印发现池实际内容（排查随从/武器等非法术牌混入）
+        MegaCrit.Sts2.Core.Logging.Log.Info(
+            $"[JainaDiag] RollCandidates count={pool.Count} maxCost={(maxCost?.ToString() ?? "null")}: " +
+            string.Join(", ", pool.Select(c => $"{c.Id}({c.Type})")));
         var picked = new List<CardModel>();
         while (picked.Count < count && pool.Count > 0)
         {
