@@ -206,7 +206,9 @@ public sealed class MageQuestlinePower : PowerModel, IModPowerAssetOverrides
         // 不丢失，先移除原堆再排队，队列发放走 AddGeneratedCardToCombat 时卡已无牌堆）
         if (!jaina.Scripts.Character.JainaHandHelper.IsHandFull(player))
         {
+            // Add 带卡牌移动动画（从抽牌堆/弃牌堆入手）；抽牌音效与原版抽牌一致
             await CardPileCmd.Add(spell, PileType.Hand);
+            jaina.Scripts.Character.JainaDrawHelper.PlayDrawSfx();
             return;
         }
         spell.RemoveFromCurrentPile(silent: true);

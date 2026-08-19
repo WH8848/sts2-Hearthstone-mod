@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using MegaCrit.Sts2.Core.Audio.Debug;
+using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Models;
 
@@ -13,6 +15,15 @@ namespace jaina.Scripts.Character;
 /// </summary>
 public static class JainaDrawHelper
 {
+    /// <summary>
+    /// 抽牌音效（与原版 CardPileCmd.Draw 一致：card_deal.mp3）。
+    /// 所有"抽牌"类效果（拨号抽牌/圣殿蜡烛商/加大音量/任务线抽法术等）统一调用。
+    /// </summary>
+    public static void PlayDrawSfx()
+    {
+        NDebugAudioManager.Instance?.Play("card_deal.mp3", 0.25f, PitchVariance.Small);
+    }
+
     /// <summary>
     /// 从抽牌堆中挑最多 count 张符合条件的牌；不足时从弃牌堆按顺序补足。
     /// 返回的卡仍在原牌堆中（调用方负责入手/移除）。

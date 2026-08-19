@@ -64,7 +64,9 @@ public sealed class SanctumCandlesellerMinion : JainaMinionBase
             c != null && jaina.Scripts.Character.JainaCastTracker.IsSpellCard(c));
         if (spell != null)
         {
+            // Add 带卡牌移动动画（从抽牌堆入手）；抽牌音效与原版抽牌一致
             await CardPileCmd.Add(spell, PileType.Hand);
+            jaina.Scripts.Character.JainaDrawHelper.PlayDrawSfx();
             return;
         }
         // 抽牌堆没有：从弃牌堆找
@@ -74,6 +76,7 @@ public sealed class SanctumCandlesellerMinion : JainaMinionBase
         if (discarded != null)
         {
             await CardPileCmd.Add(discarded, PileType.Hand);
+            jaina.Scripts.Character.JainaDrawHelper.PlayDrawSfx();
             return;
         }
         // 都没有：普通抽一张

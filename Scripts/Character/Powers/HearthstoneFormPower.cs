@@ -163,7 +163,8 @@ public sealed class HearthstoneFormPower : PowerModel, IModPowerAssetOverrides
             var card = drawPile.Cards.FirstOrDefault();
             if (card != null)
             {
-                card.RemoveFromCurrentPile(silent: true);
+                // 烧牌（牌被消耗销毁）：非静默移除——触发抽牌堆 UI 更新与牌消失动画
+                card.RemoveFromCurrentPile(silent: false);
                 MegaCrit.Sts2.Core.Logging.Log.Info(
                     $"[JainaFatigue] hand full, burned: {card.Id}");
             }

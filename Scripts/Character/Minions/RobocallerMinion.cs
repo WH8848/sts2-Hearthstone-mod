@@ -75,8 +75,9 @@ public sealed class RobocallerMinion : JainaMinionBase
             {
                 continue;
             }
-            card.RemoveFromCurrentPile(silent: true);
+            // Add 内部从原牌堆移除（带卡牌移动动画）；抽牌音效与原版抽牌一致
             await CardPileCmd.Add(card, PileType.Hand);
+            jaina.Scripts.Character.JainaDrawHelper.PlayDrawSfx();
         }
     }
 }

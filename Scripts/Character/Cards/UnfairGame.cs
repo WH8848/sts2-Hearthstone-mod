@@ -86,7 +86,9 @@ public sealed class UnfairGame : JainaSpellCardTemplate, Powers.IJainaConditionG
             foreach (var spell in spellCandidates)
             {
                 drawn.Add(spell);
+                // Add 带卡牌移动动画（从抽牌堆/弃牌堆入手）；抽牌音效与原版抽牌一致
                 await CardPileCmd.Add(spell, PileType.Hand);
+                jaina.Scripts.Character.JainaDrawHelper.PlayDrawSfx();
             }
             // 压轴：如果刚好消耗完能量，从抽到的三张法术牌中发现一张复制
             if (base.Owner.PlayerCombatState is { Energy: <= 0 })
