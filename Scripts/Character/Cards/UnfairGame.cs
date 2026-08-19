@@ -73,9 +73,22 @@ public sealed class UnfairGame : JainaSpellCardTemplate, Powers.IJainaConditionG
 
         if (IsUpgraded)
         {
-            // 加大音量：抽三张牌
-            var drawn = (await CardPileCmd.Draw(choiceContext, 3, base.Owner)).ToList();
-            // 压轴：如果刚好消耗完能量，从抽到的三张法术牌（攻击/技能牌）中发现一张复制
+            // 加大音量：抽三张法术牌（攻击/技能牌，或带"法术牌"关键词的能力牌）。
+            // 从抽牌堆中逐张挑法术牌入手（跳过随从/诅咒/状态等非法术牌）；
+            // 法术牌不足 3 张则抽到多少算多少。手牌满时排队等待空位（GrantDrawSpell 同款）。
+            var drawn = new List<CardModel>();
+            var drawPile = base.Owner.PlayerCombatState?.DrawPile;
+            var spellCandidates = drawPile?.Cards
+                .Where(c => c != null && (c.Type == CardType.Attack || c.Type == CardType.Skill ||
+                                          c.Keywords.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Spell)))
+                .Take(3)
+                .ToList() ?? [];
+            foreach (var spell in spellCandidates)
+            {
+                drawn.Add(spell);
+                await jaina.Scripts.Character.Powers.JainaPendingRewardQueue.GrantOrQueue(choiceContext, base.Owner, spell);
+            }
+            // 压轴：如果刚好消耗完能量，从抽到的三张法术牌中发现一张复制
             if (base.Owner.PlayerCombatState is { Energy: <= 0 })
             {
                 var spells = drawn.Where(c => c.Type == CardType.Attack || c.Type == CardType.Skill).ToList();
