@@ -68,6 +68,12 @@ public static class JainaDiscoverHelper
             {
                 continue;
             }
+            // 随机池统一排除（先古稀有度——米尔豪斯·法力风暴等、多人专属卡）：
+            // 先古卡不可被发现
+            if (!jaina.Scripts.Character.JainaRandomPoolHelper.IsEligible(canonical))
+            {
+                continue;
+            }
             // 英雄技能卡（火焰冲击等）不可被发现
             if (jaina.Scripts.Character.Powers.HeroPowerHandHelper.IsHeroPowerCard(canonical))
             {
