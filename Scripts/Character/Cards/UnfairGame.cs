@@ -105,10 +105,8 @@ public sealed class UnfairGame : JainaSpellCardTemplate, Powers.IJainaConditionG
                     if (chosen != null)
                     {
                         jaina.Scripts.Character.JainaCastTracker.MarkGenerated(chosen);
-                        if (!jaina.Scripts.Character.JainaHandHelper.IsHandFull(base.Owner))
-                        {
-                            await CardPileCmd.AddGeneratedCardToCombat(chosen, PileType.Hand, base.Owner);
-                        }
+                        // 手牌满时 AddGeneratedCardToCombat 自动改道弃牌堆（牌不消失不消耗）
+                        await CardPileCmd.AddGeneratedCardToCombat(chosen, PileType.Hand, base.Owner);
                     }
                 }
             }

@@ -169,12 +169,9 @@ public sealed class TearRealityCard : JainaSpellCardTemplate
                 break;
             }
             jaina.Scripts.Character.JainaCastTracker.MarkGenerated(chosen);
-            // 费用减少 1 点（直到打出）
+            // 费用减少 1 点（直到打出）；手牌满时 AddGeneratedCardToCombat 自动改道弃牌堆（牌不消失不消耗）
             chosen.EnergyCost.SetUntilPlayed(chosen.EnergyCost.GetResolved() - 1);
-            if (!jaina.Scripts.Character.JainaHandHelper.IsHandFull(base.Owner))
-            {
-                await CardPileCmd.AddGeneratedCardToCombat(chosen, PileType.Hand, base.Owner);
-            }
+            await CardPileCmd.AddGeneratedCardToCombat(chosen, PileType.Hand, base.Owner);
         }
     }
 
