@@ -51,12 +51,11 @@ public sealed class EnergyShaperMinion : JainaMinionBase
             return;
         }
 
-        // 快照手牌中的法术牌（isSpellCard 定义：攻击/技能牌，或带"法术牌"关键词的能力牌；
+        // 快照手牌中的法术牌（统一判定：攻击/技能，或带"法术牌"关键词的能力牌；
         // 排除英雄技能卡与任务卡——任务卡不可被变形破坏任务线）
         var spells = hand.Cards
             .Where(c => c != null &&
-                        (c.Type == CardType.Attack || c.Type == CardType.Skill ||
-                         c.Keywords.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Spell)) &&
+                        jaina.Scripts.Character.JainaCastTracker.IsSpellCard(c) &&
                         !HeroPowerHandHelper.IsHeroPowerCard(c) &&
                         !c.Keywords.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Quest))
             .ToList();

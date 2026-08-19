@@ -231,10 +231,9 @@ public static class JainaCastTracker
             rec.LastPlayedCardByPlayer[ownerId] = (type, card.CurrentUpgradeLevel, IsGeneratedCard(card));
         }
 
-        // 法术牌（攻击/技能，或挂"法术牌"关键词的卡）才进入攻击/技能池与派系/重放计数
-        // （倒带/罗曼斯/西瓦拉/派系追踪用）——随从/英雄/地标/武器卡只记录"上一张"
-        bool isSpellCard = card.Type == CardType.Attack || card.Type == CardType.Skill ||
-                           card.Keywords.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Spell);
+        // 法术牌（统一判定：攻击/技能，或带"法术牌"关键词的能力牌）才进入攻击/技能池
+        // 与派系/重放计数（倒带/罗曼斯/西瓦拉/派系追踪用）——随从/英雄/地标/武器卡只记录"上一张"
+        bool isSpellCard = IsSpellCard(card);
         if (!isSpellCard)
         {
             return;
@@ -502,6 +501,25 @@ public static class JainaCastTracker
     }
 
     /// <summary>
+    /// 是否为法术牌（<b>统一判定</b>）：攻击牌/技能牌，或带"法术牌"关键词的<b>能力牌</b>（Power 类型）。
+    /// 随从/地标/英雄卡即使带"法术牌"关键词（历史遗留：曾用于悬停解释，现 Spell 为纯内部标记）
+    /// 也<b>不</b>算法术牌——防止随从混入法术发现/随机池、被倒带/任务进度/加大音量等误判为法术。
+    /// </summary>
+    public static bool IsSpellCard(CardModel card)
+    {
+        if (card == null)
+        {
+            return false;
+        }
+        if (card.Type == CardType.Attack || card.Type == CardType.Skill)
+        {
+            return true;
+        }
+        return card.Type == CardType.Power &&
+               card.Keywords.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Spell);
+    }
+
+    /// <summary>
     /// 该类型是否<b>不可</b>被法术发现/随机施放池检索（<b>动态判定，无需手动注册</b>）：
     /// - 任务奖励卡/衍生牌：注册在 JainaNeutralCardPool（时空扭曲/源生之石/奥术师晨拥
     ///   等任务奖励卡与全部衍生牌）——新增任务奖励/衍生卡自动排除；
@@ -566,9 +584,8 @@ public static class JainaCastTracker
             {
                 continue;
             }
-            // 法术牌 = 攻击/技能牌，或带"法术牌"关键词的卡（Power 型能力牌）
-            bool isSpellCard = canonical.Type == CardType.Attack || canonical.Type == CardType.Skill ||
-                               canonical.CanonicalKeywords?.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Spell) == true;
+            // 法术牌 = 统一判定（攻击/技能，或带"法术牌"关键词的能力牌；随从/地标不算）
+            bool isSpellCard = IsSpellCard(canonical);
             if (!isSpellCard)
             {
                 continue;
@@ -622,9 +639,8 @@ public static class JainaCastTracker
             {
                 continue;
             }
-            // 法术牌 = 攻击/技能牌，或带"法术牌"关键词的卡（Power 型能力牌）
-            bool isSpellCard = canonical.Type == CardType.Attack || canonical.Type == CardType.Skill ||
-                               canonical.CanonicalKeywords?.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Spell) == true;
+            // 法术牌 = 统一判定（攻击/技能，或带"法术牌"关键词的能力牌；随从/地标不算）
+            bool isSpellCard = IsSpellCard(canonical);
             if (!isSpellCard)
             {
                 continue;

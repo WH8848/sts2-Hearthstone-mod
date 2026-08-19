@@ -57,11 +57,10 @@ public sealed class SanctumCandlesellerMinion : JainaMinionBase
         {
             return;
         }
-        // 优先抽牌堆（攻击/技能牌，或带"法术牌"关键词的能力牌）
+        // 优先抽牌堆（法术牌统一判定：攻击/技能，或带"法术牌"关键词的能力牌）
         var drawPile = combatState.DrawPile;
         var spell = drawPile.Cards.FirstOrDefault(c =>
-            c != null && (c.Type == CardType.Attack || c.Type == CardType.Skill ||
-                          c.Keywords.Contains(JainaKeywords.Spell)));
+            c != null && jaina.Scripts.Character.JainaCastTracker.IsSpellCard(c));
         if (spell != null)
         {
             await CardPileCmd.Add(spell, PileType.Hand);
@@ -70,8 +69,7 @@ public sealed class SanctumCandlesellerMinion : JainaMinionBase
         // 抽牌堆没有：从弃牌堆找
         var discardPile = combatState.DiscardPile;
         var discarded = discardPile.Cards.FirstOrDefault(c =>
-            c != null && (c.Type == CardType.Attack || c.Type == CardType.Skill ||
-                          c.Keywords.Contains(JainaKeywords.Spell)));
+            c != null && jaina.Scripts.Character.JainaCastTracker.IsSpellCard(c));
         if (discarded != null)
         {
             await CardPileCmd.Add(discarded, PileType.Hand);

@@ -50,9 +50,8 @@ public static class JainaDiscoverHelper
             {
                 continue;
             }
-            // 法术牌 = 攻击/技能牌，或带"法术牌"关键词的卡（Power 型能力牌）
-            bool isSpellCard = canonical.Type == CardType.Attack || canonical.Type == CardType.Skill ||
-                               canonical.CanonicalKeywords?.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Spell) == true;
+            // 法术牌 = 统一判定（攻击/技能，或带"法术牌"关键词的能力牌；随从/地标不算）
+            bool isSpellCard = jaina.Scripts.Character.JainaCastTracker.IsSpellCard(canonical);
             if (!isSpellCard)
             {
                 continue;

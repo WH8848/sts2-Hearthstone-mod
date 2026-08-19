@@ -119,10 +119,9 @@ public sealed class MageQuestlinePower : PowerModel, IModPowerAssetOverrides
             return;
         }
         var card = cardPlay.Card;
-        // 只统计法术牌：攻击/技能牌，或带"法术牌"关键词的能力牌
-        // （寒冰屏障/冰血哨塔/任务线卡视为法术牌，施放计入任务进度）
-        if (card.Type != CardType.Attack && card.Type != CardType.Skill &&
-            !card.Keywords.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Spell))
+        // 只统计法术牌（统一判定：攻击/技能，或带"法术牌"关键词的能力牌；
+        // 寒冰屏障/冰血哨塔视为法术牌，施放计入任务进度；随从/地标不算）
+        if (!jaina.Scripts.Character.JainaCastTracker.IsSpellCard(card))
         {
             return;
         }
@@ -196,8 +195,7 @@ public sealed class MageQuestlinePower : PowerModel, IModPowerAssetOverrides
     {
         var spell = jaina.Scripts.Character.JainaDrawHelper.PickMatchingFromDrawThenDiscard(
                 player, 1,
-                c => c.Type == CardType.Attack || c.Type == CardType.Skill ||
-                     c.Keywords.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Spell))
+                c => jaina.Scripts.Character.JainaCastTracker.IsSpellCard(c))
             .FirstOrDefault();
         if (spell == null)
         {

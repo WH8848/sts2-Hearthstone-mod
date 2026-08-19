@@ -127,14 +127,12 @@ public sealed class IcebloodTowerPower : PowerModel, IModPowerAssetOverrides
     }
 
     /// <summary>
-    /// 是否为可被哨塔施放的法术牌（isSpellCard 定义：攻击/技能牌，或带"法术牌"关键词的
-    /// 能力牌；不含英雄技能卡与任务卡——任务卡不可被随机释放）
+    /// 是否为可被哨塔施放的法术牌（统一判定：攻击/技能，或带"法术牌"关键词的能力牌；
+    /// 不含英雄技能卡与任务卡——任务卡不可被随机释放）
     /// </summary>
     private static bool IsSpellCard(CardModel card)
     {
-        return card != null &&
-               (card.Type == CardType.Attack || card.Type == CardType.Skill ||
-                card.Keywords.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Spell)) &&
+        return jaina.Scripts.Character.JainaCastTracker.IsSpellCard(card) &&
                !HeroPowerHandHelper.IsHeroPowerCard(card) &&
                !card.Keywords.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Quest);
     }

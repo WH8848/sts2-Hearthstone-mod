@@ -46,9 +46,8 @@ public sealed class TidePoolTrackerPower : PowerModel
         {
             return;
         }
-        // 法术牌 = 攻击牌/技能牌，或挂"法术牌"关键词的卡（任务线卡、寒冰屏障等能力卡视为法术牌）
-        bool isSpell = card.Type == CardType.Attack || card.Type == CardType.Skill ||
-                       card.Keywords.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Spell);
+        // 法术牌 = 统一判定（攻击/技能，或带"法术牌"关键词的能力牌；随从/地标不算）
+        bool isSpell = jaina.Scripts.Character.JainaCastTracker.IsSpellCard(card);
         if (!isSpell)
         {
             return;

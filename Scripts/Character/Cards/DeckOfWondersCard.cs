@@ -81,8 +81,7 @@ public sealed class DeckOfWondersCard : JainaSpellCardTemplate
             }
             spells.AddRange(pile.Cards.Where(c =>
                 c != null &&
-                (c.Type == CardType.Attack || c.Type == CardType.Skill ||
-                 c.Keywords.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Spell)) &&
+                jaina.Scripts.Character.JainaCastTracker.IsSpellCard(c) &&
                 !HeroPowerHandHelper.IsHeroPowerCard(c) &&
                 !c.Keywords.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Quest) &&
                 c.IsTransformable));

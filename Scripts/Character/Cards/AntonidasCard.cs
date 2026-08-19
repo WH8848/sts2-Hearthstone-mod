@@ -12,10 +12,12 @@ namespace jaina.Scripts.Character.Cards;
 public sealed class AntonidasCard : JainaMinionCardTemplate
 {
     /// <summary>
-    /// 描述中提及"法术牌"，挂法术牌关键词以提供右侧悬停解释（不注入卡面）
+    /// 关键词：消耗（随从卡模板默认）。
+    /// 注意：不挂"法术牌"关键词——Spell 是"法术牌"内部判定标记（isSpellCard），
+    /// 随从卡挂上会被误判为法术牌混入发现池/被倒带/任务进度等误认（历史遗留教训）。
     /// </summary>
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
-        [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, CardKeyword.Exhaust];
+        [CardKeyword.Exhaust];
 
     public override string CustomPortraitPath => "res://assets/card_art/archmage_antonidas.png";
     protected override Type MinionType => typeof(AntonidasMinion);

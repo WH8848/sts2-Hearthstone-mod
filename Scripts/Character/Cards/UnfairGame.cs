@@ -82,8 +82,7 @@ public sealed class UnfairGame : JainaSpellCardTemplate, Powers.IJainaConditionG
             var drawn = new List<CardModel>();
             var spellCandidates = jaina.Scripts.Character.JainaDrawHelper.PickMatchingFromDrawThenDiscard(
                 base.Owner, 3,
-                c => c.Type == CardType.Attack || c.Type == CardType.Skill ||
-                     c.Keywords.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Spell));
+                c => jaina.Scripts.Character.JainaCastTracker.IsSpellCard(c));
             foreach (var spell in spellCandidates)
             {
                 drawn.Add(spell);
