@@ -36,6 +36,8 @@ public sealed class ConnivingConmanCard : JainaMinionCardTemplate
     /// <summary>
     /// 悬停额外提示：战斗中显示"自己打出的上一张卡"卡面（动态；
     /// 无记录/非战斗时不显示；按玩家区分，联机只显示自己的）。
+    /// 按打出时的升级级别恢复卡面——悬停显示的卡面与实际战吼重放的卡一致
+    /// （canonical 模板卡永远是未升级形态，与重放的升级卡不符）。
     /// </summary>
     protected override IEnumerable<IHoverTip> ExtraMinionHoverTips
     {
@@ -48,7 +50,18 @@ public sealed class ConnivingConmanCard : JainaMinionCardTemplate
                 var canonical = ModelDb.GetByIdOrNull<CardModel>(ModelDb.GetId(played.Type));
                 if (canonical != null)
                 {
-                    yield return new CardHoverTip(canonical);
+                    CardModel display = canonical;
+                    if (played.UpgradeLevel > 0)
+                    {
+                        // 显示打出时的升级形态（克隆后逐级升级；点燃等无限升级卡按实际级别）
+                        var clone = (CardModel)canonical.MutableClone();
+                        for (int i = 0; i < played.UpgradeLevel && clone.CurrentUpgradeLevel < clone.MaxUpgradeLevel; i++)
+                        {
+                            clone.UpgradeInternal();
+                        }
+                        display = clone;
+                    }
+                    yield return new CardHoverTip(display);
                 }
             }
         }
