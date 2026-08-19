@@ -17,8 +17,10 @@ namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
 /// 禁忌神龛 (Forbidden Shrine) - X费技能牌（罕见）。
-/// 随机施放一个 x 费法术（x = 消耗的能量，上限 3 费）。
-/// 升级后（禁忌神龛+）：随机施放一个 x+1 费法术（上限 3 费）。
+/// 随机施放一个 x 费卡牌（x = 消耗的能量，无上限）。
+/// 升级后（禁忌神龛+）：随机施放一个 x+1 费卡牌（无上限）。
+/// 卡牌 = 吉安娜全部可打出卡牌（法术/随从/能力/武器/地标，含升级形态），
+/// 排除英雄技能卡、任务卡、英雄卡与自身。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
 public sealed class ForbiddenShrineCard : JainaSpellCardTemplate
@@ -60,8 +62,8 @@ public sealed class ForbiddenShrineCard : JainaSpellCardTemplate
     }
 
     /// <summary>
-    /// 吉安娜全部法术牌池（随机施放用）：动态构建（攻击/技能牌，含升级形态，
-    /// 排除英雄技能卡、任务线卡与自身——BuildAllSpellPool 后过滤自身）。
+    /// 随机施放一个目标费用的吉安娜卡牌：动态构建（两池全卡牌，含升级形态，
+    /// 排除英雄技能卡、任务卡、英雄卡与自身）。
     /// </summary>
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
@@ -74,30 +76,53 @@ public sealed class ForbiddenShrineCard : JainaSpellCardTemplate
             return;
         }
 
-        // x = 消耗的能量；升级后目标费用 x+1（无上限——花多少能量就施放多少费的法术）
+        // x = 消耗的能量；升级后目标费用 x+1（无上限——花多少能量就施放多少费的卡牌）
         int x = ResolveEnergyXValue();
         int targetCost = IsUpgraded ? x + 1 : x;
 
-        // 收集原始费用 = targetCost 的吉安娜法术牌（含升级形态），排除自身（同名不可自发现）
+        // 收集目标费用的吉安娜卡牌（JainaCardPool + JainaNeutralCardPool：
+        // 法术/随从/能力/武器/地标，含升级形态），排除英雄技能卡、任务卡（Quest）、
+        // 英雄卡（变身卡不可随机施放）与自身（同名不可自发现）。
+        // 费用匹配用当前基础费用（含升级减费）：升级后减费到目标费用的形态也入选。
         var pool = new List<CardModel>();
-        foreach (var (type, level) in jaina.Scripts.Character.JainaCastTracker.BuildAllSpellPool())
+        foreach (var canonical in MegaCrit.Sts2.Core.Models.ModelDb.CardPool<jaina.Scripts.Character.JainaCardPool>().AllCards
+                     .Concat(MegaCrit.Sts2.Core.Models.ModelDb.CardPool<jaina.Scripts.Character.JainaNeutralCardPool>().AllCards))
         {
-            if (type == typeof(ForbiddenShrineCard))
+            if (canonical == null)
             {
                 continue;
             }
-            var card = jaina.Scripts.Character.JainaCastTracker.CreateCardWithUpgrade(
-                combatState, base.Owner, type, level);
-            if (card == null)
+            if (jaina.Scripts.Character.Powers.HeroPowerHandHelper.IsHeroPowerCard(canonical))
             {
                 continue;
             }
-            // 费用匹配用当前基础费用（含升级减费）：升级后减费到目标费用的形态也入选
-            if (card.EnergyCost.GetWithModifiers(MegaCrit.Sts2.Core.Entities.Cards.CostModifiers.None) != targetCost)
+            if (canonical.CanonicalKeywords?.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Quest) == true)
             {
                 continue;
             }
-            pool.Add(card);
+            if (canonical.Type == jaina.Scripts.Character.Cards.JainaCardTypes.Hero)
+            {
+                continue;
+            }
+            if (canonical.GetType() == typeof(ForbiddenShrineCard))
+            {
+                continue;
+            }
+            int maxLevel = jaina.Scripts.Character.JainaCastTracker.GetDiscoverPoolMaxUpgradeLevel(canonical.GetType());
+            for (int level = 0; level <= maxLevel; level++)
+            {
+                var card = jaina.Scripts.Character.JainaCastTracker.CreateCardWithUpgrade(
+                    combatState, base.Owner, canonical.GetType(), level);
+                if (card == null)
+                {
+                    continue;
+                }
+                if (card.EnergyCost.GetWithModifiers(MegaCrit.Sts2.Core.Entities.Cards.CostModifiers.None) != targetCost)
+                {
+                    continue;
+                }
+                pool.Add(card);
+            }
         }
         if (pool.Count == 0)
         {
