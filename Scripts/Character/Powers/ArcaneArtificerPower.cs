@@ -12,7 +12,8 @@ namespace jaina.Scripts.Character.Powers;
 /// <summary>
 /// 奥术工匠光环：每当你打出一张法术牌，获得等同于其实际消耗能量的护甲值。
 /// - 按实际消耗（EnergyCost.GetResolved，含降费/零费修正）：零费打出不叠护甲；
-/// - 仅"法术牌"（挂法术牌关键词的牌）触发：英雄技能不是法术牌，不触发。
+/// - 仅"法术牌"（挂法术牌关键词的牌）触发：英雄技能不是法术牌，不触发；
+/// - <b>随机打出（自动施放：匣中古神/惊奇卡牌/戏法图腾/魔法智慧之球/重放等）不触发</b>。
 /// 挂在随从生物自身——随从死亡时本 Power 随生物移除，被动自动失效。
 /// </summary>
 [RegisterPower]
@@ -33,6 +34,11 @@ public sealed class ArcaneArtificerPower : PowerModel
         }
         // 仅法术牌触发（火焰冲击等英雄技能只挂"英雄技能"关键词，不算法术牌）
         if (!cardPlay.Card.Keywords.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Spell))
+        {
+            return;
+        }
+        // 随机打出（自动施放）不触发：调用栈检测 + 实例标记双保险
+        if (AutoPlayGuard.IsAutoPlayContext(cardPlay.Card))
         {
             return;
         }

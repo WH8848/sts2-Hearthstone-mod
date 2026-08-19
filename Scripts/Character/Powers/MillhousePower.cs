@@ -12,6 +12,7 @@ namespace jaina.Scripts.Character.Powers;
 /// 米尔豪斯光环：每当你打出一张法术牌，随机召唤一个费用消耗相同的随从（先召唤，再结算法术效果）。
 /// 挂在玩家身上（随从生物随从牌打出后保留效果，不随随从死亡消失）。
 /// 用 BeforeCardPlayed：在卡牌效果（OnPlay，含伤害）结算前召唤，满足"先召唤再造成伤害"。
+/// <b>随机打出（自动施放：匣中古神/惊奇卡牌/戏法图腾/魔法智慧之球/重放等）不触发</b>。
 /// </summary>
 [RegisterPower]
 public sealed class MillhousePower : PowerModel
@@ -30,6 +31,11 @@ public sealed class MillhousePower : PowerModel
         }
         // 仅法术牌触发（挂"法术牌"关键词；英雄技能不是法术牌，不触发）
         if (!cardPlay.Card.Keywords.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Spell))
+        {
+            return;
+        }
+        // 随机打出（自动施放）不触发：调用栈检测 + 实例标记双保险
+        if (AutoPlayGuard.IsAutoPlayContext(cardPlay.Card))
         {
             return;
         }
