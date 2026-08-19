@@ -115,22 +115,31 @@ public static class MageSpellCaster
     }
 
     /// <summary>
-    /// 免费自动打出（随机目标；preferEnemies 时单目标法术优先选敌人）
+    /// 免费自动打出（随机目标；preferEnemies 时单目标法术尽可能以敌人为目标——
+    /// 有合法敌人时只从敌人里选，无敌人时回退全部合法目标，不因无敌人而放弃施放）
     /// </summary>
     private static async Task AutoPlayRandomly(PlayerChoiceContext choiceContext, Player player, CardModel card, bool preferEnemies)
     {
         var combatState = player.Creature.CombatState;
         Creature? target = null;
+        bool isCustomSingleTarget =
+            CustomTargetTypeManager.TryGetCustomTargetType(card.TargetType, out var customType) &&
+            customType.IsSingleTarget;
         if (card.TargetType == TargetType.AnyEnemy || card.TargetType == TargetType.AnyPlayer ||
-            card.TargetType == TargetType.AnyAlly ||
-            (CustomTargetTypeManager.TryGetCustomTargetType(card.TargetType, out var customType) &&
-             customType.IsSingleTarget))
+            card.TargetType == TargetType.AnyAlly || isCustomSingleTarget)
         {
             IEnumerable<Creature> pool = combatState.Creatures.Where(c => c != null && c.IsAlive && card.IsValidTarget(c));
-            if (preferEnemies && card.TargetType == TargetType.AnyEnemy)
+            if (preferEnemies)
             {
-                // 尽可能以敌人为目标：只从敌人里选
-                pool = pool.Where(c => c.Side != player.Creature.Side);
+                // 尽可能以敌人为目标：有合法敌人时只从敌人里选
+                // （原版 AnyEnemy 与自定义单目标如 AnyTargetable 火球术/寒冰箭一致——
+                // 球施放的法术优先打敌人，不打自己/队友/己方随从）；
+                // 无敌人时回退全部合法目标（不因无敌人而放弃施放）
+                var enemies = pool.Where(c => c.Side != player.Creature.Side).ToList();
+                if (enemies.Count > 0)
+                {
+                    pool = enemies;
+                }
             }
             var candidates = pool.ToList();
             target = candidates.Count > 0 ? player.RunState.Rng.CombatTargets.NextItem(candidates) : null;
