@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
+using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
@@ -24,6 +26,14 @@ public static class JainaMinionPool
         typeof(Zealot),
         typeof(VolatileSkeleton)
     ];
+
+    /// <summary>
+    /// 泛型召唤方法 <see cref="SummonMinion{T}"/> 的反射句柄
+    /// （<see cref="SummonMinionByType"/> 用反射调用替代硬编码 switch 表，
+    /// 新增随从/地标无需在 switch 中注册分支）。
+    /// </summary>
+    private static readonly MethodInfo SummonMinionMethod =
+        typeof(JainaMinionPool).GetMethod(nameof(SummonMinion), BindingFlags.Public | BindingFlags.Static)!;
 
     /// <summary>
     /// 随从池中所有随从生物类型的只读列表
@@ -91,6 +101,8 @@ public static class JainaMinionPool
 
     /// <summary>
     /// 按运行时类型召唤指定随从生物（供随从牌等通过 Type 引用调用）。
+    /// 反射调用泛型 <see cref="SummonMinion{T}"/>——<b>新增随从/地标无需注册</b>，
+    /// 任何 JainaMinionBase 子类直接可用（不再有硬编码 switch 表漏分支的风险）。
     /// </summary>
     public static async Task<Creature> SummonMinionByType(
         PlayerChoiceContext choiceContext,
@@ -105,52 +117,20 @@ public static class JainaMinionPool
         {
             return null!;
         }
-        return minionType.Name switch
+        try
         {
-            nameof(Zealot) => await SummonMinion<Zealot>(choiceContext, player, maxHp, attack, position, source),
-            nameof(VolatileSkeleton) => await SummonMinion<VolatileSkeleton>(choiceContext, player, maxHp, attack, position, source),
-            nameof(ImpMinion) => await SummonMinion<ImpMinion>(choiceContext, player, maxHp, attack, position, source),
-            nameof(SpiritCollectorMinion) => await SummonMinion<SpiritCollectorMinion>(choiceContext, player, maxHp, attack, position, source),
-            nameof(RenathalMinion) => await SummonMinion<RenathalMinion>(choiceContext, player, maxHp, attack, position, source),
-            nameof(SorcererApprenticeMinion) => await SummonMinion<SorcererApprenticeMinion>(choiceContext, player, maxHp, attack, position, source),
-            nameof(ArcaneArtificerMinion) => await SummonMinion<ArcaneArtificerMinion>(choiceContext, player, maxHp, attack, position, source),
-            nameof(AntonidasMinion) => await SummonMinion<AntonidasMinion>(choiceContext, player, maxHp, attack, position, source),
-            nameof(VardenMinion) => await SummonMinion<VardenMinion>(choiceContext, player, maxHp, attack, position, source),
-            nameof(RommathMinion) => await SummonMinion<RommathMinion>(choiceContext, player, maxHp, attack, position, source),
-            nameof(MozakiMinion) => await SummonMinion<MozakiMinion>(choiceContext, player, maxHp, attack, position, source),
-            nameof(LunaMinion) => await SummonMinion<LunaMinion>(choiceContext, player, maxHp, attack, position, source),
-            nameof(KalecgosMinion) => await SummonMinion<KalecgosMinion>(choiceContext, player, maxHp, attack, position, source),
-            nameof(AegwynnMinion) => await SummonMinion<AegwynnMinion>(choiceContext, player, maxHp, attack, position, source),
-            nameof(DawngraspMinion) => await SummonMinion<DawngraspMinion>(choiceContext, player, maxHp, attack, position, source),
-            nameof(WaterElementalMinion) => await SummonMinion<WaterElementalMinion>(choiceContext, player, maxHp, attack, position, source),
-            nameof(GreySageParrotMinion) => await SummonMinion<GreySageParrotMinion>(choiceContext, player, maxHp, attack, position, source),
-            nameof(FlamewakerMinion) => await SummonMinion<FlamewakerMinion>(choiceContext, player, maxHp, attack, position, source),
-            nameof(SanctumCandlesellerMinion) => await SummonMinion<SanctumCandlesellerMinion>(choiceContext, player, maxHp, attack, position, source),
-            nameof(EnergyShaperMinion) => await SummonMinion<EnergyShaperMinion>(choiceContext, player, maxHp, attack, position, source),
-            nameof(KhadgarMinion) => await SummonMinion<KhadgarMinion>(choiceContext, player, maxHp, attack, position, source),
-            nameof(CommanderSivaraMinion) => await SummonMinion<CommanderSivaraMinion>(choiceContext, player, maxHp, attack, position, source),
-            nameof(MordreshFireEyeMinion) => await SummonMinion<MordreshFireEyeMinion>(choiceContext, player, maxHp, attack, position, source),
-            nameof(AstromancerSolarianMinion) => await SummonMinion<AstromancerSolarianMinion>(choiceContext, player, maxHp, attack, position, source),
-            nameof(SolarianPrimeMinion) => await SummonMinion<SolarianPrimeMinion>(choiceContext, player, maxHp, attack, position, source),
-            nameof(ImpWranglerMinion) => await SummonMinion<ImpWranglerMinion>(choiceContext, player, maxHp, attack, position, source),
-            nameof(RecklessApprenticeMinion) => await SummonMinion<RecklessApprenticeMinion>(choiceContext, player, maxHp, attack, position, source),
-            nameof(IceWalkerMinion) => await SummonMinion<IceWalkerMinion>(choiceContext, player, maxHp, attack, position, source),
-            nameof(ScrappyScavengerMinion) => await SummonMinion<ScrappyScavengerMinion>(choiceContext, player, maxHp, attack, position, source),
-            nameof(KelThuzadMinion) => await SummonMinion<KelThuzadMinion>(choiceContext, player, maxHp, attack, position, source),
-            nameof(RobocallerMinion) => await SummonMinion<RobocallerMinion>(choiceContext, player, maxHp, attack, position, source),
-            nameof(ConnivingConmanMinion) => await SummonMinion<ConnivingConmanMinion>(choiceContext, player, maxHp, attack, position, source),
-            nameof(CloudPrinceMinion) => await SummonMinion<CloudPrinceMinion>(choiceContext, player, maxHp, attack, position, source),
-            nameof(SkatingElementalMinion) => await SummonMinion<SkatingElementalMinion>(choiceContext, player, maxHp, attack, position, source),
-            nameof(MaroonedArchmageMinion) => await SummonMinion<MaroonedArchmageMinion>(choiceContext, player, maxHp, attack, position, source),
-            nameof(ColdarraDrakeMinion) => await SummonMinion<ColdarraDrakeMinion>(choiceContext, player, maxHp, attack, position, source),
-            nameof(VexallusMinion) => await SummonMinion<VexallusMinion>(choiceContext, player, maxHp, attack, position, source),
-            nameof(WinterspringWhelpMinion) => await SummonMinion<WinterspringWhelpMinion>(choiceContext, player, maxHp, attack, position, source),
-            // 地标（占随从槽，不进入随机召唤池 _minionTypes）
-            nameof(NightcloakSanctumLandmark) => await SummonMinion<NightcloakSanctumLandmark>(choiceContext, player, maxHp, attack, position, source),
-            nameof(TrinketShopLandmark) => await SummonMinion<TrinketShopLandmark>(choiceContext, player, maxHp, attack, position, source),
-            nameof(TidePoolLandmark) => await SummonMinion<TidePoolLandmark>(choiceContext, player, maxHp, attack, position, source),
-            _ => null!,
-        };
+            var generic = SummonMinionMethod.MakeGenericMethod(minionType);
+            var task = (Task<Creature>)generic.Invoke(null,
+                new object?[] { choiceContext, player, maxHp, attack, position, source })!;
+            return await task;
+        }
+        catch (TargetInvocationException tie)
+        {
+            // 反射调用会包一层 TargetInvocationException：解包原始异常，
+            // 保留堆栈（诊断日志直接看到真实异常）。
+            ExceptionDispatchInfo.Capture(tie.InnerException ?? tie).Throw();
+            throw; // 不可达
+        }
     }
 
     /// <summary>
