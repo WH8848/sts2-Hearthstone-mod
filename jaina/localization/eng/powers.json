@@ -34,6 +34,8 @@
   "JAINA_POWER_EMPOWER_POWER.title": "Empower",
   "JAINA_POWER_EMPOWER_POWER.description": "Each stack of Empower increases your Hero Power damage by 1, and summons an extra 1/1 Imp.",
   "JAINA_POWER_EMPOWER_POWER.smartDescription": "Each stack: Hero Power damage +1 and summon an extra 1/1 Imp.",
+  "JAINA_POWER_FLAME_WARD_POWER.title": "Flame Ward",
+  "JAINA_POWER_FLAME_WARD_POWER.description": "Until the end of your turn, when Jaina or her minions take damage, deal {Amount} damage to random enemies 7 times, then remove this.",
   "JAINA_POWER_UNFAIR_GAME_POWER.title": "Unfair Game",
   "JAINA_POWER_UNFAIR_GAME_POWER.description": "If you take no damage while this is active, draw 3 cards at the start of your next turn, then remove this.",
   "JAINA_POWER_UNFAIR_GAME_POWER.smartDescription": "If you take no damage this turn, draw 3 cards at the start of your next turn.",

@@ -6,6 +6,7 @@ using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
 using STS2RitsuLib.Interop.AutoRegistration;
 
@@ -25,7 +26,24 @@ public sealed class FlameWardPower : PowerModel
 
     public override PowerStackType StackType => PowerStackType.Single;
 
-    protected override bool IsVisibleInternal => false;
+    /// <summary>
+    /// 可见：能力栏显示火焰结界状态（受击时触发 7 次随机伤害）。
+    /// </summary>
+    protected override bool IsVisibleInternal => true;
+
+    /// <summary>
+    /// Power 栏显示值：单次伤害量（含力量加成）——火焰结界伤害吃力量
+    /// （ValueProp.Move），与卡面 {Damage:diff()} 一致（卡面吃力量显示时，
+    /// Power 栏不再固定显示层数）。
+    /// </summary>
+    public override int DisplayAmount
+    {
+        get
+        {
+            var strength = Owner?.GetPower<StrengthPower>();
+            return (int)(Amount + (strength?.Amount ?? 0));
+        }
+    }
 
     public override async Task BeforeDamageReceived(PlayerChoiceContext choiceContext, Creature target, decimal amount, ValueProp props, Creature? dealer, CardModel? cardSource)
     {
