@@ -81,7 +81,7 @@ public sealed class ForbiddenShrineCard : JainaSpellCardTemplate
 
         // 收集原始费用 = targetCost 的吉安娜法术牌（含升级形态），排除自身（同名不可自发现）
         var pool = new List<CardModel>();
-        foreach (var (type, level) in jaina.Scripts.Character.JainaCastTracker.BuildAllSpellPool(combatState, base.Owner))
+        foreach (var (type, level) in jaina.Scripts.Character.JainaCastTracker.BuildAllSpellPool())
         {
             if (type == typeof(ForbiddenShrineCard))
             {

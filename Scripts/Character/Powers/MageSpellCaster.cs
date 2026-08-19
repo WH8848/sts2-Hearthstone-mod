@@ -82,7 +82,7 @@ public static class MageSpellCaster
         }
         var rng = player.RunState.Rng.CombatCardSelection;
         // 动态池：类型 + 升级级别一起随机（未升级与升级形态都可能被施放）
-        var pool = jaina.Scripts.Character.JainaCastTracker.BuildAllSpellPool(combatState, player);
+        var pool = jaina.Scripts.Character.JainaCastTracker.BuildAllSpellPool();
         if (pool.Count == 0)
         {
             return;

@@ -67,7 +67,7 @@ public sealed class EvocationCard : JainaSpellCardTemplate
 
         // 用随机法师法术牌填满手牌（不占手牌位的英雄技能卡不影响容量）。
         // 每种法术牌按可升级级别展开：未升级形态与升级形态（+）都可能被填入手牌。
-        var pool = jaina.Scripts.Character.JainaCastTracker.BuildAllSpellPool(combatState, base.Owner);
+        var pool = jaina.Scripts.Character.JainaCastTracker.BuildAllSpellPool();
 
         while (!jaina.Scripts.Character.JainaHandHelper.IsHandFull(base.Owner))
         {

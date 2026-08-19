@@ -19,7 +19,7 @@ public static class ArtifactFreezeBypassPatch
     [HarmonyPatch(typeof(ArtifactPower), "TryModifyPowerAmountReceived")]
     private static class PrefixPatch
     {
-        private static bool Prefix(PowerModel canonicalPower, Creature target, decimal amount, Creature? _,
+        private static bool Prefix(PowerModel canonicalPower, decimal amount, Creature? _,
             ref decimal modifiedAmount, ref bool __result)
         {
             if (canonicalPower is FreezePower && FreezePower.BypassArtifactNextApply)

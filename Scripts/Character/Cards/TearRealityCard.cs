@@ -87,7 +87,7 @@ public sealed class TearRealityCard : JainaSpellCardTemplate
         // 撕裂现实：从所有吉安娜法术牌（含升级形态）中随机将 2 张置入手牌，费用减少 1 点。
         // 排除自身（同名不可自发现）。
         var rng = base.Owner.RunState.Rng.CombatCardSelection;
-        var pool = jaina.Scripts.Character.JainaCastTracker.BuildAllSpellPool(combatState, base.Owner)
+        var pool = jaina.Scripts.Character.JainaCastTracker.BuildAllSpellPool()
             .Where(e => e.Type != typeof(TearRealityCard))
             .ToList();
         for (int i = 0; i < 2; i++)

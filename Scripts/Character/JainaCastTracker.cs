@@ -555,8 +555,9 @@ public static class JainaCastTracker
     /// 取代各卡硬编码的 typeof 列表（硬编码会漏新增卡/错配升级形态派系）。
     /// 注意：这是<b>吉安娜法术池</b>（唤醒/卡雷苟斯/撕裂现实等发现吉安娜法术用）；
     /// 全角色语义（匣中古神/惊奇卡牌/戏法图腾等卡面写明"全角色卡牌"的）不走此方法。
+    /// 只返回 (类型, 级别) 候选列表，不创建实例——无需战斗状态/玩家参数。
     /// </summary>
-    public static List<(Type Type, int UpgradeLevel)> BuildAllSpellPool(ICombatState combatState, Player owner)
+    public static List<(Type Type, int UpgradeLevel)> BuildAllSpellPool()
     {
         var result = new List<(Type, int)>();
         foreach (var canonical in ModelDb.CardPool<JainaCardPool>().AllCards)
