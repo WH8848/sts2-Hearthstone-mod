@@ -9,6 +9,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.ValueProps;
+using STS2RitsuLib.Cards.DynamicVars;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -38,9 +39,29 @@ public sealed class Fireblast : JainaSpellCardTemplate
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
         [jaina.Scripts.Character.Keywords.JainaKeywords.HeroPower];
 
+    /// <summary>
+    /// 动态伤害显示：当前伤害 = 基础（1 + 升级等级）+ 灌注层数 + 野火加成
+    /// （与 OnPlay 实际结算一致；非战斗中仅显示基础 + 升级）。
+    /// </summary>
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new DamageVar(1m, ValueProp.Move)
+        ModCardVars.Computed("Damage", 1m, card =>
+        {
+            if (card is not Fireblast fireblast)
+            {
+                return 1m;
+            }
+            // 基础伤害：1 + 升级等级（OnUpgrade 每次升级 +1，存于 BaseValue）
+            var baseDamage = fireblast.DynamicVars.Damage.BaseValue;
+            if (card.Owner?.Creature?.CombatState == null)
+            {
+                return baseDamage;
+            }
+            // 灌注/野火：战斗内实时加成（与 OnPlay 结算一致）
+            var empower = card.Owner.Creature.GetPower<jaina.Scripts.Character.Powers.EmpowerPower>();
+            var wildfire = card.Owner.Creature.GetPower<jaina.Scripts.Character.Powers.WildfirePower>();
+            return baseDamage + (empower?.EmpowerStacks ?? 0) + (wildfire?.WildfireStacks ?? 0);
+        })
     ];
 
     /// <summary>
