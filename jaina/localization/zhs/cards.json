@@ -110,7 +110,7 @@
   "JAINA_CARD_FORBIDDEN_FLAME_CARD.title": "禁忌烈焰",
   "JAINA_CARD_FORBIDDEN_FLAME_CARD.description": "造成{IfUpgraded:show:12|10}X点伤害。",
   "JAINA_CARD_FORBIDDEN_SHRINE_CARD.title": "禁忌神龛",
-  "JAINA_CARD_FORBIDDEN_SHRINE_CARD.description": "随机施放一个{IfUpgraded:show:X+1|X}费的法术(上限3费)。",
+  "JAINA_CARD_FORBIDDEN_SHRINE_CARD.description": "随机施放一个{IfUpgraded:show:X+1|X}费的法术。",
   "JAINA_CARD_METEOR_CARD.title": "陨石术",
   "JAINA_CARD_METEOR_CARD.titleUpgraded": "烈焰风暴",
   "JAINA_CARD_METEOR_CARD.description": "{IfUpgraded:show:造成7次{Blast:diff()}点伤害，随机分配到所有敌人身上。|对一个敌人造成{Damage:diff()}点伤害，再对随机敌人造成2次{Splash:diff()}点伤害。}",

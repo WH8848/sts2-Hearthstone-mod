@@ -74,10 +74,9 @@ public sealed class ForbiddenShrineCard : JainaSpellCardTemplate
             return;
         }
 
-        // x = 消耗的能量（上限 3）；升级后目标费用 x+1（上限 3）
+        // x = 消耗的能量；升级后目标费用 x+1（无上限——花多少能量就施放多少费的法术）
         int x = ResolveEnergyXValue();
         int targetCost = IsUpgraded ? x + 1 : x;
-        targetCost = System.Math.Min(targetCost, 3);
 
         // 收集原始费用 = targetCost 的吉安娜法术牌（含升级形态），排除自身（同名不可自发现）
         var pool = new List<CardModel>();

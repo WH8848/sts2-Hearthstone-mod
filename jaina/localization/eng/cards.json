@@ -110,7 +110,7 @@
   "JAINA_CARD_FORBIDDEN_FLAME_CARD.title": "Forbidden Flame",
   "JAINA_CARD_FORBIDDEN_FLAME_CARD.description": "Deal {IfUpgraded:show:12x|10x} damage to a character (x = Energy spent).",
   "JAINA_CARD_FORBIDDEN_SHRINE_CARD.title": "Forbidden Shrine",
-  "JAINA_CARD_FORBIDDEN_SHRINE_CARD.description": "Cast a random {IfUpgraded:show:x+1|x}-cost spell. (Max 3.)",
+  "JAINA_CARD_FORBIDDEN_SHRINE_CARD.description": "Cast a random {IfUpgraded:show:x+1|x}-cost spell.",
   "JAINA_CARD_METEOR_CARD.title": "Meteor",
   "JAINA_CARD_METEOR_CARD.titleUpgraded": "Flamestrike",
   "JAINA_CARD_METEOR_CARD.description": "{IfUpgraded:show:Deal 7 instances of {Blast:diff()} damage, split randomly among all enemies.|Deal {Damage:diff()} damage to an enemy, then deal 2 instances of {Splash:diff()} damage to random enemies.}",
