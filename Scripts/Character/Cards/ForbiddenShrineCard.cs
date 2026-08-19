@@ -19,8 +19,8 @@ namespace jaina.Scripts.Character.Cards;
 /// 禁忌神龛 (Forbidden Shrine) - X费技能牌（罕见）。
 /// 随机施放一个 x 费卡牌（x = 消耗的能量，无上限）。
 /// 升级后（禁忌神龛+）：随机施放一个 x+1 费卡牌（无上限）。
-/// 卡牌 = <b>全角色</b>可打出卡牌（法术/能力/武器，Attack/Skill/Power 类型，含升级形态；
-/// 不保留随从/地标），排除英雄技能卡、任务卡、先古/衍生池（IsEligible）与自身。
+/// 卡牌 = <b>全角色</b>可打出卡牌（法术/能力牌，Attack/Skill/Power 类型，含升级形态；
+/// 不保留随从/地标/武器），排除英雄技能卡、任务卡、先古/衍生池（IsEligible）与自身。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
 public sealed class ForbiddenShrineCard : JainaSpellCardTemplate
@@ -63,8 +63,8 @@ public sealed class ForbiddenShrineCard : JainaSpellCardTemplate
 
     /// <summary>
     /// 随机施放一个目标费用的全角色卡牌：动态构建（ModelDb.AllCards 的
-    /// Attack/Skill/Power 类型——法术/能力/武器，不含随从/地标，含升级形态，
-    /// IsEligible 统一排除 + 英雄技能卡与自身）。
+    /// Attack/Skill/Power 类型——法术/能力牌，不含随从/地标/武器（"武器"关键词排除），
+    /// 含升级形态，IsEligible 统一排除 + 英雄技能卡与自身）。
     /// </summary>
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
@@ -98,6 +98,11 @@ public sealed class ForbiddenShrineCard : JainaSpellCardTemplate
                 continue;
             }
             if (jaina.Scripts.Character.Powers.HeroPowerHandHelper.IsHeroPowerCard(canonical))
+            {
+                continue;
+            }
+            // 武器卡（Power 类型 + "武器"关键词）不施放：随机施放仅限法术/能力牌
+            if (canonical.CanonicalKeywords?.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Weapon) == true)
             {
                 continue;
             }
