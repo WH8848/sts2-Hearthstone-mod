@@ -37,6 +37,10 @@ public class Entry
         // 此处显式 Warn 告警（缺失卡名会出现在启动日志）。
         jaina.Scripts.Character.Powers.HeroPowerHandFullDrawCardPatch.VerifyTargets();
 
+        // 通用验证：反射扫描所有 [HarmonyPatch]（无显式目标）+ TargetMethod(s) 动态定位的 patch，
+        // 目标缺失时 Harmony 静默跳过（不生效不报错）——版本更新 IL 变化时显式告警。
+        VerifyDynamicHarmonyTargets();
+
         // 【临时诊断】PatchAll 后检查 ToLocString 的 patch 是否应用（排查图鉴 SwitchExpressionException）
         try
         {
@@ -90,6 +94,68 @@ public class Entry
 
         // 【诊断】打印匣中古神/谜之匣的释放卡池实际内容（模型注册就绪后）
         RegisterYoggPoolDiag();
+    }
+
+    /// <summary>
+    /// 通用验证：反射扫描本程序集中所有 <c>[HarmonyPatch]</c>（<b>无显式目标</b>）+
+    /// <c>TargetMethod()/TargetMethods()</c> 动态定位的 patch 类——
+    /// 目标方法缺失时 Harmony <b>静默跳过</b>（patch 不生效、不报错）。
+    /// 游戏版本更新导致状态机/方法结构变化时，此处显式 Warn 告警（带类名）。
+    /// 显式目标（typeof+nameof / 字符串方法名）的 patch 不需要：PatchAll 找不到会抛异常（显式失败）。
+    /// </summary>
+    private static void VerifyDynamicHarmonyTargets()
+    {
+        try
+        {
+            var assembly = typeof(Entry).Assembly;
+            int checkedCount = 0;
+            foreach (var type in assembly.GetTypes())
+            {
+                if (type.GetCustomAttribute<HarmonyPatch>() == null)
+                {
+                    continue;
+                }
+                // 只检查动态定位：含 TargetMethod/TargetMethods 私有静态方法
+                var targetMethod = type.GetMethod("TargetMethod",
+                    System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
+                var targetMethods = type.GetMethod("TargetMethods",
+                    System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
+                if (targetMethod == null && targetMethods == null)
+                {
+                    continue;
+                }
+                checkedCount++;
+                if (targetMethod != null)
+                {
+                    var result = targetMethod.Invoke(null, null);
+                    if (result == null)
+                    {
+                        Logger.Warn($"[Jaina] Harmony 动态目标缺失: {type.Name}.TargetMethod 返回 null——" +
+                                    "patch 未生效，游戏版本可能已更新，请检查该 patch");
+                    }
+                }
+                if (targetMethods != null)
+                {
+                    var result = targetMethods.Invoke(null, null) as System.Collections.IEnumerable;
+                    bool any = false;
+                    if (result != null)
+                    {
+                        var enumerator = result.GetEnumerator();
+                        any = enumerator.MoveNext();
+                    }
+                    if (!any)
+                    {
+                        Logger.Warn($"[Jaina] Harmony 动态目标缺失: {type.Name}.TargetMethods 返回空——" +
+                                    "patch 未生效，游戏版本可能已更新，请检查该 patch");
+                    }
+                }
+            }
+            Logger.Info($"[JainaDiag] dynamic harmony targets verified: {checkedCount} patches");
+        }
+        catch (System.Exception ex)
+        {
+            Logger.Warn($"[Jaina] dynamic harmony target verification failed: {ex}");
+        }
     }
 
     /// <summary>
