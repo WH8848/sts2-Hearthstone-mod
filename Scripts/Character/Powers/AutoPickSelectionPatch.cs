@@ -27,6 +27,20 @@ namespace jaina.Scripts.Character.Powers;
 public static class AutoPickSelectionPatch
 {
     /// <summary>
+    /// 【诊断】AutoPlay 判定失败（将弹玩家选择界面）时记录原因：
+    /// 栈检测是否命中 AutoPlay 帧、CurrentAutoPlayCard 实例标记状态、source 参数。
+    /// 用于排查随机释放弹选择界面（JIT 内联/调度包装可能使调用栈检测失效）。
+    /// </summary>
+    private static void LogAutoPickMiss(CardModel? source)
+    {
+        var caller = new System.Diagnostics.StackTrace(1, false).GetFrame(0)?.GetMethod()?.Name ?? "?";
+        MegaCrit.Sts2.Core.Logging.Log.Warn(
+            $"[JainaDiag] AutoPick MISS in {caller}: stackAutoPlay={AutoPlayGuard.IsInAutoPlay()} " +
+            $"currentCard={(AutoPlayGuard.CurrentAutoPlayCard != null ? AutoPlayGuard.CurrentAutoPlayCard.Id : "null")} " +
+            $"source={(source != null ? source.Id : "null")}");
+    }
+
+    /// <summary>
     /// 发现三选一（FromChooseACardScreen）：随机选一张候选入手（不弹发现界面）
     /// </summary>
     [HarmonyPatch(typeof(CardSelectCmd), nameof(CardSelectCmd.FromChooseACardScreen))]
@@ -37,6 +51,7 @@ public static class AutoPickSelectionPatch
         {
             if (!AutoPlayGuard.IsAutoPlayContext(null))
             {
+                LogAutoPickMiss(null);
                 return true;
             }
             __result = Task.FromResult(AutoPlayGuard.PickRandom(player, cards));
@@ -55,6 +70,7 @@ public static class AutoPickSelectionPatch
         {
             if (!AutoPlayGuard.IsAutoPlayContext(source as CardModel))
             {
+                LogAutoPickMiss(source as CardModel);
                 return true;
             }
             __result = Task.FromResult<IEnumerable<CardModel>>(AutoPlayGuard.PickRandomN(
