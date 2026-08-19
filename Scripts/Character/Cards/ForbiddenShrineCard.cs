@@ -19,8 +19,8 @@ namespace jaina.Scripts.Character.Cards;
 /// 禁忌神龛 (Forbidden Shrine) - X费技能牌（罕见）。
 /// 随机施放一个 x 费卡牌（x = 消耗的能量，无上限）。
 /// 升级后（禁忌神龛+）：随机施放一个 x+1 费卡牌（无上限）。
-/// 卡牌 = 吉安娜全部可打出卡牌（法术/随从/能力/武器/地标，含升级形态），
-/// 排除英雄技能卡、任务卡、英雄卡与自身。
+/// 卡牌 = <b>全角色</b>可打出卡牌（法术/随从/能力/武器/地标，含升级形态），
+/// 排除英雄技能卡、任务卡、先古/衍生池（IsEligible）与自身。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
 public sealed class ForbiddenShrineCard : JainaSpellCardTemplate
@@ -62,8 +62,8 @@ public sealed class ForbiddenShrineCard : JainaSpellCardTemplate
     }
 
     /// <summary>
-    /// 随机施放一个目标费用的吉安娜卡牌：动态构建（两池全卡牌，含升级形态，
-    /// 排除英雄技能卡、任务卡、英雄卡与自身）。
+    /// 随机施放一个目标费用的全角色卡牌：动态构建（ModelDb.AllCards 全角色卡牌，
+    /// 含升级形态，IsEligible 统一排除 + 英雄技能卡与自身）。
     /// </summary>
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
@@ -80,15 +80,21 @@ public sealed class ForbiddenShrineCard : JainaSpellCardTemplate
         int x = ResolveEnergyXValue();
         int targetCost = IsUpgraded ? x + 1 : x;
 
-        // 收集目标费用的吉安娜卡牌（JainaCardPool + JainaNeutralCardPool：
-        // 法术/随从/能力/武器/地标，含升级形态），排除英雄技能卡、任务卡（Quest）、
-        // 英雄卡（变身卡不可随机施放）与自身（同名不可自发现）。
+        // 收集目标费用的<b>全角色</b>卡牌（Attack/Skill/Power/Minion/Landmark，含升级形态），
+        // 应用 Jaina 随机池统一排除（8 个非角色/衍生池、任务卡、先古稀有度、多人专属，见
+        // JainaRandomPoolHelper.IsEligible），排除英雄技能卡与自身（同名不可自发现）。
         // 费用匹配用当前基础费用（含升级减费）：升级后减费到目标费用的形态也入选。
         var pool = new List<CardModel>();
-        foreach (var canonical in MegaCrit.Sts2.Core.Models.ModelDb.CardPool<jaina.Scripts.Character.JainaCardPool>().AllCards
-                     .Concat(MegaCrit.Sts2.Core.Models.ModelDb.CardPool<jaina.Scripts.Character.JainaNeutralCardPool>().AllCards))
+        foreach (var canonical in MegaCrit.Sts2.Core.Models.ModelDb.AllCards)
         {
             if (canonical == null)
+            {
+                continue;
+            }
+            if (canonical.Type != CardType.Attack && canonical.Type != CardType.Skill &&
+                canonical.Type != CardType.Power &&
+                canonical.Type != jaina.Scripts.Character.Cards.JainaCardTypes.Minion &&
+                canonical.Type != jaina.Scripts.Character.Cards.JainaCardTypes.Landmark)
             {
                 continue;
             }
@@ -96,11 +102,7 @@ public sealed class ForbiddenShrineCard : JainaSpellCardTemplate
             {
                 continue;
             }
-            if (canonical.CanonicalKeywords?.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Quest) == true)
-            {
-                continue;
-            }
-            if (canonical.Type == jaina.Scripts.Character.Cards.JainaCardTypes.Hero)
+            if (!jaina.Scripts.Character.JainaRandomPoolHelper.IsEligible(canonical))
             {
                 continue;
             }
