@@ -32,6 +32,8 @@ public sealed class GreySageParrotCard : JainaMinionCardTemplate
     /// <summary>
     /// 悬停额外提示：战斗中显示"自己施放的上一个费用 ≥ 2 的法术"卡面（动态；
     /// 无记录/非战斗时不显示；按玩家区分，联机只显示自己的）。
+    /// 按施放时的升级级别恢复副本——悬停显示的卡面与实际战吼重复的卡一致
+    /// （用 canonical 模板卡会永远显示未升级形态，与打出的升级卡不符）。
     /// </summary>
     protected override IEnumerable<IHoverTip> ExtraMinionHoverTips
     {
@@ -41,10 +43,11 @@ public sealed class GreySageParrotCard : JainaMinionCardTemplate
                 jaina.Scripts.Character.JainaCastTracker.For(combatState).LastCastSpellCost2PlusByPlayer.TryGetValue(
                     base.Owner.NetId, out var last) && last is { } played)
             {
-                var canonical = ModelDb.GetByIdOrNull<CardModel>(ModelDb.GetId(played.Type));
-                if (canonical != null)
+                var card = jaina.Scripts.Character.JainaCastTracker.CreateCardWithUpgrade(
+                    combatState, base.Owner, played.Type, played.UpgradeLevel);
+                if (card != null)
                 {
-                    yield return new CardHoverTip(canonical);
+                    yield return new CardHoverTip(card);
                 }
             }
         }
