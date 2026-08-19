@@ -27,18 +27,40 @@ public static class AutoPlayGuard
     public static CardModel? CurrentAutoPlayCard;
 
     /// <summary>
+    /// 当前 AutoPlay 是否由<b>吉安娜 mod 的随机释放机制</b>发起
+    /// （匣中古神/惊奇卡牌/魔法智慧之球/大法师的符文/冰血哨塔/戏法图腾/重放等吉安娜卡牌发起的释放——
+    /// 释放的卡可以是原版/其它 mod 的卡）。
+    /// AutoPickSelectionPatch 只对吉安娜发起的随机释放自动选；
+    /// 其它 mod 的随机释放（原版倾泻/其它 mod 机制）触发的选择正常弹界面。
+    /// 设置：OnPlayWrapper(isAutoPlay=false) 手打吉安娜卡时置 true；非打出触发的吉安娜施法
+    /// （球/哨塔/图腾回合结束施法）在施放入口显式置 true；CombatEnded 清空。
+    /// </summary>
+    public static bool CurrentAutoPlayIsJainaOrigin;
+
+    /// <summary>
+    /// 该卡是否属于<b>吉安娜 mod</b>（卡类型定义在 jaina 程序集）。
+    /// </summary>
+    public static bool IsJainaCard(CardModel? card)
+    {
+        return card != null && card.GetType().Assembly == typeof(AutoPlayGuard).Assembly;
+    }
+
+    /// <summary>
     /// 当前是否处于 AutoPlay 上下文（调用栈检测 + 实例标记双保险）。
     /// <paramref name="source"/> = 发起选择的卡（如 CardSelectCmd.FromHand 的 source 参数）。
-    /// 栈检测在 JIT 内联/调度包装下可能失效（async 状态机帧被优化掉，实测 stackAutoPlay=False）——
-    /// 用 <see cref="CurrentAutoPlayCard"/> 非空兜底：最近一次 AutoPlay 正在进行即视为随机释放
-    /// （标记在玩家手打 TryManualPlay / OnPlayWrapper(isAutoPlay=false) / 地标使用时清空）。
-    /// <b>战斗外（地图/商店/铁匠铺/事件等）强制返回 false</b>——战斗中残留的标记不得影响
-    /// 战斗外的玩家选择（如敲击升级卡牌/商店选购）。
+    /// <b>只对吉安娜 mod 的随机释放机制发起的 AutoPlay 自动选</b>
+    /// （<see cref="CurrentAutoPlayIsJainaOrigin"/>——手打吉安娜卡/球哨塔图腾施法置位）；
+    /// 其它 mod 的随机释放、战斗外选择一律正常弹界面。
     /// </summary>
     public static bool IsAutoPlayContext(CardModel? source)
     {
         // 战斗外：不存在随机释放上下文，任何选择都正常弹界面
         if (!CombatManager.Instance.IsInProgress)
+        {
+            return false;
+        }
+        // 仅吉安娜 mod 发起的随机释放自动选（其它 mod/原版的 AutoPlay 选择正常弹界面）
+        if (!CurrentAutoPlayIsJainaOrigin)
         {
             return false;
         }

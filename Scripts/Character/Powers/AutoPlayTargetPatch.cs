@@ -54,8 +54,9 @@ public static class AutoPlayTargetPatch
     /// 每个卡的 OnPlay 入口统一设置/清除 AutoPlay 实例标记：
     /// <c>isAutoPlay=true</c>（随机释放）→ 设置标记（其触发选择自动选）；
     /// <c>isAutoPlay=false</c>（玩家手打 PlayCardAction）→ 清空标记（手打触发选择正常弹界面）。
-    /// 解决 TryManualPlay 清空无法覆盖的玩家操作路径（地标使用等不走打牌入口）导致的
-    /// 残留标记误判（手打发现被自动选）。
+    /// 手打（isAutoPlay=false）时同时设置"吉安娜发起"标记：手打<b>吉安娜 mod 的卡</b>（匣中古神/
+    /// 大法师的符文/重放类等）→ 其随机释放链（含原版/其它 mod 的卡）自动选；
+    /// 手打原版/其它 mod 的卡 → 标记 false（其触发的选择正常弹界面，不影响其它 mod）。
     /// </summary>
     [HarmonyPatch(typeof(CardModel), nameof(CardModel.OnPlayWrapper))]
     public static class OnPlayWrapperContextPrefix
@@ -63,6 +64,13 @@ public static class AutoPlayTargetPatch
         private static void Prefix(CardModel __instance, bool isAutoPlay)
         {
             AutoPlayGuard.CurrentAutoPlayCard = isAutoPlay ? __instance : null;
+            if (!isAutoPlay)
+            {
+                // 手打：发起者 = 是否吉安娜 mod 的卡（吉安娜卡触发的随机释放链自动选）
+                AutoPlayGuard.CurrentAutoPlayIsJainaOrigin = AutoPlayGuard.IsJainaCard(__instance);
+            }
+            // isAutoPlay=true（随机释放）：继承发起者标记（吉安娜发起的释放链保持 true，
+            // 释放的卡无论是否吉安娜 mod 都自动选）
         }
     }
 

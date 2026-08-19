@@ -120,6 +120,9 @@ public static class MageSpellCaster
     /// </summary>
     private static async Task AutoPlayRandomly(PlayerChoiceContext choiceContext, Player player, CardModel card, bool preferEnemies)
     {
+        // 魔法智慧之球/终极索兰莉安是吉安娜 mod 的随机释放机制（非打出触发，手打标记不适用）：
+        // 显式置位"吉安娜发起"——其释放的法术触发选择自动选（不弹界面）
+        AutoPlayGuard.CurrentAutoPlayIsJainaOrigin = true;
         var combatState = player.Creature.CombatState;
         Creature? target = null;
         bool isCustomSingleTarget =

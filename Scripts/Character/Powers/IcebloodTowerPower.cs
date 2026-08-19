@@ -65,6 +65,9 @@ public sealed class IcebloodTowerPower : PowerModel, IModPowerAssetOverrides
         {
             return;
         }
+        // 冰血哨塔是吉安娜 mod 的随机释放机制（非打出触发）：显式置位"吉安娜发起"——
+        // 其释放的卡触发选择自动选（不弹界面）
+        AutoPlayGuard.CurrentAutoPlayIsJainaOrigin = true;
 
         // 每层哨塔各触发一次（Amount = 哨塔数量）
         int casts = System.Math.Max(1, (int)Amount);

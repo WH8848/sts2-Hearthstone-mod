@@ -58,6 +58,9 @@ public sealed class TrickTotemPower : PowerModel, IModPowerAssetOverrides
         }
         var combatState = player.Creature.CombatState;
         var rng = player.RunState.Rng.CombatTargets;
+        // 戏法图腾是吉安娜 mod 的随机释放机制（非打出触发）：显式置位"吉安娜发起"——
+        // 其释放的卡触发选择自动选（不弹界面）
+        AutoPlayGuard.CurrentAutoPlayIsJainaOrigin = true;
 
         // 全角色攻击/技能/能力牌候选（Attack/Skill/Power——含吉安娜法术牌：
         // 攻击/技能牌及带"法术牌"关键词的能力牌；吉安娜的非法术能力牌
