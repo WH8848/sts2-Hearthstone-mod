@@ -32,6 +32,13 @@ public static class AutoPlayTargetPatch
             // 标记的清除由 OnPlayWrapper 统一处理（isAutoPlay=false 清空），
             // 玩家手打/地标使用等操作不会被残留标记误判。
             AutoPlayGuard.CurrentAutoPlayCard = card;
+            // 目标补全只对"吉安娜机制发起"的 AutoPlay（匣中古神/惊奇卡牌/球/哨塔/图腾/
+            // 重放等吉安娜卡牌发起的释放——释放的卡可为原版/其它 mod 卡）——
+            // 其它 mod 的 AutoPlay 保持原版行为（不干预其自定义目标类型处理）。
+            if (!AutoPlayGuard.CurrentAutoPlayIsJainaOrigin)
+            {
+                return;
+            }
             if (target != null || card.TargetType == TargetType.None)
             {
                 return;
