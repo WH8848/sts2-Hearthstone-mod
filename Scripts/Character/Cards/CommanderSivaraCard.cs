@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Models;
 using jaina.Scripts.Character.Minions;
 using jaina.Scripts.Character.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -58,6 +60,38 @@ public sealed class CommanderSivaraCard : JainaMinionCardTemplate
     public CommanderSivaraCard()
         : base(1, CardRarity.Rare)
     {
+    }
+
+    /// <summary>
+    /// 悬停提示（左侧悬浮）：显示本卡在手牌期间记录的、打出时会复制回手的法术牌
+    /// （最多 3 个，按施放时的升级级别显示升级形态；未记录满则不显示）。
+    /// 参考惊奇套牌/吉安娜的礼物显示候选卡的做法。
+    /// </summary>
+    protected override IEnumerable<IHoverTip> ExtraMinionHoverTips
+    {
+        get
+        {
+            foreach (var (type, upgradeLevel) in _recordedSpells)
+            {
+                var canonical = ModelDb.GetByIdOrNull<CardModel>(ModelDb.GetId(type));
+                if (canonical == null)
+                {
+                    continue;
+                }
+                CardModel display = canonical;
+                if (upgradeLevel > 0)
+                {
+                    // 显示施放时的升级形态（克隆后逐级升级；点燃等无限升级卡按实际级别）
+                    var clone = (CardModel)canonical.MutableClone();
+                    for (int i = 0; i < upgradeLevel && clone.CurrentUpgradeLevel < clone.MaxUpgradeLevel; i++)
+                    {
+                        clone.UpgradeInternal();
+                    }
+                    display = clone;
+                }
+                yield return new CardHoverTip(display);
+            }
+        }
     }
 
     /// <summary>
