@@ -239,7 +239,14 @@ public static class JainaCastTracker
             return;
         }
 
-        rec.SetFor(rec.PlayedAttackSkillsByPlayer, ownerId).Add(type);
+        // "本局施放过的攻击/技能牌"集合（吉安娜的礼物+倒带候选池用）：
+        // 只计玩家手打（isHandPlayed）——随机/自动打出的卡（匣中古神/惊奇卡牌/
+        // 戏法图腾/大法师的符文/罗曼斯/灰贤鹦鹉/诈骗犯重放等）不应成为倒带复制对象，
+        // 否则符文随机打出的卡会被倒带错误发现。
+        if (isHandPlayed)
+        {
+            rec.SetFor(rec.PlayedAttackSkillsByPlayer, ownerId).Add(type);
+        }
         // 记录"上一张施放的攻击/技能牌"（蓄谋诈骗犯战吼重放用）——按玩家区分，
         // 联机时每个玩家只重放自己施放的上一张牌；只计手打（上面已记录，这里不再重复）
         var playedUpgrades = rec.MapFor(rec.PlayedUpgradeLevelsByPlayer, ownerId);
@@ -257,16 +264,22 @@ public static class JainaCastTracker
             counts[type] = n + 1;
         }
         // 派系：动态按卡实例关键词判定（Fire/Frost/Arcane，升级形态跟随实例）
-        if (GetSchoolOf(card) is { } school)
+        // 只计玩家手打——随机/自动打出的卡（符文等）不应成为晨拥重放对象
+        // （否则符文随机打出的法术会被魔导师晨拥错误重放）
+        if (isHandPlayed && GetSchoolOf(card) is { } school)
         {
             rec.Schools.Add(school);
             // 记录该派系最近施放的法术（魔导师晨拥战吼重放用）——按玩家区分
             rec.MapFor(rec.LastCastBySchoolByPlayer, ownerId)[school] = (type, card.CurrentUpgradeLevel, IsGeneratedCard(card));
         }
         // 灰贤鹦鹉：记录最近施放的"费用消耗 ≥ 2"的法术牌（按施放时的升级级别与本局衍生状态）
+        // 只计玩家手打（isHandPlayed）——排除自动打出：罗曼斯/灰贤鹦鹉/诈骗犯重放、
+        // 匣中古神/惊奇卡牌/戏法图腾/大法师的符文/冰血哨塔等随机施放的卡不应成为
+        // 鹦鹉重复的对象（否则符文随机打出的卡会被鹦鹉错误重放）。
         // 用当前基础费用（含升级减费）判定——升级后减费到 <2 的形态不算"费用≥2"；
         // 临时减费（巫师学徒等）不改变判定（临时修正不影响 None）
-        if (card.EnergyCost.GetWithModifiers(MegaCrit.Sts2.Core.Entities.Cards.CostModifiers.None) >= 2)
+        if (isHandPlayed &&
+            card.EnergyCost.GetWithModifiers(MegaCrit.Sts2.Core.Entities.Cards.CostModifiers.None) >= 2)
         {
             rec.LastCastSpellCost2PlusByPlayer[ownerId] = (type, card.CurrentUpgradeLevel, IsGeneratedCard(card));
         }

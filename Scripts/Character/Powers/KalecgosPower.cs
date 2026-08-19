@@ -54,6 +54,14 @@ public sealed class KalecgosPower : PowerModel
     {
         if (!_usedThisTurn && cardPlay.Card.Owner == Owner?.PetOwner)
         {
+            // 自动打出（AutoPlay：匣中古神/惊奇卡牌/戏法图腾/大法师的符文/罗曼斯/
+            // 灰贤鹦鹉/诈骗犯重放等随机释放）不算"你使用的第一张法术"——它们免费打出
+            // 不需要减费，也不应占用本回合的减费名额（否则符文随机打出的法术会
+            // 导致玩家随后手打的第一张法术不再减费）
+            if (cardPlay.IsAutoPlay)
+            {
+                return Task.CompletedTask;
+            }
             var type = cardPlay.Card.Type;
             if (type == CardType.Attack || type == CardType.Skill)
             {

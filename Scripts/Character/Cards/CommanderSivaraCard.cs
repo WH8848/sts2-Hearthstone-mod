@@ -110,6 +110,13 @@ public sealed class CommanderSivaraCard : JainaMinionCardTemplate
         {
             return;
         }
+        // 只记录玩家手打施放的法术——自动打出（AutoPlay：匣中古神/惊奇卡牌/戏法图腾/
+        // 大法师的符文/罗曼斯/灰贤鹦鹉/诈骗犯重放等随机释放）不算"你施放的法术"，
+        // 否则符文随机打出的法术会被西瓦拉错误复制回手牌
+        if (cardPlay.IsAutoPlay)
+        {
+            return;
+        }
         var played = cardPlay.Card;
         // 法术牌 = 攻击牌/技能牌，或挂"法术牌"关键词的卡（任务线卡等视为法术牌，可被复制）；
         // 英雄技能卡（火焰冲击等）不算法术

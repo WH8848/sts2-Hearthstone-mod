@@ -119,6 +119,13 @@ public sealed class MageQuestlinePower : PowerModel, IModPowerAssetOverrides
             return;
         }
         var card = cardPlay.Card;
+        // 只统计玩家手打施放的法术——自动打出（AutoPlay：匣中古神/惊奇卡牌/戏法图腾/
+        // 大法师的符文/罗曼斯/灰贤鹦鹉/诈骗犯重放等随机释放）不算"你施放的法术"，
+        // 否则符文随机打出的火焰/冰霜/奥术法术会错误推进任务进度（与鹦鹉/晨拥同一语义）
+        if (cardPlay.IsAutoPlay)
+        {
+            return;
+        }
         // 只统计法术牌（统一判定：攻击/技能，或带"法术牌"关键词的能力牌；
         // 寒冰屏障/冰血哨塔视为法术牌，施放计入任务进度；随从/地标不算）
         if (!jaina.Scripts.Character.JainaCastTracker.IsSpellCard(card))
