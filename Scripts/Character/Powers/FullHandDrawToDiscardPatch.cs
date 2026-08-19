@@ -15,10 +15,10 @@ namespace jaina.Scripts.Character.Powers;
 
 /// <summary>
 /// 吉安娜满手抽牌 → 牌进弃牌堆（炉石语义"抽牌满手烧牌"变体：牌不消失、不消耗，直接进入弃牌堆）。
-/// 原版 CardPileCmd.Draw 满手（非英雄技能计数 ≥ 上限）时不抽（牌留在抽牌堆）；
-/// 炉石形态（HearthstoneFormPower）满手时通过 ShouldDraw 拦截并烧牌（牌被消耗）。
-/// 本 Prefix 在 Draw 入口短路：吉安娜手牌满时自行抽取（抽牌堆 → 弃牌堆），
-/// 同时覆盖炉石形态的满手烧牌拦截——满手抽到的牌一律进弃牌堆。
+/// 原版 CardPileCmd.Draw 满手（非英雄技能计数 ≥ 上限）时不抽（牌留在抽牌堆）。
+/// 本 Prefix 在 Draw 入口短路：吉安娜手牌满时自行抽取（抽牌堆 → 弃牌堆）。
+/// <b>打出炉石形态后除外</b>——炉石形态（HearthstoneFormPower）的"手牌上限之后抽到的牌会被消耗"
+/// 是卡面效果，激活时满手抽牌保持烧牌（ShouldDraw 拦截 → 牌被消耗），本补丁让位。
 /// 只对吉安娜生效（其他角色保持原版行为）。
 /// 联机：抽取顺序/洗牌复用原版命令，两端确定性一致。
 /// </summary>
@@ -34,12 +34,17 @@ public static class FullHandDrawToDiscardPatch
         {
             return true;
         }
+        // 炉石形态光环激活（打出炉石形态后）：满手抽牌保持"烧牌"（卡面效果），本补丁让位
+        if (player.Creature?.GetPower<HearthstoneFormPower>() != null)
+        {
+            return true;
+        }
         // 手牌未满：原版抽牌流程
         if (!jaina.Scripts.Character.JainaHandHelper.IsHandFull(player))
         {
             return true;
         }
-        // 吉安娜手牌满：抽到的牌进弃牌堆（短路原版 Draw 与炉石形态满手烧牌拦截）
+        // 吉安娜手牌满（无炉石形态）：抽到的牌进弃牌堆
         __result = DrawFullHandToDiscard(choiceContext, count, player, fromHandDraw);
         return false;
     }
