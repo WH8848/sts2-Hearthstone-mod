@@ -95,8 +95,8 @@ public sealed class AmazingDeckCard : JainaSpellCardTemplate
 
         if (IsUpgraded)
         {
-            // 旅社谍战：将每个其他角色的各一张牌洗入抽牌堆（随机位置），费用变为 0
-            // （X 费用卡除外——保持原 X 费，打出时花费当前能量/星星），抽取其中一张
+            // 旅社谍战：将每个其他角色的各一张牌洗入抽牌堆（随机位置），费用变为 0，抽取其中一张。
+            // X 费用卡（能量 X / 星星 X）不洗入——可变费用无法归零，直接排除在候选外。
             var rng = owner.RunState.Rng.CombatTargets;
             var jainaPool = ModelDb.CardPool<jaina.Scripts.Character.JainaCardPool>();
             var shuffled = new List<CardModel>();
@@ -107,7 +107,8 @@ public sealed class AmazingDeckCard : JainaSpellCardTemplate
                     continue; // 排除自己（吉安娜）
                 }
                 var candidates = pool.AllCards
-                    .Where(c => c != null && jaina.Scripts.Character.JainaRandomPoolHelper.IsEligible(c))
+                    .Where(c => c != null && jaina.Scripts.Character.JainaRandomPoolHelper.IsEligible(c) &&
+                                !c.EnergyCost.CostsX && !c.HasStarCostX)
                     .ToList();
                 if (candidates.Count == 0)
                 {
@@ -123,17 +124,8 @@ public sealed class AmazingDeckCard : JainaSpellCardTemplate
                 {
                     continue;
                 }
-                // X 费用卡（能量 X / 星星 X）不归零：打出花费 = 当前能量/星星（可变费用），
-                // 旅社谍战洗入保持原 X 费语义（不标记 ZeroCostMark、不改费用）。
-                if (copy.EnergyCost.CostsX || copy.HasStarCostX)
-                {
-                    jaina.Scripts.Character.JainaCastTracker.MarkGenerated(copy);
-                    shuffled.Add(copy);
-                    continue;
-                }
-                // 费用归零：能量费用（含 X 费卡的 _base）与星星费用（含星星 X）全部置 0，
-                // 并打内部标记（X 费用卡打出时花费=当前能量/星星，不走 _base，
-                // 由 ZeroCostMarkPatch 按标记强制 0 花费并让卡面显示 0）
+                // 费用归零：能量费用与星星费用全部置 0，
+                // 并打内部标记（X 费用卡不走 _base，由 ZeroCostMarkPatch 按标记强制 0 花费并让卡面显示 0）
                 copy.EnergyCost.SetCustomBaseCost(0);
                 if (copy.BaseStarCost > 0)
                 {
