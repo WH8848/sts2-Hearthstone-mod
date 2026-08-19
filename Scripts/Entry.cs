@@ -32,6 +32,11 @@ public class Entry
         var harmony = new Harmony("jaina");
         harmony.PatchAll(assembly);
 
+        // 验证 5 张原版卡的 OnPlay 状态机 patch 目标完整：
+        // 游戏版本更新导致状态机结构变化时 TargetMethods 静默失配（不生效不报错），
+        // 此处显式 Warn 告警（缺失卡名会出现在启动日志）。
+        jaina.Scripts.Character.Powers.HeroPowerHandFullDrawCardPatch.VerifyTargets();
+
         // 【临时诊断】PatchAll 后检查 ToLocString 的 patch 是否应用（排查图鉴 SwitchExpressionException）
         try
         {

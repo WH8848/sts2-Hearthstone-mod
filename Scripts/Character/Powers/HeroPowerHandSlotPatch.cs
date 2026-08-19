@@ -290,17 +290,24 @@ public static class HeroPowerHandFullDrawCardPatch
     private static readonly MethodInfo NonHeroCountFromEnumerable =
         AccessTools.Method(typeof(HeroPowerHandHelper), nameof(HeroPowerHandHelper.GetNonHeroPowerCardCountFromCards));
 
+    /// <summary>
+    /// 原版"抽牌/加牌到手牌满"卡（潦草急就 Scrawl、受膏 Anointed、坠落 CrashLanding、
+    /// 疏浚 Dredge、尼奥的怒火 NeowsFury）：OnPlay 补牌空间计算需排除英雄技能卡。
+    /// 游戏版本更新导致状态机命名/结构变化时 TargetMethods 会静默失配——
+    /// 由 <see cref="VerifyTargets"/> 在启动时显式告警。
+    /// </summary>
+    private static readonly Type[] HeroPowerAffectedVanillaCards =
+    [
+        typeof(MegaCrit.Sts2.Core.Models.Cards.Scrawl),
+        typeof(MegaCrit.Sts2.Core.Models.Cards.Anointed),
+        typeof(MegaCrit.Sts2.Core.Models.Cards.CrashLanding),
+        typeof(MegaCrit.Sts2.Core.Models.Cards.Dredge),
+        typeof(MegaCrit.Sts2.Core.Models.Cards.NeowsFury)
+    ];
+
     private static IEnumerable<MethodBase> TargetMethods()
     {
-        var cardTypes = new[]
-        {
-            typeof(MegaCrit.Sts2.Core.Models.Cards.Scrawl),
-            typeof(MegaCrit.Sts2.Core.Models.Cards.Anointed),
-            typeof(MegaCrit.Sts2.Core.Models.Cards.CrashLanding),
-            typeof(MegaCrit.Sts2.Core.Models.Cards.Dredge),
-            typeof(MegaCrit.Sts2.Core.Models.Cards.NeowsFury)
-        };
-        foreach (var type in cardTypes)
+        foreach (var type in HeroPowerAffectedVanillaCards)
         {
             foreach (var nested in type.GetNestedTypes(BindingFlags.NonPublic))
             {
@@ -312,6 +319,35 @@ public static class HeroPowerHandFullDrawCardPatch
                         yield return moveNext;
                     }
                 }
+            }
+        }
+    }
+
+    /// <summary>
+    /// 启动时验证（Entry.Init 在 PatchAll 之后调用）：5 张原版卡的 OnPlay 状态机
+    /// 是否全部可定位。游戏版本更新导致状态机命名/结构变化时，TargetMethods 会
+    /// <b>静默失配</b>（patch 不生效、不崩溃、无报错）——本验证把静默失效变成
+    /// 显式 Warn 告警：启动日志出现即表示该卡需更新进 <see cref="HeroPowerAffectedVanillaCards"/>。
+    /// </summary>
+    public static void VerifyTargets()
+    {
+        foreach (var type in HeroPowerAffectedVanillaCards)
+        {
+            bool found = false;
+            foreach (var nested in type.GetNestedTypes(BindingFlags.NonPublic))
+            {
+                if (nested.Name.StartsWith("<OnPlay>d__", System.StringComparison.Ordinal) &&
+                    nested.GetMethod("MoveNext", BindingFlags.Instance | BindingFlags.NonPublic) != null)
+                {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found)
+            {
+                MegaCrit.Sts2.Core.Logging.Log.Warn(
+                    $"[Jaina] HeroPowerHandFullDrawCardPatch: {type.Name} 的 <OnPlay>d__ 状态机未找到，" +
+                    "英雄技能卡不占手牌位 patch 对该卡失效——游戏版本可能已更新，请更新 TargetMethods 卡列表");
             }
         }
     }
