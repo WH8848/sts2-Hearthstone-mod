@@ -265,6 +265,28 @@ public static class AutoPickSelectionPatch
     }
 
     /// <summary>
+    /// 从牌组选一张附魔（FromDeckForEnchantment，cards 版——Player 版委托此版本，独立实现）：
+    /// 随机选 MinSelect 张
+    /// </summary>
+    [HarmonyPatch(typeof(CardSelectCmd), nameof(CardSelectCmd.FromDeckForEnchantment),
+        new Type[] { typeof(IReadOnlyList<CardModel>), typeof(EnchantmentModel), typeof(int), typeof(CardSelectorPrefs) })]
+    public static class FromDeckForEnchantmentCardsPatch
+    {
+        private static bool Prefix(IReadOnlyList<CardModel> cards, CardSelectorPrefs prefs,
+            ref Task<IEnumerable<CardModel>> __result)
+        {
+            if (!AutoPlayGuard.IsAutoPlayContext(null))
+            {
+                return true;
+            }
+            var owner = cards is { Count: > 0 } ? cards[0].Owner : null;
+            __result = Task.FromResult<IEnumerable<CardModel>>(AutoPlayGuard.PickRandomN(
+                owner, cards, prefs.MinSelect));
+            return false;
+        }
+    }
+
+    /// <summary>
     /// 奖励网格选择（FromSimpleGridForRewards）：随机选 MinSelect 张（防御性——随机释放不会触发奖励）
     /// </summary>
     [HarmonyPatch(typeof(CardSelectCmd), nameof(CardSelectCmd.FromSimpleGridForRewards))]
