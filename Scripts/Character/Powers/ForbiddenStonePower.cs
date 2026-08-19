@@ -46,6 +46,14 @@ public sealed class ForbiddenStonePower : PowerModel, IModPowerAssetOverrides
         {
             return;
         }
+        // 自动打出（AutoPlay：匣中古神/惊奇卡牌/戏法图腾/大法师的符文/罗曼斯/重放等
+        // 随机释放）的卡不触发源生之石：其触发的发现不响应（DiscoverTracker.IsAuto），
+        // 且自动使用其余选项会再次打出卡 → 再次触发本钩子 → 若发现判定失效则无限递归
+        // （曾导致打出源生之石后卡牌卡在空中）。只响应玩家手打的卡。
+        if (cardPlay.IsAutoPlay)
+        {
+            return;
+        }
         await ConsumePendingDiscover(choiceContext, player);
     }
 

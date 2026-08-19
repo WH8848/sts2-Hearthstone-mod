@@ -102,6 +102,12 @@ public sealed class ForbiddenSequencePower : PowerModel, IModPowerAssetOverrides
         while (DiscoverTracker.TryGetPending(player, _lastSeq) is { } pending)
         {
             _lastSeq = pending.Seq;
+            // 随机释放（AutoPlay）触发的发现不计入任务进度（与源生之石同一语义）：
+            // 只推进游标不计数——否则符文/匣中古神随机释放发现类卡会错误推进任务
+            if (pending.IsAuto)
+            {
+                continue;
+            }
             Count++;
             if (Count < Threshold)
             {

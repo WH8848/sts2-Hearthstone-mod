@@ -96,8 +96,13 @@ public static class DiscoverTracker
                 Selected = card,
                 Others = set.ToList(),
                 Seq = Interlocked.Increment(ref _seq),
-                // 随机释放（AutoPlay）流程中触发的发现：源生之石不响应
-                IsAuto = AutoPlayGuard.IsInAutoPlay()
+                // 随机释放（AutoPlay）流程中触发的发现：源生之石/禁忌序列不响应。
+                // 用实例标记（CurrentAutoPlayCard，CardCmd.AutoPlay 的 Prefix 设置，
+                // 发现完成于 AutoPlay 的 OnPlay 链内时非空）——调用栈检测
+                // （IsInAutoPlay）在 JIT 内联下会失效，曾导致 AutoPlay 触发的发现被
+                // 误判为玩家发现 → 源生之石自动使用其余选项 → 打出又触发发现 →
+                // 无限递归（卡牌卡在空中）。
+                IsAuto = AutoPlayGuard.CurrentAutoPlayCard != null
             });
             return true;
         }
