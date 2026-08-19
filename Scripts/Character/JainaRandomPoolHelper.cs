@@ -10,9 +10,21 @@ using MegaCrit.Sts2.Core.Models;
 namespace jaina.Scripts.Character;
 
 /// <summary>
+/// 随机卡牌池排除标记接口：实现此接口的<b>卡池</b>（如吉安娜中立/衍生池
+/// JainaNeutralCardPool——含任务奖励卡与全部衍生牌）被 <see cref="JainaRandomPoolHelper"/>
+/// 排除——其中的卡不可被发现、不可被随机释放/随机生成。
+/// <b>新增需排除的中性/衍生池实现此接口即可自动排除</b>（反射收集），
+/// 无需手动维护排除列表。
+/// </summary>
+public interface IJainaExcludedFromRandomPool
+{
+}
+
+/// <summary>
 /// Jaina 随机卡牌池通用过滤（所有随机取卡统一使用）：
-/// 排除 8 个非角色/衍生卡池（无色/诅咒/先古/状态/任务/事件/衍生 +
-/// 吉安娜中立衍生池 JainaNeutralCardPool——含任务奖励卡与全部衍生牌）、
+/// 排除 7 个原版非角色/衍生卡池（无色/诅咒/先古/状态/任务/事件/衍生）+
+/// 实现 <see cref="IJainaExcludedFromRandomPool"/> 的 mod 池（吉安娜中立衍生池
+/// JainaNeutralCardPool——含任务奖励卡与全部衍生牌，接口动态收集）、
 /// 先古稀有度（CardRarity.Ancient）、多人游戏专属卡（MultiplayerConstraint != None）
 /// 与<b>任务卡</b>（带 Quest 关键词的卡，如禁忌序列/打开时空之门/巫师的计策/拖延时间/抵达传送大厅——
 /// 不可被发现、不可被随机释放/随机生成）。
@@ -24,10 +36,10 @@ namespace jaina.Scripts.Character;
 public static class JainaRandomPoolHelper
 {
     /// <summary>
-    /// 被排除的非角色卡池类型
-    /// （无色/诅咒/先古/状态/任务/事件/衍生池 + 吉安娜中立/衍生池
-    /// ——JainaNeutralCardPool 含任务奖励卡（时空扭曲/源生之石/奥术师晨拥）与全部衍生牌，
-    /// 不可被发现、不可被随机释放/随机生成）。
+    /// 被排除的原版非角色卡池类型
+    /// （无色/诅咒/先古/状态/任务/事件/衍生池——游戏本体固定池，无动态化手段）。
+    /// mod 侧需排除的池（JainaNeutralCardPool 等）走 <see cref="IJainaExcludedFromRandomPool"/>
+    /// 接口动态收集，不在此列表。
     /// </summary>
     private static readonly HashSet<Type> ExcludedPoolTypes =
     [
@@ -37,9 +49,36 @@ public static class JainaRandomPoolHelper
         typeof(MegaCrit.Sts2.Core.Models.CardPools.StatusCardPool),
         typeof(MegaCrit.Sts2.Core.Models.CardPools.QuestCardPool),
         typeof(MegaCrit.Sts2.Core.Models.CardPools.EventCardPool),
-        typeof(MegaCrit.Sts2.Core.Models.CardPools.TokenCardPool),
-        typeof(JainaNeutralCardPool)
+        typeof(MegaCrit.Sts2.Core.Models.CardPools.TokenCardPool)
     ];
+
+    /// <summary>
+    /// 实现 <see cref="IJainaExcludedFromRandomPool"/> 的 mod 池类型集合
+    /// （惰性构建：遍历 ModelDb.AllCardPools 收集实现接口的池；卡池注册冻结后不变）。
+    /// 新增需排除的中性/衍生池实现接口即自动加入。
+    /// </summary>
+    private static HashSet<Type>? _modExcludedPoolTypes;
+
+    private static void EnsureModExcludedPoolTypes()
+    {
+        if (_modExcludedPoolTypes != null)
+        {
+            return;
+        }
+        var set = new HashSet<Type>();
+        foreach (var pool in ModelDb.AllCardPools)
+        {
+            if (pool == null)
+            {
+                continue;
+            }
+            if (typeof(IJainaExcludedFromRandomPool).IsAssignableFrom(pool.GetType()))
+            {
+                set.Add(pool.GetType());
+            }
+        }
+        _modExcludedPoolTypes = set;
+    }
 
     /// <summary>
     /// 该 canonical 卡是否可进入 Jaina 随机卡牌池：
@@ -192,9 +231,16 @@ public static class JainaRandomPoolHelper
 
     private static bool IsInExcludedPool(CardModel canonical)
     {
+        EnsureModExcludedPoolTypes();
         foreach (var pool in ModelDb.AllCardPools)
         {
-            if (pool == null || !ExcludedPoolTypes.Contains(pool.GetType()))
+            if (pool == null)
+            {
+                continue;
+            }
+            var poolType = pool.GetType();
+            // 原版非角色池（硬编码，本体固定）或 mod 排除池（接口动态收集）
+            if (!ExcludedPoolTypes.Contains(poolType) && !_modExcludedPoolTypes!.Contains(poolType))
             {
                 continue;
             }
