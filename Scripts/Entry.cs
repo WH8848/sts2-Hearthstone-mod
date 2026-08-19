@@ -78,6 +78,13 @@ public class Entry
         // 武器只赋予攻击力；攻击力为 0 时不可行动）
         MegaCrit.Sts2.Core.Combat.CombatManager.Instance.CombatBegan += OnCombatBeganForWeaponAction;
 
+        // 战斗结束：清空 AutoPlay 实例标记（防跨战斗残留——残留标记会导致战斗外的
+        // 玩家选择（敲击升级/商店/事件等）被 AutoPickSelectionPatch 误判为随机释放而自动选）
+        MegaCrit.Sts2.Core.Combat.CombatManager.Instance.CombatEnded += _ =>
+        {
+            jaina.Scripts.Character.Powers.AutoPlayGuard.CurrentAutoPlayCard = null;
+        };
+
         // 【临时诊断】游戏就绪后打印 JainaCardPool 实际内容（排查寒冰箭不在商店候选问题）
         RegisterMerchantDiag();
 

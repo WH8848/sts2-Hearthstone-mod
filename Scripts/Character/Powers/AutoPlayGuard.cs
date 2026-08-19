@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Models;
@@ -30,10 +31,17 @@ public static class AutoPlayGuard
     /// <paramref name="source"/> = 发起选择的卡（如 CardSelectCmd.FromHand 的 source 参数）。
     /// 栈检测在 JIT 内联/调度包装下可能失效（async 状态机帧被优化掉，实测 stackAutoPlay=False）——
     /// 用 <see cref="CurrentAutoPlayCard"/> 非空兜底：最近一次 AutoPlay 正在进行即视为随机释放
-    /// （标记在玩家手打 TryManualPlay 时清空，手打流程不受影响）。
+    /// （标记在玩家手打 TryManualPlay / OnPlayWrapper(isAutoPlay=false) / 地标使用时清空）。
+    /// <b>战斗外（地图/商店/铁匠铺/事件等）强制返回 false</b>——战斗中残留的标记不得影响
+    /// 战斗外的玩家选择（如敲击升级卡牌/商店选购）。
     /// </summary>
     public static bool IsAutoPlayContext(CardModel? source)
     {
+        // 战斗外：不存在随机释放上下文，任何选择都正常弹界面
+        if (!CombatManager.Instance.IsInProgress)
+        {
+            return false;
+        }
         if (IsInAutoPlay())
         {
             return true;
