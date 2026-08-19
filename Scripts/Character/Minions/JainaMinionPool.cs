@@ -144,6 +144,7 @@ public static class JainaMinionPool
             nameof(MaroonedArchmageMinion) => await SummonMinion<MaroonedArchmageMinion>(choiceContext, player, maxHp, attack, position, source),
             nameof(ColdarraDrakeMinion) => await SummonMinion<ColdarraDrakeMinion>(choiceContext, player, maxHp, attack, position, source),
             nameof(VexallusMinion) => await SummonMinion<VexallusMinion>(choiceContext, player, maxHp, attack, position, source),
+            nameof(WinterspringWhelpMinion) => await SummonMinion<WinterspringWhelpMinion>(choiceContext, player, maxHp, attack, position, source),
             // 地标（占随从槽，不进入随机召唤池 _minionTypes）
             nameof(NightcloakSanctumLandmark) => await SummonMinion<NightcloakSanctumLandmark>(choiceContext, player, maxHp, attack, position, source),
             nameof(TrinketShopLandmark) => await SummonMinion<TrinketShopLandmark>(choiceContext, player, maxHp, attack, position, source),
