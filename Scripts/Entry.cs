@@ -161,11 +161,15 @@ public class Entry
     }
 
     /// <summary>
-    /// 战斗开始：给所有玩家挂载角色固有的武器攻击行动点（每回合 1 点，幂等）。
+    /// 战斗开始：统一按"牌库检测"规则给玩家挂载角色能力——
+    /// 只有手牌/抽牌堆/弃牌堆中有<b>吉安娜武器卡</b>的玩家挂载武器攻击行动点；
+    /// 只有手牌/抽牌堆/弃牌堆中有<b>吉安娜随从卡</b>的玩家挂载随从军势。
+    /// 吉安娜也按此规则：开局卡组无相关卡则不显示；中途获得/发现的吉安娜卡进入
+    /// 牌库后，下一场战斗开始检测到即挂载（武器卡/随从卡均按卡类型判定，含升级形态）。
     /// 注意：必须遍历全部玩家（而非仅 LocalContext.GetMe）——CombatBegan 事件在每端
     /// 独立触发且此处使用本地执行上下文（不广播）——若只给本地玩家挂载，
     /// 联机时另一端看不到该 Power，导致状态分歧（State Divergence）断线。
-    /// 每端为所有玩家挂载 → 两端状态一致。
+    /// 每端为所有玩家挂载 → 两端状态一致（牌库两端同步，检测结果一致）。
     /// </summary>
     private static void OnCombatBeganForWeaponAction(MegaCrit.Sts2.Core.Combat.CombatState state)
     {
@@ -173,9 +177,24 @@ public class Entry
         {
             foreach (var player in state.Players)
             {
+                var pcs = player.PlayerCombatState;
+                if (pcs == null)
+                {
+                    continue;
+                }
                 var ctx = new MegaCrit.Sts2.Core.GameActions.Multiplayer.ThrowingPlayerChoiceContext();
-                _ = MegaCrit.Sts2.Core.Helpers.TaskHelper.RunSafely(
-                    jaina.Scripts.Character.Weapons.JainaWeaponSlot.EnsureAttackAction(ctx, player));
+                // 牌库检测：手牌/抽牌堆/弃牌堆中有吉安娜武器卡 → 挂武器攻击行动点
+                if (pcs.AllCards.Any(c => c is jaina.Scripts.Character.Weapons.JainaWeaponCardTemplate))
+                {
+                    _ = MegaCrit.Sts2.Core.Helpers.TaskHelper.RunSafely(
+                        jaina.Scripts.Character.Weapons.JainaWeaponSlot.EnsureAttackAction(ctx, player));
+                }
+                // 牌库检测：手牌/抽牌堆/弃牌堆中有吉安娜随从卡 → 挂随从军势（幂等）
+                if (pcs.AllCards.Any(c => c is jaina.Scripts.Character.Cards.JainaMinionCardTemplate))
+                {
+                    _ = MegaCrit.Sts2.Core.Helpers.TaskHelper.RunSafely(
+                        jaina.Scripts.Character.Powers.MinionSquadPower.EnsureAppliedAsync(ctx, player));
+                }
                 // 联机：角色死亡时清空其随从槽（参考故障机器人/亡灵契约师）。
                 // 玩家角色死亡是确定性事件，两端各自触发 → 两端随从清理一致。
                 player.Creature.Died -= OnPlayerCreatureDied;

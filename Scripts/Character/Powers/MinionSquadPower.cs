@@ -3,6 +3,7 @@ using System.Linq;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Creatures;
+using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
@@ -34,6 +35,19 @@ public sealed class MinionSquadPower : PowerModel, IModPowerAssetOverrides
     public override PowerType Type => PowerType.Buff;
 
     public override PowerStackType StackType => PowerStackType.Single;
+
+    /// <summary>
+    /// 幂等挂载随从军势（战斗开始牌库检测 / 召唤随从时共用）。
+    /// 已有则不动。
+    /// </summary>
+    public static async Task EnsureAppliedAsync(PlayerChoiceContext choiceContext, Player player)
+    {
+        if (player?.Creature == null || player.Creature.Powers.Any(p => p is MinionSquadPower))
+        {
+            return;
+        }
+        await PowerCmd.Apply<MinionSquadPower>(choiceContext, [player.Creature], 1m, player.Creature, null);
+    }
 
     /// <summary>
     /// 拦截未格挡伤害 - 按随从召唤顺序扣除随从 HP

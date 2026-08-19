@@ -504,12 +504,12 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
         }
 
         // 随从军势：吉安娜护甲无法阻挡的伤害由随从按召唤顺序抵挡（吉安娜固有机制，与遗物无关）。
-        // 在第一个随从召唤时挂到吉安娜身上（幂等）。
+        // 在第一个随从召唤时挂到吉安娜身上（幂等；战斗开始牌库检测已挂时不动——
+        // 此处在战斗中途效果召唤/生成随从卡时兜底）。
         var petOwner = Creature.PetOwner;
-        if (petOwner != null && !petOwner.Creature.Powers.Any(p => p is Powers.MinionSquadPower))
+        if (petOwner != null)
         {
-            await PowerCmd.Apply<Powers.MinionSquadPower>(
-                choiceContext, [petOwner.Creature], 1m, petOwner.Creature, null);
+            await Powers.MinionSquadPower.EnsureAppliedAsync(choiceContext, petOwner);
         }
 
         // 冲锋：召唤当回合立即授予行动点（可点击攻击；行动点回合末自动移除，下回合正常授予）
