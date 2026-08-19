@@ -24,7 +24,7 @@ namespace jaina.Scripts.Character.Cards;
 /// 升级后变为尤格-萨隆的谜之匣 (Puzzle Box of Yogg-Saron)：随机施放 10 个法术（目标随机，联机可打队友）。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
-public sealed class YoggBoxCard : JainaSpellCardTemplate
+public sealed class YoggBoxCard : JainaSpellCardTemplate, Powers.IJainaConditionGlowCard
 {
     /// <summary>
     /// 法术牌 + 暗影派系

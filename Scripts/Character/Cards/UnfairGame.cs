@@ -8,6 +8,7 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
+using jaina.Scripts.Character.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -20,7 +21,7 @@ namespace jaina.Scripts.Character.Cards;
 /// 压轴：如果刚好消耗完能量，从抽到的三张法术牌中发现一张复制。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
-public sealed class UnfairGame : JainaSpellCardTemplate
+public sealed class UnfairGame : JainaSpellCardTemplate, Powers.IJainaConditionGlowCard
 {
     /// <summary>
     /// 法术牌：攻击牌和技能牌都视为法术牌。

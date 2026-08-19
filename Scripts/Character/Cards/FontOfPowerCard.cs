@@ -7,6 +7,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using jaina.Scripts.Character.Keywords;
+using jaina.Scripts.Character.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
 using MegaCrit.Sts2.Core.HoverTips;
 
@@ -18,8 +19,14 @@ namespace jaina.Scripts.Character.Cards;
 /// 基础版消耗；升级后不再消耗。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
-public sealed class FontOfPowerCard : JainaSpellCardTemplate
+public sealed class FontOfPowerCard : JainaSpellCardTemplate, Powers.IJainaConditionGlowCard
 {
+    /// <summary>
+    /// 升级后仍发光：升级只移除消耗，"抽牌堆无随从 → 获取全部三张"机制保留
+    /// （区别于匣中古神/埃匹希斯冲击/加工失误——升级后条件效果关闭）。
+    /// </summary>
+    public bool GlowsWhenUpgraded => true;
+
     /// <summary>
     /// 可升级（升级后去除消耗）
     /// </summary>

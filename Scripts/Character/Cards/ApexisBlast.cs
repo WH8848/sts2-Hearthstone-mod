@@ -9,6 +9,7 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.ValueProps;
 using jaina.Scripts.Character.Minions;
+using jaina.Scripts.Character.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -20,7 +21,7 @@ namespace jaina.Scripts.Character.Cards;
 /// 升级后变为"火焰之地传送门 (Firelands Portal)"（2 费）：造成 6 点伤害，随机召唤一个费用为 2 的随从。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
-public sealed class ApexisBlast : JainaSpellCardTemplate
+public sealed class ApexisBlast : JainaSpellCardTemplate, Powers.IJainaConditionGlowCard
 {
     /// <summary>
     /// 法术牌：攻击牌和技能牌都视为法术牌；升级后（火焰之地传送门）为火焰派系
