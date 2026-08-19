@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using HarmonyLib;
+using MegaCrit.Sts2.Core.Audio.Debug;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -51,8 +52,8 @@ public static class FullHandDrawToDiscardPatch
 
     /// <summary>
     /// 满手抽牌：从抽牌堆取 count 张（抽牌堆空时弃牌堆洗回），逐张移入弃牌堆，
-    /// 保留原版 Draw 的历史/钩子（CardDrawn/AfterCardDrawn/InvokeDrawn——炉石形态
-    /// "抽到状态卡额外抽一张"仍生效）。
+    /// 保留原版 Draw 的动画/音效/钩子（Add 带卡牌移动动画、card_deal 抽牌音效、
+    /// CardDrawn/AfterCardDrawn/InvokeDrawn——炉石形态"抽到状态卡额外抽一张"仍生效）。
     /// </summary>
     private static async Task<IEnumerable<CardModel>> DrawFullHandToDiscard(
         PlayerChoiceContext choiceContext, decimal count, Player player, bool fromHandDraw)
@@ -82,12 +83,14 @@ public static class FullHandDrawToDiscardPatch
                 break;
             }
             result.Add(card);
-            card.RemoveFromCurrentPile(silent: true);
+            // Add 内部从抽牌堆移除（带卡牌移动动画）并加入弃牌堆（满手改道目标）
             await CardPileCmd.Add(card, PileType.Discard);
             // 与原版 Draw 一致：历史记录 + 抽牌钩子（炉石形态 AfterCardDrawn 连锁额外抽牌仍生效）
             CombatManager.Instance.History.CardDrawn(combatState, card, fromHandDraw);
             await Hook.AfterCardDrawn(combatState, choiceContext, card, fromHandDraw);
             card.InvokeDrawn();
+            // 原版抽牌音效
+            NDebugAudioManager.Instance?.Play("card_deal.mp3", 0.25f, PitchVariance.Small);
         }
         return result;
     }
