@@ -76,7 +76,9 @@ public sealed class UnfairGame : JainaSpellCardTemplate, Powers.IJainaConditionG
             // 加大音量：抽三张法术牌（攻击/技能牌，或带"法术牌"关键词的能力牌）。
             // 从抽牌堆中逐张挑法术牌入手（跳过随从/诅咒/状态等非法术牌）；
             // 抽牌堆不足 3 张 → 从弃牌堆补足（统一语义见 JainaDrawHelper）。
-            // 手牌满时排队等待空位（GrantDrawSpell 同款）。
+            // 注意：取牌堆中的卡入手必须用 CardPileCmd.Add（满手时原版语义改道弃牌堆，
+            // 与圣殿蜡烛商一致）；不能走 GrantOrQueue/AddGeneratedCardToCombat——
+            // 卡已有牌堆，引擎禁止"生成已有牌堆的卡"（会抛异常卡住打出流程）。
             var drawn = new List<CardModel>();
             var spellCandidates = jaina.Scripts.Character.JainaDrawHelper.PickMatchingFromDrawThenDiscard(
                 base.Owner, 3,
@@ -85,7 +87,7 @@ public sealed class UnfairGame : JainaSpellCardTemplate, Powers.IJainaConditionG
             foreach (var spell in spellCandidates)
             {
                 drawn.Add(spell);
-                await jaina.Scripts.Character.Powers.JainaPendingRewardQueue.GrantOrQueue(choiceContext, base.Owner, spell);
+                await CardPileCmd.Add(spell, PileType.Hand);
             }
             // 压轴：如果刚好消耗完能量，从抽到的三张法术牌中发现一张复制
             if (base.Owner.PlayerCombatState is { Energy: <= 0 })

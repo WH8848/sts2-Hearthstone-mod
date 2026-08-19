@@ -188,7 +188,9 @@ public sealed class MageQuestlinePower : PowerModel, IModPowerAssetOverrides
     /// 抽一张法术牌：从抽牌堆中找第一张攻击/技能牌（或带"法术牌"关键词的能力牌）
     /// 置入手牌；抽牌堆没有 → 从弃牌堆找（统一语义见 JainaDrawHelper）；
     /// 两堆都没有则普通抽一张。
-    /// 手牌满时抽牌奖励排队等待空位（炉石任务奖励语义）。
+    /// 手牌满时先从原堆移除再排队等待空位（炉石任务奖励语义——奖励不丢失；
+    /// 取牌堆中的卡不能直接 GrantOrQueue：卡已有牌堆，AddGeneratedCardToCombat
+    /// 会抛"不允许生成已有牌堆的卡"）。
     /// </summary>
     private static async Task GrantDrawSpell(PlayerChoiceContext choiceContext, Player player)
     {
@@ -202,6 +204,14 @@ public sealed class MageQuestlinePower : PowerModel, IModPowerAssetOverrides
             await CardPileCmd.Draw(choiceContext, 1, player);
             return;
         }
+        // 手牌有空位：从牌堆取牌入手（满手时原版 Add 语义改道弃牌堆——但任务奖励
+        // 不丢失，先移除原堆再排队，队列发放走 AddGeneratedCardToCombat 时卡已无牌堆）
+        if (!jaina.Scripts.Character.JainaHandHelper.IsHandFull(player))
+        {
+            await CardPileCmd.Add(spell, PileType.Hand);
+            return;
+        }
+        spell.RemoveFromCurrentPile(silent: true);
         await JainaPendingRewardQueue.GrantOrQueue(choiceContext, player, spell);
     }
 
