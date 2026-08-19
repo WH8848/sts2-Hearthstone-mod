@@ -95,10 +95,7 @@ public sealed class CramSessionCard : JainaSpellCardTemplate
             // 抽牌堆与弃牌堆都没有奥术法术牌：不生效
             return;
         }
-        if (jaina.Scripts.Character.JainaHandHelper.IsHandFull(base.Owner))
-        {
-            return;
-        }
+        // 手牌满时 Add 自动改道弃牌堆（原版满手语义，牌不消失不消耗）
         await CardPileCmd.Add(arcaneSpell, PileType.Hand);
 
         // 挂重放1：该牌本回合内打出时自动重放一次（用一次即消耗，回合结束也移除）

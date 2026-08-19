@@ -56,19 +56,16 @@ public sealed class SpiritCollectorCard : JainaMinionCardTemplate
     {
         await base.OnPlay(choiceContext, cardPlay);
 
-        // 获取一张 0 费 1/1 的小精灵（加入手牌）——MutableClone 无 Owner 会 NRE，用 CreateCard 生成带 Owner 的实例
-        // 手牌满时不入手（0.111.1 满手时 Add 会把牌静默改道弃牌堆）
-        if (!jaina.Scripts.Character.JainaHandHelper.IsHandFull(base.Owner))
+        // 获取一张 0 费 1/1 的小精灵（加入手牌）——MutableClone 无 Owner 会 NRE，用 CreateCard 生成带 Owner 的实例。
+        // 手牌满时 AddGeneratedCardToCombat 自动改道弃牌堆（原版满手语义，牌不消失不消耗）
+        var combatState = base.Owner.Creature.CombatState;
+        var canonical = MegaCrit.Sts2.Core.Models.ModelDb.GetByIdOrNull<MegaCrit.Sts2.Core.Models.CardModel>(
+            MegaCrit.Sts2.Core.Models.ModelDb.GetId(typeof(ImpCard)));
+        if (canonical != null)
         {
-            var combatState = base.Owner.Creature.CombatState;
-            var canonical = MegaCrit.Sts2.Core.Models.ModelDb.GetByIdOrNull<MegaCrit.Sts2.Core.Models.CardModel>(
-                MegaCrit.Sts2.Core.Models.ModelDb.GetId(typeof(ImpCard)));
-            if (canonical != null)
-            {
-                var imp = combatState.CreateCard(canonical, base.Owner);
-                jaina.Scripts.Character.JainaCastTracker.MarkGenerated(imp);
-                await CardPileCmd.AddGeneratedCardToCombat(imp, PileType.Hand, base.Owner);
-            }
+            var imp = combatState.CreateCard(canonical, base.Owner);
+            jaina.Scripts.Character.JainaCastTracker.MarkGenerated(imp);
+            await CardPileCmd.AddGeneratedCardToCombat(imp, PileType.Hand, base.Owner);
         }
 
         // 灌注你的英雄技能（+1 层灌注）

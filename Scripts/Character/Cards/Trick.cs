@@ -81,18 +81,14 @@ public sealed class Trick : JainaSpellCardTemplate
             if (first != null)
             {
                 jaina.Scripts.Character.JainaCastTracker.MarkGenerated(first);
-                if (!jaina.Scripts.Character.JainaHandHelper.IsHandFull(base.Owner))
-                {
-                    await CardPileCmd.AddGeneratedCardToCombat(first, PileType.Hand, base.Owner);
-                }
+                // 手牌满时 AddGeneratedCardToCombat 自动改道弃牌堆（原版满手语义，牌不消失不消耗）
+                await CardPileCmd.AddGeneratedCardToCombat(first, PileType.Hand, base.Owner);
             }
             if (second != null)
             {
                 jaina.Scripts.Character.JainaCastTracker.MarkGenerated(second);
-                if (!jaina.Scripts.Character.JainaHandHelper.IsHandFull(base.Owner))
-                {
-                    await CardPileCmd.AddGeneratedCardToCombat(second, PileType.Hand, base.Owner);
-                }
+                // 手牌满时 AddGeneratedCardToCombat 自动改道弃牌堆（原版满手语义，牌不消失不消耗）
+                await CardPileCmd.AddGeneratedCardToCombat(second, PileType.Hand, base.Owner);
             }
             return;
         }

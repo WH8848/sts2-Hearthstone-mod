@@ -149,10 +149,7 @@ public sealed class CommanderSivaraCard : JainaMinionCardTemplate
         }
         foreach (var (type, upgradeLevel) in _recordedSpells.ToList())
         {
-            if (jaina.Scripts.Character.JainaHandHelper.IsHandFull(base.Owner))
-            {
-                break;
-            }
+            // 手牌满时 AddGeneratedCardToCombat 自动改道弃牌堆（原版满手语义，牌不消失不消耗）
             var copy = jaina.Scripts.Character.JainaCastTracker.CreateCardWithUpgrade(
                 combatState, base.Owner, type, upgradeLevel);
             if (copy == null)

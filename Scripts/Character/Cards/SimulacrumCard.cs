@@ -59,11 +59,7 @@ public sealed class SimulacrumCard : JainaSpellCardTemplate
         {
             return;
         }
-        // 手牌满时不入手（0.111.1 满手时 Add 会把牌静默改道弃牌堆）
-        if (jaina.Scripts.Character.JainaHandHelper.IsHandFull(player))
-        {
-            return;
-        }
+        // 手牌满时 AddGeneratedCardToCombat 自动改道弃牌堆（原版满手语义，牌不消失不消耗）
 
         // 手牌中法力值消耗最低的随从牌（不含英雄技能卡；按当前基础费用——含升级减费）
         var hand = PileType.Hand.GetPile(player);

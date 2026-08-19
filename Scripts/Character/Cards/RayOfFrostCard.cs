@@ -114,12 +114,8 @@ public sealed class RayOfFrostCard : JainaSpellCardTemplate
         // 用显式标记判断：复制品标记 IsTwinspellCopy，打出时不再复制。
         if (!IsTwinspellCopy)
         {
-            // CreateClone 保留 Owner（MutableClone 的卡无 Owner 会导致入牌堆 NRE）
-            // 手牌满时不复制（满手入手会被 0.111.1 静默改道弃牌堆）
-            if (jaina.Scripts.Character.JainaHandHelper.IsHandFull(base.Owner))
-            {
-                return;
-            }
+            // CreateClone 保留 Owner（MutableClone 的卡无 Owner 会导致入牌堆 NRE）。
+            // 手牌满时 AddGeneratedCardToCombat 自动改道弃牌堆（原版满手语义，牌不消失不消耗）
             var copy = (RayOfFrostCard)CreateClone();
             copy.RemoveKeyword(JainaKeywords.Twinspell);
             copy.IsTwinspellCopy = true;

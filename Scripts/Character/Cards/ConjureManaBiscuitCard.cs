@@ -79,17 +79,14 @@ public sealed class ConjureManaBiscuitCard : JainaSpellCardTemplate
         // 记录施放（倒带/罗曼斯/三派系追踪）
         jaina.Scripts.Character.JainaCastTracker.RecordPlayed(this);
 
-        // 将一张法力饼干置入手牌（手牌满不入手）
-        if (!jaina.Scripts.Character.JainaHandHelper.IsHandFull(base.Owner))
+        // 将一张法力饼干置入手牌（手牌满时 AddGeneratedCardToCombat 自动改道弃牌堆，牌不消失不消耗）
+        var combatState = base.Owner.Creature.CombatState;
+        var canonical = ModelDb.GetByIdOrNull<CardModel>(ModelDb.GetId(typeof(ManaBiscuitCard)));
+        if (canonical != null && combatState != null)
         {
-            var combatState = base.Owner.Creature.CombatState;
-            var canonical = ModelDb.GetByIdOrNull<CardModel>(ModelDb.GetId(typeof(ManaBiscuitCard)));
-            if (canonical != null && combatState != null)
-            {
-                var biscuit = combatState.CreateCard(canonical, base.Owner);
-                jaina.Scripts.Character.JainaCastTracker.MarkGenerated(biscuit);
-                await CardPileCmd.AddGeneratedCardToCombat(biscuit, PileType.Hand, base.Owner);
-            }
+            var biscuit = combatState.CreateCard(canonical, base.Owner);
+            jaina.Scripts.Character.JainaCastTracker.MarkGenerated(biscuit);
+            await CardPileCmd.AddGeneratedCardToCombat(biscuit, PileType.Hand, base.Owner);
         }
     }
 }

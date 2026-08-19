@@ -53,11 +53,7 @@ public static class JainaMiniaturizePatch
             }
             var combatState = player.Creature.CombatState;
 
-            // 手牌满时不入手（0.111.1 满手时 Add 会把牌静默改道弃牌堆）
-            if (jaina.Scripts.Character.JainaHandHelper.IsHandFull(player))
-            {
-                return;
-            }
+            // 手牌满时 AddGeneratedCardToCombat 自动改道弃牌堆（原版满手语义，牌不消失不消耗）
 
             // 生成 0 费 1/1 的微型复制品（保留升级级别与全部文字效果）
             var copy = jaina.Scripts.Character.JainaCastTracker.CreateCardWithUpgrade(

@@ -76,11 +76,7 @@ public sealed class MedivhEcho : JainaSpellCardTemplate
 
         foreach (var minion in minions)
         {
-            // 手牌满时不入手（0.111.1 满手时 Add 会把牌静默改道弃牌堆）
-            if (jaina.Scripts.Character.JainaHandHelper.IsHandFull(owner))
-            {
-                break;
-            }
+            // 手牌满时 AddGeneratedCardToCombat 自动改道弃牌堆（原版满手语义，牌不消失不消耗）
 
             var cardType = JainaMinionCardMap.GetCardType(minion.Monster.GetType());
             if (cardType == null)

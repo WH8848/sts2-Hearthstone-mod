@@ -121,10 +121,7 @@ public sealed class FontOfPowerCard : JainaSpellCardTemplate, Powers.IJainaCondi
         {
             foreach (var card in picked)
             {
-                if (jaina.Scripts.Character.JainaHandHelper.IsHandFull(player))
-                {
-                    return;
-                }
+                // 手牌满时 AddGeneratedCardToCombat 自动改道弃牌堆（原版满手语义，牌不消失不消耗）
                 jaina.Scripts.Character.JainaCastTracker.MarkGenerated(card);
                 await CardPileCmd.AddGeneratedCardToCombat(card, PileType.Hand, player);
             }
@@ -134,10 +131,6 @@ public sealed class FontOfPowerCard : JainaSpellCardTemplate, Powers.IJainaCondi
         // 三选一（可跳过）
         var chosen = await CardSelectCmd.FromChooseACardScreen(choiceContext, picked, player, canSkip: true);
         if (chosen == null)
-        {
-            return;
-        }
-        if (jaina.Scripts.Character.JainaHandHelper.IsHandFull(player))
         {
             return;
         }
