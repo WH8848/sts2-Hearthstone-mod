@@ -111,17 +111,22 @@ public sealed class ForbiddenShrineCard : JainaSpellCardTemplate
         }
         jaina.Scripts.Character.JainaCastTracker.MarkGenerated(chosen);
 
-        // 单目标法术：随机选合法目标（尽可能以敌人为目标）
+        // 单目标法术：随机选合法目标（尽可能以敌人为目标——有合法敌人只打敌人；
+        // 无敌人时回退全部合法目标，不放弃施放，与魔法智慧之球统一语义）
         Creature? target = null;
         if (chosen.TargetType == TargetType.AnyEnemy || chosen.TargetType == TargetType.AnyPlayer ||
             chosen.TargetType == TargetType.AnyAlly ||
             (CustomTargetTypeManager.TryGetCustomTargetType(chosen.TargetType, out var customType) &&
              customType.IsSingleTarget))
         {
-            var targets = combatState.Creatures
-                .Where(c => c != null && c.IsAlive && chosen.IsValidTarget(c) &&
-                            c.Side != base.Owner.Creature.Side)
-                .ToList();
+            IEnumerable<Creature> targetPool = combatState.Creatures
+                .Where(c => c != null && c.IsAlive && chosen.IsValidTarget(c));
+            var enemies = targetPool.Where(c => c.Side != base.Owner.Creature.Side).ToList();
+            if (enemies.Count > 0)
+            {
+                targetPool = enemies;
+            }
+            var targets = targetPool.ToList();
             target = targets.Count > 0 ? base.Owner.RunState.Rng.CombatTargets.NextItem(targets) : null;
             if (target == null)
             {
