@@ -19,26 +19,12 @@ namespace jaina.Scripts.Character.Minions;
 public static class JainaMinionPool
 {
     /// <summary>
-    /// 随从池中的随从生物类型列表
-    /// </summary>
-    private static readonly Type[] _minionTypes =
-    [
-        typeof(Zealot),
-        typeof(VolatileSkeleton)
-    ];
-
-    /// <summary>
     /// 泛型召唤方法 <see cref="SummonMinion{T}"/> 的反射句柄
     /// （<see cref="SummonMinionByType"/> 用反射调用替代硬编码 switch 表，
     /// 新增随从/地标无需在 switch 中注册分支）。
     /// </summary>
     private static readonly MethodInfo SummonMinionMethod =
         typeof(JainaMinionPool).GetMethod(nameof(SummonMinion), BindingFlags.Public | BindingFlags.Static)!;
-
-    /// <summary>
-    /// 随从池中所有随从生物类型的只读列表
-    /// </summary>
-    public static IReadOnlyList<Type> MinionTypes => _minionTypes;
 
     /// <summary>
     /// 吉安娜最多可同时拥有的随从数量（对应 7 个充能球位）
@@ -63,14 +49,6 @@ public static class JainaMinionPool
             }
         }
         return count;
-    }
-
-    /// <summary>
-    /// 从随从池中随机选择一个随从生物类型
-    /// </summary>
-    public static Type GetRandomMinionType(Player player)
-    {
-        return player.RunState.Rng.CombatTargets.NextItem(_minionTypes) ?? _minionTypes[0];
     }
 
     /// <summary>
@@ -131,18 +109,6 @@ public static class JainaMinionPool
             ExceptionDispatchInfo.Capture(tie.InnerException ?? tie).Throw();
             throw; // 不可达
         }
-    }
-
-    /// <summary>
-    /// 从随从池中随机召唤一个随从生物
-    /// </summary>
-    public static async Task<Creature> SummonRandomMinion(
-        PlayerChoiceContext choiceContext,
-        Player player,
-        MinionPosition position = MinionPosition.FrontUpper)
-    {
-        Type type = GetRandomMinionType(player);
-        return await SummonMinionByType(choiceContext, player, type, position: position);
     }
 
     /// <summary>
