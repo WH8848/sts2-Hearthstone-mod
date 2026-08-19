@@ -29,6 +29,8 @@
   "JAINA_POWER_COUNTERSPELL_POWER.title": "法术反制",
   "JAINA_POWER_COUNTERSPELL_POWER.description": "敌人的下一个非攻击意图不会触发任何效果。",
   "JAINA_POWER_COUNTERSPELL_POWER.smartDescription": "敌人的下一个非攻击意图不会触发任何效果。",
+  "JAINA_POWER_COLDARRA_DRAKE_POWER.title": "考达拉幼龙",
+  "JAINA_POWER_COLDARRA_DRAKE_POWER.description": "你的英雄技能变为1费，你可以使用任意次数的英雄技能。",
   "JAINA_POWER_EMPOWER_POWER.title": "灌注",
   "JAINA_POWER_EMPOWER_POWER.description": "每一层灌注都会增加一点英雄技能（火焰冲击）伤害，以及额外召唤一个 1/1 的小精灵。",
   "JAINA_POWER_EMPOWER_POWER.smartDescription": "每层灌注：英雄技能伤害 +1，额外召唤一个 1/1 的小精灵。",

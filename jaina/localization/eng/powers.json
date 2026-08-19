@@ -29,6 +29,8 @@
   "JAINA_POWER_COUNTERSPELL_POWER.title": "Counterspell",
   "JAINA_POWER_COUNTERSPELL_POWER.description": "The enemy's next non-Attack intent has no effect.",
   "JAINA_POWER_COUNTERSPELL_POWER.smartDescription": "The enemy's next non-Attack intent has no effect.",
+  "JAINA_POWER_COLDARRA_DRAKE_POWER.title": "Coldarra Drake",
+  "JAINA_POWER_COLDARRA_DRAKE_POWER.description": "Your Hero Power costs 1. You may use your Hero Power any number of times.",
   "JAINA_POWER_EMPOWER_POWER.title": "Empower",
   "JAINA_POWER_EMPOWER_POWER.description": "Each stack of Empower increases your Hero Power damage by 1, and summons an extra 1/1 Imp.",
   "JAINA_POWER_EMPOWER_POWER.smartDescription": "Each stack: Hero Power damage +1 and summon an extra 1/1 Imp.",
