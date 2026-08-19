@@ -18,7 +18,7 @@ namespace jaina.Scripts.Character.Cards;
 /// 霜冻射线 (Ray of Frost) - 0费技能牌（罕见，冰霜派系）。
 /// 双生法术：冻结一个随从或敌人；使用后获得一张复制牌（复制品不再复制）。
 /// 升级后变为顺水漂流 (Go with the Flow)：选择一个角色。如果是敌方，给予其1层冻结；
-/// 如果是友方随从，使其获得力量+1。
+/// 如果是友方随从，给吉安娜力量+1（随从死亡时该力量消失，见 GoWithTheFlowStrengthPower）。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
 public sealed class RayOfFrostCard : JainaSpellCardTemplate
@@ -95,8 +95,11 @@ public sealed class RayOfFrostCard : JainaSpellCardTemplate
             }
             else if (target != owner.Creature)
             {
-                // 友方随从（不含吉安娜自己）：使其获得力量+1
+                // 友方随从（不含吉安娜自己）：顺水漂流语义——力量实际加到吉安娜身上，
+                // 并在该随从身上挂跟踪 Power：随从死亡时从吉安娜扣回对应力量
                 await PowerCmd.Apply<MegaCrit.Sts2.Core.Models.Powers.StrengthPower>(
+                    choiceContext, [owner.Creature], 1m, owner.Creature, this);
+                await PowerCmd.Apply<GoWithTheFlowStrengthPower>(
                     choiceContext, [target], 1m, owner.Creature, this);
             }
             // 选择了友方英雄（吉安娜自己）：无效果

@@ -25,7 +25,7 @@
   "JAINA_CARD_FROSTBOLT.description": "{IfUpgraded:show:Give a character|Deal {Damage:diff()} damage to a character and give it} 1 [gold]Freeze[/gold].{IfUpgraded:show: If it already has Freeze, deal 4 damage for each stack of Freeze.|}",
   "JAINA_CARD_RAY_OF_FROST_CARD.title": "Ray of Frost",
   "JAINA_CARD_RAY_OF_FROST_CARD.titleUpgraded": "Go with the Flow",
-  "JAINA_CARD_RAY_OF_FROST_CARD.description": "{IfUpgraded:show:Choose a character. If it's an enemy, give it 1 [gold]Freeze[/gold]; if it's a friendly minion, give it +1 Strength.|[gold]Twinspell[/gold].\n[gold]Freeze[/gold] a minion or enemy.}",
+  "JAINA_CARD_RAY_OF_FROST_CARD.description": "{IfUpgraded:show:Choose a character. If it's an enemy, give it 1 [gold]Freeze[/gold]; if it's a friendly minion, Jaina gains +1 Strength (lost when that minion dies).|[gold]Twinspell[/gold].\n[gold]Freeze[/gold] a minion or enemy.}",
   "JAINA_CARD_ICEBLOOD_TOWER_CARD.title": "Iceblood Tower",
   "JAINA_CARD_ICEBLOOD_TOWER_CARD.description": "At the end of your turn, draw and cast a spell from your Draw Pile (if your Draw Pile has no spells, cast one from your Discard Pile). Stacks: each Iceblood Tower triggers once.",
   "JAINA_CARD_COLDARRA_DRAKE_CARD.title": "Coldarra Drake",
