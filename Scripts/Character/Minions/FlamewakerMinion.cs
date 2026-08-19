@@ -39,6 +39,12 @@ public sealed class FlamewakerMinion : JainaMinionBase
         {
             return;
         }
+        // 英雄技能卡（火焰冲击/二级火焰冲击/奥术爆裂/冰冷触摸）不是法术牌，不触发火妖
+        // （英雄技能卡类型为 Attack，仅按类型判断会误触发）
+        if (jaina.Scripts.Character.Powers.HeroPowerHandHelper.IsHeroPowerCard(cardPlay.Card))
+        {
+            return;
+        }
         var combatState = Creature.CombatState;
         if (combatState == null)
         {
