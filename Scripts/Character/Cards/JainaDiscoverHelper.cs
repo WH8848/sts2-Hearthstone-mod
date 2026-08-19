@@ -33,9 +33,11 @@ public static class JainaDiscoverHelper
     /// 池：吉安娜卡池（JainaCardPool）中的法术牌（攻击/技能牌，或带"法术牌"关键词的能力牌），
     /// 含升级形态，排除英雄技能卡、任务卡（带 Quest 关键词：禁忌序列/打开时空之门/巫师的计策/
     /// 拖延时间/抵达传送大厅）与黑名单能力牌（戏法图腾/炉石形态）。
-    /// 每种法术牌按可升级级别展开。
+    /// 每种法术牌按可升级级别展开。<paramref name="excludeType"/> = 发起发现的卡自身类型
+    /// （同名不可自发现——如魔术戏法/远古雕文不能发现自己）。
     /// </summary>
-    public static List<CardModel> RollCandidates(Player player, int count = 3, int? maxCost = null)
+    public static List<CardModel> RollCandidates(Player player, int count = 3, int? maxCost = null,
+        System.Type? excludeType = null)
     {
         var combatState = player.Creature.CombatState;
         if (combatState == null)
@@ -47,6 +49,11 @@ public static class JainaDiscoverHelper
         foreach (var canonical in MegaCrit.Sts2.Core.Models.ModelDb.CardPool<JainaCardPool>().AllCards)
         {
             if (canonical == null)
+            {
+                continue;
+            }
+            // 同名卡不可自发现：排除发起发现的卡自身（含其升级形态）
+            if (excludeType != null && canonical.GetType() == excludeType)
             {
                 continue;
             }
@@ -153,10 +160,12 @@ public static class JainaDiscoverHelper
     /// <summary>
     /// 三选一发现（可跳过），选中的牌加入手牌。
     /// 手牌满时不入手（0.111.1 满手时 Add 会把牌静默改道弃牌堆）。
+    /// <paramref name="excludeType"/> = 发起发现的卡自身类型（同名不可自发现）。
     /// </summary>
-    public static async Task<CardModel?> DiscoverAndAddToHand(PlayerChoiceContext choiceContext, Player player, int count = 3, int? maxCost = null)
+    public static async Task<CardModel?> DiscoverAndAddToHand(PlayerChoiceContext choiceContext, Player player, int count = 3, int? maxCost = null,
+        System.Type? excludeType = null)
     {
-        var chosen = await SelectCandidate(choiceContext, player, count, maxCost);
+        var chosen = await SelectCandidate(choiceContext, player, count, maxCost, excludeType);
         if (chosen != null)
         {
             if (jaina.Scripts.Character.JainaHandHelper.IsHandFull(player))
@@ -170,11 +179,13 @@ public static class JainaDiscoverHelper
     }
 
     /// <summary>
-    /// 三选一发现（可跳过），仅选择不加入手牌（广阔智慧交换费用用）
+    /// 三选一发现（可跳过），仅选择不加入手牌（广阔智慧交换费用用）。
+    /// <paramref name="excludeType"/> = 发起发现的卡自身类型（同名不可自发现）。
     /// </summary>
-    public static async Task<CardModel?> SelectCandidate(PlayerChoiceContext choiceContext, Player player, int count = 3, int? maxCost = null)
+    public static async Task<CardModel?> SelectCandidate(PlayerChoiceContext choiceContext, Player player, int count = 3, int? maxCost = null,
+        System.Type? excludeType = null)
     {
-        var candidates = RollCandidates(player, count, maxCost);
+        var candidates = RollCandidates(player, count, maxCost, excludeType);
         if (candidates.Count == 0)
         {
             return null;

@@ -59,8 +59,8 @@ public sealed class Awaken : JainaSpellCardTemplate
         // 记录施放（倒带/罗曼斯/诺甘农派系追踪）
         jaina.Scripts.Character.JainaCastTracker.RecordPlayed(this);
 
-        // 远古雕文/巅峰无限：发现一张法术牌，使其费用减少 1 点
-        var chosen = await JainaDiscoverHelper.DiscoverAndAddToHand(choiceContext, base.Owner, maxCost: 9);
+        // 远古雕文/巅峰无限：发现一张法术牌，使其费用减少 1 点（同名不可自发现）
+        var chosen = await JainaDiscoverHelper.DiscoverAndAddToHand(choiceContext, base.Owner, maxCost: 9, excludeType: typeof(Awaken));
         if (chosen != null && chosen.EnergyCost.GetWithModifiers(MegaCrit.Sts2.Core.Entities.Cards.CostModifiers.None) > 0)
         {
             // 直接减少 1 点展示费用（mutable 实例；按当前基础费用减——升级后已减费的形态在此基础上再 -1）

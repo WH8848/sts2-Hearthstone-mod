@@ -67,9 +67,9 @@ public sealed class Trick : JainaSpellCardTemplate
 
         if (IsUpgraded)
         {
-            // 广阔智慧：发现两张费用≤1的攻击/技能牌，交换其费用消耗
-            var first = await JainaDiscoverHelper.SelectCandidate(choiceContext, base.Owner, maxCost: 1);
-            var second = await JainaDiscoverHelper.SelectCandidate(choiceContext, base.Owner, maxCost: 1);
+            // 广阔智慧：发现两张费用≤1的攻击/技能牌，交换其费用消耗（同名不可自发现）
+            var first = await JainaDiscoverHelper.SelectCandidate(choiceContext, base.Owner, maxCost: 1, excludeType: typeof(Trick));
+            var second = await JainaDiscoverHelper.SelectCandidate(choiceContext, base.Owner, maxCost: 1, excludeType: typeof(Trick));
             if (first != null && second != null)
             {
                 // 交换展示费用（SetUntilPlayed 直到打出）
@@ -97,8 +97,8 @@ public sealed class Trick : JainaSpellCardTemplate
             return;
         }
 
-        // 魔术戏法：发现一张费用≤1的攻击/技能牌
-        var chosen = await JainaDiscoverHelper.DiscoverAndAddToHand(choiceContext, base.Owner, maxCost: 1);
+        // 魔术戏法：发现一张费用≤1的攻击/技能牌（同名不可自发现）
+        var chosen = await JainaDiscoverHelper.DiscoverAndAddToHand(choiceContext, base.Owner, maxCost: 1, excludeType: typeof(Trick));
         if (chosen != null)
         {
             jaina.Scripts.Character.JainaCastTracker.MarkGenerated(chosen);
