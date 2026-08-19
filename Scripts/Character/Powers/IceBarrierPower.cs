@@ -36,6 +36,19 @@ public sealed class IceBarrierPower : PowerModel, IModPowerAssetOverrides
     public override PowerStackType StackType => PowerStackType.Counter;
 
     /// <summary>
+    /// Power 栏显示值：格挡量（含敏捷加成）——寒冰护盾的层数语义就是格挡量，
+    /// 与卡面 {Block:diff()} 一致（卡面吃敏捷显示 11 时，Power 栏不再固定显示 8）。
+    /// </summary>
+    public override int DisplayAmount
+    {
+        get
+        {
+            var dexterity = Owner?.GetPower<DexterityPower>();
+            return (int)(Amount + (dexterity?.Amount ?? 0));
+        }
+    }
+
+    /// <summary>
     /// 吉安娜或其随从受到攻击时（伤害结算前），获得 Amount 点护甲（动态 BlockVar，
     /// 吃敏捷加成，与卡面 {Block:diff()} 显示一致），然后本 Power 消失。
     /// 随从受击的伤害会转移到主人的护甲（DamageCmd 内 PetOwner 转移），
