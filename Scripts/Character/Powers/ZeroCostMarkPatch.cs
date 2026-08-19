@@ -13,8 +13,10 @@ namespace jaina.Scripts.Character.Powers;
 /// 但 <b>X 费用卡</b>（能量 X / 星星 X）打出时的花费 = 当前能量/星星，不走 _base：
 /// - CardEnergyCost.GetAmountToSpend：能量 X 卡返回玩家当前能量
 /// - CardModel.GetStarCostWithModifiers：星星 X 卡返回玩家当前星星
-/// 这里对带 ZeroCostMark 标记（旅社谍战洗入）的 X 费卡强制 0 花费
-/// （同时 CapturedXValue=0 → 效果 X 值也为 0），并让卡面费用显示 0。
+/// 旅社谍战洗入的 X 费用卡<b>不归零</b>（保持原 X 费，见 AmazingDeckCard），
+/// 不标记 ZeroCostMark；本补丁仅对带标记的卡生效（当前只可能来自非 X 卡，
+/// 逻辑保留作防御：若其他来源对 X 费卡打标记则强制 0 花费，
+/// 同时 CapturedXValue=0 → 效果 X 值也为 0，并让卡面费用显示 0）。
 /// 普通能量/星星卡的费用显示走 _base（已为 0），无需处理。
 /// 联机：标记在 Keywords 集合中序列化，两端求值一致。
 /// </summary>
