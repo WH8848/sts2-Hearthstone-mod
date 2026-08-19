@@ -129,6 +129,18 @@ public sealed class AmazingCard : JainaSpellCardTemplate
             // 显式置位"吉安娜发起"——其释放的法术触发选择自动选（不弹界面）
             AutoPlayGuard.CurrentAutoPlayIsJainaOrigin = true;
 
+            // 显示释放的卡牌（角色头顶气泡提示，如"释放了 火球术"——随机释放可见性）
+            try
+            {
+                MegaCrit.Sts2.Core.Nodes.Rooms.NCombatRoom.Instance?.CombatVfxContainer.AddChildSafely(
+                    MegaCrit.Sts2.Core.Nodes.Vfx.NThoughtBubbleVfx.Create(
+                        $"释放了 {spell.Title}", player.Creature, 1.5f));
+            }
+            catch
+            {
+                // 气泡显示失败不影响释放
+            }
+
             // 施放节奏与"倾泻"等自动打出卡一致：先进入打出区，停顿后再施放效果
             // （原版 AutoPlayFromDrawPile 先逐张 Add 到打出区再逐个 AutoPlay）
             if (spell.Pile == null)

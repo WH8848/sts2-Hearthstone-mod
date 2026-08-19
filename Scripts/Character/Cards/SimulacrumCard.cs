@@ -61,13 +61,14 @@ public sealed class SimulacrumCard : JainaSpellCardTemplate
         }
         // 手牌满时 AddGeneratedCardToCombat 自动改道弃牌堆（原版满手语义，牌不消失不消耗）
 
-        // 手牌中法力值消耗最低的随从牌（不含英雄技能卡；按当前基础费用——含升级减费）
+        // 手牌中法力值消耗最低的随从牌（不含英雄技能卡；按<b>当前费用</b>——GetResolved
+        // 含临时减费（巫师学徒/咒术洪流等），不是原始费用——炉石"当前费用最低"语义）
         var hand = PileType.Hand.GetPile(player);
         var cheapest = hand?.Cards
             .Where(c => c != null &&
                         c.Type == JainaCardTypes.Minion &&
                         !jaina.Scripts.Character.Powers.HeroPowerHandHelper.IsHeroPowerCard(c))
-            .OrderBy(c => c.EnergyCost.GetWithModifiers(MegaCrit.Sts2.Core.Entities.Cards.CostModifiers.None))
+            .OrderBy(c => c.EnergyCost.GetResolved())
             .FirstOrDefault();
         if (cheapest == null)
         {

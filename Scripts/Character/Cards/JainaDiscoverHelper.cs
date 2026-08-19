@@ -280,9 +280,10 @@ public static class JainaDiscoverHelper
             {
                 return;
             }
-            // 任意角色模式：应用 Jaina 随机池统一排除
-            // （8 个非角色/衍生池/任务卡/先古稀有度/多人专属——见 JainaRandomPoolHelper.IsEligible）
-            if (allClasses && !jaina.Scripts.Character.JainaRandomPoolHelper.IsEligible(canonical))
+            // 应用 Jaina 随机池统一排除
+            // （8 个非角色/衍生池/任务卡/先古稀有度/多人专属——见 JainaRandomPoolHelper.IsEligible；
+            // 任意角色与吉安娜主池都过滤——先古卡（米尔豪斯·法力风暴）等不可被发现）
+            if (!jaina.Scripts.Character.JainaRandomPoolHelper.IsEligible(canonical))
             {
                 return;
             }

@@ -44,12 +44,13 @@ public abstract class JainaHeroCardTemplate : ModCardTemplate
     public override CardType Type => JainaCardTypes.Hero;
 
     /// <summary>
-    /// 关键词：战吼（打出英雄卡触发英雄战吼）。
+    /// 关键词：战吼（打出英雄卡触发英雄战吼）+ 消耗（打出后像能力牌一样从本场战斗移除，
+    /// 不再进入弃牌堆被抽回——炉石英雄卡一次性）。
     /// 挂 Battlecry 关键词后，悬停英雄卡时右侧显示"战吼"词条注释
     /// （游戏原版 CardModel.HoverTips 对卡上 Keywords 自动生成悬停解释）。
     /// </summary>
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
-        [jaina.Scripts.Character.Keywords.JainaKeywords.Battlecry];
+        [jaina.Scripts.Character.Keywords.JainaKeywords.Battlecry, CardKeyword.Exhaust];
 
     /// <summary>
     /// 悬停提示：显示本英雄卡的英雄技能卡（炉石式：英雄卡悬停展示其英雄技能）。

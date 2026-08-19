@@ -86,7 +86,10 @@ public sealed class SkatingElementalMinion : JainaMinionBase
         }
 
         // 获得等同于其减少的总体伤害的格挡：
-        // 1层冻结使该敌方攻击伤害减少 12.5%——按敌方当前意图攻击伤害计算减少量
+        // 1层冻结使该敌方攻击伤害减少 12.5%——按敌方当前意图攻击伤害计算减少量。
+        // GetTotalDamage(targets, owner) 的 targets = 被攻击的目标（玩家方），
+        // 不是敌人自己——传错目标会导致伤害计算错误（力量/易伤等修正按目标判定），
+        // 表现为"冻结给了但格挡没正确获得"。
         int totalAttack = 0;
         if (enemy.Monster?.NextMove != null)
         {
@@ -94,7 +97,7 @@ public sealed class SkatingElementalMinion : JainaMinionBase
             {
                 if (intent is AttackIntent atk)
                 {
-                    totalAttack += atk.GetTotalDamage(new[] { enemy }, enemy);
+                    totalAttack += atk.GetTotalDamage(new[] { owner.Creature }, enemy);
                 }
             }
         }

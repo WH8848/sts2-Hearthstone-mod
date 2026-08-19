@@ -64,6 +64,10 @@ public sealed class IceBlockPower : PowerModel, IModPowerAssetOverrides
         if (unblocked >= target.CurrentHp)
         {
             _pendingTrigger = true;
+            // 联机诊断：两端触发不一致时（StateDivergence——一端屏障消耗+免疫、
+            // 另一端未触发）对比 amount/hp/block，定位伤害或状态分歧
+            MegaCrit.Sts2.Core.Logging.Log.Info(
+                $"[JainaDiag] IceBlock trigger: dealer={dealer?.Name ?? "null"} amount={amount} hp={target.CurrentHp} block={target.Block} unblocked={unblocked} stacks={Amount}");
             return 0m;
         }
         return 1m;
@@ -81,6 +85,8 @@ public sealed class IceBlockPower : PowerModel, IModPowerAssetOverrides
             return;
         }
         _pendingTrigger = false;
+        MegaCrit.Sts2.Core.Logging.Log.Info(
+            $"[JainaDiag] IceBlock consumed: stacks={Amount} -> {(Amount <= 1 ? 0 : Amount - 1)} then immunity");
 
         // 移除 1 层；层数归零时屏障耗尽（本 Power 移除）
         if (Amount <= 1)

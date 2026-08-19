@@ -121,7 +121,9 @@ public static class JainaMinionPool
         int cost,
         MinionPosition position = MinionPosition.FrontUpper)
     {
-        // 收集费用匹配的随从类型（地标不进入随机召唤池）
+        // 收集费用匹配的随从类型（地标不进入随机召唤池）；
+        // 应用 Jaina 随机池统一排除（IsEligible：非角色池/任务卡/先古稀有度/多人专属、
+        // 任务奖励池如奥术师晨拥）——任务奖励/衍生卡不可被随机召唤（火门召唤晨拥是 bug）
         var candidates = new List<Type>();
         foreach (var minionType in JainaMinionCardMap.MinionTypes)
         {
@@ -135,7 +137,8 @@ public static class JainaMinionPool
                 continue;
             }
             var cardModel = ModelDb.GetByIdOrNull<MegaCrit.Sts2.Core.Models.CardModel>(ModelDb.GetId(cardType));
-            if (cardModel != null && cardModel.EnergyCost.Canonical == cost)
+            if (cardModel != null && cardModel.EnergyCost.Canonical == cost &&
+                jaina.Scripts.Character.JainaRandomPoolHelper.IsEligible(cardModel))
             {
                 candidates.Add(minionType);
             }
