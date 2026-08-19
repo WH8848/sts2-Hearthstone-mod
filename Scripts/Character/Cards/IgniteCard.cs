@@ -22,6 +22,12 @@ public sealed class IgniteCard : JainaSpellCardTemplate
     public override int MaxUpgradeLevel => int.MaxValue;
 
     /// <summary>
+    /// 无限升级卡：发现/随机生成池只展开未升级形态（0 级），
+    /// 只有倒带/西瓦拉等"复制实际施放过的牌"才保留真实升级层数。
+    /// </summary>
+    public override int DiscoverPoolMaxUpgradeLevel => 0;
+
+    /// <summary>
     /// 法术牌 + 火焰派系 + 消耗（打出后从本场战斗移除）
     /// </summary>
     public override IEnumerable<CardKeyword> CanonicalKeywords =>

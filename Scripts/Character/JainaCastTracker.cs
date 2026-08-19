@@ -434,19 +434,21 @@ public static class JainaCastTracker
     /// <summary>
     /// 发现/随机生成池中该法术牌允许出现的最高升级级别：
     /// 未升级形态与升级形态（+）都可能被检索，但升级级别上限 2 级。
-    /// 点燃（Ignite）可无限升级，但发现/随机生成只能获得未升级形态（0 级）——
+    /// 无限升级卡（点燃/灯光表演）覆写 <see cref="JainaSpellCardTemplate.DiscoverPoolMaxUpgradeLevel"/>
+    /// 为 0——发现/随机生成只能获得未升级形态（0 级），
     /// 只有倒带/西瓦拉这类"复制具体施放过的牌"的效果才保留其实际升级层数。
+    /// 非吉安娜卡（原版/其他 mod）走原版逻辑：普通升级上限封顶 2 级。
     /// </summary>
     public static int GetDiscoverPoolMaxUpgradeLevel(Type cardType)
     {
-        if (cardType == typeof(IgniteCard))
-        {
-            return 0;
-        }
         var canonical = ModelDb.GetByIdOrNull<CardModel>(ModelDb.GetId(cardType));
         if (canonical == null)
         {
             return 0;
+        }
+        if (canonical is JainaSpellCardTemplate spellCard)
+        {
+            return spellCard.DiscoverPoolMaxUpgradeLevel;
         }
         return Math.Min(canonical.MaxUpgradeLevel, 2);
     }

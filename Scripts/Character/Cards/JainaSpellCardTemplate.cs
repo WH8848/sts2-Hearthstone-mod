@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using STS2RitsuLib.Scaffolding.Content;
@@ -17,6 +18,14 @@ public abstract class JainaSpellCardTemplate : ModCardTemplate
         : base(baseCost, type, rarity, target, showInCardLibrary)
     {
     }
+
+    /// <summary>
+    /// 发现/随机生成池允许展开的最高升级级别（默认 = 普通升级上限，封顶 2 级）。
+    /// <b>无限升级卡</b>（如点燃/灯光表演）覆写为 0：发现/随机生成只能获得
+    /// 未升级形态（0 级）——只有倒带/西瓦拉这类"复制具体施放过的牌"的效果
+    /// 才保留其实际升级层数。
+    /// </summary>
+    public virtual int DiscoverPoolMaxUpgradeLevel => Math.Min(MaxUpgradeLevel, 2);
 
     /// <summary>
     /// 能力牌（Power 类型）打出后的去向与杀戮尖塔2原版机制一致：
