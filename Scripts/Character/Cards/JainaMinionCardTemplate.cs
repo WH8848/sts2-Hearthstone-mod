@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using jaina.Scripts.Character.Keywords;
@@ -103,6 +104,70 @@ public abstract class JainaMinionCardTemplate : ModCardTemplate,
                 .Replace("[gold]Miniaturize[/gold].", "");
         }
         return description;
+    }
+
+    /// <summary>
+    /// 打出带"微缩"关键词的随从牌后（仅从手牌打出触发；自动打出——召唤/复活登场——
+    /// 不触发）：立即将一张 0 费 1/1 的复制（微型）置入你的手牌。
+    /// 覆写 AfterCardPlayed 而非 Hook Postfix + 串行队列：与惊奇卡牌同因——
+    /// Postfix fire-and-forget 与 networked 动作/checksum 生成点竞态
+    /// （一端先入手复制品、另一端后入手 → 手牌分歧 → StateDivergence 断联）。
+    /// 原版"打出后触发"的监听者（如女妖之嚎）都在 networked 钩子链内阻塞执行。
+    /// 微型复制品完整保留原卡牌的所有文字效果，带"微型"关键词、去掉"微缩"（不再触发），
+    /// 不消耗（打出后进弃牌堆，可再次抽回）。
+    /// </summary>
+    public override async Task AfterCardPlayed(PlayerChoiceContext choiceContext, CardPlay cardPlay)
+    {
+        // Hook 遍历所有监听者：每张随从牌都会收到事件，只响应"打出的是本卡"
+        if (cardPlay.Card != this)
+        {
+            return;
+        }
+        // 只在从手牌使用时触发（自动打出——召唤/复活等——不触发）
+        if (cardPlay.IsAutoPlay)
+        {
+            return;
+        }
+        // 只对带"微缩"关键词的随从牌生效
+        if (!Keywords.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Miniaturize))
+        {
+            return;
+        }
+        try
+        {
+            var player = Owner;
+            if (player == null || player.Creature?.CombatState == null)
+            {
+                return;
+            }
+            var combatState = player.Creature.CombatState;
+
+            // 手牌满时 AddGeneratedCardToCombat 自动改道弃牌堆（原版满手语义，牌不消失不消耗）
+
+            // 生成 0 费 1/1 的微型复制品（保留升级级别与全部文字效果）
+            var copy = jaina.Scripts.Character.JainaCastTracker.CreateCardWithUpgrade(
+                combatState, player, GetType(), CurrentUpgradeLevel);
+            if (copy == null)
+            {
+                return;
+            }
+            copy.EnergyCost.SetCustomBaseCost(0);
+            if (copy is JainaMinionCardTemplate minionCard)
+            {
+                minionCard.SetOverrideStats(1, 1);
+            }
+            // 关键词：去掉"微缩"（微型不再触发微缩），加上"微型"；不打消耗标记
+            copy.RemoveKeyword(jaina.Scripts.Character.Keywords.JainaKeywords.Miniaturize);
+            copy.AddKeyword(jaina.Scripts.Character.Keywords.JainaKeywords.Mini);
+            copy.RemoveKeyword(CardKeyword.Exhaust);
+
+            jaina.Scripts.Character.JainaCastTracker.MarkGenerated(copy);
+            await CardPileCmd.AddGeneratedCardToCombat(copy, PileType.Hand, player);
+        }
+        catch (System.Exception ex)
+        {
+            MegaCrit.Sts2.Core.Logging.Log.Error($"[Jaina] Miniaturize trigger failed: {ex}");
+        }
     }
 
     /// <summary>
