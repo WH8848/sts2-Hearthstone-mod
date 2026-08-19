@@ -31,6 +31,18 @@ public sealed class JainasGiftCard : JainaSpellCardTemplate
     protected override IEnumerable<DynamicVar> CanonicalVars => [];
 
     /// <summary>
+    /// 该卡类型是否为英雄技能卡（带 HeroPower 关键词：
+    /// 火焰冲击/奥术冲击/寒冰之触/远古火焰冲击等）。
+    /// 用 canonical 模板判定，与 HeroPowerHandHelper.IsHeroPowerCard 语义一致——
+    /// <b>新增英雄技能卡自动排除</b>，无需维护排除列表。
+    /// </summary>
+    private static bool IsHeroPowerCardType(System.Type type)
+    {
+        var canonical = ModelDb.GetByIdOrNull<CardModel>(ModelDb.GetId(type));
+        return canonical != null && jaina.Scripts.Character.Powers.HeroPowerHandHelper.IsHeroPowerCard(canonical);
+    }
+
+    /// <summary>
     /// 卡牌原画：吉安娜的礼物 / 升级后（倒带 Rewind）切换原画
     /// </summary>
     public override string CustomPortraitPath =>
@@ -107,7 +119,7 @@ public sealed class JainasGiftCard : JainaSpellCardTemplate
 
     /// <summary>
     /// 升级形态（倒带）：发现一张本局施放过的其他攻击牌或技能牌的一张复制。
-    /// 与 Rewind 逻辑一致（排除自身与英雄技能）。
+    /// 与 Rewind 逻辑一致（排除自身与<b>全部</b>英雄技能卡）。
     /// </summary>
     private async Task PlayAsRewind(PlayerChoiceContext choiceContext)
     {
@@ -122,7 +134,7 @@ public sealed class JainasGiftCard : JainaSpellCardTemplate
             ? myPlayed
             : new HashSet<System.Type>();
         var playedTypes = playedSet
-            .Where(t => t != typeof(JainasGiftCard) && t != typeof(Fireblast) && t != typeof(ArcaneBurstCard))
+            .Where(t => t != typeof(JainasGiftCard) && !IsHeroPowerCardType(t))
             .ToList();
         if (playedTypes.Count == 0)
         {
