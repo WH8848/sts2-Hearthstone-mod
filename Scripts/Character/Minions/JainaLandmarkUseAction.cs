@@ -56,6 +56,9 @@ public sealed class JainaLandmarkUseAction : ActionModel, IModPowerAssetOverride
         {
             return;
         }
+        // 地标使用是玩家操作：清空 AutoPlay 实例标记——
+        // 地标触发选择（潮汐之池发现等）应正常弹界面等待玩家（不是随机释放）。
+        Powers.AutoPlayGuard.CurrentAutoPlayCard = null;
         // 无目标地标（潮汐之池/小玩物小屋）target 为 null；有目标地标（夜隐者圣所）target 必非 null
         var landmark = Owner.Monster as JainaLandmarkBase;
         if (landmark == null)

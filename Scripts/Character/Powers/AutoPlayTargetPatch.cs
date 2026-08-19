@@ -28,7 +28,9 @@ public static class AutoPlayTargetPatch
                 return;
             }
             // 实例标记：记录最近 AutoPlay 的卡（AutoPickSelectionPatch 用实例引用兜底判断
-            // "当前选择是否来自随机释放"——调用栈检测在 async 包装下可能失效）
+            // "当前选择是否来自随机释放"——调用栈检测在 async 包装下可能失效）。
+            // 标记的清除由 OnPlayWrapper 统一处理（isAutoPlay=false 清空），
+            // 玩家手打/地标使用等操作不会被残留标记误判。
             AutoPlayGuard.CurrentAutoPlayCard = card;
             if (target != null || card.TargetType == TargetType.None)
             {
@@ -49,10 +51,25 @@ public static class AutoPlayTargetPatch
     }
 
     /// <summary>
+    /// 每个卡的 OnPlay 入口统一设置/清除 AutoPlay 实例标记：
+    /// <c>isAutoPlay=true</c>（随机释放）→ 设置标记（其触发选择自动选）；
+    /// <c>isAutoPlay=false</c>（玩家手打 PlayCardAction）→ 清空标记（手打触发选择正常弹界面）。
+    /// 解决 TryManualPlay 清空无法覆盖的玩家操作路径（地标使用等不走打牌入口）导致的
+    /// 残留标记误判（手打发现被自动选）。
+    /// </summary>
+    [HarmonyPatch(typeof(CardModel), nameof(CardModel.OnPlayWrapper))]
+    public static class OnPlayWrapperContextPrefix
+    {
+        private static void Prefix(CardModel __instance, bool isAutoPlay)
+        {
+            AutoPlayGuard.CurrentAutoPlayCard = isAutoPlay ? __instance : null;
+        }
+    }
+
+    /// <summary>
     /// 玩家手打（手动打出）入口：清空 AutoPlay 实例标记——
     /// 手打流程中触发选择（发现三选一/选牌等）时应正常弹界面等待玩家（不是随机释放）。
-    /// AutoPlay 的 Prefix 会重新设置标记；嵌套随机施放（符文循环 AutoPlay）期间标记
-    /// 始终非空 → 自动选择；手打清空后选择正常弹出。
+    /// （OnPlayWrapper(isAutoPlay=false) 已统一清空，此处双保险。）
     /// </summary>
     [HarmonyPatch(typeof(CardModel), nameof(CardModel.TryManualPlay))]
     public static class ManualPlayClearPrefix
