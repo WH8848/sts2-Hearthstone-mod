@@ -86,6 +86,13 @@ public sealed class ArchmagesRuneCard : JainaSpellCardTemplate
             {
                 continue;
             }
+            // 随机释放不可释放"自身"：大法师的符文不可随机释放大法师的符文。
+            // 但匣中古神随机释放出的符文是另一张卡——该符文释放时
+            // 排除的是符文自身类型，匣中古神仍可被其随机释放。
+            if (jaina.Scripts.Character.JainaRandomPoolHelper.IsRandomReleaseSelf(canonical, GetType()))
+            {
+                continue;
+            }
             if (HeroPowerHandHelper.IsHeroPowerCard(canonical))
             {
                 continue;

@@ -251,4 +251,17 @@ public static class JainaRandomPoolHelper
         }
         return false;
     }
+
+    /// <summary>
+    /// 随机释放"不可释放自身"规则：正在随机释放的法术的池中排除<b>自身 canonical 类型</b>
+    /// （按类型而非实例：随机池由 canonical 展开的新实例构建，无法按实例匹配）。
+    /// 例：匣中古神不可随机释放匣中古神；但匣中古神随机释放出的大法师的符文，
+    /// 该符文随机释放时排除的是"大法师的符文"类型——匣中古神仍可被其释放。
+    /// </summary>
+    /// <param name="canonical">池中的候选 canonical 卡。</param>
+    /// <param name="releaseSourceType">当前正在随机释放的那张卡的 canonical 类型。</param>
+    public static bool IsRandomReleaseSelf(CardModel canonical, System.Type releaseSourceType)
+    {
+        return canonical != null && canonical.GetType() == releaseSourceType;
+    }
 }

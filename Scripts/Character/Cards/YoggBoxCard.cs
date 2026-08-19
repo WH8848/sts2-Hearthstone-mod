@@ -143,6 +143,13 @@ public sealed class YoggBoxCard : JainaSpellCardTemplate, Powers.IJainaCondition
         var result = new List<CardModel>();
         foreach (var canonical in GetSpellPoolCanonicals())
         {
+            // 随机释放不可释放"自身"：匣中古神不可随机释放匣中古神。
+            // 但匣中古神随机释放出的大法师的符文是另一张卡——该符文释放时
+            // 排除的是符文自身类型，匣中古神仍可被其随机释放。
+            if (jaina.Scripts.Character.JainaRandomPoolHelper.IsRandomReleaseSelf(canonical, GetType()))
+            {
+                continue;
+            }
             int maxLevel = jaina.Scripts.Character.JainaCastTracker.GetDiscoverPoolMaxUpgradeLevel(canonical.GetType());
             for (int level = 0; level <= maxLevel; level++)
             {
