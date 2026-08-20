@@ -35,7 +35,7 @@ public sealed class ColdarraDrakePower : PowerModel, IModPowerAssetOverrides
 
     /// <summary>
     /// 你的英雄技能变为1费：战斗中费用解析时，主人（随从的主人）的英雄技能卡费用固定为 1。
-    /// 注意：Power 挂在随从身上，Owner.Player 对随从为 null——必须用 Owner.PetOwner?.Player
+    /// 注意：Power 挂在随从身上，Owner.Player 对随从为 null——必须用 Owner.PetOwner
     /// （随从的主人），否则 1 费与回手都不生效（实测：playerNull=True）。
     /// </summary>
     public override bool TryModifyEnergyCostInCombat(CardModel card, decimal originalCost, out decimal modifiedCost)
