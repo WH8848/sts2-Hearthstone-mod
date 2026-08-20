@@ -17,5 +17,8 @@
   "JAINA_RELIC_APPRENTICE_OF_THE_MAGI.title": "Apprentice of the Magi",
   "JAINA_RELIC_APPRENTICE_OF_THE_MAGI.description": "At the start of each turn, your first Arcane spell costs 1 less.",
   "JAINA_RELIC_APPRENTICE_OF_THE_MAGI.flavor": "A young apprentice's first foray into the arcane is full of surprises.",
+  "JAINA_RELIC_FROST_TONGUE_CENTAUR.title": "Frost Tongue Centaur",
+  "JAINA_RELIC_FROST_TONGUE_CENTAUR.description": "After you cast a Frost spell, summon a 1/1 Frost Elemental.",
+  "JAINA_RELIC_FROST_TONGUE_CENTAUR.flavor": "Each neigh of this centaur's frost tongue solidifies into a frozen elemental.",
   "SEA_GLASS.JAINA_CHARACTER_JAINA.title": "Frost Glass"
 }
