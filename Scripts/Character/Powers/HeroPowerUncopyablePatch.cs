@@ -125,12 +125,14 @@ public static class HeroPowerUncopyablePatch
 
     /// <summary>
     /// 佩尔的成长：附 Clone 附魔的候选排除英雄技能卡
-    /// （英雄技能不可被复制 → 不可被选中复制）
+    /// （英雄技能不可被复制 → 不可被选中复制）。
+    /// <b>注意</b>：原方法是 async Task，Prefix 跳过时必须补 __result=CompletedTask
+    /// （否则 null Task 在 AfterObtained 调用处 await NRE，同 MusicBoxPatch 注释）。
     /// </summary>
     [HarmonyPatch(typeof(PaelsGrowth), nameof(PaelsGrowth.AfterObtained))]
     public static class PaelsGrowthPatch
     {
-        private static bool Prefix(PaelsGrowth __instance)
+        private static bool Prefix(PaelsGrowth __instance, ref Task __result)
         {
             // 用过滤后的牌库卡直接附 Clone 附魔（Amount=4，与原版一致）
             var owner = __instance.Owner;
@@ -139,16 +141,19 @@ public static class HeroPowerUncopyablePatch
                 .ToList() ?? [];
             if (candidates.Count == 0)
             {
+                __result = Task.CompletedTask;
                 return false;
             }
             // 随机选 1 张（与原版 FromDeckForEnchantment 1 张语义一致）
             var picked = owner.RunState.Rng.Niche.NextItem(candidates);
             if (picked == null)
             {
+                __result = Task.CompletedTask;
                 return false;
             }
             CardCmd.Enchant<Clone>(picked, 4m);
             CardCmd.Preview(picked);
+            __result = Task.CompletedTask;
             return false;
         }
     }
@@ -158,27 +163,43 @@ public static class HeroPowerUncopyablePatch
     /// 拦截 BeforeCardPlayed：英雄技能卡不进入复制标记（_cardBeingPlayed）——
     /// AfterCardPlayed 中 `cardPlay.Card == CardBeingPlayed` 不成立 → 自然不复制，
     /// 且不残留状态（无副作用）。
+    /// <b>注意</b>：原方法是返回 Task 的方法（非 async 也返回 Task），Prefix 跳过
+    /// 时必须补 <c>__result = Task.CompletedTask</c>——否则 __result 默认 null Task，
+    /// Hook.BeforeCardPlayed 的 await 对 null 抛 NullReferenceException，
+    /// 英雄技能打出即崩（无伤害、进弃牌堆）。同 TemporaryPowerPetTurnEndFix 模式。
     /// </summary>
     [HarmonyPatch(typeof(MusicBox), nameof(MusicBox.BeforeCardPlayed))]
     public static class MusicBoxPatch
     {
-        private static bool Prefix(MusicBox __instance, CardPlay cardPlay)
+        private static bool Prefix(MusicBox __instance, CardPlay cardPlay, ref Task __result)
         {
             // 英雄技能卡：跳过原版 BeforeCardPlayed（不设置复制标记）
-            return !IsHeroPower(cardPlay.Card);
+            if (IsHeroPower(cardPlay.Card))
+            {
+                __result = Task.CompletedTask;
+                return false;
+            }
+            return true;
         }
     }
 
     /// <summary>
     /// 杂耍（JugglingPower）：本回合第 3 张攻击牌复制入手——英雄技能是 Attack
     /// 类型会被复制。拦截 BeforeCardPlayed：英雄技能卡不参与计数/不复制。
+    /// <b>注意</b>：原方法是 async Task，Prefix 跳过时必须补 __result=CompletedTask
+    /// （否则 null Task → Hook.BeforeCardPlayed await NRE，见 MusicBoxPatch 注释）。
     /// </summary>
     [HarmonyPatch(typeof(MegaCrit.Sts2.Core.Models.Powers.JugglingPower), nameof(MegaCrit.Sts2.Core.Models.Powers.JugglingPower.BeforeCardPlayed))]
     public static class JugglingPatch
     {
-        private static bool Prefix(MegaCrit.Sts2.Core.Models.Powers.JugglingPower __instance, CardPlay cardPlay)
+        private static bool Prefix(MegaCrit.Sts2.Core.Models.Powers.JugglingPower __instance, CardPlay cardPlay, ref Task __result)
         {
-            return !IsHeroPower(cardPlay.Card);
+            if (IsHeroPower(cardPlay.Card))
+            {
+                __result = Task.CompletedTask;
+                return false;
+            }
+            return true;
         }
     }
 

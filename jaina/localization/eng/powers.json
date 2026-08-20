@@ -90,6 +90,8 @@
   "JAINA_POWER_SIF_POWER.title": "Sif",
   "JAINA_POWER_SIF_POWER.description": "[gold]+1 Strength[/gold]. (Each spell school you have cast this combat grants +1 more!)",
   "JAINA_POWER_SIF_POWER.smartDescription": "+1 Strength. Each spell school cast this combat grants +1 more Strength.",
+  "JAINA_POWER_IGNITE_CLOCK_POWER.title": "Ignite Clock",
+  "JAINA_POWER_IGNITE_CLOCK_POWER.description": "Checks cards in your hand with [gold]Ignite[/gold]: at the end of the 3rd turn after being Ignited, if still in hand, they are Exhausted.",
   "JAINA_POWER_HEARTHSTONE_FORM_POWER.title": "Hearthstone Form",
   "JAINA_POWER_HEARTHSTONE_FORM_POWER.description": "All your cards have [gold]Retain[/gold] and [gold]Exhaust[/gold].\nBlock no longer disappears at the start of your turn.\nWhen you draw a Status card, draw an extra card.\nStarting next turn, gain 10 Energy each turn, and draw 1 card instead of 5 at the start of your turn.\nCards drawn after your hand is full are burned.\nWhen your Draw Pile and Discard Pile are empty, enter [gold]Fatigue[/gold].",
   "JAINA_POWER_HEARTHSTONE_FORM_POWER.smartDescription": "All cards Retain + Exhaust; Status draws trigger extra draws; 10 Energy per turn; turn-start draw 5 becomes 1; full-hand draws burn; empty piles cause Fatigue.",
