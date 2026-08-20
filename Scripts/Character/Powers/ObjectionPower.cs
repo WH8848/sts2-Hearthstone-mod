@@ -60,27 +60,27 @@ public sealed class ObjectionPower : PowerModel, IModPowerAssetOverrides
     }
 
     /// <summary>
-    /// 实际伤害结算后移除（含被拦为 0 的伤害）
+    /// 实际伤害结算后移除（含被拦为 0 的伤害）。
+    /// await 而非 fire-and-forget：避免移除的 AfterRemoved 钩子与当前链交错
+    /// 导致模型栈警告。
     /// </summary>
-    public override Task AfterDamageReceived(PlayerChoiceContext choiceContext, Creature target, DamageResult result, ValueProp props, Creature? dealer, CardModel? cardSource)
+    public override async Task AfterDamageReceived(PlayerChoiceContext choiceContext, Creature target, DamageResult result, ValueProp props, Creature? dealer, CardModel? cardSource)
     {
         if (_consumed && dealer != null && dealer.Side == CombatSide.Enemy)
         {
-            _ = PowerCmd.Remove(this);
+            await PowerCmd.Remove(this);
         }
-        return Task.CompletedTask;
     }
 
     /// <summary>
     /// 玩家回合开始：兜底清理（若敌人始终未攻击）
     /// </summary>
-    public override Task BeforeSideTurnStart(PlayerChoiceContext choiceContext, CombatSide side,
+    public override async Task BeforeSideTurnStart(PlayerChoiceContext choiceContext, CombatSide side,
         IReadOnlyList<Creature> participants, MegaCrit.Sts2.Core.Combat.ICombatState combatState)
     {
         if (side == Owner.Side)
         {
-            _ = PowerCmd.Remove(this);
+            await PowerCmd.Remove(this);
         }
-        return Task.CompletedTask;
     }
 }

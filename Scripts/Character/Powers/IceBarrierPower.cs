@@ -73,14 +73,15 @@ public sealed class IceBarrierPower : PowerModel, IModPowerAssetOverrides
     /// <summary>
     /// 下一个玩家回合开始时移除。
     /// 打出后覆盖整个敌方回合的攻击窗口（不能在玩家回合结束就移除）。
+    /// await 而非 fire-and-forget：避免移除的 AfterRemoved 钩子（push/pop 模型）
+    /// 与当前钩子链交错导致"Tried to pop model"模型栈警告。
     /// </summary>
-    public override Task BeforeSideTurnStart(PlayerChoiceContext choiceContext, CombatSide side,
+    public override async Task BeforeSideTurnStart(PlayerChoiceContext choiceContext, CombatSide side,
         IReadOnlyList<Creature> participants, ICombatState combatState)
     {
         if (side == Owner.Side && Amount > 0)
         {
-            _ = PowerCmd.Remove(this);
+            await PowerCmd.Remove(this);
         }
-        return Task.CompletedTask;
     }
 }

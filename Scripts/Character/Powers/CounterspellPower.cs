@@ -66,15 +66,16 @@ public sealed class CounterspellPower : PowerModel, IModPowerAssetOverrides
     }
 
     /// <summary>
-    /// 玩家回合开始：移除（拦截持续到本回合结束；与异议可各自独立生效）
+    /// 玩家回合开始：移除（拦截持续到本回合结束；与异议可各自独立生效）。
+    /// await 而非 fire-and-forget：避免移除的 AfterRemoved 钩子（push/pop 模型）
+    /// 与当前钩子链交错导致"Tried to pop model"模型栈警告。
     /// </summary>
-    public override Task BeforeSideTurnStart(PlayerChoiceContext choiceContext, CombatSide side,
+    public override async Task BeforeSideTurnStart(PlayerChoiceContext choiceContext, CombatSide side,
         IReadOnlyList<Creature> participants, MegaCrit.Sts2.Core.Combat.ICombatState combatState)
     {
         if (side == Owner.Side)
         {
-            _ = PowerCmd.Remove(this);
+            await PowerCmd.Remove(this);
         }
-        return Task.CompletedTask;
     }
 }
