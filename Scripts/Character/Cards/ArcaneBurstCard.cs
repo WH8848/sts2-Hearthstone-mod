@@ -36,7 +36,7 @@ public sealed class ArcaneBurstCard : JainaSpellCardTemplate
     /// </summary>
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        ModCardVars.Computed("Damage", 2m, card =>
+        new ComputedDamageVar(2m, card =>
         {
             // canonical（图鉴渲染等）不可变：访问 Owner 会抛异常，直接返回基础值
             if (card is not ArcaneBurstCard arcane || !card.IsMutable ||

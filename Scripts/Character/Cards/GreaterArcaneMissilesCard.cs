@@ -45,7 +45,10 @@ public sealed class GreaterArcaneMissilesCard : JainaSpellCardTemplate
     /// </summary>
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        ModCardVars.Computed("Damage", 3m, card =>
+        // ComputedDamageVar（DamageVar 子类）："Damage" 槽强转 DamageVar 安全——
+        // 用 RitsuLib ComputedDynamicVar 放 "Damage" 槽会在打出/附魔/牌库网格
+        // 访问 DynamicVars.Damage 时抛 InvalidCastException（卡打出无伤害进弃牌堆）。
+        new ComputedDamageVar(3m, card =>
         {
             // 升级（星辰能量）：5 + 力量（起始值）；基础（强能奥术飞弹）：3
             // canonical（图鉴渲染等）不可变：访问 Owner 会抛异常，直接返回基础值
@@ -154,7 +157,9 @@ public sealed class GreaterArcaneMissilesCard : JainaSpellCardTemplate
             {
                 break;
             }
-            await DamageCmd.Attack(base.DynamicVars.Damage.BaseValue)
+            // 用索引器读取（ComputedDynamicVar 不可强转 DamageVar——
+            // DynamicVars.Damage 会抛 InvalidCastException，卡打出即崩、无伤害进弃牌堆）
+            await DamageCmd.Attack(base.DynamicVars["Damage"].BaseValue)
                 .FromCard(this, cardPlay)
                 .Targeting(target)
                 .Execute(choiceContext);

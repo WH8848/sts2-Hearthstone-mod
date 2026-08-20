@@ -39,6 +39,23 @@ public sealed class ForbiddenStonePower : PowerModel, IModPowerAssetOverrides
 
     protected override bool IsVisibleInternal => true;
 
+    /// <summary>
+    /// 挂载时跳过打出之前已完成的发现：源生之石打出后才开始生效
+    /// （炉石"After you Discover a card"——装备后每次发现触发；
+    /// 与禁忌序列 StartCountingAfterPlay 同一语义，避免打出时把
+    /// 之前任务进度积累的发现也自动使用掉）。
+    /// </summary>
+    public override Task AfterApplied(MegaCrit.Sts2.Core.Entities.Creatures.Creature? applier,
+        MegaCrit.Sts2.Core.Models.CardModel? cardSource)
+    {
+        var player = Owner?.Player;
+        if (player != null)
+        {
+            _lastSeq = DiscoverTracker.GetLatestSeq(player);
+        }
+        return Task.CompletedTask;
+    }
+
     public override async Task AfterCardPlayed(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
         var player = Owner?.Player;

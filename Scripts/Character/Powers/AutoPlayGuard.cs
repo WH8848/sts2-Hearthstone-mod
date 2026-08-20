@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Players;
@@ -23,8 +24,22 @@ public static class AutoPlayGuard
     /// 调用栈检测在 RitsuLib/RegentFX 的 async 包装下可能失效（OnPlay 延续脱离 AutoPlay 帧），
     /// 用"发起选择的卡 == 最近 AutoPlay 的卡"实例引用对比兜底。
     /// 由 CardCmd.AutoPlay 的 Prefix 更新（手打不经过 AutoPlay → 不更新）。
+    /// <b>AsyncLocal 实现</b>：值沿<b>异步流程</b>流动而非全局共享——联机双人并行操作时
+    /// （一方玩家手打、另一方随机释放链进行中），手打流程的清空/设置不会污染并行的
+    /// AutoPlay 流程，反之亦然。否则全局静态字段会被并行的玩家手打清空，
+    /// 导致随机释放链中后续选择入口 AutoPick 判定失败（MISS）→ 弹玩家选择界面暂停
+    /// → 两端动作执行顺序分歧 → StateDivergence 断联（匣中古神 + 队友同时打牌必现）。
     /// </summary>
-    public static CardModel? CurrentAutoPlayCard;
+    private static readonly AsyncLocal<CardModel?> CurrentAutoPlayCardAsyncLocal = new();
+
+    /// <summary>
+    /// 当前流程最近的 AutoPlay 卡实例（AsyncLocal，流程隔离）
+    /// </summary>
+    public static CardModel? CurrentAutoPlayCard
+    {
+        get => CurrentAutoPlayCardAsyncLocal.Value;
+        set => CurrentAutoPlayCardAsyncLocal.Value = value;
+    }
 
     /// <summary>
     /// 当前 AutoPlay 是否由<b>吉安娜 mod 的随机释放机制</b>发起
@@ -34,8 +49,19 @@ public static class AutoPlayGuard
     /// 其它 mod 的随机释放（原版倾泻/其它 mod 机制）触发的选择正常弹界面。
     /// 设置：OnPlayWrapper(isAutoPlay=false) 手打吉安娜卡时置 true；非打出触发的吉安娜施法
     /// （球/哨塔/图腾回合结束施法）在施放入口显式置 true；CombatEnded 清空。
+    /// <b>AsyncLocal 实现</b>：同上——并行玩家操作互不污染（全局静态字段在双人
+    /// 并行操作时会互相覆盖，导致一端 AutoPick 失效/误判）。
     /// </summary>
-    public static bool CurrentAutoPlayIsJainaOrigin;
+    private static readonly AsyncLocal<bool> CurrentAutoPlayIsJainaOriginAsyncLocal = new();
+
+    /// <summary>
+    /// 当前流程是否为吉安娜机制发起的随机释放（AsyncLocal，流程隔离）
+    /// </summary>
+    public static bool CurrentAutoPlayIsJainaOrigin
+    {
+        get => CurrentAutoPlayIsJainaOriginAsyncLocal.Value;
+        set => CurrentAutoPlayIsJainaOriginAsyncLocal.Value = value;
+    }
 
     /// <summary>
     /// 该卡是否属于<b>吉安娜 mod</b>（卡类型定义在 jaina 程序集）。

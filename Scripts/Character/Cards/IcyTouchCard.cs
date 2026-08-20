@@ -36,7 +36,7 @@ public sealed class IcyTouchCard : JainaSpellCardTemplate
     /// </summary>
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        STS2RitsuLib.Cards.DynamicVars.ModCardVars.Computed("Damage", 1m, card =>
+        new ComputedDamageVar(1m, card =>
         {
             // canonical（图鉴渲染等）不可变：访问 Owner 会抛异常，直接返回基础值
             if (card == null || !card.IsMutable || card.Owner?.Creature?.CombatState == null)
