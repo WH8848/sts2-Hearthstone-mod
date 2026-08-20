@@ -23,7 +23,7 @@ public static class MageSpellCaster
 {
     /// <summary>
     /// 魔法智慧之球固定池（类型 + 升级级别；
-    /// 烈焰风暴/暴风雪/法术反制分别为火焰结界/死神之躯/异议的升级形态）
+    /// 烈焰风暴/暴风雪/异议分别为火焰结界/死神之躯/法术反制的升级形态）
     /// </summary>
     public static readonly (Type Type, int UpgradeLevel)[] UsefulMageSpells =
     [
@@ -31,7 +31,7 @@ public static class MageSpellCaster
         (typeof(Frostbolt), 0),
         (typeof(FlameWard), 1),   // 烈焰风暴
         (typeof(DeathborneCard), 1), // 暴风雪
-        (typeof(Objection), 1),   // 法术反制
+        (typeof(Objection), 0),   // 法术反制（基础形态）
         (typeof(IceBarrier), 0),
     ];
 
