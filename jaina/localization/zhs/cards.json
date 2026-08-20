@@ -152,7 +152,7 @@
   "JAINA_CARD_GREY_SAGE_PARROT_CARD.description": "[gold]野兽[/gold]。\n召唤一个[blue]4/5[/blue]的[red]灰贤鹦鹉[/red]。\n[gold]战吼[/gold]:重复你施放的上一个耗能大于等于2点的法术。",
   "JAINA_CARD_YOGG_BOX_CARD.title": "匣中古神",
   "JAINA_CARD_YOGG_BOX_CARD.titleUpgraded": "尤格-萨隆的谜之匣",
-  "JAINA_CARD_YOGG_BOX_CARD.description": "随机施放{IfUpgraded:show:5|10}张全角色卡牌。{IfUpgraded:show:|如果你的抽牌堆里没有随从牌，则这些卡牌的耗能大于或等于2点。}",
+  "JAINA_CARD_YOGG_BOX_CARD.description": "随机施放{IfUpgraded:show:10|5}张全角色卡牌。{IfUpgraded:show:|如果你的抽牌堆里没有随从牌，则这些卡牌的耗能大于或等于2点。}",
   "JAINA_CARD_ALUNETH_CARD.title": "艾露尼斯",
   "JAINA_CARD_ALUNETH_CARD.description": "每回合开始时，抽三张牌。\n攻击力0。耐久度3。",
   "JAINA_CARD_INCANTERS_FLOW_CARD.title": "咒术洪流",
