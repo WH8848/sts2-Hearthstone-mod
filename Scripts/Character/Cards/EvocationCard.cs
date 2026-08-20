@@ -71,6 +71,12 @@ public sealed class EvocationCard : JainaSpellCardTemplate
 
         while (!jaina.Scripts.Character.JainaHandHelper.IsHandFull(base.Owner))
         {
+            // 防御：战斗已结束（IsInProgress=false）时 AddGeneratedCardToCombat 返回空数组，
+            // 取 [0] 会抛 ArgumentOutOfRangeException（实测：战斗收尾时打出唤醒崩溃）
+            if (!MegaCrit.Sts2.Core.Combat.CombatManager.Instance.IsInProgress || combatState == null)
+            {
+                break;
+            }
             if (pool.Count == 0)
             {
                 break;
