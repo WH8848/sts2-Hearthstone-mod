@@ -10,13 +10,17 @@ using jaina.Scripts.Character.Cards;
 namespace jaina.Scripts.Character;
 
 /// <summary>
-/// 法术派系（对应文档"额外描述"列的火焰/奥术/冰霜标签）
+/// 法术派系（炉石标准 7 大派系：火焰/冰霜/奥术/暗影/邪能/神圣/自然）
 /// </summary>
 public enum JainaSpellSchool
 {
     Fire,
     Frost,
-    Arcane
+    Arcane,
+    Shadow,
+    Fel,
+    Holy,
+    Nature
 }
 
 /// <summary>
@@ -165,9 +169,9 @@ public static class JainaCastTracker
     }
 
     /// <summary>
-    /// 动态判定一张卡的派系（火焰/冰霜/奥术）：按该卡实例的<b>本地</b>关键词
-    /// （GetKeywordsWithSources(Local)，排除全局光环干扰）判断 Fire/Frost/Arcane。
-    /// 每张卡只可能有一个派系（关键词互斥），按 Fire → Frost → Arcane 顺序取第一个。
+    /// 动态判定一张卡的派系（火焰/冰霜/奥术/暗影/邪能/神圣/自然）：按该卡实例的<b>本地</b>关键词
+    /// （GetKeywordsWithSources(Local)，排除全局光环干扰）判断各派系。
+    /// 每张卡只可能有一个派系（关键词互斥），按 Fire → Frost → Arcane → Shadow → Fel → Holy → Nature 顺序取第一个。
     /// 无派系返回 null。升级形态按实例关键词动态判定（如埃匹希斯冲击基础无派系、
     /// 升级为火焰——硬编码列表无法表达）。
     /// </summary>
@@ -189,6 +193,22 @@ public static class JainaCastTracker
         if (keywords.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Arcane))
         {
             return JainaSpellSchool.Arcane;
+        }
+        if (keywords.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Shadow))
+        {
+            return JainaSpellSchool.Shadow;
+        }
+        if (keywords.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Fel))
+        {
+            return JainaSpellSchool.Fel;
+        }
+        if (keywords.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Holy))
+        {
+            return JainaSpellSchool.Holy;
+        }
+        if (keywords.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Nature))
+        {
+            return JainaSpellSchool.Nature;
         }
         return null;
     }

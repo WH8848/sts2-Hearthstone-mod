@@ -8,7 +8,7 @@ New-Item -ItemType Directory -Force -Path $outDir | Out-Null
 $kw = @{
   Deathrattle='亡'; Charge='冲'; Freeze='冻'; Twinspell='双'; Empower='灌';
   Finisher='斩'; Battlecry='吼'; Replay='重'; HeroPower='英'; Spell='法';
-  Fire='火'; Frost='冰'; Arcane='奥'; Shadow='暗'; Quest='任';
+  Fire='火'; Frost='冰'; Arcane='奥'; Shadow='暗'; Fel='邪'; Holy='圣'; Nature='自'; Quest='任';
   Durability='耐'; Weapon='武'; Elemental='元'; Beast='野'; Dragon='龙';
   Undead='尸'; Demon='魔'; Draenei='德'; Naga='娜'; Pirate='海';
   Mech='机'; Lifesteal='吸'; Discover='探'; Immune='免'; Landmark='地';

@@ -32,6 +32,9 @@ namespace jaina.Scripts.Character.Keywords;
 [RegisterOwnedKeyword(nameof(Frost), IconPath = "res://assets/keyword_icons/keyword_Frost.png",CardDescriptionPlacement = ModKeywordCardDescriptionPlacement.BeforeCardDescription)]
 [RegisterOwnedKeyword(nameof(Arcane), IconPath = "res://assets/keyword_icons/keyword_Arcane.png",CardDescriptionPlacement = ModKeywordCardDescriptionPlacement.BeforeCardDescription)]
 [RegisterOwnedKeyword(nameof(Shadow), IconPath = "res://assets/keyword_icons/keyword_Shadow.png",CardDescriptionPlacement = ModKeywordCardDescriptionPlacement.BeforeCardDescription)]
+[RegisterOwnedKeyword(nameof(Fel), IconPath = "res://assets/keyword_icons/keyword_Fel.png",CardDescriptionPlacement = ModKeywordCardDescriptionPlacement.BeforeCardDescription)]
+[RegisterOwnedKeyword(nameof(Holy), IconPath = "res://assets/keyword_icons/keyword_Holy.png",CardDescriptionPlacement = ModKeywordCardDescriptionPlacement.BeforeCardDescription)]
+[RegisterOwnedKeyword(nameof(Nature), IconPath = "res://assets/keyword_icons/keyword_Nature.png",CardDescriptionPlacement = ModKeywordCardDescriptionPlacement.BeforeCardDescription)]
 // 任务：任务卡专属关键词（不注入卡面描述，仅提供悬停解释）
 [RegisterOwnedKeyword(nameof(Quest), IconPath = "res://assets/keyword_icons/keyword_Quest.png")]
 // 耐久度：拥有耐久度的卡牌，耐久度为0时卡牌被消耗（不注入卡面描述，仅提供悬停解释）
@@ -142,6 +145,21 @@ public class JainaKeywords
     /// 暗影派系
     /// </summary>
     public static readonly CardKeyword Shadow = ModContentRegistry.GetQualifiedKeywordId(Entry.ModId, nameof(Shadow)).GetModCardKeyword();
+
+    /// <summary>
+    /// 邪能派系
+    /// </summary>
+    public static readonly CardKeyword Fel = ModContentRegistry.GetQualifiedKeywordId(Entry.ModId, nameof(Fel)).GetModCardKeyword();
+
+    /// <summary>
+    /// 神圣派系
+    /// </summary>
+    public static readonly CardKeyword Holy = ModContentRegistry.GetQualifiedKeywordId(Entry.ModId, nameof(Holy)).GetModCardKeyword();
+
+    /// <summary>
+    /// 自然派系
+    /// </summary>
+    public static readonly CardKeyword Nature = ModContentRegistry.GetQualifiedKeywordId(Entry.ModId, nameof(Nature)).GetModCardKeyword();
 
     /// <summary>
     /// 任务：完成任务可以获得奖励

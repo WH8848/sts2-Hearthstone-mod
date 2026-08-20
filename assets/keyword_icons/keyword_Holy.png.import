@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cwlx812d4x3fm"
-path="res://.godot/imported/keyword_Arcane.png-5e513088c94b175c6b2b9f3805bfd572.ctex"
+uid="uid://5qc7m27yqdpj"
+path="res://.godot/imported/keyword_Holy.png-5c960eb97f5a3381c3a09376e327e5d9.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/keyword_icons/keyword_Arcane.png"
-dest_files=["res://.godot/imported/keyword_Arcane.png-5e513088c94b175c6b2b9f3805bfd572.ctex"]
+source_file="res://assets/keyword_icons/keyword_Holy.png"
+dest_files=["res://.godot/imported/keyword_Holy.png-5c960eb97f5a3381c3a09376e327e5d9.ctex"]
 
 [params]
 
