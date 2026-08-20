@@ -63,10 +63,11 @@ public sealed class CloudPrinceMinion : JainaMinionBase
         }
 
         // 状态栏中的状态数（主人身上的 Power 数量），每 1 种状态对目标造成 6 点伤害
+        // （固定 6 点，不吃力量——ValueProp.Unpowered，与卡面 {Damage} 预览一致）
         int statusCount = owner.Creature.Powers.Count;
         for (int i = 0; i < statusCount; i++)
         {
-            await CreatureCmd.Damage(choiceContext, [target], 6m, ValueProp.Move, Creature, null, null);
+            await CreatureCmd.Damage(choiceContext, [target], 6m, ValueProp.Unpowered, Creature, null, null);
         }
     }
 }

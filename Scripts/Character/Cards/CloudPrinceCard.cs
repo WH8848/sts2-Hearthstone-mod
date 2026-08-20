@@ -30,12 +30,12 @@ public sealed class CloudPrinceCard : JainaMinionCardTemplate
         [JainaKeywords.Elemental, JainaKeywords.Battlecry, CardKeyword.Exhaust];
 
     /// <summary>
-    /// 动态伤害变量：战吼每有一种状态造成 6 点伤害（吃力量，与随从实际结算一致——
-    /// 描述用 {Damage:diff()} 动态显示，不写死数值）。
+    /// 动态伤害变量：战吼每有一种状态造成 6 点伤害（固定值，不吃力量——
+    /// ValueProp.Unpowered，与随从实际结算一致；描述用 {Damage:diff()} 动态显示）。
     /// </summary>
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new DamageVar(6m, ValueProp.Move)
+        new DamageVar(6m, ValueProp.Unpowered)
     ];
 
     /// <summary>
