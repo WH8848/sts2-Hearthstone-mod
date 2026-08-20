@@ -81,7 +81,9 @@ public sealed class RecklessApprenticeMinion : JainaMinionBase
                     continue;
                 }
             }
-            await CardCmd.AutoPlay(choiceContext, heroPower, target);
+            // 加速：skipCardPileVisuals=true 跳过卡牌入场/离场动画与 0.25-0.35s 等待
+            // （8 次连续英雄技能，每次全量动画过慢；模型仍正常进出牌堆，不会卡在空中）
+            await CardCmd.AutoPlay(choiceContext, heroPower, target, skipCardPileVisuals: true);
 
             // 副本打出后从牌堆移除：不回到手牌、不产生额外英雄技能卡
             if (heroPower.Pile != null)

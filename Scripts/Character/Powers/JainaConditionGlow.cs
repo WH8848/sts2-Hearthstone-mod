@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using Godot;
+using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Models;
 using jaina.Scripts.Character.Cards;
 using STS2RitsuLib.Scaffolding.Cards.HandOutline;
@@ -12,6 +13,9 @@ namespace jaina.Scripts.Character.Powers;
 /// 时手牌深白描边发光（提示玩家现在打出可触发额外效果）。
 /// <b>新增条件触发卡实现此接口即可自动生效</b>（JainaConditionGlow 反射收集，
 /// 无需手动维护 switch 分支）。
+/// 条件可覆写 <see cref="IsGlowConditionMet"/>：默认 = 抽牌堆无随从
+/// （匣中古神/埃匹希斯冲击/加工失误/能量之泉），火眼莫德雷斯等
+/// 自定义条件卡覆写为各自的条件。
 /// </summary>
 public interface IJainaConditionGlowCard
 {
@@ -20,6 +24,15 @@ public interface IJainaConditionGlowCard
     /// 加工失误——升级后条件效果关闭；能量之泉等升级后仍可触发额外效果的卡覆写为 true）。
     /// </summary>
     bool GlowsWhenUpgraded => false;
+
+    /// <summary>
+    /// 发光条件是否满足。默认：抽牌堆中没有随从牌（匣中古神/埃匹希斯冲击/
+    /// 加工失误/能量之泉语义）；火眼莫德雷斯等覆写为各自条件
+    /// （如英雄技能本局累计伤害 ≥ 10）。
+    /// 纯本地 UI 判定（pcs 两端确定性同步），联机安全。
+    /// </summary>
+    bool IsGlowConditionMet(CardModel card, PlayerCombatState pcs) =>
+        !pcs.DrawPile.Cards.Any(c => c != null && c.Type == JainaCardTypes.Minion);
 }
 
 /// <summary>
@@ -77,9 +90,8 @@ public static class JainaConditionGlow
             {
                 return null;
             }
-            // 条件：抽牌堆中没有随从牌
-            bool noMinionInDrawPile = !pcs.DrawPile.Cards.Any(c => c != null && c.Type == JainaCardTypes.Minion);
-            return noMinionInDrawPile ? GlowColor : null;
+            // 条件：默认抽牌堆中没有随从牌；自定义条件卡（火眼莫德雷斯等）覆写
+            return glowCard.IsGlowConditionMet(card, pcs) ? GlowColor : null;
         }
         catch (Exception)
         {
