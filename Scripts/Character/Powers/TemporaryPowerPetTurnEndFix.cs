@@ -18,7 +18,12 @@ namespace jaina.Scripts.Character.Powers;
 /// AfterSideTurnEnd 只在 participants（仅玩家角色 Creature，不含随从 Pet）包含
 /// 自己时才移除——随从（Pet）身上的临时属性（如王之凝视的力量下降）永不消失。
 /// 扩展：随从的主人的回合结束时，随从身上的临时属性同样移除并恢复对应属性。
-/// 与项目既有模式一致（fire-and-forget 移除，无等待，竞态窗口极小）。
+/// ⚠ 注意：Prefix 必须 return true（不跳过原方法）——目标方法是 async，
+/// 若 return false 跳过声明包装器，Harmony 返回 default(Task)=null，
+/// Hook.AfterSideTurnEnd 将 null 传给 AssignTaskAndWaitForPauseOrCompletion
+/// → TaskHelper.WhenAny(null,...) 抛 ArgumentNullException('task1')
+/// → 回合循环死亡、战斗卡死（联机状态分歧）。原方法对随从是 no-op
+/// （participants 不含随从），return true 安全。
 /// </summary>
 internal static class TemporaryPowerPetTurnEndHelper
 {
@@ -54,7 +59,9 @@ public static class TemporaryStrengthPetTurnEndFix
             var amount = __instance.Amount;
             bool positive = TemporaryPowerPetTurnEndHelper.IsPositive(__instance);
             _ = RemoveAndRestoreAsync(__instance, choiceContext, owner, positive ? -amount : amount);
-            return false;
+            // ⚠ 必须 return true：async 方法被 Prefix 跳过会返回 null Task 导致
+            // Hook.AfterSideTurnEnd 崩溃（ArgumentNullException 'task1'）。
+            // 原方法对随从（不在 participants）是 no-op，执行无害。
         }
         return true;
     }
@@ -91,7 +98,7 @@ public static class TemporaryFocusPetTurnEndFix
             var amount = __instance.Amount;
             bool positive = TemporaryPowerPetTurnEndHelper.IsPositive(__instance);
             _ = RemoveAndRestoreAsync(__instance, choiceContext, owner, positive ? -amount : amount);
-            return false;
+            // ⚠ 必须 return true：async 方法被 Prefix 跳过会返回 null Task（同上）
         }
         return true;
     }
@@ -128,7 +135,7 @@ public static class TemporaryDexterityPetTurnEndFix
             var amount = __instance.Amount;
             bool positive = TemporaryPowerPetTurnEndHelper.IsPositive(__instance);
             _ = RemoveAndRestoreAsync(__instance, choiceContext, owner, positive ? -amount : amount);
-            return false;
+            // ⚠ 必须 return true：async 方法被 Prefix 跳过会返回 null Task（同上）
         }
         return true;
     }
