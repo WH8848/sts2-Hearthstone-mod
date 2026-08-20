@@ -8,5 +8,8 @@
   "JAINA_RELIC_ARCANE_AMPLIFIER.title": "Arcane Amplifier",
   "JAINA_RELIC_ARCANE_AMPLIFIER.description": "Your Hero Power deals 2 extra damage.",
   "JAINA_RELIC_ARCANE_AMPLIFIER.flavor": "Arcane energy surges within, and your spells burn ever brighter.",
+  "JAINA_RELIC_BOOK_OF_SECRETS.title": "Book of Secrets",
+  "JAINA_RELIC_BOOK_OF_SECRETS.description": "At the start of each combat, randomly gain 3 Mage spells.",
+  "JAINA_RELIC_BOOK_OF_SECRETS.flavor": "Every page holds a winning spell.",
   "SEA_GLASS.JAINA_CHARACTER_JAINA.title": "Frost Glass"
 }
