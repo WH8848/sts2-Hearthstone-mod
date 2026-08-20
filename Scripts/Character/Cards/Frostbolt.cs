@@ -97,7 +97,9 @@ public sealed class Frostbolt : JainaSpellCardTemplate
 
     protected override void OnUpgrade()
     {
-        // 升级为冰枪术：改为冻结+额外伤害效果（基础伤害不再生效，3 -> 0）
-        base.DynamicVars.Damage.UpgradeValueBy(-3m);
+        // 升级为冰枪术：改为冻结+额外伤害效果（基础伤害不再生效，3 -> 4——
+        // 4 是"每层冻结造成 4 点伤害"，卡面升级分支 {Damage:diff()} 动态显示
+        // （预览含力量），与 OnPlay 的 existingFreeze.Amount * 4m 一致）
+        base.DynamicVars.Damage.UpgradeValueBy(1m);
     }
 }

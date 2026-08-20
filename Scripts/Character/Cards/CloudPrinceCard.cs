@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
+using MegaCrit.Sts2.Core.ValueProps;
 using jaina.Scripts.Character.Keywords;
 using jaina.Scripts.Character.Minions;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -26,6 +28,15 @@ public sealed class CloudPrinceCard : JainaMinionCardTemplate
     /// </summary>
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
         [JainaKeywords.Elemental, JainaKeywords.Battlecry, CardKeyword.Exhaust];
+
+    /// <summary>
+    /// 动态伤害变量：战吼每有一种状态造成 6 点伤害（吃力量，与随从实际结算一致——
+    /// 描述用 {Damage:diff()} 动态显示，不写死数值）。
+    /// </summary>
+    protected override IEnumerable<DynamicVar> CanonicalVars =>
+    [
+        new DamageVar(6m, ValueProp.Move)
+    ];
 
     /// <summary>
     /// 战吼选择 1 名敌人（打出时进入目标选择）

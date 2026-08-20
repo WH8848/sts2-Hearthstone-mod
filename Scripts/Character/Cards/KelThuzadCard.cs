@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using jaina.Scripts.Character.Keywords;
 using jaina.Scripts.Character.Minions;
+using STS2RitsuLib.Cards.DynamicVars;
 using STS2RitsuLib.Interop.AutoRegistration;
 
 namespace jaina.Scripts.Character.Cards;
@@ -30,6 +32,24 @@ public sealed class KelThuzadCard : JainaMinionCardTemplate
             yield return new CardHoverTip(MegaCrit.Sts2.Core.Models.ModelDb.Card<VolatileSkeletonCard>());
         }
     }
+
+    /// <summary>
+    /// 动态骷髅数量：卡面显示本局已死亡（可复活）的不稳定的骷髅数量——
+    /// 与战吼实际复活数一致（Computed 实时读 SkeletonDeathsByPlayer，战斗外显示 0）。
+    /// </summary>
+    protected override IEnumerable<DynamicVar> CanonicalVars =>
+    [
+        STS2RitsuLib.Cards.DynamicVars.ModCardVars.Computed("Skeletons", 0m, card =>
+        {
+            if (card.Owner?.Creature?.CombatState is { } cs)
+            {
+                var rec = jaina.Scripts.Character.JainaCastTracker.For(cs);
+                rec.SkeletonDeathsByPlayer.TryGetValue(card.Owner.NetId, out var died);
+                return died;
+            }
+            return 0m;
+        })
+    ];
 
     protected override Type MinionType => typeof(KelThuzadMinion);
 
