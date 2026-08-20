@@ -6,7 +6,6 @@ using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Models;
 
 namespace jaina.Scripts.Character.Powers;
-
 /// <summary>
 /// 发现追踪：识别"从三张随机卡牌中选择一张置入手牌"（发现）事件。
 /// 游戏所有发现（含原版发现/药水/遗物与 mod 内发现）都走
@@ -104,6 +103,13 @@ public static class DiscoverTracker
                 // 无限递归（卡牌卡在空中）。
                 IsAuto = AutoPlayGuard.CurrentAutoPlayCard != null
             });
+            // 乱翻库存遗物：你每在你的回合发现1张牌，就对1名随机敌人造成3点伤害。
+            // 所有发现路径统一在此触发（含原版/mod 发现）；IsAuto（随机释放触发的
+            // 发现）不触发——用户只在自己回合主动发现才生效。
+            if (AutoPlayGuard.CurrentAutoPlayCard == null)
+            {
+                jaina.Scripts.Character.Relics.RummageThroughStockRelic.TriggerOnDiscover(player);
+            }
             return true;
         }
         return false;
