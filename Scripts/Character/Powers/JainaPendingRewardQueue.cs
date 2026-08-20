@@ -62,7 +62,13 @@ public static class JainaPendingRewardQueue
             {
                 continue; // 卡已进入牌堆（排队期间被打出/洗入）：跳过
             }
-            await CardPileCmd.AddGeneratedCardToCombat(entry.Card, PileType.Hand, player);
+            var result = await CardPileCmd.AddGeneratedCardToCombat(entry.Card, PileType.Hand, player);
+            // 防御：满手改道（卡进弃牌堆而非手牌）说明已无手牌空间——停止发放，
+            // 防止"满手判定不一致"导致同一张奖励被反复改道（与唤醒同款防御）
+            if (result.cardAdded?.Pile?.Type != PileType.Hand)
+            {
+                break;
+            }
         }
     }
 

@@ -89,7 +89,14 @@ public sealed class EvocationCard : JainaSpellCardTemplate
             // 这些牌具有虚无（回合结束时留在手牌则消耗）
             MegaCrit.Sts2.Core.Commands.CardCmd.ApplyKeyword(card, CardKeyword.Ethereal);
             jaina.Scripts.Character.JainaCastTracker.MarkGenerated(card);
-            await CardPileCmd.AddGeneratedCardToCombat(card, PileType.Hand, base.Owner);
+            var result = await CardPileCmd.AddGeneratedCardToCombat(card, PileType.Hand, base.Owner);
+            // 防御：满手改道（卡实际进弃牌堆而非手牌）说明已无手牌空间——
+            // 停止填充，防止"满手判定不一致"（如其他 mod 覆盖手牌上限逻辑）导致
+            // 无限循环往弃牌堆塞牌（实测 bug：满手时打出唤醒停不下来）
+            if (result.cardAdded?.Pile?.Type != PileType.Hand)
+            {
+                break;
+            }
         }
     }
 }
