@@ -188,6 +188,17 @@ public sealed class ForbiddenShrineCard : JainaSpellCardTemplate
                 return;
             }
         }
+
+        // X 费卡（如挽歌——消耗全部能量的卡）：神龛已消耗全部能量（剩余 0），
+        // AutoPlay 默认捕获当前剩余能量会得到 X=0（挽歌无效果）。
+        // 改为继承神龛消耗的 X 值（skipXCapture 跳过默认捕获 + 手动设置 CapturedXValue），
+        // 使挽歌以"神龛消耗的费用"结算（6 费打出神龛 → 6 费挽歌）。
+        if (chosen.EnergyCost.CostsX)
+        {
+            chosen.EnergyCost.CapturedXValue = x;
+            await CardCmd.AutoPlay(choiceContext, chosen, target, skipXCapture: true);
+            return;
+        }
         await CardCmd.AutoPlay(choiceContext, chosen, target);
     }
 }
