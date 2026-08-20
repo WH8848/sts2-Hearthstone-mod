@@ -30,12 +30,19 @@ public sealed class MagisterDawngraspCard : JainaHeroCardTemplate
     protected override int HeroArmor => 5;
 
     /// <summary>
-    /// 悬停提示：格挡关键词注释（描述中"获得5点格挡"）
+    /// 悬停提示：先显示基类的英雄技能卡提示（替换后的英雄技能"奥术爆裂"），
+    /// 再显示格挡关键词注释（描述中"获得5点格挡"）。
+    /// 注意：必须链式调用 base.AdditionalHoverTips —— 基类负责 CardHoverTip(英雄技能卡)，
+    /// 直接覆写而不接 base 会导致悬停时左侧不显示英雄技能。
     /// </summary>
     protected override IEnumerable<IHoverTip> AdditionalHoverTips
     {
         get
         {
+            foreach (var tip in base.AdditionalHoverTips)
+            {
+                yield return tip;
+            }
             yield return HoverTipFactory.Static(StaticHoverTip.Block);
         }
     }
