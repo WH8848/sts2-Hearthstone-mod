@@ -70,5 +70,7 @@
   "JAINA_KEYWORD_MINION.title": "Minion",
   "JAINA_KEYWORD_MINION.description": "When played, summon a minion with Attack and Health to your [gold]Minion Bar[/gold]. Starting from the turn after it is summoned, you can click it to attack. Unblocked damage you take hits your [gold]minions[/gold] first.\nYou can have up to 7 [gold]minions[/gold].",
   "JAINA_KEYWORD_SPECIAL_HERO_SKILL.title": "Empowered Skill",
-  "JAINA_KEYWORD_SPECIAL_HERO_SKILL.description": "Blessing of the Imps: summon 1 Imp and deal 1 damage randomly split among all enemies. Casts once per Empower stack."
+  "JAINA_KEYWORD_SPECIAL_HERO_SKILL.description": "Blessing of the Imps: summon 1 Imp and deal 1 damage randomly split among all enemies. Casts once per Empower stack.",
+  "JAINA_KEYWORD_IGNITE.title": "Ignite",
+  "JAINA_KEYWORD_IGNITE.description": "Ignite: A card with Ignite is Exhausted after 3 turns. Example: if a card is Ignited on turn 1, it is Exhausted at the end of turn 3 if it is still in your hand."
 }

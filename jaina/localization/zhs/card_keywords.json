@@ -70,5 +70,7 @@
   "JAINA_KEYWORD_MINION.title":"随从",
   "JAINA_KEYWORD_MINION.description":"使用时召唤一个具有攻击力和生命值的[gold]随从[/gold]，进入你的[gold]随从栏[/gold]。从召唤后的第二回合开始，点击其可以进行攻击。你受到的未被[gold]格挡[/gold]的伤害会优先命中你的[gold]随从[/gold]。\n你最多可以拥有7个[gold]随从[/gold]。",
   "JAINA_KEYWORD_SPECIAL_HERO_SKILL.title":"灌注技能",
-  "JAINA_KEYWORD_SPECIAL_HERO_SKILL.description":"小精灵的祝福：召唤1个小精灵，造成1点伤害随机分配到所有敌人身上。释放次数等于灌注层数。"
+  "JAINA_KEYWORD_SPECIAL_HERO_SKILL.description":"小精灵的祝福：召唤1个小精灵，造成1点伤害随机分配到所有敌人身上。释放次数等于灌注层数。",
+  "JAINA_KEYWORD_IGNITE.title": "引燃",
+  "JAINA_KEYWORD_IGNITE.description": "引燃：被附加引燃的卡牌会在3回合后消耗。例如：第1回合某张卡被附加引燃，第3回合结束时若它还在手牌中则被消耗。"
 }

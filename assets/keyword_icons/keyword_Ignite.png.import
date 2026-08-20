@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c05x7chp2lrwu"
-path="res://.godot/imported/keyword_Demon.png-086fd638d4e75726ae0813bb5df1152a.ctex"
+uid="uid://b3edhmargmkjb"
+path="res://.godot/imported/keyword_Ignite.png-6007529d22398dff6c0645ab16366643.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/keyword_icons/keyword_Demon.png"
-dest_files=["res://.godot/imported/keyword_Demon.png-086fd638d4e75726ae0813bb5df1152a.ctex"]
+source_file="res://assets/keyword_icons/keyword_Ignite.png"
+dest_files=["res://.godot/imported/keyword_Ignite.png-6007529d22398dff6c0645ab16366643.ctex"]
 
 [params]
 

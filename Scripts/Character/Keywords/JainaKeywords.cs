@@ -67,6 +67,9 @@ namespace jaina.Scripts.Character.Keywords;
 // 零费标记：旅社谍战洗入的其它角色卡牌内部标记（能量/星星/X 全部费用归零用；
 // 不作为关键词展示，仅用于 ZeroCostMarkPatch 识别）
 [RegisterOwnedKeyword(nameof(ZeroCostMark), IconPath = "res://assets/keyword_icons/keyword_ZeroCostMark.png", IncludeInCardHoverTip = false)]
+// 引燃：被附加引燃的卡牌会在 3 回合后消耗（附加回合算第 1 回合，
+// 第 3 回合结束若该卡还在手牌则被消耗；打出/移出战斗则不再检查）
+[RegisterOwnedKeyword(nameof(Ignite), IconPath = "res://assets/keyword_icons/keyword_Ignite.png")]
 public class JainaKeywords
 {
     /// <summary>
@@ -247,4 +250,11 @@ public class JainaKeywords
     /// 能量/星星/X 费用全部归零，见 ZeroCostMarkPatch）。
     /// </summary>
     public static readonly CardKeyword ZeroCostMark = ModContentRegistry.GetQualifiedKeywordId(Entry.ModId, nameof(ZeroCostMark)).GetModCardKeyword();
+
+    /// <summary>
+    /// 引燃：被附加引燃的卡牌会在 3 回合后消耗。
+    /// 附加回合算第 1 回合，第 3 回合结束若该卡还在手牌则被消耗
+    /// （打出/移出战斗则不再检查；见 IgniteTracker）。
+    /// </summary>
+    public static readonly CardKeyword Ignite = ModContentRegistry.GetQualifiedKeywordId(Entry.ModId, nameof(Ignite)).GetModCardKeyword();
 }

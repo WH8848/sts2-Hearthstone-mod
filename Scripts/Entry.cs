@@ -89,6 +89,8 @@ public class Entry
         {
             jaina.Scripts.Character.Powers.AutoPlayGuard.CurrentAutoPlayCard = null;
             jaina.Scripts.Character.Powers.AutoPlayGuard.CurrentAutoPlayIsJainaOrigin = false;
+            // 清空引燃记录（防跨战斗残留误消耗）
+            jaina.Scripts.Character.Powers.IgniteTracker.Clear();
         };
 
         // 【临时诊断】游戏就绪后打印 JainaCardPool 实际内容（排查寒冰箭不在商店候选问题）
@@ -195,6 +197,10 @@ public class Entry
                     _ = MegaCrit.Sts2.Core.Helpers.TaskHelper.RunSafely(
                         jaina.Scripts.Character.Powers.MinionSquadPower.EnsureAppliedAsync(ctx, player));
                 }
+                // 引燃时钟：对所有玩家幂等挂载（引燃卡牌 3 回合后消耗的检查点，
+                // 不依赖牌库检测——任意玩家手牌都可能出现带引燃的卡）
+                _ = MegaCrit.Sts2.Core.Helpers.TaskHelper.RunSafely(
+                    jaina.Scripts.Character.Powers.IgniteClockPower.EnsureAppliedAsync(ctx, player));
                 // 联机：角色死亡时清空其随从槽（参考故障机器人/亡灵契约师）。
                 // 玩家角色死亡是确定性事件，两端各自触发 → 两端随从清理一致。
                 player.Creature.Died -= OnPlayerCreatureDied;

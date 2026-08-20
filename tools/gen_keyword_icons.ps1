@@ -12,7 +12,8 @@ $kw = @{
   Durability='耐'; Weapon='武'; Elemental='元'; Beast='野'; Dragon='龙';
   Undead='尸'; Demon='魔'; Draenei='德'; Naga='娜'; Pirate='海';
   Mech='机'; Lifesteal='吸'; Discover='探'; Immune='免'; Landmark='地';
-  Fatigue='疲'; Miniaturize='缩'; Mini='微'; Tradeable='易'; ZeroCostMark='零'
+  Fatigue='疲'; Miniaturize='缩'; Mini='微'; Tradeable='易'; ZeroCostMark='零';
+  Ignite='引'
 }
 
 $template = Get-Content "E:\MOD\sts2\godot_project\jaina\assets\power_icons\jaina_power_minion_squad_power.png.import" -Raw
