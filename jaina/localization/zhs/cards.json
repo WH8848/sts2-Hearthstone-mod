@@ -143,6 +143,8 @@
   "JAINA_CARD_DEEP_FREEZE_CARD.description": "召唤{IfUpgraded:show:3|2}个3/6的水元素{IfUpgraded:show:,并使其随机攻击敌人。|\n给予1层[gold]冻结[/gold]}",
   "JAINA_CARD_WATER_ELEMENTAL_CARD.title": "水元素",
   "JAINA_CARD_WATER_ELEMENTAL_CARD.description": "[gold]元素[/gold]。\n召唤一个[blue]3/6[/blue]的[red]水元素[/red]。\n受到本随从伤害的角色获得1层[gold]冻结[/gold]。",
+  "JAINA_CARD_FROST_ELEMENTAL_CARD.title": "霜冻元素",
+  "JAINA_CARD_FROST_ELEMENTAL_CARD.description": "[gold]元素[/gold]。\n召唤一个[blue]1/1[/blue]的[red]霜冻元素[/red]。\n受到本随从伤害的角色获得1层[gold]冻结[/gold]。",
   "JAINA_CARD_IGNITE_CARD.title": "点燃",
   "JAINA_CARD_IGNITE_CARD.description": "造成{Damage:diff()}点伤害。\n将一张[gold]点燃+{Upgraded}[/gold]加入你的[gold]抽牌堆[/gold]。\n可无限升级。",
   "JAINA_CARD_JAINAS_GIFT_CARD.title": "吉安娜的礼物",

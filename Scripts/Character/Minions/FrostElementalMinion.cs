@@ -1,0 +1,53 @@
+using System.Threading.Tasks;
+using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Creatures;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.ValueProps;
+using jaina.Scripts.Character.Powers;
+using MinionLib.Minion;
+using STS2RitsuLib.Interop.AutoRegistration;
+
+namespace jaina.Scripts.Character.Minions;
+
+/// <summary>
+/// 霜冻元素 (Frost Elemental) - 吉安娜专属随从。
+/// 属性：攻击 1，生命 1。冻结：任何受到本随从伤害的角色获得 1 层冻结。
+/// </summary>
+[RegisterMonster]
+public sealed class FrostElementalMinion : JainaMinionBase
+{
+    public override JainaMinionBehaviorMode BehaviorMode => JainaMinionBehaviorMode.Manual;
+
+    public override int MinInitialHp => 1;
+
+    public override int MaxInitialHp => 1;
+
+    protected override string MinionVisualsPath => "res://assets/card_art/frost_elemental.png";
+
+    /// <summary>
+    /// 造成伤害后：先走基类吸血钩子（冰霜女巫吉安娜光环下元素吸血），
+    /// 再给受伤角色 1 层冻结（手动点击攻击与自动攻击都走 CreatureCmd.Damage → AfterDamageGiven）
+    /// </summary>
+    public override async Task AfterDamageGiven(PlayerChoiceContext choiceContext, Creature? dealer, DamageResult result,
+        ValueProp props, Creature target, CardModel? cardSource)
+    {
+        if (dealer != Creature)
+        {
+            return;
+        }
+        // 基类吸血：冰霜女巫吉安娜光环下，元素随从造成伤害回复主人等量生命
+        await base.AfterDamageGiven(choiceContext, dealer, result, props, target, cardSource);
+        if (!target.IsAlive)
+        {
+            return;
+        }
+        var owner = Creature.PetOwner;
+        if (owner == null)
+        {
+            return;
+        }
+        await PowerCmd.Apply<FreezePower>(choiceContext, [target], 1m, owner.Creature, cardSource);
+    }
+}

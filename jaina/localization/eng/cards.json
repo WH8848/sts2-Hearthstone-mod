@@ -144,6 +144,8 @@
   "JAINA_CARD_DEEP_FREEZE_CARD.description": "{IfUpgraded:show:Summon three 3/6 Water Elementals that Freeze their attack targets, and they attack random enemies.|Freeze an enemy and summon two 3/6 Water Elementals.}",
   "JAINA_CARD_WATER_ELEMENTAL_CARD.title": "Water Elemental",
   "JAINA_CARD_WATER_ELEMENTAL_CARD.description": "[gold]Elemental[/gold].\nSummon a [blue]3/6[/blue] [red]Water Elemental[/red]. Any character damaged by this minion gains 1 [gold]Freeze[/gold].",
+  "JAINA_CARD_FROST_ELEMENTAL_CARD.title": "Frost Elemental",
+  "JAINA_CARD_FROST_ELEMENTAL_CARD.description": "[gold]Elemental[/gold].\nSummon a [blue]1/1[/blue] [red]Frost Elemental[/red]. Any character damaged by this minion gains 1 [gold]Freeze[/gold].",
   "JAINA_CARD_IGNITE_CARD.title": "Ignite",
   "JAINA_CARD_IGNITE_CARD.description": "Deal {Damage:diff()} damage.\nAdd an [gold]Ignite+{Upgraded}[/gold] to your [gold]draw pile[/gold].\nCan be upgraded infinitely.",
   "JAINA_CARD_JAINAS_GIFT_CARD.title": "Jaina's Gift",
