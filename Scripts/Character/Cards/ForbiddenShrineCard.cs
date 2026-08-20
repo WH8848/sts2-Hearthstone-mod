@@ -86,7 +86,9 @@ public sealed class ForbiddenShrineCard : JainaSpellCardTemplate
         // 应用 Jaina 随机池统一排除（8 个非角色/衍生池、任务卡、先古稀有度、多人专属，见
         // JainaRandomPoolHelper.IsEligible），排除英雄技能卡与自身（同名不可自发现）。
         // 费用匹配用当前基础费用（含升级减费）：升级后减费到目标费用的形态也入选。
-        var pool = new List<CardModel>();
+        // 按费用分组收集（≤ targetCost 的都要）：能量超过 5 时（6/7/8 费没有卡）
+        // 回退到 ≤ X 的最高可用费用，保证任何能量都能打出卡（不做精确匹配死等）。
+        var byCost = new Dictionary<int, List<CardModel>>();
         foreach (var canonical in MegaCrit.Sts2.Core.Models.ModelDb.AllCards)
         {
             if (canonical == null)
@@ -130,14 +132,43 @@ public sealed class ForbiddenShrineCard : JainaSpellCardTemplate
                 {
                     continue;
                 }
-                if (card.EnergyCost.GetWithModifiers(MegaCrit.Sts2.Core.Entities.Cards.CostModifiers.None) != targetCost)
+                int cost = (int)card.EnergyCost.GetWithModifiers(MegaCrit.Sts2.Core.Entities.Cards.CostModifiers.None);
+                if (cost > targetCost)
                 {
                     continue;
                 }
-                pool.Add(card);
+                if (!byCost.TryGetValue(cost, out var list))
+                {
+                    list = [];
+                    byCost[cost] = list;
+                }
+                list.Add(card);
             }
         }
-        if (pool.Count == 0)
+
+        // 优先精确匹配 targetCost；无则回退到费用 ≤ X 的最高可用费用组
+        // （6/7/8 费没有卡 → 能量 6~8 打 5 费卡；10/11 → 9 费卡；≥12 → 12 费卡）
+        List<CardModel>? pool = null;
+        if (byCost.TryGetValue(targetCost, out var exact) && exact.Count > 0)
+        {
+            pool = exact;
+        }
+        else
+        {
+            int best = -1;
+            foreach (var cost in byCost.Keys)
+            {
+                if (cost > best)
+                {
+                    best = cost;
+                }
+            }
+            if (best >= 0)
+            {
+                pool = byCost[best];
+            }
+        }
+        if (pool == null || pool.Count == 0)
         {
             return;
         }
