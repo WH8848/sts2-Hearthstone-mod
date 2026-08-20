@@ -15,7 +15,7 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
-/// 霜冻射线 (Ray of Frost) - 0费技能牌（罕见，冰霜派系）。
+/// 霜冻射线 (Ray of Frost) - 0费技能牌（普通，冰霜派系）。
 /// 双生法术：冻结一个随从或敌人；使用后获得一张复制牌（复制品不再复制）。
 /// 升级后变为顺水漂流 (Go with the Flow)：选择一个角色。如果是敌方，给予其1层冻结；
 /// 如果是友方随从，给吉安娜力量+1（随从死亡时该力量消失，见 GoWithTheFlowStrengthPower）。
@@ -48,7 +48,7 @@ public sealed class RayOfFrostCard : JainaSpellCardTemplate
         IsUpgraded ? "res://assets/card_art/go_with_the_flow.png" : "res://assets/card_art/ray_of_frost.png";
 
     public RayOfFrostCard()
-        : base(0, CardType.Skill, CardRarity.Uncommon, JainaTargetTypes.AnyTargetable, true)
+        : base(0, CardType.Skill, CardRarity.Common, JainaTargetTypes.AnyTargetable, true)
     {
     }
 

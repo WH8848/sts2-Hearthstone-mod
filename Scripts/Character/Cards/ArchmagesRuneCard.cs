@@ -18,7 +18,7 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
-/// 大法师的符文 (Archmage's Rune) - 3费技能牌（普通）。
+/// 大法师的符文 (Archmage's Rune) - 3费技能牌（罕见）。
 /// 对敌人施放消耗总计6费的法师法术。可无限升级，每次升级多1费。消耗。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
@@ -46,7 +46,7 @@ public sealed class ArchmagesRuneCard : JainaSpellCardTemplate
     public override string CustomPortraitPath => "res://assets/card_art/archmages_rune.png";
 
     public ArchmagesRuneCard()
-        : base(3, CardType.Skill, CardRarity.Common, TargetType.None, true)
+        : base(3, CardType.Skill, CardRarity.Uncommon, TargetType.None, true)
     {
     }
 
