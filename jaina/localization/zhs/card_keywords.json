@@ -16,7 +16,7 @@
   "JAINA_KEYWORD_BATTLECRY.title": "战吼",
   "JAINA_KEYWORD_BATTLECRY.description": "战吼：卡牌从手牌中被使用时，会立即触发其效果。",
   "JAINA_KEYWORD_HERO_POWER.title": "英雄技能",
-  "JAINA_KEYWORD_HERO_POWER.description": "英雄的专属技能，每回合开始时自动加入[gold]手牌[/gold]。\n可无限升级。",
+  "JAINA_KEYWORD_HERO_POWER.description": "英雄的专属技能，每回合开始时自动加入[gold]手牌[/gold]。",
   "JAINA_KEYWORD_FIRE.title": "火焰",
   "JAINA_KEYWORD_FIRE.description": "火焰派系法术。",
   "JAINA_KEYWORD_FROST.title": "冰霜",
