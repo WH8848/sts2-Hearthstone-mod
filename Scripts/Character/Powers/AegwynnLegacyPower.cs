@@ -41,6 +41,11 @@ public sealed class AegwynnLegacyPower : PowerModel, IModPowerAssetOverrides
     private CardModel? _claimedCard;
 
     /// <summary>
+    /// 该卡是否是被标记的"下一张随从牌"（卡面显示艾格文亡语提示用）
+    /// </summary>
+    public bool IsClaimedCard(CardModel card) => ReferenceEquals(_claimedCard, card);
+
+    /// <summary>
     /// 抽到随从牌时标记（只标记第一张）
     /// </summary>
     public override Task AfterCardDrawn(PlayerChoiceContext choiceContext, CardModel card, bool fromHandDraw)

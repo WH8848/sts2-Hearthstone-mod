@@ -103,6 +103,16 @@ public abstract class JainaMinionCardTemplate : ModCardTemplate,
                 .Replace("[gold]微缩[/gold]。", "")
                 .Replace("[gold]Miniaturize[/gold].", "");
         }
+        // 艾格文亡语继承提示（参考炉石：被赋予亡语的随从卡面显示该亡语）：
+        // 本卡是"艾格文的馈赠"标记的下一张随从牌（在手中时）→ 描述追加艾格文亡语。
+        // canonical（图鉴渲染等）不可变：访问 Owner 会抛异常，先判 IsMutable
+        if (IsMutable && Owner != null &&
+            Owner.Creature.GetPower<jaina.Scripts.Character.Powers.AegwynnLegacyPower>() is { } legacy &&
+            legacy.IsClaimedCard(this))
+        {
+            description += "\n" + new MegaCrit.Sts2.Core.Localization.LocString(
+                "gameplay_ui", "JAINA_UI_AEGWYNN_DEATHRATTLE").GetFormattedText();
+        }
         return description;
     }
 
