@@ -5,5 +5,8 @@
   "JAINA_RELIC_EVEN_MATCH_ANCIENT.title": "Prying the Opponent's End Turn Button",
   "JAINA_RELIC_EVEN_MATCH_ANCIENT.description": "At the start of each combat, gain a Lucky Coin and draw 1 card.",
   "JAINA_RELIC_EVEN_MATCH_ANCIENT.flavor": "Before your opponent can end their turn, you've already won it.",
+  "JAINA_RELIC_ARCANE_AMPLIFIER.title": "Arcane Amplifier",
+  "JAINA_RELIC_ARCANE_AMPLIFIER.description": "Your Hero Power deals 2 extra damage.",
+  "JAINA_RELIC_ARCANE_AMPLIFIER.flavor": "Arcane energy surges within, and your spells burn ever brighter.",
   "SEA_GLASS.JAINA_CHARACTER_JAINA.title": "Frost Glass"
 }

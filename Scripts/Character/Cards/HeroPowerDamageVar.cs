@@ -8,7 +8,7 @@ using jaina.Scripts.Character.Powers;
 namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
-/// 英雄技能伤害变量：DamageVar 子类，显示值实时叠加野火加成
+/// 英雄技能伤害变量：DamageVar 子类，显示值实时叠加野火与奥术增幅加成
 /// （与 OnPlay 实际结算一致）。
 /// 必须继承 DamageVar 而非替换为 ComputedDynamicVar：
 /// DynamicVarSet.Damage 强转 DamageVar，ComputedDynamicVar 会抛
@@ -24,7 +24,7 @@ public sealed class HeroPowerDamageVar : DamageVar
 
     /// <summary>
     /// 显示路径（无 formatter 的 {Damage} 等 IConvertible 取值）：
-    /// 基础 + 野火加成。
+    /// 基础 + 野火/奥术增幅加成。
     /// </summary>
     protected override decimal GetBaseValueForIConvertible()
     {
@@ -33,7 +33,7 @@ public sealed class HeroPowerDamageVar : DamageVar
 
     /// <summary>
     /// 预览路径（{Damage:diff()} 取 PreviewValue）：
-    /// 先跑原版 enchantment/力量等 hooks，再叠加野火加成。
+    /// 先跑原版 enchantment/力量等 hooks，再叠加野火/奥术增幅加成。
     /// </summary>
     public override void UpdateCardPreview(CardModel card, CardPreviewMode previewMode, Creature? target, bool runGlobalHooks)
     {
@@ -41,7 +41,7 @@ public sealed class HeroPowerDamageVar : DamageVar
         base.PreviewValue += GetBonus(card);
     }
 
-    /// <summary>当前野火加成（战斗外为 0）。</summary>
+    /// <summary>当前野火 + 奥术增幅加成（战斗外为 0）。</summary>
     private static decimal GetBonus(CardModel? card)
     {
         // canonical（图鉴/牌库网格渲染等）不可变：访问 Owner 会抛
@@ -51,6 +51,7 @@ public sealed class HeroPowerDamageVar : DamageVar
             return 0m;
         }
         var wildfire = card.Owner.Creature.GetPower<WildfirePower>();
-        return wildfire?.WildfireStacks ?? 0;
+        var amplifier = card.Owner.Creature.GetPower<ArcaneAmplifierPower>();
+        return (wildfire?.WildfireStacks ?? 0) + (amplifier?.AmplifierBonus ?? 0);
     }
 }

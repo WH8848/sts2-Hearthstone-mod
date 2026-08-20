@@ -82,6 +82,9 @@ public sealed class BlessingOfImpsCard : JainaSpellCardTemplate
         // 释放次数 = 灌注层数（每层灌注额外释放一次；至少 1 次防御）
         var empower = owner.Creature.GetPower<EmpowerPower>();
         int casts = Math.Max(1, empower?.EmpowerStacks ?? 0);
+        // 奥术增幅：英雄技能额外伤害（每次释放的伤害 = 1 + 增幅）
+        var amplifier = owner.Creature.GetPower<ArcaneAmplifierPower>();
+        int hitDamage = 1 + (amplifier?.AmplifierBonus ?? 0);
 
         for (int i = 0; i < casts; i++)
         {
@@ -89,7 +92,7 @@ public sealed class BlessingOfImpsCard : JainaSpellCardTemplate
             await JainaMinionPool.SummonMinion<ImpMinion>(
                 choiceContext, owner, maxHp: 1m, attack: 1m);
 
-            // 造成 1 点伤害，随机分配到所有敌人身上（随机选一个可命中敌人）
+            // 造成伤害，随机分配到所有敌人身上（随机选一个可命中敌人）
             var enemies = combatState.GetOpponentsOf(owner.Creature)
                 .Where(e => e != null && e.IsAlive && e.IsHittable)
                 .ToList();
@@ -102,14 +105,14 @@ public sealed class BlessingOfImpsCard : JainaSpellCardTemplate
             {
                 break;
             }
-            await DamageCmd.Attack(1m)
+            await DamageCmd.Attack(hitDamage)
                 .FromCard(this, cardPlay)
                 .Targeting(target)
                 .WithHitFx("vfx/vfx_attack_blunt", null, "blunt_attack.mp3")
                 .Execute(choiceContext);
 
             // 记录英雄技能伤害（火眼莫德雷斯战吼条件用；每次释放都计）
-            jaina.Scripts.Character.JainaCastTracker.RecordHeroPowerDamage(this, 1);
+            jaina.Scripts.Character.JainaCastTracker.RecordHeroPowerDamage(this, hitDamage);
         }
     }
 

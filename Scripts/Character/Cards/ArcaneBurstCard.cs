@@ -48,7 +48,8 @@ public sealed class ArcaneBurstCard : JainaSpellCardTemplate
             var rec = jaina.Scripts.Character.JainaCastTracker.For(combatState);
             rec.ArcaneBurstCastsByPlayer.TryGetValue(card.Owner.NetId, out var casts);
             var wildfire = card.Owner.Creature.GetPower<WildfirePower>();
-            return 2 + casts * 2 + (wildfire?.WildfireStacks ?? 0);
+            var amplifier = card.Owner.Creature.GetPower<ArcaneAmplifierPower>();
+            return 2 + casts * 2 + (wildfire?.WildfireStacks ?? 0) + (amplifier?.AmplifierBonus ?? 0);
         })
     ];
 
@@ -91,10 +92,12 @@ public sealed class ArcaneBurstCard : JainaSpellCardTemplate
         rec.ArcaneBurstCastsByPlayer.TryGetValue(base.Owner.NetId, out var burstCasts);
         rec.ArcaneBurstCastsByPlayer[base.Owner.NetId] = burstCasts + 1;
 
-        // 野火：英雄技能伤害永久加成（可叠加，本局对战）
+        // 野火：英雄技能伤害永久加成（可叠加，本局对战）；奥术增幅：英雄技能额外伤害
         var wildfire = base.Owner.Creature.GetPower<WildfirePower>();
         var wildfireStacks = wildfire?.WildfireStacks ?? 0;
-        var totalDamage = 2 + burstCasts * 2 + wildfireStacks;
+        var amplifier = base.Owner.Creature.GetPower<ArcaneAmplifierPower>();
+        var amplifierBonus = amplifier?.AmplifierBonus ?? 0;
+        var totalDamage = 2 + burstCasts * 2 + wildfireStacks + amplifierBonus;
 
         if (cardPlay.Target is { IsAlive: true } target)
         {

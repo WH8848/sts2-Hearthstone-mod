@@ -44,7 +44,8 @@ public sealed class IcyTouchCard : JainaSpellCardTemplate
                 return 1m;
             }
             var wildfire = card.Owner.Creature.GetPower<jaina.Scripts.Character.Powers.WildfirePower>();
-            return 1m + (wildfire?.WildfireStacks ?? 0);
+            var amplifier = card.Owner.Creature.GetPower<jaina.Scripts.Character.Powers.ArcaneAmplifierPower>();
+            return 1m + (wildfire?.WildfireStacks ?? 0) + (amplifier?.AmplifierBonus ?? 0);
         })
     ];
 
@@ -77,10 +78,12 @@ public sealed class IcyTouchCard : JainaSpellCardTemplate
         // 记录施放（倒带/罗曼斯/三派系追踪）
         jaina.Scripts.Character.JainaCastTracker.RecordPlayed(this);
 
-        // 野火：英雄技能伤害永久加成（可叠加，本局对战）
+        // 野火：英雄技能伤害永久加成（可叠加，本局对战）；奥术增幅：英雄技能额外伤害
         var wildfire = base.Owner.Creature.GetPower<jaina.Scripts.Character.Powers.WildfirePower>();
         var wildfireStacks = wildfire?.WildfireStacks ?? 0;
-        var totalDamage = 1 + wildfireStacks;
+        var amplifier = base.Owner.Creature.GetPower<jaina.Scripts.Character.Powers.ArcaneAmplifierPower>();
+        var amplifierBonus = amplifier?.AmplifierBonus ?? 0;
+        var totalDamage = 1 + wildfireStacks + amplifierBonus;
 
         // 造成伤害（参考火焰冲击）
         if (cardPlay.Target is { IsAlive: true } target)

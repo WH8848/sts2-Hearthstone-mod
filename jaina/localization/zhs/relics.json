@@ -5,5 +5,8 @@
   "JAINA_RELIC_EVEN_MATCH_ANCIENT.title": "正在撬动对手的回合结束按钮",
   "JAINA_RELIC_EVEN_MATCH_ANCIENT.description": "每场战斗开始时，获得一张幸运币，并额外抽 1 张牌。",
   "JAINA_RELIC_EVEN_MATCH_ANCIENT.flavor": "在对手按下回合结束按钮之前，你已经赢下了这一回合。",
+  "JAINA_RELIC_ARCANE_AMPLIFIER.title": "奥术增幅体",
+  "JAINA_RELIC_ARCANE_AMPLIFIER.description": "你的英雄技能会额外造成2点伤害。",
+  "JAINA_RELIC_ARCANE_AMPLIFIER.flavor": "奥术能量在体内奔涌，法术愈发炽烈。",
   "SEA_GLASS.JAINA_CHARACTER_JAINA.title": "冰霜玻璃"
 }

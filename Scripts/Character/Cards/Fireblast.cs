@@ -67,10 +67,12 @@ public sealed class Fireblast : JainaSpellCardTemplate
         // 记录施放（倒带/罗曼斯/三派系追踪）
         jaina.Scripts.Character.JainaCastTracker.RecordPlayed(this);
 
-        // 野火：英雄技能伤害永久加成（可叠加，本局对战）
+        // 野火：英雄技能伤害永久加成（可叠加，本局对战）；奥术增幅：英雄技能额外伤害
         var wildfire = base.Owner.Creature.GetPower<jaina.Scripts.Character.Powers.WildfirePower>();
         var wildfireStacks = wildfire?.WildfireStacks ?? 0;
-        var totalDamage = (int)(base.DynamicVars.Damage.BaseValue + wildfireStacks);
+        var amplifier = base.Owner.Creature.GetPower<jaina.Scripts.Character.Powers.ArcaneAmplifierPower>();
+        var amplifierBonus = amplifier?.AmplifierBonus ?? 0;
+        var totalDamage = (int)(base.DynamicVars.Damage.BaseValue + wildfireStacks + amplifierBonus);
 
         // 目标防御：无目标时不施放（自动打出兜底，防 Targeting(null) NRE）
         if (cardPlay.Target is not { IsAlive: true } fireblastTarget)
