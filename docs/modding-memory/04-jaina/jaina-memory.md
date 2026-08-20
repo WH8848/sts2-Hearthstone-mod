@@ -2,6 +2,7 @@
 
 > 本文档是**会话压缩后的恢复依据**：丢失上下文时先读这里 + `git log --oneline`（每次改动都有详细提交信息）。
 > 仓库：`E:\MOD\sts2\godot_project\jaina`，GitHub: WH8848/sts2-Hearthstone-mod（main）。
+> **`E:\MOD\sts2\sts2` 路径下是游戏各版本的反编译 pck 文件**（如 `E:\MOD\sts2\sts2\0.111.1\src` 为游戏源码、`%TEMP%\sts2_decomp` 反编译 DLL 产物）；查游戏原版资源/代码（含 shaders、本地化、模型）先看这里。
 
 ## 1. 项目主请求与意图
 - 开发《杀戮尖塔2》(STS2 v0.111.1) MOD "Jaina"（Godot 4.5.1 + C#/.NET 10）：把炉石传说吉安娜/法师体系搬进 STS2（随从系统、法术派系、炉石关键词、任务线、武器位）。
