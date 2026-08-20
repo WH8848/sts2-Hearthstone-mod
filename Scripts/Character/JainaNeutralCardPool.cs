@@ -30,4 +30,12 @@ public class JainaNeutralCardPool : TypeListCardPoolModel, IJainaExcludedFromRan
     public override bool IsColorless => true;
 
     public override string CardFrameMaterialPath => "card_frame_colorless";
+
+    /// <summary>
+    /// 中立池卡框材质：HSV 调色（h=0、s=0、v=0.75——灰色调，与中立池灰色风格一致）。
+    /// </summary>
+    private static readonly Material? _poolFrameMaterial =
+        STS2RitsuLib.Utils.MaterialUtils.CreateHsvShaderMaterial(0f, 0f, 0.75f);
+
+    public override Material? PoolFrameMaterial => _poolFrameMaterial;
 }
