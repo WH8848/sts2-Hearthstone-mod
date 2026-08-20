@@ -41,7 +41,7 @@ public sealed class Jaina : ModCharacterTemplate<JainaCardPool, JainaRelicPool, 
 
     public override int StartingHp => 40;
 
-    public override int StartingGold => 90;
+    public override int StartingGold => 99;
 
     public override float AttackAnimDelay => 0.2f;
 
