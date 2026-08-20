@@ -14,5 +14,8 @@
   "JAINA_RELIC_RUMMAGE_THROUGH_STOCK.title": "Rummage Through Stock",
   "JAINA_RELIC_RUMMAGE_THROUGH_STOCK.description": "Whenever you Discover a card on your turn, deal 3 damage to a random enemy.",
   "JAINA_RELIC_RUMMAGE_THROUGH_STOCK.flavor": "There's always something useful at the very bottom.",
+  "JAINA_RELIC_APPRENTICE_OF_THE_MAGI.title": "Apprentice of the Magi",
+  "JAINA_RELIC_APPRENTICE_OF_THE_MAGI.description": "At the start of each turn, your first Arcane spell costs 1 less.",
+  "JAINA_RELIC_APPRENTICE_OF_THE_MAGI.flavor": "A young apprentice's first foray into the arcane is full of surprises.",
   "SEA_GLASS.JAINA_CHARACTER_JAINA.title": "Frost Glass"
 }
