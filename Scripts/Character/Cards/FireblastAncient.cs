@@ -28,10 +28,10 @@ namespace jaina.Scripts.Character.Cards;
 public sealed class FireblastAncient : JainaSpellCardTemplate
 {
     /// <summary>
-    /// 升级上限保留 int.MaxValue（防古老牙齿超越时对已升级火焰冲击调 CardCmd.Upgrade
-    /// 崩溃——MaxUpgradeLevel=0 会抛异常）；每次升级伤害 +2。
+    /// 只能升级 1 次（升级伤害+2；MaxUpgradeLevel 不能为 0——防古老牙齿超越时
+    /// 对已升级火焰冲击调 CardCmd.Upgrade 崩溃）。
     /// </summary>
-    public override int MaxUpgradeLevel => int.MaxValue;
+    public override int MaxUpgradeLevel => 1;
 
     /// <summary>
     /// 英雄技能（悬停解释）。英雄技能不视为法术牌（不挂法术牌关键词）。
@@ -142,10 +142,10 @@ public sealed class FireblastAncient : JainaSpellCardTemplate
 
     protected override void OnUpgrade()
     {
-        // 每次升级伤害 +2（UpgradeValueBy 设置 WasJustUpgraded，升级预览数值绿色高亮；
+        // 升级伤害 +2（UpgradeValueBy 设置 WasJustUpgraded，升级预览数值绿色高亮；
         // BaseValue 随升级增长，OnPlay 与 HeroPowerDamageVar 显示均自动跟随）。
-        // 保留升级能力亦防古老牙齿超越崩溃（MaxUpgradeLevel=0 时对已升级初始卡调
-        // Upgrade 会抛异常）。升级级别显示在标题（+级别）。
+        // 只能升级 1 次（MaxUpgradeLevel=1 亦防古老牙齿超越崩溃——MaxUpgradeLevel=0
+        // 时对已升级初始卡调 Upgrade 会抛异常）。升级级别显示在标题（+级别）。
         base.DynamicVars.Damage.UpgradeValueBy(2m);
     }
 }

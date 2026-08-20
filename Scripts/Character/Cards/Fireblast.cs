@@ -16,7 +16,7 @@ namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
 /// 火焰冲击 (Fireblast) - 吉安娜专属卡牌，只出现在初始卡组中。
-/// 0费造成1点伤害，可无限升级（每次升级伤害+1），每回合开始自动加入手牌。
+/// 0费造成1点伤害，可升级 1 次（升级伤害+1），每回合开始自动加入手牌。
 /// 使用 Basic 稀有度使其不出现战斗奖励掉落中。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
@@ -25,9 +25,9 @@ namespace jaina.Scripts.Character.Cards;
 public sealed class Fireblast : JainaSpellCardTemplate
 {
     /// <summary>
-    /// 可无限升级（每次升级伤害+1；升级能力由古老牙齿超越为二级火焰冲击承接）
+    /// 只能升级 1 次（升级伤害+1；升级能力由古老牙齿超越为二级火焰冲击承接）
     /// </summary>
-    public override int MaxUpgradeLevel => int.MaxValue;
+    public override int MaxUpgradeLevel => 1;
 
     // 英雄技能：不挂"法术牌"关键词，不被视为法术牌（不触发法术相关效果）；
     // 挂"英雄技能"关键词用于悬停解释
@@ -131,8 +131,9 @@ public sealed class Fireblast : JainaSpellCardTemplate
     }
 
     /// <summary>
-    /// 升级：每次升级伤害 +1（UpgradeValueBy 设置 WasJustUpgraded，升级预览数值绿色高亮；
-    /// BaseValue 随升级增长，OnPlay 与 HeroPowerDamageVar 显示均自动跟随）
+    /// 升级：升级伤害 +1（UpgradeValueBy 设置 WasJustUpgraded，升级预览数值绿色高亮；
+    /// BaseValue 随升级增长，OnPlay 与 HeroPowerDamageVar 显示均自动跟随）。
+    /// 只能升级 1 次（MaxUpgradeLevel=1）。
     /// </summary>
     protected override void OnUpgrade()
     {
