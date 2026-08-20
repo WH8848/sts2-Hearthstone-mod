@@ -37,18 +37,28 @@ public sealed class GreaterArcaneMissilesCard : JainaSpellCardTemplate
 
     /// <summary>
     /// 动态伤害变量（STS2 原版机制：指向目标时 {Damage} 预览实际伤害，含力量/虚弱/易伤）：
-    /// 基础 = 3 次 3 点；升级（星辰能量）= 5 + 力量（起始值，随后每次递减 1）。
+    /// 基础 = 3；升级（星辰能量）= 5 + 力量（起始值，随后每次递减 1）。
+    /// 注意：用<b>单一 Computed 变量</b>（lambda 内按 IsUpgraded 分支）而非
+    /// "IsUpgraded ? [Computed(5m)] : [DamageVar(3m)]"——升级形态 clone 基础形态的
+    /// DynamicVars（CanonicalVars 不会为升级形态重新求值），分支声明会导致升级形态
+    /// 的 Damage 仍是基础值 3（实测：卡面显示 3 而实际伤害从 5 开始）。
     /// </summary>
-    protected override IEnumerable<DynamicVar> CanonicalVars => IsUpgraded
-        ? [STS2RitsuLib.Cards.DynamicVars.ModCardVars.Computed("Damage", 5m, card =>
+    protected override IEnumerable<DynamicVar> CanonicalVars =>
+    [
+        ModCardVars.Computed("Damage", 3m, card =>
         {
-            if (card.Owner?.Creature?.CombatState != null)
+            // 升级（星辰能量）：5 + 力量（起始值）；基础（强能奥术飞弹）：3
+            if (card is GreaterArcaneMissilesCard g && g.IsUpgraded)
             {
-                return 5m + card.Owner.Creature.GetPowerAmount<MegaCrit.Sts2.Core.Models.Powers.StrengthPower>();
+                if (card.Owner?.Creature?.CombatState != null)
+                {
+                    return 5m + card.Owner.Creature.GetPowerAmount<MegaCrit.Sts2.Core.Models.Powers.StrengthPower>();
+                }
+                return 5m;
             }
-            return 5m;
-        })]
-        : [new DamageVar(3m, ValueProp.Move)];
+            return 3m;
+        })
+    ];
 
     /// <summary>
     /// 卡牌原画：强能奥术飞弹 / 升级后（星辰能量）切换原画
