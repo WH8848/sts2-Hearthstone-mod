@@ -38,13 +38,14 @@ public sealed class IcyTouchCard : JainaSpellCardTemplate
     [
         STS2RitsuLib.Cards.DynamicVars.ModCardVars.Computed("Damage", 1m, card =>
         {
-            if (card.Owner?.Creature?.CombatState != null)
+            // canonical（图鉴渲染等）不可变：访问 Owner 会抛异常，直接返回基础值
+            if (card == null || !card.IsMutable || card.Owner?.Creature?.CombatState == null)
             {
-                var empower = card.Owner.Creature.GetPower<jaina.Scripts.Character.Powers.EmpowerPower>();
-                var wildfire = card.Owner.Creature.GetPower<jaina.Scripts.Character.Powers.WildfirePower>();
-                return 1m + (empower?.EmpowerStacks ?? 0) + (wildfire?.WildfireStacks ?? 0);
+                return 1m;
             }
-            return 1m;
+            var empower = card.Owner.Creature.GetPower<jaina.Scripts.Character.Powers.EmpowerPower>();
+            var wildfire = card.Owner.Creature.GetPower<jaina.Scripts.Character.Powers.WildfirePower>();
+            return 1m + (empower?.EmpowerStacks ?? 0) + (wildfire?.WildfireStacks ?? 0);
         })
     ];
 

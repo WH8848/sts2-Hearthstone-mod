@@ -43,7 +43,7 @@ public sealed class ArcaneBarrage : JainaSpellCardTemplate
     [
         ModCardVars.Computed("Beams", 2m, card =>
         {
-            if (card is not ArcaneBarrage barrage)
+            if (card is not ArcaneBarrage barrage || !card.IsMutable)
             {
                 return 2m;
             }

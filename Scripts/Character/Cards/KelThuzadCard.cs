@@ -36,11 +36,19 @@ public sealed class KelThuzadCard : JainaMinionCardTemplate
     /// <summary>
     /// 动态骷髅数量：卡面显示本局已死亡（可复活）的不稳定的骷髅数量——
     /// 与战吼实际复活数一致（Computed 实时读 SkeletonDeathsByPlayer，战斗外显示 0）。
+    /// 注意：图鉴/牌库网格渲染 canonical 实例（不可变）——访问 Owner 会抛
+    /// CanonicalModelException 并连带打断图鉴网格行分配（实测：图鉴网格崩溃）。
+    /// 先用 IsMutable 判 canonical，不可变直接返回 0。
     /// </summary>
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
         STS2RitsuLib.Cards.DynamicVars.ModCardVars.Computed("Skeletons", 0m, card =>
         {
+            // canonical（图鉴渲染等）不可变：访问 Owner 会抛异常，直接返回 0
+            if (card == null || !card.IsMutable)
+            {
+                return 0m;
+            }
             if (card.Owner?.Creature?.CombatState is { } cs)
             {
                 var rec = jaina.Scripts.Character.JainaCastTracker.For(cs);

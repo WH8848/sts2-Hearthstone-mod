@@ -44,7 +44,9 @@ public sealed class HeroPowerDamageVar : DamageVar
     /// <summary>当前灌注 + 野火加成（战斗外为 0）。</summary>
     private static decimal GetBonus(CardModel? card)
     {
-        if (card?.Owner?.Creature?.CombatState == null)
+        // canonical（图鉴/牌库网格渲染等）不可变：访问 Owner 会抛
+        // CanonicalModelException——不可变实例直接返回 0
+        if (card == null || !card.IsMutable || card.Owner?.Creature?.CombatState == null)
         {
             return 0m;
         }

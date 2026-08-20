@@ -38,16 +38,18 @@ public sealed class ArcaneBurstCard : JainaSpellCardTemplate
     [
         ModCardVars.Computed("Damage", 2m, card =>
         {
-            if (card is ArcaneBurstCard arcane && card.Owner?.Creature?.CombatState != null)
+            // canonical（图鉴渲染等）不可变：访问 Owner 会抛异常，直接返回基础值
+            if (card is not ArcaneBurstCard arcane || !card.IsMutable ||
+                card.Owner?.Creature?.CombatState == null)
             {
-                var combatState = card.Owner.Creature.CombatState;
-                var rec = jaina.Scripts.Character.JainaCastTracker.For(combatState);
-                rec.ArcaneBurstCastsByPlayer.TryGetValue(card.Owner.NetId, out var casts);
-                var empower = card.Owner.Creature.GetPower<EmpowerPower>();
-                var wildfire = card.Owner.Creature.GetPower<WildfirePower>();
-                return 2 + casts * 2 + (empower?.EmpowerStacks ?? 0) + (wildfire?.WildfireStacks ?? 0);
+                return 2m;
             }
-            return 2m;
+            var combatState = card.Owner.Creature.CombatState;
+            var rec = jaina.Scripts.Character.JainaCastTracker.For(combatState);
+            rec.ArcaneBurstCastsByPlayer.TryGetValue(card.Owner.NetId, out var casts);
+            var empower = card.Owner.Creature.GetPower<EmpowerPower>();
+            var wildfire = card.Owner.Creature.GetPower<WildfirePower>();
+            return 2 + casts * 2 + (empower?.EmpowerStacks ?? 0) + (wildfire?.WildfireStacks ?? 0);
         })
     ];
 
