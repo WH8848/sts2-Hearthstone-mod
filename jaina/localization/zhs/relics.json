@@ -20,5 +20,8 @@
   "JAINA_RELIC_FROST_TONGUE_CENTAUR.title": "霜舌半人马",
   "JAINA_RELIC_FROST_TONGUE_CENTAUR.description": "在你施放一个冰霜法术后，召唤一个1/1的霜冻元素。",
   "JAINA_RELIC_FROST_TONGUE_CENTAUR.flavor": "半人马的冰霜之舌，每一声嘶鸣都凝结成霜冻的元素。",
+  "JAINA_RELIC_FIRE_SPREAD.title": "失火",
+  "JAINA_RELIC_FIRE_SPREAD.description": "每场战斗开始时，抽3张牌并附加保留与引燃。",
+  "JAINA_RELIC_FIRE_SPREAD.flavor": "火势蔓延，越快抽到的牌越早被点燃。",
   "SEA_GLASS.JAINA_CHARACTER_JAINA.title": "冰霜玻璃"
 }

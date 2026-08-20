@@ -20,5 +20,8 @@
   "JAINA_RELIC_FROST_TONGUE_CENTAUR.title": "Frost Tongue Centaur",
   "JAINA_RELIC_FROST_TONGUE_CENTAUR.description": "After you cast a Frost spell, summon a 1/1 Frost Elemental.",
   "JAINA_RELIC_FROST_TONGUE_CENTAUR.flavor": "Each neigh of this centaur's frost tongue solidifies into a frozen elemental.",
+  "JAINA_RELIC_FIRE_SPREAD.title": "Fire Spread",
+  "JAINA_RELIC_FIRE_SPREAD.description": "At the start of each combat, draw 3 cards and give them Retain and Ignite.",
+  "JAINA_RELIC_FIRE_SPREAD.flavor": "The fire spreads — the sooner you draw a card, the sooner it catches.",
   "SEA_GLASS.JAINA_CHARACTER_JAINA.title": "Frost Glass"
 }
