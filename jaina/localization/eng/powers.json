@@ -95,5 +95,8 @@
   "JAINA_POWER_LANDMARK_DURABILITY_POWER.smartDescription": "Durability {Amount}, -1 per use, destroyed at 0.",
   "JAINA_POWER_JAINA_LANDMARK_USE_ACTION.title": "Use Landmark",
   "JAINA_POWER_JAINA_LANDMARK_USE_ACTION.description": "[gold]Action[/gold]: Choose 1 character and trigger the landmark's effect. Spend 1 point.",
-  "JAINA_POWER_JAINA_LANDMARK_USE_ACTION.smartDescription": "[gold]Action[/gold]: Choose 1 character and trigger the landmark's effect. Spend 1 point."
+  "JAINA_POWER_JAINA_LANDMARK_USE_ACTION.smartDescription": "[gold]Action[/gold]: Choose 1 character and trigger the landmark's effect. Spend 1 point.",
+  "JAINA_POWER_HERO_POWER_REPLAY_POWER.title": "Hero Power Replay",
+  "JAINA_POWER_HERO_POWER_REPLAY_POWER.description": "Your Hero Powers have [gold]Replay 1[/gold]: they are cast a second time after being played.",
+  "JAINA_POWER_HERO_POWER_REPLAY_POWER.smartDescription": "Your Hero Powers have [gold]Replay 1[/gold] (cast twice)."
 }

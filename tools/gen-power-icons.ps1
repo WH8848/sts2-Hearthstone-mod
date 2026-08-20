@@ -1,4 +1,4 @@
-# ============================================================
+﻿# ============================================================
 # Jaina MOD 力量图标生成工具
 # 用法: powershell -ExecutionPolicy Bypass -File gen-power-icons.ps1
 # 作用: 为可见力量(Power)生成 128x128 程序绘制图标
@@ -305,6 +305,28 @@ function Draw-IceBlock {
     $pen.Dispose(); $cross.Dispose()
 }
 
+function Draw-HeroPowerReplay {
+    param($g)
+    New-IconBase $g
+    # double-arrow loop (replay 1) + flame (hero power)
+    $pen = [System.Drawing.Pen]::new($flame, 5)
+    $g.DrawArc($pen, 30, 40, 68, 48, 200, 140)  # loop top
+    $g.DrawArc($pen, 30, 40, 68, 48, 20, 140)   # loop bottom
+    $arrow = [System.Drawing.Pen]::new($white, 5)
+    $g.DrawLine($arrow, 86, 40, 96, 40)
+    $g.DrawLine($arrow, 96, 40, 88, 32)
+    $g.DrawLine($arrow, 96, 40, 88, 48)
+    # small central flame (hero power)
+    $flameBrush = [System.Drawing.SolidBrush]::new($gold)
+    $pts = @()
+    $pts += New-Object System.Drawing.PointF(64, 58)
+    $pts += New-Object System.Drawing.PointF(78, 84)
+    $pts += New-Object System.Drawing.PointF(64, 74)
+    $pts += New-Object System.Drawing.PointF(50, 84)
+    $g.FillPolygon($flameBrush, $pts)
+    $pen.Dispose(); $arrow.Dispose(); $flameBrush.Dispose()
+}
+
 function Save-Icon {
     param($name, $drawFunc)
     $bmp = New-Object System.Drawing.Bitmap(128, 128)
@@ -335,5 +357,6 @@ Save-Icon 'jaina_power_khadgar_orb_power'          (Get-Command Draw-KhadgarOrb)
 Save-Icon 'jaina_power_wildfire_power'              (Get-Command Draw-Wildfire)
 Save-Icon 'jaina_power_hearthstone_form_power'      (Get-Command Draw-HearthstoneForm)
 Save-Icon 'jaina_power_ice_block_power'              (Get-Command Draw-IceBlock)
+Save-Icon 'jaina_power_hero_power_replay_power'      (Get-Command Draw-HeroPowerReplay)
 
 Write-Host "完成: 7 个力量图标 -> $outDir"

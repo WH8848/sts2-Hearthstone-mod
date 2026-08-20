@@ -95,5 +95,8 @@
   "JAINA_POWER_LANDMARK_DURABILITY_POWER.smartDescription": "耐久度 {Amount}，每次使用-1，归零时地标被摧毁。",
   "JAINA_POWER_JAINA_LANDMARK_USE_ACTION.title": "使用地标",
   "JAINA_POWER_JAINA_LANDMARK_USE_ACTION.description": "[gold]行动[/gold]：选择 1 名角色，触发地标效果。消耗 1 点。",
-  "JAINA_POWER_JAINA_LANDMARK_USE_ACTION.smartDescription": "[gold]行动[/gold]：选择 1 名角色，触发地标效果。消耗 1 点。"
+  "JAINA_POWER_JAINA_LANDMARK_USE_ACTION.smartDescription": "[gold]行动[/gold]：选择 1 名角色，触发地标效果。消耗 1 点。",
+  "JAINA_POWER_HERO_POWER_REPLAY_POWER.title": "英雄技能重放",
+  "JAINA_POWER_HERO_POWER_REPLAY_POWER.description": "你的所有英雄技能具有[gold]重放1[/gold]：英雄技能打出时自动重放一次（施放两次）。",
+  "JAINA_POWER_HERO_POWER_REPLAY_POWER.smartDescription": "你的所有英雄技能[gold]重放1[/gold]（打出时施放两次）。"
 }
