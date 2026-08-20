@@ -31,13 +31,15 @@ public sealed class SpiritCollectorCard : JainaMinionCardTemplate
     public override string CustomPortraitPath => "res://assets/card_art/spirit_collector.png";
 
     /// <summary>
-    /// 自身特性悬停：战吼获取的小精灵衍生物卡（"随从"关键词解释由模板兜底）
+    /// 自身特性悬停：战吼获取的小精灵衍生物卡 + 灌注技能（小精灵的祝福）
+    /// 卡面（"随从"关键词解释由模板兜底）
     /// </summary>
     protected override IEnumerable<IHoverTip> ExtraMinionHoverTips
     {
         get
         {
             yield return new CardHoverTip(MegaCrit.Sts2.Core.Models.ModelDb.Card<ImpCard>());
+            yield return new CardHoverTip(MegaCrit.Sts2.Core.Models.ModelDb.Card<BlessingOfImpsCard>());
         }
     }
 

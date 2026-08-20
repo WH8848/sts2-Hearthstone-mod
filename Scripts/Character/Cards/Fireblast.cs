@@ -16,7 +16,7 @@ namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
 /// 火焰冲击 (Fireblast) - 吉安娜专属卡牌，只出现在初始卡组中。
-/// 0费造成1点伤害，不可升级，每回合开始自动加入手牌。
+/// 0费造成1点伤害，可无限升级（每次升级伤害+1），每回合开始自动加入手牌。
 /// 使用 Basic 稀有度使其不出现战斗奖励掉落中。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
@@ -25,9 +25,9 @@ namespace jaina.Scripts.Character.Cards;
 public sealed class Fireblast : JainaSpellCardTemplate
 {
     /// <summary>
-    /// 不可升级（固定 1 点伤害；升级能力由古老牙齿超越为二级火焰冲击承接）
+    /// 可无限升级（每次升级伤害+1；升级能力由古老牙齿超越为二级火焰冲击承接）
     /// </summary>
-    public override int MaxUpgradeLevel => 0;
+    public override int MaxUpgradeLevel => int.MaxValue;
 
     // 英雄技能：不挂"法术牌"关键词，不被视为法术牌（不触发法术相关效果）；
     // 挂"英雄技能"关键词用于悬停解释
@@ -42,8 +42,24 @@ public sealed class Fireblast : JainaSpellCardTemplate
         [jaina.Scripts.Character.Keywords.JainaKeywords.HeroPower, CardKeyword.Eternal];
 
     /// <summary>
-    /// 动态伤害显示：当前伤害 = 基础 1 点 + 灌注层数 + 野火加成
-    /// （与 OnPlay 实际结算一致；不可升级，无升级加成）。
+    /// 升级后卡牌名称显示 "+级别"（升级每次 +1 伤害，标记升级状态）
+    /// </summary>
+    public override string Title
+    {
+        get
+        {
+            var title = new LocString("cards", base.Id.Entry + ".title");
+            if (!IsUpgraded)
+            {
+                return title.GetFormattedText();
+            }
+            return title.GetFormattedText() + "+" + CurrentUpgradeLevel;
+        }
+    }
+
+    /// <summary>
+    /// 动态伤害显示：当前伤害 = 基础 1 点（含升级加成）+ 野火加成 + 奥术增幅加成
+    /// （与 OnPlay 实际结算一致；每次升级 +1 点伤害）。
     /// 用 HeroPowerDamageVar（DamageVar 子类）而非 ComputedDynamicVar：
     /// DynamicVarSet.Damage 强转 DamageVar，Computed 会导致牌库网格初始化崩溃。
     /// </summary>
@@ -115,6 +131,11 @@ public sealed class Fireblast : JainaSpellCardTemplate
     }
 
     /// <summary>
-    /// 不可升级：无需 OnUpgrade（升级能力由古老牙齿超越为二级火焰冲击承接）
+    /// 升级：每次升级伤害 +1（UpgradeValueBy 设置 WasJustUpgraded，升级预览数值绿色高亮；
+    /// BaseValue 随升级增长，OnPlay 与 HeroPowerDamageVar 显示均自动跟随）
     /// </summary>
+    protected override void OnUpgrade()
+    {
+        base.DynamicVars.Damage.UpgradeValueBy(1m);
+    }
 }
