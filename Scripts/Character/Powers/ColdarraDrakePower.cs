@@ -56,29 +56,35 @@ public sealed class ColdarraDrakePower : PowerModel
     {
         if (Owner == null || !Owner.IsAlive)
         {
+            MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaDiag] Coldarra AfterCardPlayed: ownerNull={Owner == null} alive={Owner?.IsAlive}");
             return;
         }
         var player = Owner.Player;
         if (player == null || cardPlay.Card.Owner != player)
         {
+            MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaDiag] Coldarra AfterCardPlayed: playerNull={player == null} cardOwner={cardPlay.Card.Owner?.NetId} player={player?.NetId}");
             return;
         }
         var card = cardPlay.Card;
         // 只响应英雄技能卡
         if (!HeroPowerHandHelper.IsHeroPowerCard(card))
         {
+            MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaDiag] Coldarra AfterCardPlayed: {card.Id.Entry} NOT heroPower");
             return;
         }
         // 自动打出（IsAutoPlay）不回手
         if (cardPlay.IsAutoPlay)
         {
+            MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaDiag] Coldarra AfterCardPlayed: {card.Id.Entry} isAutoPlay skip");
             return;
         }
         // 已在手牌（如打出前已在手）不重复入手
         if (card.Pile != null && card.Pile.Type == PileType.Hand)
         {
+            MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaDiag] Coldarra AfterCardPlayed: {card.Id.Entry} already in hand skip");
             return;
         }
+        MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaDiag] Coldarra AfterCardPlayed: {card.Id.Entry} returning to hand from pile={card.Pile?.Type}");
         await CardPileCmd.Add(card, PileType.Hand);
     }
 }
