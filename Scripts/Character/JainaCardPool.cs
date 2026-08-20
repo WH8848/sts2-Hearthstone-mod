@@ -28,4 +28,14 @@ public class JainaCardPool : TypeListCardPoolModel, IModColorfulPhilosophersCard
     public override bool IsColorless => false;
 
     public override string CardFrameMaterialPath => "card_frame_colorless";
+
+    /// <summary>
+    /// 吉安娜主题卡框材质：HSV 调色（h=0.542 蓝、s=0.56、v=0.94——冰蓝主题）。
+    /// RitsuLib 的 MaterialUtils.CreateHsvShaderMaterial 加载 res://shaders/hsv.gdshader
+    /// （游戏原版 shader；本 mod 的 shaders/hsv.gdshader 提供同路径兜底）。
+    /// </summary>
+    private static readonly Material? _poolFrameMaterial =
+        STS2RitsuLib.Utils.MaterialUtils.CreateHsvShaderMaterial(0.542f, 0.56f, 0.94f);
+
+    public override Material? PoolFrameMaterial => _poolFrameMaterial;
 }
