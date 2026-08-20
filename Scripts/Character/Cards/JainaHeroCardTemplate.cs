@@ -44,13 +44,27 @@ public abstract class JainaHeroCardTemplate : ModCardTemplate
     public override CardType Type => JainaCardTypes.Hero;
 
     /// <summary>
-    /// 关键词：战吼（打出英雄卡触发英雄战吼）+ 消耗（打出后像能力牌一样从本场战斗移除，
-    /// 不再进入弃牌堆被抽回——炉石英雄卡一次性）。
+    /// 关键词：战吼（打出英雄卡触发英雄战吼）。
     /// 挂 Battlecry 关键词后，悬停英雄卡时右侧显示"战吼"词条注释
     /// （游戏原版 CardModel.HoverTips 对卡上 Keywords 自动生成悬停解释）。
+    /// 注意：不用 Exhaust 关键词——英雄卡是自定义 Hero 类型，原版打出后判定
+    /// （GetResultLocationForCardPlay）对 Hero 类型不识别 Exhaust（实测进了弃牌堆）；
+    /// 改为覆写 GetResultLocationForCardPlay 返回 PileType.None（与能力牌 Power 类型
+    /// 同一路径：打出后从战斗移除，不再进入弃牌堆被抽回——炉石英雄卡一次性）。
     /// </summary>
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
-        [jaina.Scripts.Character.Keywords.JainaKeywords.Battlecry, CardKeyword.Exhaust];
+        [jaina.Scripts.Character.Keywords.JainaKeywords.Battlecry];
+
+    /// <summary>
+    /// 打出后移除（像能力牌一样）：英雄卡打出后从战斗移除（PileType.None →
+    /// RemoveFromCombat），不进弃牌堆。能力牌（Power 类型）由原版
+    /// GetResultLocationForCardPlay 的 Type==Power 分支处理；英雄卡是自定义
+    /// Hero 类型，需显式覆写（原版先例：ParticleWall/ShiningStrike/TheBall）。
+    /// </summary>
+    protected override CardLocation GetResultLocationForCardPlay()
+    {
+        return new CardLocation(Owner, PileType.None, CardPilePosition.Bottom);
+    }
 
     /// <summary>
     /// 悬停提示：显示本英雄卡的英雄技能卡（炉石式：英雄卡悬停展示其英雄技能）。
