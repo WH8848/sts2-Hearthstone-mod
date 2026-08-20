@@ -67,21 +67,10 @@ public sealed class Fireblast : JainaSpellCardTemplate
         // 记录施放（倒带/罗曼斯/三派系追踪）
         jaina.Scripts.Character.JainaCastTracker.RecordPlayed(this);
 
-        // 灌注：每一层灌注增加一点英雄技能伤害；灌注后伤害从 n*1（高伤单段）
-        // 变为 1*n（1 伤多段），段数 = 总伤害
-        var empower = base.Owner.Creature.GetPower<jaina.Scripts.Character.Powers.EmpowerPower>();
-        var empowerStacks = empower?.EmpowerStacks ?? 0;
         // 野火：英雄技能伤害永久加成（可叠加，本局对战）
         var wildfire = base.Owner.Creature.GetPower<jaina.Scripts.Character.Powers.WildfirePower>();
         var wildfireStacks = wildfire?.WildfireStacks ?? 0;
-        var totalDamage = (int)(base.DynamicVars.Damage.BaseValue + empowerStacks + wildfireStacks);
-
-        // 灌注：每一层灌注额外召唤一个 1/1 的小精灵（先召唤，再造成伤害）
-        for (int i = 0; i < empowerStacks; i++)
-        {
-            await jaina.Scripts.Character.Minions.JainaMinionPool.SummonMinion<jaina.Scripts.Character.Minions.ImpMinion>(
-                choiceContext, base.Owner, maxHp: 1m, attack: 1m);
-        }
+        var totalDamage = (int)(base.DynamicVars.Damage.BaseValue + wildfireStacks);
 
         // 目标防御：无目标时不施放（自动打出兜底，防 Targeting(null) NRE）
         if (cardPlay.Target is not { IsAlive: true } fireblastTarget)
@@ -89,27 +78,11 @@ public sealed class Fireblast : JainaSpellCardTemplate
             return;
         }
 
-        if (empowerStacks <= 0)
-        {
-            // 无灌注：单段总伤害
-            await DamageCmd.Attack(totalDamage)
-                .FromCard(this, cardPlay)
-                .Targeting(fireblastTarget)
-                .WithHitFx("vfx/vfx_attack_blunt", null, "blunt_attack.mp3")
-                .Execute(choiceContext);
-        }
-        else
-        {
-            // 灌注：1*n 多段攻击（每段 1 点伤害，段数 = 总伤害）
-            for (int i = 0; i < totalDamage; i++)
-            {
-                await DamageCmd.Attack(1m)
-                    .FromCard(this, cardPlay)
-                    .Targeting(fireblastTarget)
-                    .WithHitFx("vfx/vfx_attack_blunt", null, "blunt_attack.mp3")
-                    .Execute(choiceContext);
-            }
-        }
+        await DamageCmd.Attack(totalDamage)
+            .FromCard(this, cardPlay)
+            .Targeting(fireblastTarget)
+            .WithHitFx("vfx/vfx_attack_blunt", null, "blunt_attack.mp3")
+            .Execute(choiceContext);
 
         // 记录英雄技能伤害（火眼莫德雷斯战吼条件用）
         jaina.Scripts.Character.JainaCastTracker.RecordHeroPowerDamage(this, totalDamage);

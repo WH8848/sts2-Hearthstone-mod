@@ -8,7 +8,7 @@
   "JAINA_KEYWORD_TWINSPELL.title": "双生法术",
   "JAINA_KEYWORD_TWINSPELL.description": "当你施放一个具有“双生法术”关键词的法术时，会立即将一张该法术的复制置入你的手牌。复制出的这张牌不再具有“双生法术”关键词。",
   "JAINA_KEYWORD_EMPOWER.title": "灌注",
-  "JAINA_KEYWORD_EMPOWER.description": "将你的英雄技能替换为[gold]灌注技能[/gold]。\n每次灌注使你的英雄技能多造成1次伤害，并召唤一个1/1的小精灵。",
+  "JAINA_KEYWORD_EMPOWER.description": "第一次打出灌注卡牌会将你的英雄技能替换为[gold]小精灵的祝福[/gold]。此后每层灌注都会让英雄技能额外释放一次。",
   "JAINA_KEYWORD_FINISHER.title": "压轴",
   "JAINA_KEYWORD_FINISHER.description": "压轴：使用带有“压轴”的卡牌时，如果刚好消耗完你的能量，就会触发额外效果。",
   "JAINA_KEYWORD_SPELL.title": "法术牌",
@@ -70,5 +70,5 @@
   "JAINA_KEYWORD_MINION.title":"随从",
   "JAINA_KEYWORD_MINION.description":"使用时召唤一个具有攻击力和生命值的[gold]随从[/gold]，进入你的[gold]随从栏[/gold]。从召唤后的第二回合开始，点击其可以进行攻击。你受到的未被[gold]格挡[/gold]的伤害会优先命中你的[gold]随从[/gold]。\n你最多可以拥有7个[gold]随从[/gold]。",
   "JAINA_KEYWORD_SPECIAL_HERO_SKILL.title":"灌注技能",
-  "JAINA_KEYWORD_SPECIAL_HERO_SKILL.description":"造成1点伤害1次。召唤1个1/1的小精灵。"
+  "JAINA_KEYWORD_SPECIAL_HERO_SKILL.description":"小精灵的祝福：召唤1个小精灵，造成1点伤害随机分配到所有敌人身上。释放次数等于灌注层数。"
 }

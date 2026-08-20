@@ -32,7 +32,7 @@ public sealed class IcyTouchCard : JainaSpellCardTemplate
 
     /// <summary>
     /// 动态伤害变量（STS2 原版机制：指向目标时 {Damage} 预览实际伤害）：
-    /// 当前伤害 = 1 + 灌注层数 + 野火加成（与 OnPlay 实际结算一致）。
+    /// 当前伤害 = 1 + 野火加成（与 OnPlay 实际结算一致）。
     /// </summary>
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
@@ -43,9 +43,8 @@ public sealed class IcyTouchCard : JainaSpellCardTemplate
             {
                 return 1m;
             }
-            var empower = card.Owner.Creature.GetPower<jaina.Scripts.Character.Powers.EmpowerPower>();
             var wildfire = card.Owner.Creature.GetPower<jaina.Scripts.Character.Powers.WildfirePower>();
-            return 1m + (empower?.EmpowerStacks ?? 0) + (wildfire?.WildfireStacks ?? 0);
+            return 1m + (wildfire?.WildfireStacks ?? 0);
         })
     ];
 
@@ -78,44 +77,19 @@ public sealed class IcyTouchCard : JainaSpellCardTemplate
         // 记录施放（倒带/罗曼斯/三派系追踪）
         jaina.Scripts.Character.JainaCastTracker.RecordPlayed(this);
 
-        // 灌注：每一层灌注增加一点英雄技能伤害；灌注后伤害从 n*1（高伤单段）
-        // 变为 1*n（1 伤多段），段数 = 总伤害（参考火焰冲击）
-        var empower = base.Owner.Creature.GetPower<jaina.Scripts.Character.Powers.EmpowerPower>();
-        var empowerStacks = empower?.EmpowerStacks ?? 0;
         // 野火：英雄技能伤害永久加成（可叠加，本局对战）
         var wildfire = base.Owner.Creature.GetPower<jaina.Scripts.Character.Powers.WildfirePower>();
         var wildfireStacks = wildfire?.WildfireStacks ?? 0;
-        var totalDamage = 1 + empowerStacks + wildfireStacks;
+        var totalDamage = 1 + wildfireStacks;
 
-        // 灌注：每一层灌注额外召唤一个 1/1 的小精灵（先召唤，再造成伤害）
-        for (int i = 0; i < empowerStacks; i++)
-        {
-            await JainaMinionPool.SummonMinion<jaina.Scripts.Character.Minions.ImpMinion>(
-                choiceContext, base.Owner, maxHp: 1m, attack: 1m);
-        }
-
-        // 造成伤害（参考火焰冲击：灌注后 1*n 多段）
+        // 造成伤害（参考火焰冲击）
         if (cardPlay.Target is { IsAlive: true } target)
         {
-            if (empowerStacks <= 0)
-            {
-                await DamageCmd.Attack(totalDamage)
-                    .FromCard(this, cardPlay)
-                    .Targeting(target)
-                    .WithHitFx("vfx/vfx_attack_blunt")
-                    .Execute(choiceContext);
-            }
-            else
-            {
-                for (int i = 0; i < totalDamage; i++)
-                {
-                    await DamageCmd.Attack(1m)
-                        .FromCard(this, cardPlay)
-                        .Targeting(target)
-                        .WithHitFx("vfx/vfx_attack_blunt")
-                        .Execute(choiceContext);
-                }
-            }
+            await DamageCmd.Attack(totalDamage)
+                .FromCard(this, cardPlay)
+                .Targeting(target)
+                .WithHitFx("vfx/vfx_attack_blunt")
+                .Execute(choiceContext);
 
             // 记录英雄技能伤害（火眼莫德雷斯战吼条件用）
             jaina.Scripts.Character.JainaCastTracker.RecordHeroPowerDamage(this, totalDamage);
