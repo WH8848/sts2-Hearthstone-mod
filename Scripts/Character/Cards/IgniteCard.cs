@@ -77,7 +77,7 @@ public sealed class IgniteCard : JainaSpellCardTemplate
                 .Execute(choiceContext);
         }
 
-        // 将一张升级过的"点燃"洗入弃牌堆（升级等级 = 本卡当前升级等级 + 1）
+        // 将一张升级过的"点燃"洗入抽牌堆（升级等级 = 本卡当前升级等级 + 1）
         var combatState = base.Owner.Creature.CombatState;
         var upgraded = jaina.Scripts.Character.JainaCastTracker.CreateCardWithUpgrade(
             combatState, base.Owner, typeof(IgniteCard), base.CurrentUpgradeLevel + 1);
@@ -86,10 +86,10 @@ public sealed class IgniteCard : JainaSpellCardTemplate
             return;
         }
         jaina.Scripts.Character.JainaCastTracker.MarkGenerated(upgraded);
-        // 塞入弃牌堆动画 + 弃牌堆计数刷新（生成卡没有 NCard 节点，原版 tween 流程
+        // 塞入抽牌堆动画 + 抽牌堆计数刷新（生成卡没有 NCard 节点，原版 tween 流程
         // 不会为它们创建动画/触发 CardAddFinished → 这里用原版生成卡塞堆流程 + 手动刷计数）
         var results = await CardPileCmd.AddGeneratedCardsToCombat(
-            [upgraded], PileType.Discard, base.Owner, CardPilePosition.Bottom);
+            [upgraded], PileType.Draw, base.Owner, CardPilePosition.Bottom);
         CardCmd.PreviewCardPileAdd(results, 1.0f);
         foreach (var r in results)
         {
