@@ -18,14 +18,25 @@ namespace jaina.Scripts.Character.Powers;
 ///   自动打出（小精灵驾驭者等）不回手）。
 /// </summary>
 [RegisterPower]
-public sealed class ColdarraDrakePower : PowerModel
+public sealed class ColdarraDrakePower : PowerModel, IModPowerAssetOverrides
 {
+    /// <inheritdoc />
+    public PowerAssetProfile AssetProfile => new("res://assets/power_icons/jaina_power_coldarra_drake_power.png");
+
+    /// <inheritdoc />
+    public string? CustomIconPath => AssetProfile.IconPath;
+
+    /// <inheritdoc />
+    public string? CustomBigIconPath => AssetProfile.BigIconPath;
+
     public override PowerType Type => PowerType.Buff;
 
     public override PowerStackType StackType => PowerStackType.Single;
 
     /// <summary>
     /// 你的英雄技能变为1费：战斗中费用解析时，主人（随从的主人）的英雄技能卡费用固定为 1。
+    /// 注意：Power 挂在随从身上，Owner.Player 对随从为 null——必须用 Owner.PetOwner?.Player
+    /// （随从的主人），否则 1 费与回手都不生效（实测：playerNull=True）。
     /// </summary>
     public override bool TryModifyEnergyCostInCombat(CardModel card, decimal originalCost, out decimal modifiedCost)
     {
@@ -34,7 +45,7 @@ public sealed class ColdarraDrakePower : PowerModel
         {
             return false;
         }
-        var player = Owner.Player;
+        var player = Owner.PetOwner;
         if (player == null || card.Owner != player)
         {
             return false;
@@ -59,7 +70,7 @@ public sealed class ColdarraDrakePower : PowerModel
             MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaDiag] Coldarra AfterCardPlayed: ownerNull={Owner == null} alive={Owner?.IsAlive}");
             return;
         }
-        var player = Owner.Player;
+        var player = Owner.PetOwner;
         if (player == null || cardPlay.Card.Owner != player)
         {
             MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaDiag] Coldarra AfterCardPlayed: playerNull={player == null} cardOwner={cardPlay.Card.Owner?.NetId} player={player?.NetId}");
