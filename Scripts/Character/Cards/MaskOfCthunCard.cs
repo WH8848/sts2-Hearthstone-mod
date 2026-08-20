@@ -85,8 +85,9 @@ public sealed class MaskOfCthunCard : JainaSpellCardTemplate
         }
 
         // 造成 10 点伤害，随机分配到所有敌人身上（逐点随机，重复命中允许）。
-        // 力量改为追加次数：共 (10 + 力量) 次 1 点伤害（总伤害 = 10 + 力量，
-        // 与卡面 {Damage} 预览一致；每点都是 1，均匀逐点分配）。
+        // 力量改为追加次数：共 (10 + 力量) 次 <b>固定 1 点</b>（总伤害 = 10 + 力量，
+        // 与卡面 {Damage} 预览一致）。每点必须 Unpowered（不吃力量）——
+        // 否则每点 1+力量 → 实际 (10+力量)×(1+力量)，力量被重复计算（实测 bug）。
         int hits = 10 + base.Owner.Creature.GetPowerAmount<MegaCrit.Sts2.Core.Models.Powers.StrengthPower>();
         var enemies = combatState.GetOpponentsOf(base.Owner.Creature)
             .Where(e => e.IsAlive && e.IsHittable)
@@ -100,8 +101,9 @@ public sealed class MaskOfCthunCard : JainaSpellCardTemplate
                 {
                     break;
                 }
-                // 走 AttackCommand（DamageCmd.Attack）：触发"被攻击命中"类效果（如胆小）
-                await DamageCmd.Attack(1m).FromCard(this, cardPlay).Targeting(target).Execute(choiceContext);
+                // 走 AttackCommand（DamageCmd.Attack）：触发"被攻击命中"类效果（如胆小）；
+                // Unpowered()：每点固定 1，不吃力量
+                await DamageCmd.Attack(1m).Unpowered().FromCard(this, cardPlay).Targeting(target).Execute(choiceContext);
             }
         }
 

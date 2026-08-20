@@ -46,6 +46,7 @@ public sealed class SorcererApprenticePower : PowerModel
         var apprentices = owner.PlayerCombatState?.Pets
             .Where(p => p != null && p.IsAlive && p.Monster is SorcererApprenticeMinion)
             .ToList();
+        MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaDiag] SorcApprentice cost check: card={card.Id.Entry} cost={originalCost} apprentices={apprentices?.Count ?? -1} ownerIsFirst={(apprentices != null && apprentices.Count > 0 && apprentices[0] == Owner)}");
         if (apprentices == null || apprentices.Count < RequiredApprentices)
         {
             return false;
