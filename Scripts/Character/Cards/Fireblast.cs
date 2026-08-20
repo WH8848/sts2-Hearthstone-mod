@@ -31,12 +31,15 @@ public sealed class Fireblast : JainaSpellCardTemplate
 
     // 英雄技能：不挂"法术牌"关键词，不被视为法术牌（不触发法术相关效果）；
     // 挂"英雄技能"关键词用于悬停解释
+    // 永恒（Eternal）：不可从牌库移除/变形——英雄技能是英雄自带的，
+    // 防止营地移除（SlipperyBridge/Cook）、PaelsTooth 移除、WoodCarvings 变形
+    // 等事件把默认英雄技能永久删出牌库（IsRemovable/IsTransformable 均按 Eternal 判定）
 
     /// <summary>
-    /// 英雄技能关键词（悬停显示解释；不注入卡面描述）
+    /// 英雄技能关键词（悬停显示解释；不注入卡面描述）+ 永恒（不可移除/变形）
     /// </summary>
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
-        [jaina.Scripts.Character.Keywords.JainaKeywords.HeroPower];
+        [jaina.Scripts.Character.Keywords.JainaKeywords.HeroPower, CardKeyword.Eternal];
 
     /// <summary>
     /// 动态伤害显示：当前伤害 = 基础（1 + 升级等级）+ 灌注层数 + 野火加成

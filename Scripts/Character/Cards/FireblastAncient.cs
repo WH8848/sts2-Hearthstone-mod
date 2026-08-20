@@ -33,9 +33,10 @@ public sealed class FireblastAncient : JainaSpellCardTemplate
 
     /// <summary>
     /// 英雄技能 + 重放（悬停解释）。英雄技能不视为法术牌（不挂法术牌关键词）。
+    /// 永恒（Eternal）：不可从牌库移除/变形（同火焰冲击——英雄技能是英雄自带的）。
     /// </summary>
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
-        [JainaKeywords.HeroPower, JainaKeywords.Replay];
+        [JainaKeywords.HeroPower, JainaKeywords.Replay, CardKeyword.Eternal];
 
     /// <summary>
     /// 动态伤害显示：当前伤害 = 基础（1 + 升级等级）+ 灌注层数 + 野火加成
