@@ -17,11 +17,14 @@ namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
 /// 禁忌神龛 (Forbidden Shrine) - X费技能牌（罕见）。
-/// 随机施放一个 x 费卡牌（x = 消耗的能量，无上限）。
+/// 随机施放一个 x 费卡牌（x = 消耗的能量，无上限），<b>精确费用匹配</b>。
+/// 例外：<b>X 费卡牌</b>（HasEnergyCostX，如挽歌 Dirge——消耗全部能量的卡）
+/// 无论玩家用多少费打出禁忌神龛都有机会被打出（它们"匹配任意 X"）。
 /// 升级后（禁忌神龛+）：随机施放一个 x+1 费卡牌（无上限）。
 /// 卡牌 = <b>全角色</b>可打出卡牌（法术/能力牌，Attack/Skill/Power 类型，含升级形态；
 /// 不保留随从/地标/武器/吉安娜非法术能力牌），排除英雄技能卡、任务卡、先古/衍生池
-/// （IsEligible）与自身。
+/// （IsEligible）、多人专属卡、自身，以及<b>X 星卡</b>（储君的 0 能量 X 星卡如星尘——
+/// 消耗星星而非能量，只有 0 费打出禁忌神龛（X=0）时才有机会被打出）。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
 public sealed class ForbiddenShrineCard : JainaSpellCardTemplate
@@ -65,7 +68,10 @@ public sealed class ForbiddenShrineCard : JainaSpellCardTemplate
     /// <summary>
     /// 随机施放一个目标费用的全角色卡牌：动态构建（ModelDb.AllCards 的
     /// Attack/Skill/Power 类型——法术/能力牌，不含随从/地标/武器（"武器"关键词排除），
-    /// 含升级形态，IsEligible 统一排除 + 英雄技能卡与自身）。
+    /// 含升级形态，IsEligible 统一排除 + 英雄技能卡、多人专属卡与自身）。
+    /// 费用匹配：普通卡需当前基础费用 == targetCost；<b>X 费卡</b>
+    /// （HasEnergyCostX，如挽歌——消耗全部能量的卡）始终入选（匹配任意 X）。
+    /// X 星卡（HasStarCostX——储君的 0 能量 X 星卡如星尘）只在 0 费打出（X=0）时入选。
     /// </summary>
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
@@ -81,14 +87,15 @@ public sealed class ForbiddenShrineCard : JainaSpellCardTemplate
         // x = 消耗的能量；升级后目标费用 x+1（无上限——花多少能量就施放多少费的卡牌）
         int x = ResolveEnergyXValue();
         int targetCost = IsUpgraded ? x + 1 : x;
+        // 0 费打出禁忌神龛（X=0）：X 星卡（星尘等 0 能量 X 星卡）才有机会被打出
+        bool allowStarCostX = targetCost == 0;
 
-        // 收集目标费用的<b>全角色</b>卡牌（Attack/Skill/Power/Minion/Landmark，含升级形态），
+        // 收集目标费用的<b>全角色</b>卡牌（Attack/Skill/Power，含升级形态），
         // 应用 Jaina 随机池统一排除（8 个非角色/衍生池、任务卡、先古稀有度、多人专属，见
-        // JainaRandomPoolHelper.IsEligible），排除英雄技能卡与自身（同名不可自发现）。
-        // 费用匹配用当前基础费用（含升级减费）：升级后减费到目标费用的形态也入选。
-        // 按费用分组收集（≤ targetCost 的都要）：能量超过 5 时（6/7/8 费没有卡）
-        // 回退到 ≤ X 的最高可用费用，保证任何能量都能打出卡（不做精确匹配死等）。
-        var byCost = new Dictionary<int, List<CardModel>>();
+        // JainaRandomPoolHelper.IsEligible），排除英雄技能卡、自身（同名不可自发现）。
+        // 费用匹配用当前基础费用（含升级减费）：升级后减费到目标费用的形态也入选；
+        // X 费卡（HasEnergyCostX）无论 X 是多少都入选（消耗全部能量，匹配任意 X）。
+        var pool = new List<CardModel>();
         foreach (var canonical in MegaCrit.Sts2.Core.Models.ModelDb.AllCards)
         {
             if (canonical == null)
@@ -123,6 +130,14 @@ public sealed class ForbiddenShrineCard : JainaSpellCardTemplate
             {
                 continue;
             }
+            // X 星卡（0 能量 X 星卡——储君的星尘等）：消耗星星而非能量，
+            // 默认不施放；只有 0 费打出禁忌神龛（X=0）时才有机会被打出
+            if (canonical.HasStarCostX && !allowStarCostX)
+            {
+                continue;
+            }
+            // X 费卡（EnergyCost.CostsX，如挽歌——消耗全部能量）：始终入选（匹配任意 X）
+            bool isEnergyX = canonical.EnergyCost.CostsX;
             int maxLevel = jaina.Scripts.Character.JainaCastTracker.GetDiscoverPoolMaxUpgradeLevel(canonical.GetType());
             for (int level = 0; level <= maxLevel; level++)
             {
@@ -132,43 +147,15 @@ public sealed class ForbiddenShrineCard : JainaSpellCardTemplate
                 {
                     continue;
                 }
-                int cost = (int)card.EnergyCost.GetWithModifiers(MegaCrit.Sts2.Core.Entities.Cards.CostModifiers.None);
-                if (cost > targetCost)
+                if (!isEnergyX &&
+                    card.EnergyCost.GetWithModifiers(MegaCrit.Sts2.Core.Entities.Cards.CostModifiers.None) != targetCost)
                 {
                     continue;
                 }
-                if (!byCost.TryGetValue(cost, out var list))
-                {
-                    list = [];
-                    byCost[cost] = list;
-                }
-                list.Add(card);
+                pool.Add(card);
             }
         }
-
-        // 优先精确匹配 targetCost；无则回退到费用 ≤ X 的最高可用费用组
-        // （6/7/8 费没有卡 → 能量 6~8 打 5 费卡；10/11 → 9 费卡；≥12 → 12 费卡）
-        List<CardModel>? pool = null;
-        if (byCost.TryGetValue(targetCost, out var exact) && exact.Count > 0)
-        {
-            pool = exact;
-        }
-        else
-        {
-            int best = -1;
-            foreach (var cost in byCost.Keys)
-            {
-                if (cost > best)
-                {
-                    best = cost;
-                }
-            }
-            if (best >= 0)
-            {
-                pool = byCost[best];
-            }
-        }
-        if (pool == null || pool.Count == 0)
+        if (pool.Count == 0)
         {
             return;
         }
