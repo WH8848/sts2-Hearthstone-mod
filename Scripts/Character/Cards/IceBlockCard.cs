@@ -12,7 +12,7 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
-/// 寒冰屏障 (Ice Block) - 2费能力牌（稀有，冰霜派系）。
+/// 寒冰屏障 (Ice Block) - 2费能力牌（罕见，冰霜派系）。
 /// 当你将要承受致命伤害时，防止这些伤害，并在本回合中免疫。
 /// 升级后费用变为 1。
 /// </summary>
@@ -37,7 +37,7 @@ public sealed class IceBlockCard : JainaSpellCardTemplate
     public override string CustomPortraitPath => "res://assets/card_art/ice_block.png";
 
     public IceBlockCard()
-        : base(2, CardType.Power, CardRarity.Rare, TargetType.Self, true)
+        : base(2, CardType.Power, CardRarity.Uncommon, TargetType.Self, true)
     {
     }
 
