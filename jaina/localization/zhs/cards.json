@@ -232,5 +232,7 @@
   "JAINA_CARD_CONNIVING_CONMAN_CARD.title": "蓄谋诈骗犯",
   "JAINA_CARD_CONNIVING_CONMAN_CARD.description": "召唤一个[blue]4/4[/blue]的[red]蓄谋诈骗犯[/red]。\n[gold]战吼[/gold]:再次使用你使用过的上一张卡牌。",
   "JAINA_CARD_EVERFIRE_ARROW_CARD.title": "永时火焰箭",
-  "JAINA_CARD_EVERFIRE_ARROW_CARD.description": "[gold]吸血[/gold]。\n对一个角色造成{Damage:diff()}点伤害。{IfUpgraded:show:\n下回合开始时，将本牌移回你的手牌。|}"
+  "JAINA_CARD_EVERFIRE_ARROW_CARD.description": "[gold]吸血[/gold]。\n对一个角色造成{Damage:diff()}点伤害。{IfUpgraded:show:\n下回合开始时，将本牌移回你的手牌。|}",
+  "JAINA_CARD_COSMIC_ANOMALY_CARD.title": "宇宙异象",
+  "JAINA_CARD_COSMIC_ANOMALY_CARD.description": "[gold]元素[/gold]。\n召唤一个[blue]4/3[/blue]的[red]宇宙异象[/red]。\n力量+2。"
 }

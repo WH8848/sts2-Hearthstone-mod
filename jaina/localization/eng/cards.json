@@ -232,5 +232,7 @@
   "JAINA_CARD_CONNIVING_CONMAN_CARD.title": "Conniving Conman",
   "JAINA_CARD_CONNIVING_CONMAN_CARD.description": "Summon a [blue]4/4[/blue] [red]Conniving Conman[/red].\n[gold]Battlecry[/gold]: Play the last card you played again.",
   "JAINA_CARD_EVERFIRE_ARROW_CARD.title": "Everfire Arrow",
-  "JAINA_CARD_EVERFIRE_ARROW_CARD.description": "[gold]Lifesteal[/gold].\nDeal {Damage:diff()} damage to a character.{IfUpgraded:show:\nAt the start of your next turn, return this card to your hand.|}"
+  "JAINA_CARD_EVERFIRE_ARROW_CARD.description": "[gold]Lifesteal[/gold].\nDeal {Damage:diff()} damage to a character.{IfUpgraded:show:\nAt the start of your next turn, return this card to your hand.|}",
+  "JAINA_CARD_COSMIC_ANOMALY_CARD.title": "Cosmic Anomaly",
+  "JAINA_CARD_COSMIC_ANOMALY_CARD.description": "[gold]Elemental[/gold].\nSummon a [blue]4/3[/blue] [red]Cosmic Anomaly[/red].\nStrength +2."
 }
