@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://di22gs0ir5cte"
-path="res://.godot/imported/flame_lance.png-27c8d087fe282807c039322c1a9f9229.ctex"
+uid="uid://cutcvnuvl30eo"
+path="res://.godot/imported/eternal_firebolt.png-a6b0e90125309249a7428fe79f1f0e16.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/card_art/flame_lance.png"
-dest_files=["res://.godot/imported/flame_lance.png-27c8d087fe282807c039322c1a9f9229.ctex"]
+source_file="res://assets/card_art/eternal_firebolt.png"
+dest_files=["res://.godot/imported/eternal_firebolt.png-a6b0e90125309249a7428fe79f1f0e16.ctex"]
 
 [params]
 

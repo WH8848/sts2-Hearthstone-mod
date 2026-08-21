@@ -44,10 +44,9 @@ public sealed class EverfireArrowCard : JainaSpellCardTemplate
         [new DamageVar(3m, ValueProp.Move)];
 
     /// <summary>
-    /// 卡牌原画：火焰主题官方原画（火焰长枪"Flame Lance"画面，视觉与火焰箭一致；
-    /// 如有"永时火焰箭"官方原画可替换）
+    /// 卡牌原画：炉石传说"永时火焰箭"（Eternal Firebolt, END_025）官方原画
     /// </summary>
-    public override string CustomPortraitPath => "res://assets/card_art/flame_lance.png";
+    public override string CustomPortraitPath => "res://assets/card_art/eternal_firebolt.png";
 
     public EverfireArrowCard()
         : base(1, CardType.Attack, CardRarity.Rare, JainaTargetTypes.AnyTargetable, true)
