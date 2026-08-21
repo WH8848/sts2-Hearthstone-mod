@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Generic;
 using System.Reflection;
-using System.Reflection.Emit;
 using System.Threading.Tasks;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.Animation;
@@ -12,9 +10,11 @@ namespace jaina.Scripts.Character.Powers;
 /// <summary>
 /// 动画触发安全兜底（两层）：
 /// 1. <see cref="AnimStateCallTriggerSafePatch"/>：<see cref="AnimState.CallTrigger"/>
-///    的动画条件 lambda 异常不中断（Transpiler 把 condition() 调用替换为 try-catch
-///    包装——<b>所有</b>动画触发路径最终都汇聚到这里，含 CreatureCmd.TriggerAnim、
+///    的动画条件 lambda 异常不中断（Prefix 用反射调用原方法并包 try-catch——
+///    <b>所有</b>动画触发路径最终都汇聚到这里：CreatureCmd.TriggerAnim、
 ///    DoomPower 直接 SetAnimationTrigger、NCreature 内部 Dead/Revive 触发）。
+///    <b>不用 Transpiler</b>：Transpiler 修改该方法的 IL 会触发 Harmony
+///    "Bad label content in ILGenerator"（PatchAll 崩 → mod dll 初始化失败）。
 /// 2. <see cref="TriggerAnimTaskSafePatch"/>：<see cref="CreatureCmd.TriggerAnim"/>
 ///    的 Task 再包一层 try-catch（双保险，模式同 CardStuckInPlayAfterPlayPatch）。
 ///
@@ -30,54 +30,27 @@ namespace jaina.Scripts.Character.Powers;
 public static class TriggerAnimSafePatch
 {
     /// <summary>
-    /// 安全调用动画条件：异常（怪物 Power 已移除等）返回 false（不切换动画），
-    /// 不影响任何游戏逻辑。
-    /// </summary>
-    private static bool SafeCondition(Func<bool>? condition)
-    {
-        if (condition == null)
-        {
-            return true;
-        }
-        try
-        {
-            return condition();
-        }
-        catch (Exception ex)
-        {
-            MegaCrit.Sts2.Core.Logging.Log.Warn($"[Jaina] Anim condition failed (visual only): {ex.GetType().Name} {ex.Message}");
-            return false;
-        }
-    }
-
-    /// <summary>
-    /// AnimState.CallTrigger：把 <c>condition.Invoke()</c> 替换为
-    /// <see cref="SafeCondition"/>（try-catch 包装）。覆盖所有动画触发路径。
+    /// AnimState.CallTrigger：Prefix 用反射调用原方法并包 try-catch。
+    /// 动画条件 lambda 异常（怪物 Power 已移除等）→ 返回 null（不切换动画），
+    /// 不影响任何游戏逻辑。覆盖所有动画触发路径。
     /// </summary>
     [HarmonyPatch(typeof(AnimState), nameof(AnimState.CallTrigger))]
     public static class AnimStateCallTriggerSafePatch
     {
-        private static readonly MethodInfo InvokeMethod =
-            typeof(Func<bool>).GetMethod("Invoke")!;
-
-        private static readonly MethodInfo SafeConditionMethod =
-            AccessTools.Method(typeof(TriggerAnimSafePatch), nameof(SafeCondition))!;
-
-        private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+        private static bool Prefix(AnimState __instance, string trigger,
+            ref AnimState? __result, MethodBase __originalMethod)
         {
-            foreach (var code in instructions)
+            try
             {
-                // condition() → SafeCondition(condition)：调用点栈上已有 Func<bool>，
-                // 替换 callvirt Invoke 为 call SafeCondition（签名匹配，参数即栈上的 Func）
-                if (code.opcode == OpCodes.Callvirt && Equals(code.operand, InvokeMethod))
-                {
-                    yield return new CodeInstruction(OpCodes.Call, SafeConditionMethod);
-                }
-                else
-                {
-                    yield return code;
-                }
+                __result = (AnimState?)__originalMethod.Invoke(__instance, new object[] { trigger });
             }
+            catch (TargetInvocationException ex)
+            {
+                MegaCrit.Sts2.Core.Logging.Log.Warn(
+                    $"[Jaina] Anim condition failed (visual only): {ex.InnerException?.GetType().Name ?? ex.GetType().Name} {ex.InnerException?.Message}");
+                __result = null;
+            }
+            return false;
         }
     }
 
