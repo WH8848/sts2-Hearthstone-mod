@@ -236,5 +236,7 @@
   "JAINA_CARD_ROBOCALLER_CARD.title": "Robocaller",
   "JAINA_CARD_ROBOCALLER_CARD.description": "Summon a [blue]3/2[/blue] [red]Robocaller[/red]. [gold]Battlecry[/gold]: Draw a card that costs {Roll0}, one that costs {Roll1}, and one that costs {Roll2}. (The dial is randomized each turn!)",
   "JAINA_CARD_CONNIVING_CONMAN_CARD.title": "Conniving Conman",
-  "JAINA_CARD_CONNIVING_CONMAN_CARD.description": "Summon a [blue]4/4[/blue] [red]Conniving Conman[/red].\n[gold]Battlecry[/gold]: Play the last card you played again."
+  "JAINA_CARD_CONNIVING_CONMAN_CARD.description": "Summon a [blue]4/4[/blue] [red]Conniving Conman[/red].\n[gold]Battlecry[/gold]: Play the last card you played again.",
+  "JAINA_CARD_EVERFIRE_ARROW_CARD.title": "Everfire Arrow",
+  "JAINA_CARD_EVERFIRE_ARROW_CARD.description": "[gold]Lifesteal[/gold].\nDeal {Damage:diff()} damage to a character.{IfUpgraded:show:\nAt the start of your next turn, return this card to your hand.|}"
 }
