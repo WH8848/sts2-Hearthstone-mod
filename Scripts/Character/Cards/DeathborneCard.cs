@@ -19,6 +19,7 @@ namespace jaina.Scripts.Character.Cards;
 /// <summary>
 /// 死神之躯 (Deathborne) - 2费技能牌（罕见，冰霜派系）。
 /// 对所有随从造成2点伤害，对敌人造成7次2点伤害。每消灭一个角色，召唤一个2/2的不稳定的骷髅。
+/// 战场上放不下的骷髅会立即爆炸（对随机敌人造成 2 点伤害）。
 /// 升级后变为"暴风雪 (Blizzard)"：造成7次2点伤害，随机分配到所有敌人身上。给予敌方全体7层冻结。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
@@ -150,10 +151,11 @@ public sealed class DeathborneCard : JainaSpellCardTemplate
             }
         }
 
-        // 3) 每消灭一个角色，召唤一个 2/2 的不稳定的骷髅
+        // 3) 每消灭一个角色，召唤一个 2/2 的不稳定的骷髅；
+        // 战场上放不下的骷髅会立即爆炸（对随机敌人造成 2 点伤害）
         for (int i = 0; i < killed; i++)
         {
-            await JainaMinionPool.SummonMinion<VolatileSkeleton>(
+            await JainaMinionPool.SummonVolatileSkeletonOrExplode(
                 choiceContext, base.Owner, maxHp: 2m, attack: 2m);
         }
     }

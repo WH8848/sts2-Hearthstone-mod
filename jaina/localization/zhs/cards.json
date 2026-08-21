@@ -100,7 +100,7 @@
   "JAINA_CARD_FIREBLAST_ANCIENT.description": "[gold]英雄技能[/gold]。\n造成{Damage:diff()}点伤害。\n你的所有英雄技能具有[gold]重放1[/gold]。",
   "JAINA_CARD_DEATHBORNE_CARD.title": "死神之躯",
   "JAINA_CARD_DEATHBORNE_CARD.titleUpgraded": "暴风雪",
-  "JAINA_CARD_DEATHBORNE_CARD.description": "随机造成{Damage:diff()}点伤害7次。{IfUpgraded:show:\n给予所有敌人7层[gold]冻结[/gold]。|对所有随从造成{Damage:diff()}点伤害。\n每[gold]斩杀[/gold]一个目标，召唤一个[blue]2/2[/blue]的[red]不稳定的骷髅[/red]。}",
+  "JAINA_CARD_DEATHBORNE_CARD.description": "随机造成{Damage:diff()}点伤害7次。{IfUpgraded:show:\n给予所有敌人7层[gold]冻结[/gold]。|对所有随从造成{Damage:diff()}点伤害。\n每[gold]斩杀[/gold]一个目标，召唤一个[blue]2/2[/blue]的[red]不稳定的骷髅[/red]。\n战场上放不下的骷髅会立即爆炸。}",
   "JAINA_CARD_FROST_NOVA.title": "冰霜新星",
   "JAINA_CARD_FROST_NOVA.description": "给予所有敌人7层[gold]冻结[/gold]。",
   "JAINA_CARD_EXONERATION_CARD.title": "脱罪力证",

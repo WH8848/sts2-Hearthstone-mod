@@ -1,12 +1,15 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
+using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.ValueProps;
 using MinionLib.Commands;
 using MinionLib.Minion;
 
@@ -75,6 +78,54 @@ public static class JainaMinionPool
             PrimaryStatAmount: attack,
             Source: source,
             Position: position));
+    }
+
+    /// <summary>
+    /// 召唤一个 2/2 的不稳定的骷髅；若战场已满（放不下），该骷髅立即爆炸：
+    /// 对随机敌人造成 2 点伤害（不稳定的骷髅的亡语伤害）。
+    /// 返回是否成功召唤（false = 战场已满，骷髅爆炸）。
+    /// </summary>
+    public static async Task<bool> SummonVolatileSkeletonOrExplode(
+        PlayerChoiceContext choiceContext,
+        Player player,
+        decimal? maxHp = null,
+        decimal? attack = null,
+        MegaCrit.Sts2.Core.Models.CardModel? source = null)
+    {
+        var summoned = await SummonMinion<VolatileSkeleton>(
+            choiceContext, player, maxHp, attack, MinionPosition.FrontUpper, source);
+        if (summoned != null)
+        {
+            return true;
+        }
+        await ExplodeSkeleton(choiceContext, player);
+        return false;
+    }
+
+    /// <summary>
+    /// 战场上放不下的骷髅立即爆炸：对随机敌人造成 2 点伤害（不稳定的骷髅的亡语伤害）。
+    /// </summary>
+    private static async Task ExplodeSkeleton(PlayerChoiceContext choiceContext, Player player)
+    {
+        var creature = player.Creature;
+        var state = creature?.CombatState;
+        if (state == null)
+        {
+            return;
+        }
+        var enemies = state.GetOpponentsOf(creature)
+            .Where(e => e != null && e.IsAlive && e.IsHittable)
+            .ToList();
+        if (enemies.Count == 0)
+        {
+            return;
+        }
+        var target = state.RunState.Rng.CombatTargets.NextItem(enemies);
+        if (target == null)
+        {
+            return;
+        }
+        await CreatureCmd.Damage(choiceContext, [target], 2, ValueProp.Unpowered, creature);
     }
 
     /// <summary>

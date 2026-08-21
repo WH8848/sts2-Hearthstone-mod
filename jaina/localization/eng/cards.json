@@ -100,7 +100,7 @@
   "JAINA_CARD_FIREBLAST_ANCIENT.description": "Deal {Damage:diff()} damage. At the start of each turn, add this card to your hand. Your Hero Powers have [gold]Replay 1[/gold].",
   "JAINA_CARD_DEATHBORNE_CARD.title": "Deathborne",
   "JAINA_CARD_DEATHBORNE_CARD.titleUpgraded": "Blizzard",
-  "JAINA_CARD_DEATHBORNE_CARD.description": "{IfUpgraded:show:Deal 7 instances of {Damage:diff()} damage, split randomly among all enemies. Give all enemies 7 [gold]Freeze[/gold].|Deal {Damage:diff()} damage to all minions, then deal 7 instances of {Damage:diff()} damage to enemies. For each character killed, summon a [blue]2/2[/blue] [red]Volatile Skeleton[/red].}",
+  "JAINA_CARD_DEATHBORNE_CARD.description": "{IfUpgraded:show:Deal 7 instances of {Damage:diff()} damage, split randomly among all enemies. Give all enemies 7 [gold]Freeze[/gold].|Deal {Damage:diff()} damage to all minions, then deal 7 instances of {Damage:diff()} damage to enemies. For each character killed, summon a [blue]2/2[/blue] [red]Volatile Skeleton[/red]. Skeletons that don't fit on the battlefield immediately explode.}",
   "JAINA_CARD_FROST_NOVA.title": "Frost Nova",
   "JAINA_CARD_FROST_NOVA.description": "{IfUpgraded:show:Give all enemies 7 [gold]Freeze[/gold].|Give all enemies 7 [gold]Freeze[/gold]. Exhaust.}",
   "JAINA_CARD_EXONERATION_CARD.title": "Exoneration",
