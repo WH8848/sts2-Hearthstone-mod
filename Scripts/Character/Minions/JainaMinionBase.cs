@@ -756,6 +756,26 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
                 MegaCrit.Sts2.Core.Logging.Log.Warn($"[JainaDeathrattle] error on {GetType().Name}: {ex}");
             }
         }
+
+        // 防御：死亡后主动从 CombatState 移除自身（默认 unattach=true，CombatState 置 null）。
+        // 官方死亡流程只清理 Enemy 侧（CreatureCmd.cs:556-563）；玩家随从的移除依赖
+        // MinionLib MinionKillPatch（Postfix 包裹异步任务，存在时序边缘/失败概率——
+        // 实测：5 个随从被 AOE 清场后残留，CombatState=null 的死随从仍留在 _allies，
+        // 下回合开始 StartTurn → AfterTurnStart → ClearBlock → ShouldClearBlock(null)
+        // NRE → "turn loop died" 战斗卡死）。
+        // 放在亡语之后（亡语需要 CombatState 正常）；try/catch 保护，不影响核心死亡收尾。
+        if (Creature.CombatState is { } deathState && Creature.CombatState == deathState)
+        {
+            try
+            {
+                deathState.RemoveCreature(Creature);
+            }
+            catch (System.Exception ex)
+            {
+                MegaCrit.Sts2.Core.Logging.Log.Warn(
+                    $"[JainaDeathrattle] remove-from-combat failed on {GetType().Name}: {ex}");
+            }
+        }
     }
 
     /// <summary>
