@@ -11,7 +11,7 @@ using STS2RitsuLib.Interop.AutoRegistration;
 namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
-/// 天定之灾克尔苏加德 (Kel'Thuzad, the Inevitable) - 3费随从卡（稀有，亡灵种族）。
+/// 天定之灾克尔苏加德 (Kel'Thuzad, the Inevitable) - 2费随从卡（稀有，亡灵种族）。
 /// 战吼：复活你的不稳定的骷髅。战场上放不下的骷髅会立即爆炸。属性 6/8。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
@@ -72,7 +72,7 @@ public sealed class KelThuzadCard : JainaMinionCardTemplate
         [JainaKeywords.Undead, JainaKeywords.Battlecry, CardKeyword.Exhaust];
 
     public KelThuzadCard()
-        : base(3, CardRarity.Rare)
+        : base(2, CardRarity.Rare)
     {
     }
 }
