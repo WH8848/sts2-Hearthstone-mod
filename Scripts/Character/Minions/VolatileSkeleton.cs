@@ -80,20 +80,17 @@ public sealed class VolatileSkeleton : JainaMinionBase
         {
             return;
         }
-        // 炉石亡语语义：伤害来源是死掉的随从本身，效果不因随从死亡而失效。
-        // 引擎对"已死 dealer"默认返回空伤害，由 JainaDeathrattleDamagePatch 在亡语结算期间放行。
-        JainaDeathrattleHelper.IsResolvingDeathrattle = true;
-        try
+        // 亡语伤害：来源改为骷髅的主人（玩家）——引擎禁止"已死 dealer"造成伤害，
+        // 与克尔苏加德战吼爆炸/冰冷案例/死神之躯的"放不下骷髅爆炸"一致：
+        // 玩家作 dealer + ValueProp.Unpowered 固定 2 点（不吃力量/专注，炉石亡语伤害语义）。
+        var dealer = Creature.PetOwner?.Creature;
+        if (dealer == null)
         {
-            var results = (await CreatureCmd.Damage(choiceContext, [target], DeathrattleDamage, ValueProp.Unpowered, Creature)).ToList();
-            MegaCrit.Sts2.Core.Logging.Log.Info(
-                $"[JainaDeathrattle] VolatileSkeleton damage: target={target.Monster?.GetType().Name} " +
-                $"unblocked={results.Sum(r => r.UnblockedDamage)} blocked={results.Sum(r => r.BlockedDamage)} " +
-                $"resolving={JainaDeathrattleHelper.IsResolvingDeathrattle}");
+            return;
         }
-        finally
-        {
-            JainaDeathrattleHelper.IsResolvingDeathrattle = false;
-        }
+        var results = (await CreatureCmd.Damage(choiceContext, [target], DeathrattleDamage, ValueProp.Unpowered, dealer)).ToList();
+        MegaCrit.Sts2.Core.Logging.Log.Info(
+            $"[JainaDeathrattle] VolatileSkeleton damage: target={target.Monster?.GetType().Name} " +
+            $"unblocked={results.Sum(r => r.UnblockedDamage)} blocked={results.Sum(r => r.BlockedDamage)}");
     }
 }

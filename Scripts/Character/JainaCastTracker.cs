@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using MegaCrit.Sts2.Core.Combat;
+using MegaCrit.Sts2.Core.Commands.Builders;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Models;
@@ -351,6 +353,16 @@ public static class JainaCastTracker
         {
             genUpgrades[type] = card.CurrentUpgradeLevel;
         }
+    }
+
+    /// <summary>
+    /// 统计一次攻击命令实际造成的总伤害（含力量/专注/易伤等修正）——
+    /// 英雄技能伤害记录用（火眼莫德雷斯条件：记录真实命中伤害而非基础值）。
+    /// 必须在 <c>Execute</c> 完成后调用（<see cref="AttackCommand.Results"/> 执行后才填充）。
+    /// </summary>
+    public static int SumActualDamage(AttackCommand attack)
+    {
+        return attack.Results.SelectMany(r => r).Sum(r => (int)r.TotalDamage);
     }
 
     /// <summary>

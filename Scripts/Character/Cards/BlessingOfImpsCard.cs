@@ -105,14 +105,15 @@ public sealed class BlessingOfImpsCard : JainaSpellCardTemplate
             {
                 break;
             }
-            await DamageCmd.Attack(hitDamage)
+            var attack = DamageCmd.Attack(hitDamage)
                 .FromCard(this, cardPlay)
                 .Targeting(target)
-                .WithHitFx("vfx/vfx_attack_blunt", null, "blunt_attack.mp3")
-                .Execute(choiceContext);
+                .WithHitFx("vfx/vfx_attack_blunt", null, "blunt_attack.mp3");
+            await attack.Execute(choiceContext);
 
-            // 记录英雄技能伤害（火眼莫德雷斯战吼条件用；每次释放都计）
-            jaina.Scripts.Character.JainaCastTracker.RecordHeroPowerDamage(this, hitDamage);
+            // 记录英雄技能实际造成伤害（含力量加成；每次释放都计——火眼莫德雷斯条件用）
+            jaina.Scripts.Character.JainaCastTracker.RecordHeroPowerDamage(
+                this, jaina.Scripts.Character.JainaCastTracker.SumActualDamage(attack));
         }
     }
 

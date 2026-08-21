@@ -88,14 +88,15 @@ public sealed class IcyTouchCard : JainaSpellCardTemplate
         // 造成伤害（参考火焰冲击）
         if (cardPlay.Target is { IsAlive: true } target)
         {
-            await DamageCmd.Attack(totalDamage)
+            var attack = DamageCmd.Attack(totalDamage)
                 .FromCard(this, cardPlay)
                 .Targeting(target)
-                .WithHitFx("vfx/vfx_attack_blunt")
-                .Execute(choiceContext);
+                .WithHitFx("vfx/vfx_attack_blunt");
+            await attack.Execute(choiceContext);
 
-            // 记录英雄技能伤害（火眼莫德雷斯战吼条件用）
-            jaina.Scripts.Character.JainaCastTracker.RecordHeroPowerDamage(this, totalDamage);
+            // 记录英雄技能实际造成伤害（含力量加成——火眼莫德雷斯条件用）
+            jaina.Scripts.Character.JainaCastTracker.RecordHeroPowerDamage(
+                this, jaina.Scripts.Character.JainaCastTracker.SumActualDamage(attack));
         }
 
         // 召唤一个水元素（3/6）

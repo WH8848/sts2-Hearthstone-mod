@@ -96,14 +96,15 @@ public sealed class Fireblast : JainaSpellCardTemplate
             return;
         }
 
-        await DamageCmd.Attack(totalDamage)
+        var attack = DamageCmd.Attack(totalDamage)
             .FromCard(this, cardPlay)
             .Targeting(fireblastTarget)
-            .WithHitFx("vfx/vfx_attack_blunt", null, "blunt_attack.mp3")
-            .Execute(choiceContext);
+            .WithHitFx("vfx/vfx_attack_blunt", null, "blunt_attack.mp3");
+        await attack.Execute(choiceContext);
 
-        // 记录英雄技能伤害（火眼莫德雷斯战吼条件用）
-        jaina.Scripts.Character.JainaCastTracker.RecordHeroPowerDamage(this, totalDamage);
+        // 记录英雄技能实际造成伤害（含力量加成——火眼莫德雷斯条件用）
+        jaina.Scripts.Character.JainaCastTracker.RecordHeroPowerDamage(
+            this, jaina.Scripts.Character.JainaCastTracker.SumActualDamage(attack));
     }
 
     /// <summary>
