@@ -48,20 +48,38 @@ public sealed class AegwynnLegacyPower : PowerModel, IModPowerAssetOverrides
     private CardModel? _claimedCard;
 
     /// <summary>
+    /// 已标记继承能力的随从牌实例（支持多张：模拟幻影复制标记卡时同步给复制品；
+    /// 任意一张打出兑现继承后全部作废——继承预算只兑现一次）
+    /// </summary>
+    private readonly HashSet<CardModel> _claimedCards = new();
+
+    /// <summary>
     /// 该卡是否是被标记的"下一张随从牌"（卡面显示艾格文亡语提示用）
     /// </summary>
-    public bool IsClaimedCard(CardModel card) => ReferenceEquals(_claimedCard, card);
+    public bool IsClaimedCard(CardModel card) => _claimedCards.Contains(card);
 
     /// <summary>
     /// 抽到随从牌时标记（只标记第一张；匹配标记卡由 OnSummon 消费转移后清空）
     /// </summary>
     public override Task AfterCardDrawn(PlayerChoiceContext choiceContext, CardModel card, bool fromHandDraw)
     {
-        if (_claimedCard == null && card is JainaMinionCardTemplate)
+        if (_claimedCards.Count == 0 && card is JainaMinionCardTemplate)
         {
-            _claimedCard = card;
+            _claimedCards.Add(card);
         }
         return Task.CompletedTask;
+    }
+
+    /// <summary>
+    /// 复制标记卡时同步给复制品（模拟幻影）：
+    /// 原卡与复制品共享"下一次兑现"的继承预算，任意一张打出即转移并全部作废。
+    /// </summary>
+    public void ClaimCopy(CardModel sourceCard, CardModel copy)
+    {
+        if (_claimedCards.Contains(sourceCard))
+        {
+            _claimedCards.Add(copy);
+        }
     }
 
     /// <summary>
@@ -71,11 +89,11 @@ public sealed class AegwynnLegacyPower : PowerModel, IModPowerAssetOverrides
     /// </summary>
     public async Task ConsumeForMinion(PlayerChoiceContext choiceContext, Creature minion, CardModel card)
     {
-        if (!ReferenceEquals(_claimedCard, card))
+        if (!_claimedCards.Contains(card))
         {
             return;
         }
-        _claimedCard = null;
+        _claimedCards.Clear();
         int count = System.Math.Max(1, (int)Amount);
         // 该卡在 OnSummon 中记录召唤出的随从生物（要求随从成功站场才算继承）
         if (minion is not { IsAlive: true })
