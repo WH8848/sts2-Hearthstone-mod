@@ -1,22 +1,13 @@
 using System;
-using System.Reflection;
 using System.Threading.Tasks;
 using HarmonyLib;
-using MegaCrit.Sts2.Core.Animation;
 using MegaCrit.Sts2.Core.Commands;
 
 namespace jaina.Scripts.Character.Powers;
 
 /// <summary>
-/// 动画触发安全兜底（两层）：
-/// 1. <see cref="AnimStateCallTriggerSafePatch"/>：<see cref="AnimState.CallTrigger"/>
-///    的动画条件 lambda 异常不中断（Prefix 用反射调用原方法并包 try-catch——
-///    <b>所有</b>动画触发路径最终都汇聚到这里：CreatureCmd.TriggerAnim、
-///    DoomPower 直接 SetAnimationTrigger、NCreature 内部 Dead/Revive 触发）。
-///    <b>不用 Transpiler</b>：Transpiler 修改该方法的 IL 会触发 Harmony
-///    "Bad label content in ILGenerator"（PatchAll 崩 → mod dll 初始化失败）。
-/// 2. <see cref="TriggerAnimTaskSafePatch"/>：<see cref="CreatureCmd.TriggerAnim"/>
-///    的 Task 再包一层 try-catch（双保险，模式同 CardStuckInPlayAfterPlayPatch）。
+/// 动画触发安全兜底：<see cref="CreatureCmd.TriggerAnim"/> 的 Task 包一层 try-catch，
+/// 动画回调异常（怪物动画条件 lambda NRE）不中断伤害/法术结算。
 ///
 /// 根因（实测日志）：RitsuLib 的 AttackHitHook 在<b>伤害结算之后</b>触发受击动画
 /// （原版时序是先播动画后结算伤害）。带"一次性/可移除 Power"的怪物动画条件
@@ -24,58 +15,33 @@ namespace jaina.Scripts.Character.Powers;
 /// - 寄生惧魔 Parafright：<c>() =&gt; !GetPower&lt;IllusionPower&gt;().IsReviving</c>
 ///   （1 层幻象，第一次被攻击后移除）；
 /// - 幻象园丁 PhantasmalGardener：<c>GetPower&lt;SkittishPower&gt;().HasGainedBlockThisTurn</c>。
-/// 动画是纯视觉层，失败不应中断伤害/法术结算（火焰风暴 7 次伤害第 1 次即崩、
+/// 动画是纯视觉层，失败不应中断游戏逻辑（火焰风暴 7 次伤害第 1 次即崩、
 /// 大法师的符文后续法术全部中断，都是该 NRE 冒泡所致）。
+///
+/// <b>实现说明</b>：只用 Task 层 try-catch（Postfix 替换 __result，模式同
+/// CardStuckInPlayAfterPlayPatch.WrapAsync）——<b>不用</b> AnimState.CallTrigger 的
+/// Transpiler（会触发 Harmony "Bad label content in ILGenerator"，dll 初始化失败）
+/// 也<b>不用</b>反射 Prefix 手动调用原方法（动画高频路径 + 可空返回类型反射有
+/// 崩溃隐患——实测打出二级火焰冲击后游戏卡死崩溃）。
 /// </summary>
+[HarmonyPatch(typeof(CreatureCmd), nameof(CreatureCmd.TriggerAnim))]
 public static class TriggerAnimSafePatch
 {
-    /// <summary>
-    /// AnimState.CallTrigger：Prefix 用反射调用原方法并包 try-catch。
-    /// 动画条件 lambda 异常（怪物 Power 已移除等）→ 返回 null（不切换动画），
-    /// 不影响任何游戏逻辑。覆盖所有动画触发路径。
-    /// </summary>
-    [HarmonyPatch(typeof(AnimState), nameof(AnimState.CallTrigger))]
-    public static class AnimStateCallTriggerSafePatch
+    public static void Postfix(ref Task __result)
     {
-        private static bool Prefix(AnimState __instance, string trigger,
-            ref AnimState? __result, MethodBase __originalMethod)
-        {
-            try
-            {
-                __result = (AnimState?)__originalMethod.Invoke(__instance, new object[] { trigger });
-            }
-            catch (TargetInvocationException ex)
-            {
-                MegaCrit.Sts2.Core.Logging.Log.Warn(
-                    $"[Jaina] Anim condition failed (visual only): {ex.InnerException?.GetType().Name ?? ex.GetType().Name} {ex.InnerException?.Message}");
-                __result = null;
-            }
-            return false;
-        }
+        __result = WrapAsync(__result);
     }
 
-    /// <summary>
-    /// CreatureCmd.TriggerAnim 的 Task 再包一层 try-catch（双保险）。
-    /// </summary>
-    [HarmonyPatch(typeof(CreatureCmd), nameof(CreatureCmd.TriggerAnim))]
-    public static class TriggerAnimTaskSafePatch
+    private static async Task WrapAsync(Task original)
     {
-        public static void Postfix(ref Task __result)
+        try
         {
-            __result = WrapAsync(__result);
+            await original;
         }
-
-        private static async Task WrapAsync(Task original)
+        catch (Exception ex)
         {
-            try
-            {
-                await original;
-            }
-            catch (Exception ex)
-            {
-                // 动画失败（如怪物幻象消失后动画条件 NRE）仅影响视觉，不影响游戏逻辑
-                MegaCrit.Sts2.Core.Logging.Log.Warn($"[Jaina] TriggerAnim animation failed (visual only): {ex.GetType().Name} {ex.Message}");
-            }
+            // 动画失败（如怪物幻象消失后动画条件 NRE）仅影响视觉，不影响游戏逻辑
+            MegaCrit.Sts2.Core.Logging.Log.Warn($"[Jaina] TriggerAnim animation failed (visual only): {ex.GetType().Name} {ex.Message}");
         }
     }
 }
