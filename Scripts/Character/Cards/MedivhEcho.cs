@@ -69,9 +69,10 @@ public sealed class MedivhEcho : JainaSpellCardTemplate
             return;
         }
 
-        // 收集友方存活随从（玩家侧宠物中的 Jaina 随从）
+        // 收集友方存活随从（玩家侧宠物中的 Jaina 随从；地标虽是 JainaMinionBase 子类
+        // 但占随从槽使用、不是随从——不复制，参考 MinionSquadPower 的排除写法）
         var minions = owner.PlayerCombatState?.Pets
-            .Where(p => p != null && p.IsAlive && p.Monster is JainaMinionBase)
+            .Where(p => p != null && p.IsAlive && p.Monster is JainaMinionBase && p.Monster is not JainaLandmarkBase)
             .ToList() ?? [];
 
         foreach (var minion in minions)
