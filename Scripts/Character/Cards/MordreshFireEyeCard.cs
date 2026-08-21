@@ -104,6 +104,8 @@ public sealed class MordreshFireEyeCard : JainaSpellCardTemplate, IJainaConditio
         // 条件：英雄技能本局累计造成 10 点伤害（火焰冲击记录）
         var rec = jaina.Scripts.Character.JainaCastTracker.For(combatState);
         rec.HeroPowerDamageDealtByPlayer.TryGetValue(base.Owner.NetId, out var heroPowerDamage);
+        MegaCrit.Sts2.Core.Logging.Log.Info(
+            $"[Jaina] Mordresh Fire Eye: heroPowerDamage={heroPowerDamage} need>=10 -> {(heroPowerDamage >= 10 ? "proceed" : "SKIP no damage")}");
         if (heroPowerDamage < 10)
         {
             return;
@@ -114,6 +116,7 @@ public sealed class MordreshFireEyeCard : JainaSpellCardTemplate, IJainaConditio
         var enemies = combatState.GetOpponentsOf(base.Owner.Creature)
             .Where(e => e != null && e.IsAlive && e.IsHittable)
             .ToList();
+        MegaCrit.Sts2.Core.Logging.Log.Info($"[Jaina] Mordresh Fire Eye: enemies={enemies.Count}");
         for (int i = 0; i < 8; i++)
         {
             enemies = enemies.Where(e => e.IsAlive).ToList();
@@ -130,6 +133,8 @@ public sealed class MordreshFireEyeCard : JainaSpellCardTemplate, IJainaConditio
                 .FromCard(this, cardPlay)
                 .Targeting(target)
                 .Execute(choiceContext);
+            MegaCrit.Sts2.Core.Logging.Log.Info(
+                $"[Jaina] Mordresh Fire Eye hit #{i + 1}: {target.Identity?.Name ?? target.Name} alive={target.IsAlive}");
         }
     }
 
