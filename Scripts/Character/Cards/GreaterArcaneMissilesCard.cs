@@ -15,7 +15,7 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
-/// 强能奥术飞弹 (Greater Arcane Missiles) - 1费攻击牌（罕见，火焰派系）。
+/// 强能奥术飞弹 (Greater Arcane Missiles) - 1费攻击牌（稀有，火焰派系）。
 /// 对随机敌人造成 3 次 3 点伤害。
 /// 升级后变为"星辰能量 (Star Power)"（奥术派系）：随机对一个敌方造成 5 点伤害。
 /// 重复此效果，每次伤害减少 1 点。星辰能量吃力量（起始伤害 = 5 + 力量）。
@@ -75,7 +75,7 @@ public sealed class GreaterArcaneMissilesCard : JainaSpellCardTemplate
         IsUpgraded ? "res://assets/card_art/star_power.png" : "res://assets/card_art/greater_arcane_missiles.png";
 
     public GreaterArcaneMissilesCard()
-        : base(1, CardType.Attack, CardRarity.Uncommon, TargetType.None, true)
+        : base(1, CardType.Attack, CardRarity.Rare, TargetType.None, true)
     {
     }
 
