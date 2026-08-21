@@ -15,7 +15,7 @@
   "JAINA_CARD_ARCANE_INTELLECT.description": "Draw {Cards} cards. {IfUpgraded:show:Summon a [blue]3/4[/blue] [red]Zealot[/red].|}",
   "JAINA_CARD_ICE_BARRIER.title": "Ice Barrier",
   "JAINA_CARD_ICE_BARRIER.titleUpgraded": "Cold Case",
-  "JAINA_CARD_ICE_BARRIER.description": "{IfUpgraded:show:Summon 2 [blue]2/2[/blue] [red]Volatile Skeletons[/red], and gain|When you are attacked this turn, gain} {Block:diff()} Block.",
+  "JAINA_CARD_ICE_BARRIER.description": "{IfUpgraded:show:Summon 2 [blue]2/2[/blue] [red]Volatile Skeletons[/red]. Skeletons that don't fit on the battlefield immediately explode, and|When you are attacked this turn,} gain {Block:diff()} Block.",
   "JAINA_CARD_VOLATILE_SKELETON_CARD.title": "Volatile Skeleton",
   "JAINA_CARD_VOLATILE_SKELETON_CARD.description": "[gold]Undead[/gold].\nSummon a [blue]2/2[/blue] [red]Volatile Skeleton[/red].\n[gold]Deathrattle[/gold]: Deal 2 damage to a random enemy.",
   "JAINA_CARD_ZEALOT_CARD.title": "Zealot",

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -19,6 +20,7 @@ namespace jaina.Scripts.Character.Cards;
 /// 寒冰护体 (Ice Barrier) - 吉安娜的基础技能牌。
 /// 1费：获得 8 点护甲值。
 /// 升级后变为"冰冷案例 (Cold Case)"：召唤 2 个 2/2 的不稳定的骷髅，并获得 4 点护甲值。
+/// 战场上放不下的骷髅会立即爆炸（对随机敌人造成 2 点伤害）。
 /// 不稳定的骷髅是冰冷案例的衍生物：悬停冰冷案例卡牌时，会显示不稳定的骷髅衍生物卡。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
@@ -92,7 +94,8 @@ public sealed class IceBarrier : JainaSpellCardTemplate
     /// <summary>
     /// 打出效果：
     /// 未升级（寒冰护盾）：本回合内受到攻击时，获得 8 点护甲。
-    /// 已升级（冰冷案例）：召唤 2 个 2/2 不稳定的骷髅 + 获得 4 点护甲。
+    /// 已升级（冰冷案例）：召唤 2 个 2/2 不稳定的骷髅 + 获得 4 点护甲；
+    /// 战场上放不下的骷髅会立即爆炸（对随机敌人造成 2 点伤害）。
     /// </summary>
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
@@ -104,8 +107,16 @@ public sealed class IceBarrier : JainaSpellCardTemplate
             // 冰冷案例：召唤 2 个 2/2 不稳定的骷髅（衍生物）
             // 注意：必须 await —— 召唤走随从动作同步流，fire-and-forget
             // 会导致两端执行时序错位，联机状态分歧断联。
-            await JainaMinionPool.SummonMinion<VolatileSkeleton>(choiceContext, base.Owner, maxHp: 2m, attack: 2m);
-            await JainaMinionPool.SummonMinion<VolatileSkeleton>(choiceContext, base.Owner, maxHp: 2m, attack: 2m);
+            for (int i = 0; i < 2; i++)
+            {
+                var skeleton = await JainaMinionPool.SummonMinion<VolatileSkeleton>(
+                    choiceContext, base.Owner, maxHp: 2m, attack: 2m);
+                if (skeleton == null)
+                {
+                    // 战场上放不下的骷髅立即爆炸（对随机敌人造成 2 点伤害，亡语伤害）
+                    await ExplodeUnplacedSkeleton(choiceContext);
+                }
+            }
             // 获得 4 点护甲
             await CreatureCmd.GainBlock(base.Owner.Creature, new BlockVar(4m, ValueProp.Move), cardPlay);
             return;
@@ -114,6 +125,32 @@ public sealed class IceBarrier : JainaSpellCardTemplate
         // 寒冰护盾：本回合内受到攻击时，获得 8 点护甲（受击触发，回合结束失效）
         await PowerCmd.Apply<jaina.Scripts.Character.Powers.IceBarrierPower>(
             choiceContext, [base.Owner.Creature], 8m, base.Owner.Creature, this);
+    }
+
+    /// <summary>
+    /// 战场上放不下的骷髅立即爆炸：对随机敌人造成 2 点伤害（不稳定的骷髅的亡语伤害）。
+    /// </summary>
+    private async Task ExplodeUnplacedSkeleton(PlayerChoiceContext choiceContext)
+    {
+        var creature = base.Owner.Creature;
+        var state = creature.CombatState;
+        if (state == null)
+        {
+            return;
+        }
+        var enemies = state.GetOpponentsOf(creature)
+            .Where(e => e != null && e.IsAlive && e.IsHittable)
+            .ToList();
+        if (enemies.Count == 0)
+        {
+            return;
+        }
+        var target = state.RunState.Rng.CombatTargets.NextItem(enemies);
+        if (target == null)
+        {
+            return;
+        }
+        await CreatureCmd.Damage(choiceContext, [target], 2, ValueProp.Unpowered, creature);
     }
 
     protected override void OnUpgrade()
