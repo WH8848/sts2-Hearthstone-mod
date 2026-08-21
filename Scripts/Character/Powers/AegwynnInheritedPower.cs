@@ -37,7 +37,7 @@ public sealed class AegwynnInheritedPower : PowerModel, IModPowerAssetOverrides
     protected override bool IsVisibleInternal => true;
 
     /// <summary>
-    /// 继承随从死亡：移除玩家 +2 力量，并将继承效果传给下一张抽到的随从牌
+    /// 继承随从死亡：返还 2*层数 力量，并将继承效果（同层数）传给下一张抽到的随从牌
     /// </summary>
     public override async Task AfterDeath(PlayerChoiceContext choiceContext, Creature creature,
         bool wasRemovalPrevented, float deathAnimLength)
@@ -51,7 +51,8 @@ public sealed class AegwynnInheritedPower : PowerModel, IModPowerAssetOverrides
         {
             return;
         }
-        await PowerCmd.Apply<StrengthPower>(choiceContext, [petOwner.Creature], -2m, Owner, null);
-        await PowerCmd.Apply<AegwynnLegacyPower>(choiceContext, [petOwner.Creature], 1m, Owner, null);
+        int count = System.Math.Max(1, (int)Amount);
+        await PowerCmd.Apply<StrengthPower>(choiceContext, [petOwner.Creature], -2m * count, Owner, null);
+        await PowerCmd.Apply<AegwynnLegacyPower>(choiceContext, [petOwner.Creature], count, Owner, null);
     }
 }

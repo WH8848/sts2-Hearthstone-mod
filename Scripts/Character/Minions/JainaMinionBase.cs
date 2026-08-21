@@ -496,6 +496,19 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
             // 战斗场景未就绪时忽略，回合开始揭示流程会再次刷新
         }
 
+        // 艾格文亡语继承（炉石语义）：被标记的随从牌（AegwynnLegacyPower.IsClaimedCard）
+        // 召唤登场时，在<b>战吼之前</b>消费继承：玩家获得 +2*层数 力量，本随从挂继承
+        // Power（死亡时返还力量并链式传续）。放战吼前是因为战吼可能施放英雄技能
+        // （如鲁莽的学徒发射 8 次）——晚于战吼则战吼吃不到继承力量（实测 bug）。
+        var petOwner0 = Creature.PetOwner;
+        if (options.Source is jaina.Scripts.Character.Cards.JainaMinionCardTemplate &&
+            petOwner0 != null &&
+            petOwner0.Creature.GetPower<jaina.Scripts.Character.Powers.AegwynnLegacyPower>() is { } legacy &&
+            legacy.IsClaimedCard(options.Source))
+        {
+            await legacy.ConsumeForMinion(choiceContext, Creature, options.Source);
+        }
+
         // 战吼只在"从手牌打出随从卡"时触发（炉石规则：随机召唤/效果召唤不触发战吼）。
         // 判断依据：只有 JainaMinionCardTemplate.OnPlay 召唤时 Source 传的是随从卡实例。
         if (options.Source is jaina.Scripts.Character.Cards.JainaMinionCardTemplate)
