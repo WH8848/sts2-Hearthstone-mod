@@ -8,6 +8,8 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Enchantments;
 using MegaCrit.Sts2.Core.Models.Relics;
+using MegaCrit.Sts2.Core.Nodes.Cards;
+using MegaCrit.Sts2.Core.Nodes.Screens.CardSelection;
 using MegaCrit.Sts2.Core.Runs;
 
 namespace jaina.Scripts.Character.Powers;
@@ -29,6 +31,16 @@ namespace jaina.Scripts.Character.Powers;
 public static class HeroPowerUncopyablePatch
 {
     /// <summary>
+    /// UI 预览/选择上下文：为 true 时 <see cref="RunState.CloneCard"/> 对英雄技能卡<b>正常克隆</b>（不拦截）——
+    /// 升级预览（NUpgradePreview/NDeckUpgradeSelectScreen）与附魔预览（NEnchantPreview/
+    /// 使用预览需要克隆一张卡来渲染"升级后/附魔后"卡面；若拦截返回 null，
+    /// 预览调用 NullReferenceException（实测：锻造界面点击二级火焰冲击卡住）。
+    /// 克隆拦截只应用于真正的复制机制（倒影/叮当/多莉的镜子/历史课等）。
+    /// 由下方 UI patch 的 Prefix/Postfix 置位/复位（UI 线程同步，无并发）。
+    /// </summary>
+    internal static bool UiPreviewCloneContext;
+
+    /// <summary>
     /// 是否为英雄技能卡（复用 HeroPowerHandHelper 判定）
     /// </summary>
     private static bool IsHeroPower(CardModel? card)
@@ -42,19 +54,56 @@ public static class HeroPowerUncopyablePatch
     /// （卡进入牌库时复制）、多莉的镜子（DollysMirror 选牌库卡复制）、
     /// 冰蛋/熔岩蛋/毒蛋（仅 Power 类型，天然不触发）、弗雷斯内尔透镜/
     /// 闪光/丝绒发辫/熔岩灯/白银坩埚/羽饰（奖励卡附魔/升级克隆，天然不含英雄技能）。
+    /// <b>UI 预览克隆（升级/附魔预览）放行</b>：见 <see cref="UiPreviewCloneContext"/>。
     /// </summary>
     [HarmonyPatch(typeof(RunState), nameof(RunState.CloneCard))]
     public static class RunStateCloneCardPatch
     {
         private static bool Prefix(RunState __instance, CardModel mutableCard, ref CardModel? __result)
         {
-            if (IsHeroPower(mutableCard))
+            if (IsHeroPower(mutableCard) && !HeroPowerUncopyablePatch.UiPreviewCloneContext)
             {
                 __result = null;
                 return false;
             }
             return true;
         }
+    }
+
+    /// <summary>
+    /// 升级预览（单卡模式，NUpgradePreview.Reload 经 Card.CardScope.CloneCard 克隆）：
+    /// 预览期间克隆放行（否则英雄技能卡升级预览 NRE，联网锻造界面点击卡住）。
+    /// </summary>
+    [HarmonyPatch(typeof(NUpgradePreview), "Reload")]
+    public static class NUpgradePreviewReloadPatch
+    {
+        private static void Prefix() => UiPreviewCloneContext = true;
+
+        private static void Postfix() => UiPreviewCloneContext = false;
+    }
+
+    /// <summary>
+    /// 升级选择屏（多选模式，OnCardClicked 内 _runState.CloneCard 克隆）：
+    /// 选择/预览期间克隆放行。
+    /// </summary>
+    [HarmonyPatch(typeof(NDeckUpgradeSelectScreen), "OnCardClicked")]
+    public static class NDeckUpgradeSelectScreenPatch
+    {
+        private static void Prefix() => UiPreviewCloneContext = true;
+
+        private static void Postfix() => UiPreviewCloneContext = false;
+    }
+
+    /// <summary>
+    /// 附魔预览（NEnchantPreview.Init 经 Card.CardScope.CloneCard 克隆）：
+    /// 预览期间克隆放行。
+    /// </summary>
+    [HarmonyPatch(typeof(NEnchantPreview), nameof(NEnchantPreview.Init))]
+    public static class NEnchantPreviewPatch
+    {
+        private static void Prefix() => UiPreviewCloneContext = true;
+
+        private static void Postfix() => UiPreviewCloneContext = false;
     }
 
     /// <summary>
