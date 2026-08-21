@@ -134,7 +134,7 @@ public sealed class MordreshFireEyeCard : JainaSpellCardTemplate, IJainaConditio
                 .Targeting(target)
                 .Execute(choiceContext);
             MegaCrit.Sts2.Core.Logging.Log.Info(
-                $"[Jaina] Mordresh Fire Eye hit #{i + 1}: {target.Identity?.Name ?? target.Name} alive={target.IsAlive}");
+                $"[Jaina] Mordresh Fire Eye hit #{i + 1}: {target.Name} alive={target.IsAlive}");
         }
     }
 
