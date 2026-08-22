@@ -4,5 +4,5 @@
   "CARD_TYPE.LANDMARK": "Landmark",
   "CARD_TYPE.SPELL": "Spell",
   "CARD_TYPE.UNKNOWN": "Card",
-  "JAINA_UI_AEGWYNN_DEATHRATTLE": "[gold]Deathrattle[/gold]: Gain +2 Strength. When this dies, pass this effect to the next minion card you draw."
+  "JAINA_UI_AEGWYNN_DEATHRATTLE": "[gold]Deathrattle[/gold]: Gain +{Bonus} Strength. When this dies, pass this effect to the next minion card you draw."
 }

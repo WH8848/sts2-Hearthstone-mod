@@ -105,13 +105,31 @@ public abstract class JainaMinionCardTemplate : ModCardTemplate,
         }
         // 艾格文亡语继承提示（参考炉石：被赋予亡语的随从卡面显示该亡语）：
         // 本卡是"艾格文的馈赠"标记的下一张随从牌（在手中时）→ 描述追加艾格文亡语。
+        // 力量加成为动态：2 * 层数（两张艾格文 → +4）。
         // canonical（图鉴渲染等）不可变：访问 Owner 会抛异常，先判 IsMutable
-        if (IsMutable && Owner != null &&
-            Owner.Creature.GetPower<jaina.Scripts.Character.Powers.AegwynnLegacyPower>() is { } legacy &&
-            legacy.IsClaimedCard(this))
+        if (IsMutable && Owner != null)
         {
-            description += "\n" + new MegaCrit.Sts2.Core.Localization.LocString(
-                "gameplay_ui", "JAINA_UI_AEGWYNN_DEATHRATTLE").GetFormattedText();
+            int bonus = 0;
+            var legacy = Owner.Creature.GetPower<jaina.Scripts.Character.Powers.AegwynnLegacyPower>();
+            if (legacy != null && legacy.IsClaimedCard(this))
+            {
+                bonus = 2 * System.Math.Max(1, (int)legacy.Amount);
+            }
+            else
+            {
+                var copyPower = Owner.Creature.GetPower<jaina.Scripts.Character.Powers.AegwynnLegacyCopyPower>();
+                if (copyPower != null && copyPower.IsClaimedCard(this))
+                {
+                    bonus = 2 * System.Math.Max(1, (int)copyPower.Amount);
+                }
+            }
+            if (bonus > 0)
+            {
+                description += "\n" + new MegaCrit.Sts2.Core.Localization.LocString(
+                    "gameplay_ui", "JAINA_UI_AEGWYNN_DEATHRATTLE")
+                    .GetFormattedText()
+                    .Replace("{Bonus}", bonus.ToString());
+            }
         }
         return description;
     }

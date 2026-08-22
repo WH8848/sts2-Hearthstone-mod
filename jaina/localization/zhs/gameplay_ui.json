@@ -4,5 +4,5 @@
   "CARD_TYPE.LANDMARK": "地标",
   "CARD_TYPE.SPELL": "法术",
   "CARD_TYPE.UNKNOWN": "卡牌",
-  "JAINA_UI_AEGWYNN_DEATHRATTLE": "[gold]亡语[/gold]:获得力量+2。该随从死亡时，将此效果传给下一张抽到的随从牌。"
+  "JAINA_UI_AEGWYNN_DEATHRATTLE": "[gold]亡语[/gold]:获得力量+{Bonus}。该随从死亡时，将此效果传给下一张抽到的随从牌。"
 }
