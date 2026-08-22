@@ -38,10 +38,10 @@ public sealed class MordreshFireEyeCard : JainaSpellCardTemplate, IJainaConditio
     protected override HashSet<CardTag> CanonicalTags => new HashSet<CardTag> { CardTag.Strike };
 
     /// <summary>
-    /// 法术牌 + 火焰派系
+    /// 法术牌（无派系——炉石原卡无派系；不触发派系类效果如西芙遗物加成）
     /// </summary>
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
-        [JainaKeywords.Spell, JainaKeywords.Fire];
+        [JainaKeywords.Spell];
 
     /// <summary>
     /// 动态伤害变量（STS2 原版机制：{Damage} 预览实际伤害，含力量/虚弱/易伤）
