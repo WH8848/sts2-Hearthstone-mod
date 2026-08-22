@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -22,6 +23,8 @@ namespace jaina.Scripts.Character.Powers;
 /// 随后本 Power 移除。
 /// <b>层数（Amount）= 死亡过的艾格文数量</b>（Counter 叠层）：两张艾格文亡语
 /// 各自+1 层 → 继承随从获得 +4 力量、挂 2 层继承（死亡时一次返还 4 点并传 2 层）。
+/// <b>复制品独立机会</b>：被标记卡被模拟幻影复制时，复制机会交给独立类型
+/// <see cref="AegwynnLegacyCopyPower"/>（与主链互不干扰，见 ClaimCopyAsync）。
 /// </summary>
 [RegisterPower]
 public sealed class AegwynnLegacyPower : PowerModel, IModPowerAssetOverrides
@@ -48,38 +51,37 @@ public sealed class AegwynnLegacyPower : PowerModel, IModPowerAssetOverrides
     private CardModel? _claimedCard;
 
     /// <summary>
-    /// 已标记继承能力的随从牌实例（支持多张：模拟幻影复制标记卡时同步给复制品；
-    /// 任意一张打出兑现继承后全部作废——继承预算只兑现一次）
-    /// </summary>
-    private readonly HashSet<CardModel> _claimedCards = new();
-
-    /// <summary>
     /// 该卡是否是被标记的"下一张随从牌"（卡面显示艾格文亡语提示用）
     /// </summary>
-    public bool IsClaimedCard(CardModel card) => _claimedCards.Contains(card);
+    public bool IsClaimedCard(CardModel card) => ReferenceEquals(_claimedCard, card);
 
     /// <summary>
     /// 抽到随从牌时标记（只标记第一张；匹配标记卡由 OnSummon 消费转移后清空）
     /// </summary>
     public override Task AfterCardDrawn(PlayerChoiceContext choiceContext, CardModel card, bool fromHandDraw)
     {
-        if (_claimedCards.Count == 0 && card is JainaMinionCardTemplate)
+        if (_claimedCard == null && card is JainaMinionCardTemplate)
         {
-            _claimedCards.Add(card);
+            _claimedCard = card;
         }
         return Task.CompletedTask;
     }
 
     /// <summary>
-    /// 复制标记卡时同步给复制品（模拟幻影）：
-    /// 原卡与复制品共享"下一次兑现"的继承预算，任意一张打出即转移并全部作废。
+    /// 复制标记卡时（模拟幻影）：复制品的继承机会交给<b>独立类型</b>
+    /// <see cref="AegwynnLegacyCopyPower"/>（同层数）——原卡（本 Power）与复制品
+    /// 各自拥有独立的一次兑现，互不消耗、互不干扰（含后续链传）。
     /// </summary>
-    public void ClaimCopy(CardModel sourceCard, CardModel copy)
+    public async Task ClaimCopyAsync(PlayerChoiceContext choiceContext, CardModel sourceCard, CardModel copy)
     {
-        if (_claimedCards.Contains(sourceCard))
+        if (!ReferenceEquals(_claimedCard, sourceCard))
         {
-            _claimedCards.Add(copy);
+            return;
         }
+        int count = System.Math.Max(1, (int)Amount);
+        var copyPower = await PowerCmd.Apply<AegwynnLegacyCopyPower>(
+            choiceContext, Owner, count, Owner, null);
+        copyPower?.MarkClaimed(copy);
     }
 
     /// <summary>
@@ -89,11 +91,11 @@ public sealed class AegwynnLegacyPower : PowerModel, IModPowerAssetOverrides
     /// </summary>
     public async Task ConsumeForMinion(PlayerChoiceContext choiceContext, Creature minion, CardModel card)
     {
-        if (!_claimedCards.Contains(card))
+        if (!ReferenceEquals(_claimedCard, card))
         {
             return;
         }
-        _claimedCards.Clear();
+        _claimedCard = null;
         int count = System.Math.Max(1, (int)Amount);
         // 该卡在 OnSummon 中记录召唤出的随从生物（要求随从成功站场才算继承）
         if (minion is not { IsAlive: true })

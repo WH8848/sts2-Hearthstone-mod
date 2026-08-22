@@ -83,13 +83,12 @@ public sealed class SimulacrumCard : JainaSpellCardTemplate
             return;
         }
 
-        // 艾格文亡语继承：被标记的随从牌被复制时,复制品同样携带继承——
-        // 原卡与复制品共享"下一次兑现"预算,任意一张打出即转移(力量+2*层数,
-        // 挂继承并链传),另一张随之作废(不会双份继承)。
+        // 艾格文亡语继承：被标记的随从牌被复制时,复制品获得<b>独立</b>的一次继承机会
+        // （AegwynnLegacyCopyPower,同层数）——与原卡互不消耗,各自可兑现一次。
         if (player.Creature.GetPower<jaina.Scripts.Character.Powers.AegwynnLegacyPower>() is { } legacy &&
             legacy.IsClaimedCard(cheapest))
         {
-            legacy.ClaimCopy(cheapest, copy);
+            await legacy.ClaimCopyAsync(choiceContext, cheapest, copy);
         }
 
         jaina.Scripts.Character.JainaCastTracker.MarkGenerated(copy);
