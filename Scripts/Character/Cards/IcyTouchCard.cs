@@ -17,7 +17,7 @@ namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
 /// 冰冷触摸 (Icy Touch) - 0费攻击牌（衍生，英雄技能，冰霜派系）。
-/// 造成 1 点伤害，召唤一个水元素。
+/// 造成 1 点伤害；如果该英雄技能消灭了一个角色，召唤一个 3/6 的水元素。
 /// 由冰霜女巫吉安娜替换英雄技能后，每回合开始自动加入手牌（英雄技能卡不占手牌位）。
 /// </summary>
 [RegisterCard(typeof(JainaNeutralCardPool))]
@@ -97,16 +97,19 @@ public sealed class IcyTouchCard : JainaSpellCardTemplate
             // 记录英雄技能实际造成伤害（含力量加成——火眼莫德雷斯条件用）
             jaina.Scripts.Character.JainaCastTracker.RecordHeroPowerDamage(
                 this, jaina.Scripts.Character.JainaCastTracker.SumActualDamage(attack));
-        }
 
-        // 召唤一个水元素（3/6）
-        await JainaMinionPool.SummonMinionByType(
-            choiceContext,
-            base.Owner,
-            typeof(WaterElementalMinion),
-            maxHp: 6m,
-            attack: 3m,
-            source: this);
+            // 消灭了一个角色（目标因此死亡）→ 召唤一个 3/6 的水元素
+            if (!target.IsAlive)
+            {
+                await JainaMinionPool.SummonMinionByType(
+                    choiceContext,
+                    base.Owner,
+                    typeof(WaterElementalMinion),
+                    maxHp: 6m,
+                    attack: 3m,
+                    source: this);
+            }
+        }
     }
 
     /// <summary>

@@ -181,7 +181,7 @@
   "JAINA_CARD_FROST_LICH_JAINA_CARD.title": "Frost Lich Jaina",
   "JAINA_CARD_FROST_LICH_JAINA_CARD.description": "[gold]Battlecry[/gold]: Summon a [blue]3/6[/blue] [red]Water Elemental[/red]. For the rest of the combat, your Elementals have [gold]Lifesteal[/gold].\nGain 5 Armor. Your Hero Power becomes [gold]Icy Touch[/gold].",
   "JAINA_CARD_ICY_TOUCH_CARD.title": "Icy Touch",
-  "JAINA_CARD_ICY_TOUCH_CARD.description": "Deal {Damage:diff()} damage. Summon a [blue]3/6[/blue] [red]Water Elemental[/red]. Automatically added to your hand at the start of each turn.",
+  "JAINA_CARD_ICY_TOUCH_CARD.description": "[gold]Hero Power[/gold].\nDeal {Damage:diff()} damage. If this Hero Power kills a character, summon a [blue]3/6[/blue] [red]Water Elemental[/red]. Automatically added to your hand at the start of each turn.",
   "JAINA_CARD_BLESSING_OF_IMPS_CARD.title": "Blessing of the Imps",
   "JAINA_CARD_BLESSING_OF_IMPS_CARD.description": "[gold]Hero Power[/gold].\nSummon 1 Imp. Deal 1 damage randomly split among all enemies.",
   "JAINA_CARD_CRAM_SESSION_CARD.title": "Cram Session",

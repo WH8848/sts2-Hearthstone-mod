@@ -180,7 +180,7 @@
   "JAINA_CARD_FROST_LICH_JAINA_CARD.title": "冰霜女巫吉安娜",
   "JAINA_CARD_FROST_LICH_JAINA_CARD.description": "[gold]战吼[/gold]:召唤一个[blue]3/6[/blue]的[red]水元素[/red]。在本局对战中，你的所有[gold]元素[/gold]拥有[gold]吸血[/gold]。\n获得5点[gold]格挡[/gold]。\n你的英雄技能变为[gold]冰冷触摸[/gold]。",
   "JAINA_CARD_ICY_TOUCH_CARD.title": "冰冷触摸",
-  "JAINA_CARD_ICY_TOUCH_CARD.description": "[gold]英雄技能[/gold]。\n造成{Damage:diff()}点伤害，召唤一个[blue]3/6[/blue]的[red]水元素[/red]。",
+  "JAINA_CARD_ICY_TOUCH_CARD.description": "[gold]英雄技能[/gold]。\n造成{Damage:diff()}点伤害。如果该英雄技能消灭了一个角色，召唤一个[blue]3/6[/blue]的[red]水元素[/red]。",
   "JAINA_CARD_BLESSING_OF_IMPS_CARD.title": "小精灵的祝福",
   "JAINA_CARD_BLESSING_OF_IMPS_CARD.description": "[gold]英雄技能[/gold]。\n召唤1个小精灵。造成1点伤害，随机分配到所有敌人身上。",
   "JAINA_CARD_CRAM_SESSION_CARD.title": "考前刷夜",
