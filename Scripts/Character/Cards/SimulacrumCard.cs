@@ -15,21 +15,28 @@ namespace jaina.Scripts.Character.Cards;
 /// <summary>
 /// 模拟幻影 (Simulacrum) - 1费技能牌（普通，冰霜派系）。
 /// 复制你手牌中法力值消耗最低的随从牌。
-/// 升级后费用变为 0。
+/// 升级后变为"熔岩镜像 (Molten Mirror)"（1费，火焰派系）：
+/// 选择一个友方随从，召唤一个该随从的复制（当前属性，不触发战吼）。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
 public sealed class SimulacrumCard : JainaSpellCardTemplate
 {
     /// <summary>
-    /// 可升级（升级后费用 1 -> 0）
+    /// 可升级 1 次（升级为熔岩镜像）
     /// </summary>
     public override int MaxUpgradeLevel => 1;
 
     /// <summary>
-    /// 法术牌 + 冰霜派系
+    /// 法术牌 + 冰霜派系（升级为熔岩镜像后切换为火焰）
     /// </summary>
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
         [JainaKeywords.Spell, JainaKeywords.Frost];
+
+    /// <summary>
+    /// 目标：升级（熔岩镜像）选择友方随从；基础（模拟幻影）无目标自动生效
+    /// </summary>
+    public override TargetType TargetType =>
+        IsUpgraded ? JainaTargetTypes.AnyTargetable : TargetType.None;
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [];
 
@@ -41,17 +48,40 @@ public sealed class SimulacrumCard : JainaSpellCardTemplate
     }
 
     /// <summary>
-    /// 升级：费用 1 -> 0
+    /// 升级为熔岩镜像：费用保持 1；派系 冰霜 -> 火焰（LocalKeywords 懒初始化只算一次，
+    /// 需显式切换关键词，参考 Awaken 的模式）
     /// </summary>
     protected override void OnUpgrade()
     {
-        EnergyCost.UpgradeBy(-1);
+        RemoveKeyword(JainaKeywords.Frost);
+        AddKeyword(JainaKeywords.Fire);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
         // 记录施放（倒带/罗曼斯/三派系追踪）
         jaina.Scripts.Character.JainaCastTracker.RecordPlayed(this);
+
+        if (IsUpgraded)
+        {
+            // 熔岩镜像：选择一个友方随从，召唤一个该随从的复制
+            if (cardPlay.Target is { IsAlive: true } target &&
+                target.IsPet && target.PetOwner == base.Owner &&
+                target.Monster is jaina.Scripts.Character.Minions.JainaMinionBase minion &&
+                minion.GetType() is { } minionType &&
+                !jaina.Scripts.Character.Minions.JainaMinionCardMap.IsLandmarkType(minionType))
+            {
+                // 复制当前属性（炉石"该随从的复制"语义）；不传 source → 不触发战吼
+                await jaina.Scripts.Character.Minions.JainaMinionPool.SummonMinionByType(
+                    choiceContext,
+                    base.Owner,
+                    minionType,
+                    maxHp: target.CurrentHp,
+                    attack: minion.BaseAttackValue,
+                    source: null);
+            }
+            return;
+        }
 
         var player = base.Owner;
         var combatState = player.Creature.CombatState;
