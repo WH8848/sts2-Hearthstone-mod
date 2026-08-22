@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using jaina.Scripts.Character.Keywords;
@@ -40,7 +41,28 @@ public sealed class SimulacrumCard : JainaSpellCardTemplate
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [];
 
-    public override string CustomPortraitPath => "res://assets/card_art/simulacrum.png";
+    /// <summary>
+    /// 卡牌原画：模拟幻影 / 升级后（熔岩镜像）切换原画
+    /// </summary>
+    public override string CustomPortraitPath =>
+        IsUpgraded ? "res://assets/card_art/molten_mirror.png" : "res://assets/card_art/simulacrum.png";
+
+    /// <summary>
+    /// 升级后卡牌名称变为"熔岩镜像 (Molten Mirror)"
+    /// </summary>
+    public override string Title
+    {
+        get
+        {
+            var title = new LocString("cards", base.Id.Entry + ".title");
+            if (!IsUpgraded)
+            {
+                return title.GetFormattedText();
+            }
+            LocString? upgraded = LocString.GetIfExists("cards", base.Id.Entry + ".titleUpgraded");
+            return upgraded?.GetFormattedText() ?? title.GetFormattedText() + "+";
+        }
+    }
 
     public SimulacrumCard()
         : base(1, CardType.Skill, CardRarity.Common, TargetType.None, true)
