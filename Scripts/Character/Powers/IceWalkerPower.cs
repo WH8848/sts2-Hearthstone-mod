@@ -42,6 +42,17 @@ public sealed class IceWalkerPower : PowerModel
         {
             return;
         }
-        await PowerCmd.Apply<FreezePower>(choiceContext, [target], 1m, Owner, cardPlay.Card);
+        // 随从给予的冻结不被人工制品(Artifact)阻挡——与滑冰元素/瓦尔登一致
+        // （见 ArtifactFreezeBypassPatch / FreezePower.BypassArtifactNextApply;
+        //  联机两端命令确定性执行,行为一致）
+        try
+        {
+            FreezePower.BypassArtifactNextApply = true;
+            await PowerCmd.Apply<FreezePower>(choiceContext, [target], 1m, Owner, cardPlay.Card);
+        }
+        finally
+        {
+            FreezePower.BypassArtifactNextApply = false;
+        }
     }
 }
