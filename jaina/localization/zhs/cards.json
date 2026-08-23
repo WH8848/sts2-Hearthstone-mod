@@ -230,7 +230,6 @@
   "JAINA_CARD_COSMIC_ANOMALY_CARD.title": "宇宙异象",
   "JAINA_CARD_COSMIC_ANOMALY_CARD.description": "[gold]元素[/gold]。\n召唤一个[blue]4/3[/blue]的[red]宇宙异象[/red]。\n力量+2。",
   "JAINA_CARD_ANCIENT_TREE_CARD.title": "昔时古树",
-  "JAINA_CARD_ANCIENT_TREE_CARD.description": "获得{Block:diff()}点[gold]格挡[/gold]。",
-  "JAINA_CARD_GURUBASHI_OFFERING_CARD.title": "古拉巴什贡品",
-  "JAINA_CARD_GURUBASHI_OFFERING_CARD.description": "获得{Block:diff()}点[gold]格挡[/gold]。"
+  "JAINA_CARD_ANCIENT_TREE_CARD.titleUpgraded": "古拉巴什贡品",
+  "JAINA_CARD_ANCIENT_TREE_CARD.description": "获得{Block:diff()}点[gold]格挡[/gold]。"
 }
