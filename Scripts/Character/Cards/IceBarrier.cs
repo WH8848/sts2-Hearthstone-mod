@@ -23,7 +23,6 @@ namespace jaina.Scripts.Character.Cards;
 /// 不稳定的骷髅是冰冷案例的衍生物：悬停冰冷案例卡牌时，会显示不稳定的骷髅衍生物卡。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
-[RegisterCharacterStarterCard(typeof(Jaina), 4)]
 public sealed class IceBarrier : JainaSpellCardTemplate
 {
     /// <summary>

@@ -19,7 +19,7 @@ namespace jaina.Scripts.Character.Cards;
 /// （原寒冰护盾的防御标签移至本卡）。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
-[RegisterCharacterStarterCard(typeof(Jaina), 1)]
+[RegisterCharacterStarterCard(typeof(Jaina), 4)]
 public sealed class AncientTreeCard : JainaSpellCardTemplate
 {
     /// <summary>
