@@ -27,10 +27,12 @@ namespace jaina.Scripts.Character.Cards;
 public sealed class DeepFreezeCard : JainaSpellCardTemplate
 {
     /// <summary>
-    /// 法术牌 + 冰霜派系
+    /// 法术牌 + 冰霜派系 + 冻结（悬停解释,给予 1 层冻结）
     /// </summary>
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
-        [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Frost];
+        [jaina.Scripts.Character.Keywords.JainaKeywords.Spell,
+         jaina.Scripts.Character.Keywords.JainaKeywords.Frost,
+         jaina.Scripts.Character.Keywords.JainaKeywords.Freeze];
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [];
 

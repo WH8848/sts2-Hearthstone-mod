@@ -32,10 +32,12 @@ public sealed class IceWalkerCard : JainaMinionCardTemplate
     protected override IEnumerable<IHoverTip> ExtraMinionHoverTips => [HoverTipFactory.FromPower<FreezePower>()];
 
     /// <summary>
-    /// 元素种族 + 消耗（随从卡打出后消耗，模板默认）
+    /// 元素种族 + 冻结（悬停解释,英雄技能额外给予冻结）+ 消耗（随从卡打出后消耗,模板默认）
     /// </summary>
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
-        [jaina.Scripts.Character.Keywords.JainaKeywords.Elemental, CardKeyword.Exhaust];
+        [jaina.Scripts.Character.Keywords.JainaKeywords.Elemental,
+         jaina.Scripts.Character.Keywords.JainaKeywords.Freeze,
+         CardKeyword.Exhaust];
 
     public IceWalkerCard()
         : base(0, CardRarity.Common)
