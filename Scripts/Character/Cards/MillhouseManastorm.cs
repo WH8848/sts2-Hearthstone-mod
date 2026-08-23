@@ -16,17 +16,19 @@ namespace jaina.Scripts.Character.Cards;
 /// 米尔牢斯·法力风暴 (Jailhouse Manastorm) - 吉安娜专属先古能力牌（2 费）。
 /// 每当你打出一张法术牌，随机召唤一个费用消耗相同的随从。
 /// 升级后费用保持 2 费，并获得[gold]固有[/gold]（战斗开始时在手牌）。
+/// 非法术牌：不挂"法术牌"关键词——卡面分类仅显示"能力"，
+/// 不进法术池/减费/复制类效果；"打出一张法术牌"的自身效果由 Power 监听,不受影响。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
 [RegisterDustyTomeCard(typeof(jaina.Scripts.Character.Jaina))]
 public sealed class MillhouseManastorm : JainaSpellCardTemplate
 {
     /// <summary>
-    /// 法术牌；升级后额外获得固有（战斗开始时在手牌）
+    /// 无"法术牌"关键词（能力牌）；升级后额外获得固有（战斗开始时在手牌）
     /// </summary>
     public override IEnumerable<CardKeyword> CanonicalKeywords => IsUpgraded
-        ? [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, CardKeyword.Innate]
-        : [jaina.Scripts.Character.Keywords.JainaKeywords.Spell];
+        ? [CardKeyword.Innate]
+        : [];
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [];
 
