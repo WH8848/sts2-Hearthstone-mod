@@ -1,10 +1,10 @@
-﻿{
+{
     "JAINA_KEYWORD_DEATHRATTLE.title":  "Deathrattle",
     "JAINA_KEYWORD_DEATHRATTLE.description":  "Triggers when the minion dies.",
     "JAINA_KEYWORD_CHARGE.title":  "Charge",
     "JAINA_KEYWORD_CHARGE.description":  "Can attack immediately after being summoned.",
     "JAINA_KEYWORD_FREEZE.title":  "Freeze",
-    "JAINA_KEYWORD_FREEZE.description":  "Frozen characters deal 12.5% less damage with attacks. Stacks up to 8 times. All stacks are removed at end of turn. Freeze applied by minions is not blocked by [gold]Artifacts[/gold].",
+    "JAINA_KEYWORD_FREEZE.description":  "Frozen characters deal 12.5% less damage with attacks. Stacks. All stacks are removed at end of turn. Freeze applied by minions is not blocked by [gold]Artifacts[/gold].",
     "JAINA_KEYWORD_TWINSPELL.title":  "Twinspell",
     "JAINA_KEYWORD_TWINSPELL.description":  "Immediately add a copy of this spell to your hand and lose Twinspell.",
     "JAINA_KEYWORD_EMPOWER.title":  "Empower",
