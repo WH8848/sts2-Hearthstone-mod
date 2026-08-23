@@ -78,6 +78,10 @@ public class Entry
         // 注册吉安娜随从布局：将随从摆放在玩家（充能球区域）周围
         MinionLayoutManager.Register(new OrbStyleMinionLayout(), priority: 100);
 
+        // 随从选中快捷键（小键盘1-7 选中/取消己方随从，Esc 取消；RitsuLib
+        // RuntimeHotkeyService 注册 + ModSettings 设置页可改键，见 MinionSelectHotkeys）
+        jaina.Scripts.Character.Powers.MinionSelectHotkeys.Initialize();
+
         // 武器系统：战斗开始时给玩家挂载角色固有的 1 点攻击行动点（与武器无关，
         // 武器只赋予攻击力；攻击力为 0 时不可行动）
         MegaCrit.Sts2.Core.Combat.CombatManager.Instance.CombatBegan += OnCombatBeganForWeaponAction;

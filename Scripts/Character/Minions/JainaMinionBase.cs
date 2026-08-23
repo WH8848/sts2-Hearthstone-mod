@@ -166,6 +166,21 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
     private CanvasItem? _visualsRoot;
 
     /// <summary>
+    /// 鼠标当前是否悬停在本随从上（Hitbox）
+    /// </summary>
+    private bool _hovering;
+
+    /// <summary>
+    /// 快捷键（小键盘1-7）当前是否选中本随从
+    /// </summary>
+    private bool _hotkeySelected;
+
+    /// <summary>
+    /// 快捷键选中时显示的金色选中框（覆盖整个随从卡面区域）
+    /// </summary>
+    private Panel? _selectionHighlight;
+
+    /// <summary>
     /// 是否已连接游戏原生悬停层（NCreature.Hitbox）
     /// </summary>
     private bool _hoverConnected;
@@ -587,7 +602,7 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
     }
 
     /// <summary>
-    /// 悬停进入（Hitbox）：显示随从卡卡面
+    /// 悬停进入（Hitbox）：记录悬停状态并刷新随从预览（悬停卡面；与快捷键选中状态合并）
     /// </summary>
     private void OnMinionHoverEnter()
     {
@@ -595,6 +610,49 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
         {
             return;
         }
+        _hovering = true;
+        RefreshMinionPreview();
+    }
+
+    /// <summary>
+    /// 悬停退出（Hitbox）：刷新随从预览（悬停离开但快捷键选中时卡面保持）
+    /// </summary>
+    private void OnMinionHoverExit()
+    {
+        _hovering = false;
+        RefreshMinionPreview();
+    }
+
+    /// <summary>
+    /// 快捷键（小键盘1-7）选中状态：显示金色选中框 + 随从卡卡面；取消时清除。
+    /// 与鼠标悬停独立：悬停离开但被快捷键选中时卡面保持显示。
+    /// </summary>
+    internal void SetHotkeySelected(bool selected)
+    {
+        if (_hotkeySelected == selected)
+        {
+            return;
+        }
+        _hotkeySelected = selected;
+        RefreshSelectionHighlight();
+        RefreshMinionPreview();
+    }
+
+    /// <summary>
+    /// 刷新随从预览：任一来源（悬停/快捷键选中）需要显示时显示卡面，否则隐藏。
+    /// </summary>
+    private void RefreshMinionPreview()
+    {
+        if (!Creature.IsAlive)
+        {
+            // 随从死亡时清空选中/悬停状态并隐藏卡面
+            _hovering = false;
+            _hotkeySelected = false;
+            RefreshSelectionHighlight();
+            HideMinionCard();
+            return;
+        }
+
         bool showOnLeft = false;
         try
         {
@@ -609,13 +667,66 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
         catch
         {
         }
-        ShowMinionCard(showOnLeft);
+
+        if (_hovering || _hotkeySelected)
+        {
+            ShowMinionCard(showOnLeft);
+        }
+        else
+        {
+            HideMinionCard();
+        }
     }
 
     /// <summary>
-    /// 悬停退出（Hitbox）：隐藏随从卡卡面
+    /// 刷新快捷键选中框（金色描边；覆盖 ±125×±95 与悬停区一致的卡面区域）
     /// </summary>
-    private void OnMinionHoverExit() => HideMinionCard();
+    private void RefreshSelectionHighlight()
+    {
+        if (_selectionHighlight == null)
+        {
+            try
+            {
+                var style = new StyleBoxFlat
+                {
+                    DrawCenter = false,
+                    BorderColor = new Color(1f, 0.85f, 0.3f, 1f),
+                    BorderWidthLeft = 4,
+                    BorderWidthTop = 4,
+                    BorderWidthRight = 4,
+                    BorderWidthBottom = 4,
+                    CornerRadiusTopLeft = 8,
+                    CornerRadiusTopRight = 8,
+                    CornerRadiusBottomRight = 8,
+                    CornerRadiusBottomLeft = 8,
+                };
+                _selectionHighlight = new Panel
+                {
+                    Name = "SelectionHighlight",
+                    MouseFilter = Control.MouseFilterEnum.Ignore,
+                    Position = new Vector2(-125f, -95f),
+                    Size = new Vector2(250f, 190f),
+                    ZIndex = 100,
+                    Visible = false,
+                };
+                _selectionHighlight.AddThemeStyleboxOverride("panel", style);
+                if (_visualsRoot != null)
+                {
+                    _visualsRoot.AddChild(_selectionHighlight);
+                }
+            }
+            catch (System.Exception ex)
+            {
+                MegaCrit.Sts2.Core.Logging.Log.Warn($"[JainaSelect] highlight create error: {ex.Message}");
+                _selectionHighlight = null;
+            }
+        }
+
+        if (_selectionHighlight != null)
+        {
+            _selectionHighlight.Visible = _hotkeySelected;
+        }
+    }
 
     /// <summary>
     /// 战吼效果：随从从手牌打出时触发（随机召唤/效果召唤不触发）。子类重写。
@@ -770,6 +881,10 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
         MegaCrit.Sts2.Core.Logging.Log.Info(
             $"[JainaDeathrattle] AfterDeath: monster={GetType().Name} hasRattle={HasDeathrattle} " +
             $"combatStateNull={Creature.CombatState == null}");
+
+        // 快捷键选中的随从死亡：取消选中状态（清选中框/卡面）
+        jaina.Scripts.Character.Powers.MinionSelectHotkeys.NotifyMinionDied(this);
+
         if (HasDeathrattle)
         {
             try
