@@ -739,11 +739,8 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
             }
         }
         RefreshSelectionHighlight();
-        // 选中不再显示卡面（卡面只由鼠标悬停触发）；仅高亮框+攻击动作
-        if (!selected)
-        {
-            RefreshMinionPreview();
-        }
+        // 选中/取消都刷新预览:选中时弹出卡面(与高亮框一起),取消时(无悬停)隐藏
+        RefreshMinionPreview();
     }
 
     /// <summary>
@@ -778,7 +775,7 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
         {
         }
 
-        if (_hovering || _hoveringArea)
+        if (_hovering || _hoveringArea || _hotkeySelected)
         {
             ShowMinionCard(showOnLeft);
         }
