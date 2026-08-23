@@ -101,9 +101,11 @@ public sealed class DeathborneCard : JainaSpellCardTemplate
 
         // 死神之躯：对所有随从造成 2 点伤害；对敌人造成 7 次 2 点伤害；
         // 每消灭一个角色，召唤一个 2/2 的不稳定的骷髅。
-        // "所有随从" = 场上所有非英雄生物（我方随从 + 敌方随从）。
+        // "所有随从" = 所有非英雄生物（我方随从 + 队友随从 + 敌方随从）——
+        // 排除玩家主身体（自己 + 队友英雄;多人联机下队友英雄也在 Creatures 中，
+        // 不排除会把队友英雄当随从打,实测多人错误对队友造成伤害）。
         var victims = combatState.Creatures
-            .Where(c => c != null && c.IsAlive && c != base.Owner.Creature)
+            .Where(c => c != null && c.IsAlive && !c.IsPlayer && c != base.Owner.Creature)
             .ToList();
 
         // 1) 对所有随从造成 2 点伤害（记录消灭数）
