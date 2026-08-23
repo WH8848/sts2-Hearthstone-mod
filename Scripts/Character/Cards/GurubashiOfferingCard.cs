@@ -14,10 +14,17 @@ namespace jaina.Scripts.Character.Cards;
 /// 古拉巴什贡品 (Gurubashi Offering) - 1费技能牌（普通，非法术牌）。
 /// 获得 8 点格挡。
 /// 非法术牌：不挂"法术牌"关键词,不被视为法术。
+/// 防御标签（CardTag.Defend）:视为"防御+"(更强版防御卡——
+/// 8 格挡高于昔时古树的 5 格挡),与防御类效果联动。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
 public sealed class GurubashiOfferingCard : JainaSpellCardTemplate
 {
+    /// <summary>
+    /// 防御类卡牌标签（CardTag.Defend）
+    /// </summary>
+    protected override HashSet<CardTag> CanonicalTags => new HashSet<CardTag> { CardTag.Defend };
+
     /// <summary>
     /// 不可升级
     /// </summary>

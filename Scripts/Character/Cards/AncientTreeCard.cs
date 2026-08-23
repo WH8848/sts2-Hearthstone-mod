@@ -15,11 +15,18 @@ namespace jaina.Scripts.Character.Cards;
 /// 获得 5 点格挡。
 /// 初始卡：Basic 稀有度,不出现在战斗奖励掉落/发现池中。
 /// 非法术牌：不挂"法术牌"关键词(与火焰冲击/戏法图腾同口径),不被视为法术。
+/// 防御标签（CardTag.Defend）:视为"防御"卡,与防御类效果联动
+/// （原寒冰护盾的防御标签移至本卡）。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
 [RegisterCharacterStarterCard(typeof(Jaina), 1)]
 public sealed class AncientTreeCard : JainaSpellCardTemplate
 {
+    /// <summary>
+    /// 防御类卡牌标签（CardTag.Defend）
+    /// </summary>
+    protected override HashSet<CardTag> CanonicalTags => new HashSet<CardTag> { CardTag.Defend };
+
     /// <summary>
     /// 初始技能牌不可升级
     /// </summary>

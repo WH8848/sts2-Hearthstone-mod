@@ -27,10 +27,10 @@ namespace jaina.Scripts.Character.Cards;
 public sealed class IceBarrier : JainaSpellCardTemplate
 {
     /// <summary>
-    /// 防御类卡牌标签（CardTag.Defend）：与"防御"（Defend）类效果联动
-    /// （升级为冰冷案例后标签不变，等价于"防御+"）
+    /// "防御"标签已移至昔时古树（新初始防御卡）/古拉巴什贡品（防御+）——
+    /// 寒冰护盾不再视为 Defend（升级为冰冷案例后同样不是）。
     /// </summary>
-    protected override HashSet<CardTag> CanonicalTags => new HashSet<CardTag> { CardTag.Defend };
+    protected override HashSet<CardTag> CanonicalTags => new HashSet<CardTag>();
 
     /// <summary>
     /// 法术牌：攻击牌和技能牌都视为法术牌
@@ -52,7 +52,7 @@ public sealed class IceBarrier : JainaSpellCardTemplate
             : "res://assets/card_art/ice_barrier.png";
 
     public IceBarrier()
-        : base(1, CardType.Skill, CardRarity.Basic, TargetType.Self, true)
+        : base(1, CardType.Skill, CardRarity.Common, TargetType.Self, true)
     {
     }
 
