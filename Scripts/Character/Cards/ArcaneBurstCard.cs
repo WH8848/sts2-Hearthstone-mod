@@ -68,14 +68,7 @@ public sealed class ArcaneBurstCard : JainaSpellCardTemplate
     /// <summary>
     /// 卡名不变
     /// </summary>
-    public override string Title
-    {
-        get
-        {
-            var title = new LocString("cards", base.Id.Entry + ".title");
-            return title.GetFormattedText();
-        }
-    }
+    
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {

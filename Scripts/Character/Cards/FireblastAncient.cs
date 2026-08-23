@@ -61,18 +61,7 @@ public sealed class FireblastAncient : JainaSpellCardTemplate
     /// <summary>
     /// 升级后卡牌名称显示 "+级别"（每次升级 +2 伤害，标记升级状态）
     /// </summary>
-    public override string Title
-    {
-        get
-        {
-            var title = new LocString("cards", base.Id.Entry + ".title");
-            if (!IsUpgraded)
-            {
-                return title.GetFormattedText();
-            }
-            return title.GetFormattedText() + "+" + CurrentUpgradeLevel;
-        }
-    }
+    
 
     public FireblastAncient()
         : base(0, CardType.Attack, CardRarity.Ancient, JainaTargetTypes.AnyTargetable, true)

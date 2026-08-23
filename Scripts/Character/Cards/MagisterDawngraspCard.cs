@@ -64,14 +64,7 @@ public sealed class MagisterDawngraspCard : JainaHeroCardTemplate
     /// <summary>
     /// 卡名不变
     /// </summary>
-    public override string Title
-    {
-        get
-        {
-            var title = new LocString("cards", base.Id.Entry + ".title");
-            return title.GetFormattedText();
-        }
-    }
+    
 
     /// <summary>
     /// 战吼：再次施放你在本局对战中施放过的每个法术派系的一个法术

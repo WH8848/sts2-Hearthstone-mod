@@ -48,14 +48,7 @@ public sealed class BlessingOfImpsCard : JainaSpellCardTemplate
     /// <summary>
     /// 卡名不变
     /// </summary>
-    public override string Title
-    {
-        get
-        {
-            var title = new LocString("cards", base.Id.Entry + ".title");
-            return title.GetFormattedText();
-        }
-    }
+    
 
     public BlessingOfImpsCard()
         : base(0, CardType.Attack, CardRarity.Token, TargetType.None, true)

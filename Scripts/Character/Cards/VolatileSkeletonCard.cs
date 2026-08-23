@@ -52,12 +52,5 @@ public sealed class VolatileSkeletonCard : JainaMinionCardTemplate
     /// </summary>
     protected override int MinionHealth => 2;
 
-    public override string Title
-    {
-        get
-        {
-            var title = new LocString("cards", base.Id.Entry + ".title");
-            return title.GetFormattedText();
-        }
-    }
+    
 }

@@ -76,14 +76,7 @@ public sealed class FrostLichJainaCard : JainaHeroCardTemplate
     /// <summary>
     /// 卡名不变
     /// </summary>
-    public override string Title
-    {
-        get
-        {
-            var title = new LocString("cards", base.Id.Entry + ".title");
-            return title.GetFormattedText();
-        }
-    }
+    
 
     /// <summary>
     /// 战吼：召唤一个3/6的水元素；挂元素吸血光环（本局对战，你的所有元素拥有吸血）

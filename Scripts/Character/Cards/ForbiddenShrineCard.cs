@@ -52,18 +52,7 @@ public sealed class ForbiddenShrineCard : JainaSpellCardTemplate
     /// <summary>
     /// 升级后卡牌名称变为"禁忌神龛+"
     /// </summary>
-    public override string Title
-    {
-        get
-        {
-            var title = new LocString("cards", base.Id.Entry + ".title");
-            if (!IsUpgraded)
-            {
-                return title.GetFormattedText();
-            }
-            return title.GetFormattedText() + "+";
-        }
-    }
+    
 
     /// <summary>
     /// 随机施放一个目标费用的全角色卡牌：动态构建（ModelDb.AllCards 的

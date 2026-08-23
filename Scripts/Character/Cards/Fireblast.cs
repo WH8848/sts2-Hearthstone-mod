@@ -44,18 +44,7 @@ public sealed class Fireblast : JainaSpellCardTemplate
     /// <summary>
     /// 升级后卡牌名称显示 "+级别"（升级每次 +1 伤害，标记升级状态）
     /// </summary>
-    public override string Title
-    {
-        get
-        {
-            var title = new LocString("cards", base.Id.Entry + ".title");
-            if (!IsUpgraded)
-            {
-                return title.GetFormattedText();
-            }
-            return title.GetFormattedText() + "+" + CurrentUpgradeLevel;
-        }
-    }
+    
 
     /// <summary>
     /// 动态伤害显示：当前伤害 = 基础 1 点（含升级加成）+ 野火加成 + 奥术增幅加成

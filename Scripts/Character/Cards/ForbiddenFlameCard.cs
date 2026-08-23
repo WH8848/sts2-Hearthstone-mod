@@ -42,18 +42,7 @@ public sealed class ForbiddenFlameCard : JainaSpellCardTemplate
     /// <summary>
     /// 升级后卡牌名称变为"禁忌烈焰+"
     /// </summary>
-    public override string Title
-    {
-        get
-        {
-            var title = new LocString("cards", base.Id.Entry + ".title");
-            if (!IsUpgraded)
-            {
-                return title.GetFormattedText();
-            }
-            return title.GetFormattedText() + "+";
-        }
-    }
+    
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {

@@ -56,18 +56,7 @@ public sealed class EverfireArrowCard : JainaSpellCardTemplate
     /// <summary>
     /// 升级后卡牌名称显示 "+级别"（升级添加回手效果，标记升级状态）
     /// </summary>
-    public override string Title
-    {
-        get
-        {
-            var title = new LocString("cards", base.Id.Entry + ".title");
-            if (!IsUpgraded)
-            {
-                return title.GetFormattedText();
-            }
-            return title.GetFormattedText() + "+" + CurrentUpgradeLevel;
-        }
-    }
+    
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {

@@ -50,18 +50,7 @@ public sealed class IgniteCard : JainaSpellCardTemplate
     /// <summary>
     /// 升级后卡牌名称变为"点燃+{级别}"（可无限升级，级别递增）
     /// </summary>
-    public override string Title
-    {
-        get
-        {
-            var title = new LocString("cards", base.Id.Entry + ".title");
-            if (!IsUpgraded)
-            {
-                return title.GetFormattedText();
-            }
-            return title.GetFormattedText() + "+" + CurrentUpgradeLevel;
-        }
-    }
+    
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {

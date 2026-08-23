@@ -62,18 +62,7 @@ public sealed class MordreshFireEyeCard : JainaSpellCardTemplate, IJainaConditio
     /// <summary>
     /// 升级后卡牌名称显示 "+级别"（升级添加保留，标记升级状态）
     /// </summary>
-    public override string Title
-    {
-        get
-        {
-            var title = new LocString("cards", base.Id.Entry + ".title");
-            if (!IsUpgraded)
-            {
-                return title.GetFormattedText();
-            }
-            return title.GetFormattedText() + "+" + CurrentUpgradeLevel;
-        }
-    }
+    
 
     /// <summary>
     /// 发光条件：英雄技能本局累计造成伤害 ≥ 10（与效果触发条件一致）。
