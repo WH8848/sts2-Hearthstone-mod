@@ -52,6 +52,13 @@ public sealed class MeteorCard : JainaSpellCardTemplate
     }
 
     /// <summary>
+    /// 升级后（烈焰风暴）无需选择目标：随机造成 7 次 5 点伤害，随机分配到所有敌人
+    /// （OnPlay 循环随机目标；未升级陨石术仍为指向单体敌人）。
+    /// </summary>
+    public override TargetType TargetType =>
+        IsUpgraded ? TargetType.None : TargetType.AnyEnemy;
+
+    /// <summary>
     /// 升级后卡牌名称变为"烈焰风暴 (Flamestrike)"
     /// </summary>
     public override string Title
