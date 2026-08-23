@@ -23,10 +23,11 @@ public sealed class SkatingElementalCard : JainaMinionCardTemplate
     public override string CustomPortraitPath => "res://assets/card_art/sleet_skater.png";
 
     /// <summary>
-    /// 微缩（打出后生成0费1/1微型复制品）+ 战吼（悬停解释）
+    /// 微缩（打出后生成0费1/1微型复制品）+ 战吼（悬停解释）+ 消耗（随从卡打出后消耗,模板默认;
+    /// 微型复制品生成时自动去除消耗）
     /// </summary>
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
-        [JainaKeywords.Miniaturize, JainaKeywords.Battlecry];
+        [JainaKeywords.Miniaturize, JainaKeywords.Battlecry, CardKeyword.Exhaust];
 
     /// <summary>
     /// 战吼选择 1 名敌人（打出时进入目标选择）
