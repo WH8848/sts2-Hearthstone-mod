@@ -7,7 +7,7 @@ using STS2RitsuLib.Interop.AutoRegistration;
 namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
-/// 戏法图腾 (Trick Totem) - 1费随从卡（普通）。属性 0/3。
+/// 戏法图腾 (Trick Totem) - 0费随从卡（普通，图腾种族）。属性 0/3。
 /// 在你的回合结束时，随机施放一个费用消耗小于或等于1点的全角色卡牌。
 /// 升级不减费（模板默认：去除"消耗"关键词）。
 /// </summary>
@@ -26,13 +26,13 @@ public sealed class TrickTotemCard : JainaMinionCardTemplate
     protected override int MinionHealth => 3;
 
     /// <summary>
-    /// 消耗（随从卡打出后消耗，模板默认；升级后自动去除）
+    /// 图腾种族 + 消耗（随从卡打出后消耗，模板默认；升级后自动去除）
     /// </summary>
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
-        [CardKeyword.Exhaust];
+        [jaina.Scripts.Character.Keywords.JainaKeywords.Totem, CardKeyword.Exhaust];
 
     public TrickTotemCard()
-        : base(1, CardRarity.Common)
+        : base(0, CardRarity.Common)
     {
     }
 }

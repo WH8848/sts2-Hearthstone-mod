@@ -1,4 +1,4 @@
-﻿# 批量生成 Jaina 关键词图标（64x64 PNG：冰蓝圆形徽章 + 中文首字）与 .import 文件
+# 批量生成 Jaina 关键词图标（64x64 PNG：冰蓝圆形徽章 + 中文首字）与 .import 文件
 Add-Type -AssemblyName System.Drawing
 
 $outDir = "E:\MOD\sts2\godot_project\jaina\assets\keyword_icons"
@@ -13,7 +13,7 @@ $kw = @{
   Undead='尸'; Demon='魔'; Draenei='德'; Naga='娜'; Pirate='海';
   Mech='机'; Lifesteal='吸'; Discover='探'; Immune='免'; Landmark='地';
   Fatigue='疲'; Miniaturize='缩'; Mini='微'; Tradeable='易'; ZeroCostMark='零';
-  Ignite='引'
+  Ignite='引'; Totem='图'
 }
 
 $template = Get-Content "E:\MOD\sts2\godot_project\jaina\assets\power_icons\jaina_power_minion_squad_power.png.import" -Raw

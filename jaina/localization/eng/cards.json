@@ -29,7 +29,7 @@
   "JAINA_CARD_COLDARRA_DRAKE_CARD.title": "Coldarra Drake",
   "JAINA_CARD_COLDARRA_DRAKE_CARD.description": "Summon a [blue]6/7[/blue] [red]Coldarra Drake[/red].\nYour Hero Power costs 1 and can be used any number of times.",
   "JAINA_CARD_TRICK_TOTEM_CARD.title": "Trick Totem",
-  "JAINA_CARD_TRICK_TOTEM_CARD.description": "Summon a [blue]0/3[/blue] [red]Trick Totem[/red].\nAt the end of your turn, randomly cast an all-class card that costs 1 or less.",
+  "JAINA_CARD_TRICK_TOTEM_CARD.description": "[gold]Totem[/gold].\nSummon a [blue]0/3[/blue] [red]Trick Totem[/red].\nAt the end of your turn, randomly cast an all-class card that costs 1 or less.",
   "JAINA_CARD_SKATING_ELEMENTAL_CARD.title": "Sleet Skater",
   "JAINA_CARD_SKATING_ELEMENTAL_CARD.description": "Summon a [blue]3/4[/blue] [red]Sleet Skater[/red].\n[gold]Miniaturize[/gold].\n[gold]Battlecry[/gold]: Choose 1 enemy. Give it 1 Freeze. Gain Block equal to the total damage it reduces.",
   "JAINA_CARD_ARCHMAGES_RUNE_CARD.title": "Archmage's Rune",

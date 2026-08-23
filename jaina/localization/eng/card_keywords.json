@@ -57,6 +57,8 @@
   "JAINA_KEYWORD_PIRATE.description": "Pirate: Minion race.",
   "JAINA_KEYWORD_MECH.title": "Mech",
   "JAINA_KEYWORD_MECH.description": "Mech: Minion race.",
+  "JAINA_KEYWORD_TOTEM.title": "Totem",
+  "JAINA_KEYWORD_TOTEM.description": "Totem: Minion race.",
   "JAINA_KEYWORD_LIFESTEAL.title": "Lifesteal",
   "JAINA_KEYWORD_LIFESTEAL.description": "Lifesteal: Heal for the amount of damage dealt.",
   "JAINA_KEYWORD_DISCOVER.title": "Discover",
