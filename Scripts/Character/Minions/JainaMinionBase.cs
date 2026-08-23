@@ -141,19 +141,14 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
             {
                 return;
             }
-            bool showOnLeft = false;
-            try
-            {
-                var screenX = _visualsRoot?.GetGlobalTransformWithCanvas().Origin.X ?? 0f;
-                var viewportWidth = _visualsRoot?.GetViewport().GetVisibleRect().Size.X ?? 1920f;
-                showOnLeft = screenX > viewportWidth / 2f;
-            }
-            catch
-            {
-            }
-            ShowMinionCard(showOnLeft);
+            _hoveringArea = true;
+            RefreshMinionPreview();
         };
-        hoverArea.MouseExited += HideMinionCard;
+        hoverArea.MouseExited += () =>
+        {
+            _hoveringArea = false;
+            RefreshMinionPreview();
+        };
 
         return root;
     }
@@ -172,6 +167,11 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
     /// 鼠标当前是否悬停在本随从上（Hitbox）
     /// </summary>
     private bool _hovering;
+
+    /// <summary>
+    /// 鼠标当前是否悬停在本随从的交互区（HoverArea，Pass 模式检测）
+    /// </summary>
+    private bool _hoveringArea;
 
     /// <summary>
     /// 快捷键（小键盘1-7）当前是否选中本随从
@@ -635,6 +635,8 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
     /// <summary>
     /// 快捷键（小键盘1-7）选中状态：显示金色选中框 + 随从卡卡面；取消时清除。
     /// 与鼠标悬停独立：悬停离开但被快捷键选中时卡面保持显示。
+    /// 选中时强制交互（防止任何原因导致 Hitbox 被 ToggleIsInteractable(false) 屏蔽，
+    /// 导致"选中后点击随从无法攻击"——点击攻击入口在 Hitbox）。
     /// </summary>
     internal void SetHotkeySelected(bool selected)
     {
@@ -643,12 +645,26 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
             return;
         }
         _hotkeySelected = selected;
+        MegaCrit.Sts2.Core.Logging.Log.Info(
+            $"[JainaSelect] {(selected ? "select" : "deselect")} {GetType().Name} hovered={_hovering} area={_hoveringArea}");
+        if (selected)
+        {
+            try
+            {
+                var node = MegaCrit.Sts2.Core.Nodes.Rooms.NCombatRoom.Instance?.GetCreatureNode(Creature);
+                node?.ToggleIsInteractable(true);
+            }
+            catch (System.Exception ex)
+            {
+                MegaCrit.Sts2.Core.Logging.Log.Warn($"[JainaSelect] interactable force failed: {ex.Message}");
+            }
+        }
         RefreshSelectionHighlight();
         RefreshMinionPreview();
     }
 
     /// <summary>
-    /// 刷新随从预览：任一来源（悬停/快捷键选中）需要显示时显示卡面，否则隐藏。
+    /// 刷新随从预览：任一来源（悬停/交互区/快捷键选中）需要显示时显示卡面，否则隐藏。
     /// </summary>
     private void RefreshMinionPreview()
     {
@@ -656,6 +672,7 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
         {
             // 随从死亡时清空选中/悬停状态并隐藏卡面
             _hovering = false;
+            _hoveringArea = false;
             _hotkeySelected = false;
             RefreshSelectionHighlight();
             HideMinionCard();
@@ -677,7 +694,7 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
         {
         }
 
-        if (_hovering || _hotkeySelected)
+        if (_hovering || _hoveringArea || _hotkeySelected)
         {
             ShowMinionCard(showOnLeft);
         }

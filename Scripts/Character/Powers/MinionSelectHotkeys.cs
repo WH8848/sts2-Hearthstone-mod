@@ -145,6 +145,14 @@ public static class MinionSelectHotkeys
             {
                 return;
             }
+            MegaCrit.Sts2.Core.Logging.Log.Info(
+                $"[JainaSelect] Numpad{index} -> {target.GetType().Name} pets={minions.Count} state={(state == null ? "null" : "ok")} side={player.Creature.Side}");
+            if (player.Creature.CombatState != null &&
+                player.Creature.CombatState.CurrentSide != player.Creature.Side)
+            {
+                MegaCrit.Sts2.Core.Logging.Log.Info(
+                    $"[JainaSelect] note: not player side (current={player.Creature.CombatState.CurrentSide}), click-to-attack will be ignored by MinionLib");
+            }
             if (_selected == target)
             {
                 Deselect();
