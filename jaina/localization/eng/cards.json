@@ -1,4 +1,4 @@
-﻿{
+{
     "JAINA_CARD_FIREBALL.title":  "Fireball",
     "JAINA_CARD_FIREBALL.titleUpgraded":  "Pyroblast",
     "JAINA_CARD_FIREBALL.description":  "Deal {Damage:diff()} damage.",
@@ -51,8 +51,6 @@
     "JAINA_CARD_IMP_CARD.description":  "[gold]Undead[/gold].\nSummon a [blue]1/1[/blue] [red]Imp[/red].",
     "JAINA_CARD_SPIRIT_COLLECTOR_CARD.title":  "Spirit Collector",
     "JAINA_CARD_SPIRIT_COLLECTOR_CARD.description":  "Summon a [blue]2/1[/blue] [red]Spirit Collector[/red].\n[gold]Battlecry[/gold]: Add a [blue]0-cost 1/1[/blue] [red]Imp[/red] to your hand. [gold]Empower[/gold] your Hero Power.",
-    "JAINA_CARD_RENATHAL_CARD.title":  "Prince Renathal",
-    "JAINA_CARD_RENATHAL_CARD.description":  "Summon a [blue]3/4[/blue] [red]Prince Renathal[/red].",
     "JAINA_CARD_SORCERER_APPRENTICE_CARD.title":  "Sorcerer\u0027s Apprentice",
     "JAINA_CARD_SORCERER_APPRENTICE_CARD.description":  "Summon a [blue]3/2[/blue] [red]Sorcerer\u0027s Apprentice[/red].\nWhile 4 Sorcerer Apprentices are in play, your [blue]Spell cards[/blue] cost 1 less.",
     "JAINA_CARD_ARCANE_ARTIFICER_CARD.title":  "Arcane Artificer",

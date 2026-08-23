@@ -51,8 +51,6 @@
     "JAINA_CARD_IMP_CARD.description":  "[gold]亡灵[/gold]。\n召唤一个[blue]1/1[/blue]的[red]小精灵[/red]。",
     "JAINA_CARD_SPIRIT_COLLECTOR_CARD.title":  "灵体采集者",
     "JAINA_CARD_SPIRIT_COLLECTOR_CARD.description":  "召唤一个[blue]2/1[/blue]的[red]灵体采集者[/red]。\n[gold]战吼[/gold]:获取一张[blue]1/1[/blue]的[red]小精灵[/red]。\n[gold]灌注[/gold]你的英雄技能。",
-    "JAINA_CARD_RENATHAL_CARD.title":  "雷纳索尔王子",
-    "JAINA_CARD_RENATHAL_CARD.description":  "召唤一个[blue]3/4[/blue]的[red]雷纳索尔王子[/red]\n你的初始生命值为40。",
     "JAINA_CARD_SORCERER_APPRENTICE_CARD.title":  "巫师学徒",
     "JAINA_CARD_SORCERER_APPRENTICE_CARD.description":  "召唤一个[blue]3/2[/blue]的[red]巫师学徒[/red]。\n当你同时拥有4个[gold]巫师学徒[/gold]时，你的[blue]法术牌[/blue]耗能减少1点。",
     "JAINA_CARD_ARCANE_ARTIFICER_CARD.title":  "奥术工匠",
