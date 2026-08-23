@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
+using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Models;
@@ -47,6 +48,15 @@ public sealed class AmazingCard : JainaSpellCardTemplate
     /// 本地释放打自己 2 点 → 客机端 HP 先变、host 端后变 → checksum 13 分歧断联）。
     /// 多张惊奇卡牌同时抽到：Hook 按抽牌顺序逐个 await 每个监听者（天然串行，
     /// 顺序 = 抽牌顺序，两端确定一致，无需串行执行器）。
+    /// <para>
+    /// <b>模型栈隔离（本轮修复）</b>：释放链（随机卡 AutoPlay，其 OnPlay 会把卡模型压栈、
+    /// 可含动画等待/玩家选择/抽牌等长流程）不再在外层传入的 choiceContext 上运行——
+    /// 而是在<b>独立嵌套的 HookPlayerChoiceContext</b>（原版官方钩子上下文机制，
+    /// Hellraiser/寻觅打击/神谜即用它）上运行：内部 Push/Pop 只影响该上下文自己的
+    /// 模型栈，玩家选择会生成独立钩子动作（GenerateHookAction）入队同步，
+    /// 不会污染父上下文（抽牌动作的 BranchingPlayerChoiceContext）的模型栈——
+    /// 修复 "Tried to pop model 惊奇卡牌 but 栈顶是 PARSE/死亡进军" 的 Push/Pop 交错断言。
+    /// </para>
     /// </summary>
     public override async Task AfterCardDrawn(PlayerChoiceContext choiceContext, CardModel card, bool fromHandDraw)
     {
@@ -142,14 +152,24 @@ public sealed class AmazingCard : JainaSpellCardTemplate
                 // 气泡显示失败不影响释放
             }
 
-            // 施放节奏与"倾泻"等自动打出卡一致：先进入打出区，停顿后再施放效果
-            // （原版 AutoPlayFromDrawPile 先逐张 Add 到打出区再逐个 AutoPlay）
-            if (spell.Pile == null)
+            // 释放链运行在独立嵌套上下文（原版 HookPlayerChoiceContext 机制）：
+            // 释放卡的 OnPlay 压栈/动画等待/玩家选择都不进入父上下文模型栈
+            // （修复父上下文 Push/Pop 交错断言；玩家选择经 GenerateHookAction
+            // 以独立动作同步，两端确定性不受影响）。
+            var netId = MegaCrit.Sts2.Core.Context.LocalContext.NetId;
+            if (netId == null)
             {
-                await CardPileCmd.Add(spell, PileType.Play);
+                // 测试模式等无 NetId 场景：回退父上下文（保持旧行为）
+                await RunReleaseAsync(choiceContext, player, spell, target);
             }
-            await Cmd.Wait(0.5f);
-            await CardCmd.AutoPlay(choiceContext, spell, target, skipCardPileVisuals: true);
+            else
+            {
+                var hookContext = new MegaCrit.Sts2.Core.GameActions.Multiplayer.HookPlayerChoiceContext(
+                    this, netId.Value, combatState,
+                    MegaCrit.Sts2.Core.Entities.Multiplayer.GameActionType.CombatPlayPhaseOnly);
+                var release = RunReleaseAsync(hookContext, player, spell, target);
+                await hookContext.AssignTaskAndWaitForPauseOrCompletion(release);
+            }
 
             // 释放后此卡消耗
             if (Pile != null && Pile.Type == PileType.Hand)
@@ -161,5 +181,20 @@ public sealed class AmazingCard : JainaSpellCardTemplate
         {
             MegaCrit.Sts2.Core.Logging.Log.Error($"[Jaina] AmazingCard draw trigger failed: {ex}");
         }
+    }
+
+    /// <summary>
+    /// 释放链：先进入打出区，停顿后再自动打出（施放节奏与"倾泻"等自动打出卡一致——
+    /// 原版 AutoPlayFromDrawPile 先逐张 Add 到打出区再逐个 AutoPlay）。
+    /// 在指定上下文（独立嵌套 HookPlayerChoiceContext 或回退的父上下文）上执行。
+    /// </summary>
+    private static async Task RunReleaseAsync(PlayerChoiceContext context, Player player, CardModel spell, Creature? target)
+    {
+        if (spell.Pile == null)
+        {
+            await CardPileCmd.Add(spell, PileType.Play);
+        }
+        await Cmd.Wait(0.5f);
+        await CardCmd.AutoPlay(context, spell, target, skipCardPileVisuals: true);
     }
 }
