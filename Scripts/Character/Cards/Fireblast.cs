@@ -20,7 +20,7 @@ namespace jaina.Scripts.Character.Cards;
 /// 使用 Basic 稀有度使其不出现战斗奖励掉落中。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
-[RegisterCharacterStarterCard(typeof(Jaina), 1)]
+[RegisterCharacterStarterCard(typeof(Jaina), 1, Order = 4)]
 [RegisterArchaicToothTranscendence(typeof(FireblastAncient))]
 public sealed class Fireblast : JainaSpellCardTemplate
 {

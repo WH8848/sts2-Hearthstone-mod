@@ -20,7 +20,7 @@ namespace jaina.Scripts.Character.Cards;
 /// 防御标签（CardTag.Defend）:视为"防御"卡（升级后为"防御+"）,与防御类效果联动。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
-[RegisterCharacterStarterCard(typeof(Jaina), 4)]
+[RegisterCharacterStarterCard(typeof(Jaina), 4, Order = 2)]
 public sealed class AncientTreeCard : JainaSpellCardTemplate
 {
     /// <summary>
