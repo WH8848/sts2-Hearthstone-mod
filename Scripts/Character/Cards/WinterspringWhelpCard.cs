@@ -9,7 +9,7 @@ using STS2RitsuLib.Interop.AutoRegistration;
 namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
-/// 冬泉雏龙 (Winterspring Whelp) - 0费随从卡（普通，龙种族）。
+/// 冬泉雏龙 (Winterspring Whelp) - 0费随从卡（罕见，龙种族）。
 /// 战吼：发现一张任意角色的费用为0的卡牌。属性 1/2。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
@@ -39,7 +39,7 @@ public sealed class WinterspringWhelpCard : JainaMinionCardTemplate
         [JainaKeywords.Dragon, JainaKeywords.Battlecry, CardKeyword.Exhaust];
 
     public WinterspringWhelpCard()
-        : base(0, CardRarity.Common)
+        : base(0, CardRarity.Uncommon)
     {
     }
 }
