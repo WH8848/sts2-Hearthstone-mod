@@ -98,7 +98,12 @@ public sealed class IceBlockPower : PowerModel, IModPowerAssetOverrides
             await PowerCmd.Decrement(this);
         }
 
-        // 免疫直到下回合开始
-        await PowerCmd.Apply<IceBlockImmunityPower>(choiceContext, [Owner], 1m, Owner, null);
+        // 免疫直到下回合结束：挂载免疫状态并锁定触发时的当前生命值
+        // （锁血：免疫期间任何结算后 HP 不低于锁定值;免疫由 IceBlockImmunityPower 提供）
+        var immunity = await PowerCmd.Apply<IceBlockImmunityPower>(choiceContext, Owner, 1m, Owner, null);
+        if (immunity != null)
+        {
+            immunity.LockedHp = Owner.CurrentHp;
+        }
     }
 }
