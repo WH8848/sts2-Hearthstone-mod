@@ -597,10 +597,13 @@ public static class JainaCastTracker
         {
             return true;
         }
-        // 吉安娜非法术能力牌：吉安娜卡池中的 Power 类型且无"法术牌"关键词
-        // （寒冰屏障/冰血哨塔带"法术牌"关键词 → 是法术牌，不在排除范围）
+        // 吉安娜非法术牌：吉安娜卡池中的 Attack/Skill/Power 型<b>且无"法术牌"关键词</b>的卡
+        // ——技能型（昔时古树/古拉巴什贡品）、攻击型（火眼莫德雷斯）、能力型（米尔豪斯）均排除;
+        // 挂"法术牌"关键词的（火球术/寒冰箭/野火/寒冰屏障等）是法术牌，不在排除范围。
+        // 职业：原来只排除 Power 型（戏法图腾/炉石形态），技能型/攻击型的非法术牌
+        // 会按"攻击/技能牌视为法术牌"误入法术池/发现（实测：古拉巴什贡品被发现）。
         if (_jainaPoolCardTypes!.Contains(type) &&
-            canonical.Type == CardType.Power &&
+            canonical.Type is CardType.Power or CardType.Attack or CardType.Skill &&
             canonical.CanonicalKeywords?.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Spell) != true)
         {
             return true;
