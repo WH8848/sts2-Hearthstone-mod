@@ -166,21 +166,27 @@ public abstract class JainaLandmarkBase : JainaMinionBase
     }
 
     /// <summary>
-    /// 地标免疫负面状态：灾厄(Doom)与中毒(Poison)等"回合结束伤害/死亡"类
-    /// 施加数量一律改为 0（炉石规则：地标不会被中毒/灾厄等状态影响,
-    /// 只通过点击使用消耗耐久度）。机制与法术反制拦敌人 Power 同款。
+    /// 地标不可被上任何状态（炉石规则：地标不受任何状态影响,只通过点击使用消耗耐久度）。
+    /// 全部正面(Buff)与全部负面(Debuff:灾厄/中毒/冻结/虚弱/易伤/力量/狂怒等)施加一律 0;
+    /// <b>仅放行地标自身机制所需的内建状态</b>：
+    /// 耐久度/冷却/使用行动点/随从标记(MinionPower)。
+    /// 机制与法术反制拦敌人 Power 同款（TryModifyPowerAmountReceived 全局施加入口）。
     /// </summary>
     public override bool TryModifyPowerAmountReceived(PowerModel canonicalPower, Creature target,
         decimal amount, Creature? applier, out decimal modifiedAmount)
     {
         modifiedAmount = amount;
-        if (canonicalPower is MegaCrit.Sts2.Core.Models.Powers.PoisonPower or
-            MegaCrit.Sts2.Core.Models.Powers.DoomPower)
+        // 地标内建状态放行（不拦截）
+        if (canonicalPower is LandmarkDurabilityPower or
+            LandmarkCooldownPower or
+            JainaLandmarkUseAction or
+            MegaCrit.Sts2.Core.Models.Powers.MinionPower)
         {
-            modifiedAmount = 0m;
-            return true;
+            return false;
         }
-        return base.TryModifyPowerAmountReceived(canonicalPower, target, amount, applier, out modifiedAmount);
+        // 其余一切状态（正面+负面）数量改 0
+        modifiedAmount = 0m;
+        return true;
     }
 
     /// <summary>
