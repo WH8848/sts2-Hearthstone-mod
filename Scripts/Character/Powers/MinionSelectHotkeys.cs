@@ -161,6 +161,8 @@ public static class MinionSelectHotkeys
             Deselect();
             _selected = target;
             target.SetHotkeySelected(true);
+            // 攻击动作：等同点击该随从 → 直接进入"选择攻击目标"（红色瞄准箭头）
+            target.TriggerAttackAsAction();
         }
         catch (System.Exception ex)
         {

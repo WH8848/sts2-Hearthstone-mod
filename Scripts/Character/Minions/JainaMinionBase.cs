@@ -312,6 +312,36 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
     }
 
     /// <summary>
+    /// 快捷键攻击动作：等同鼠标点击本随从——由 MinionLib ActionClickPatch 的
+    /// 图标点击入口发起"指定行动"（JainaAttackAction），进入攻击目标选择
+    /// （红色瞄准箭头，点敌人完成攻击；联机与点击随从走同一条队列/同步路径）。
+    /// 失败(不可行动/不在己方回合等)静默——与直接点击行为一致。
+    /// </summary>
+    internal void TriggerAttackAsAction()
+    {
+        try
+        {
+            var node = NCombatRoom.Instance?.GetCreatureNode(Creature);
+            if (node == null)
+            {
+                return;
+            }
+            var action = Creature.Powers.OfType<JainaAttackAction>().FirstOrDefault();
+            if (action == null)
+            {
+                return;
+            }
+            var start = node.Hitbox.GlobalPosition + node.Hitbox.Size / 2f;
+            _ = MinionLib.Action.Patches.ActionClickPatch.TryUseActionFromIconAsync(
+                node, action, start);
+        }
+        catch (System.Exception ex)
+        {
+            MegaCrit.Sts2.Core.Logging.Log.Warn($"[JainaSelect] trigger attack failed: {ex.Message}");
+        }
+    }
+
+    /// <summary>
     /// 隐藏随从卡卡面。
     /// 场景切换（回主菜单/结束战斗）时父节点可能正在增删子节点，
     /// 此时 QueueFreeSafely 内的同步 RemoveChild 会报
