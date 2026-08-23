@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Godot;
 using MegaCrit.Sts2.Core.Combat;
@@ -115,6 +116,26 @@ public sealed class FireblastAncient : JainaSpellCardTemplate
     {
         if (player == base.Owner)
         {
+            // 替换语义：牌库中残留的原始火焰冲击移除——二级火焰冲击是火焰冲击的
+            // 超越形态（英雄技能唯一），选择它=替换掉原始英雄技能，而不是多加一张。
+            // （尘封魔典/发现等获得途径只"新增"而不替换，此处入手时自动收尾；
+            // 火焰冲击的 BeforeHandDraw 也会因牌库存在二级而停止自动入手。）
+            try
+            {
+                var deck = PileType.Deck.GetPile(player);
+                var stale = deck?.Cards.Where(c => c is Fireblast && c != this).ToList();
+                if (stale is { Count: > 0 })
+                {
+                    MegaCrit.Sts2.Core.Logging.Log.Info(
+                        $"[JainaHeroPower] Replacing {stale.Count} Fireblast in deck with FireblastAncient");
+                    await CardPileCmd.RemoveFromDeck(stale, showPreview: false);
+                }
+            }
+            catch (System.Exception ex)
+            {
+                MegaCrit.Sts2.Core.Logging.Log.Warn($"[JainaHeroPower] FireblastAncient replace failed: {ex.Message}");
+            }
+
             // 英雄技能已被英雄卡替换：不再入手二级火焰冲击（按玩家区分，联机不受队友英雄卡影响）
             var rec = jaina.Scripts.Character.JainaCastTracker.For(combatState);
             if (rec.CurrentHeroPowerTypeByPlayer.TryGetValue(player.NetId, out var heroPowerType) &&

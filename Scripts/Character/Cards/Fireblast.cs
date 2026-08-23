@@ -105,6 +105,21 @@ public sealed class Fireblast : JainaSpellCardTemplate
     {
         if (player == base.Owner)
         {
+            // 已被超越：牌库中存在二级火焰冲击时，原始火焰冲击不再自动入手
+            // （二级=火焰冲击的超越形态，英雄技能唯一；否则每回合入手 2 张）。
+            try
+            {
+                var deck = PileType.Deck.GetPile(player);
+                if (deck != null && deck.Cards.Any(c => c is FireblastAncient))
+                {
+                    return;
+                }
+            }
+            catch (System.Exception ex)
+            {
+                MegaCrit.Sts2.Core.Logging.Log.Warn($"[JainaHeroPower] Fireblast deck check failed: {ex.Message}");
+            }
+
             // 英雄技能已被英雄卡替换：不再入手火焰冲击（按玩家区分，联机不受队友英雄卡影响）
             var rec = jaina.Scripts.Character.JainaCastTracker.For(combatState);
             if (rec.CurrentHeroPowerTypeByPlayer.TryGetValue(player.NetId, out var heroPowerType) &&
