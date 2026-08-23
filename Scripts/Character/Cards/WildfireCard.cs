@@ -13,8 +13,10 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
-/// 野火 (Wildfire) - 0费技能牌（罕见，火焰派系）。
+/// 野火 (Wildfire) - 0费能力牌（罕见，火焰派系）。
 /// 你的英雄技能造成的伤害增加1点。可无限升级（每次升级额外 +1）。
+/// 能力丨法术：CardType.Power + 法术牌关键词（寒冰屏障/冰血哨塔同款——
+/// 视为法术牌:可被减费/复制/随机释放等认定）。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
 public sealed class WildfireCard : JainaSpellCardTemplate
@@ -41,7 +43,7 @@ public sealed class WildfireCard : JainaSpellCardTemplate
     public override string CustomPortraitPath => "res://assets/card_art/wildfire.png";
 
     public WildfireCard()
-        : base(0, CardType.Skill, CardRarity.Uncommon, TargetType.None, true)
+        : base(0, CardType.Power, CardRarity.Uncommon, TargetType.None, true)
     {
     }
 
