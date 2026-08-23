@@ -213,12 +213,28 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
                 MegaCrit.Sts2.Core.Logging.Log.Info("[JainaHover] canonical null");
                 return;
             }
-            // 用可变克隆渲染卡面（而非 canonical）：
-            // 战斗中卡面描述里的计算变量/动态变量（{Damage}/{CalculatedDamage}，如冰龙吐息
-            // 升级形态/云雾王子）在 canonical(不可变)上渲染会访问 Owner 抛异常
-            // （CanonicalModelException → 卡牌文本显示不正确/异常）。
-            // 可变实例：描述动态值按战斗状态渲染(与手牌卡面一致)，且不影响任何牌堆。
-            CardModel display = canonical.ToMutable();
+            // 用"战斗真实实例"渲染卡面（而非 canonical/ToMutable）：
+            // - canonical(不可变):战斗内计算变量（{CalculatedDamage}）渲染会访问 Owner 抛异常；
+            // - canonical.ToMutable():对 mod 卡生成的是无标题/描述的占位壳
+            //   （卡面显示 "Broken Card / If you can read this, there is a bug." ——
+            //   scenes/cards/card.tscn 的默认占位文案，实测确认）；
+            // - combatState.CreateCard(canonical, owner):生成带 Owner 的真实实例，
+            //   标题/描述/动态变量全部按战斗状态渲染（与手牌卡面一致），且不进任何牌堆。
+            var ownerPlayer = Creature.PetOwner;
+            var combatStateForPreview = Creature.CombatState;
+            CardModel display;
+            try
+            {
+                display = ownerPlayer != null && combatStateForPreview != null
+                    ? (jaina.Scripts.Character.JainaCastTracker.CreateCardWithUpgrade(
+                        combatStateForPreview, ownerPlayer, cardType, 0) ?? canonical)
+                    : canonical;
+            }
+            catch (System.Exception ex)
+            {
+                MegaCrit.Sts2.Core.Logging.Log.Warn($"[JainaHover] preview instance failed, fallback canonical: {ex.Message}");
+                display = canonical;
+            }
             var cardNode = MegaCrit.Sts2.Core.Nodes.Cards.NCard.Create(display);
             if (cardNode == null)
             {
