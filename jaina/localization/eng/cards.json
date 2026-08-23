@@ -203,7 +203,7 @@
   "JAINA_CARD_ICE_WALKER_CARD.title": "Ice Walker",
   "JAINA_CARD_ICE_WALKER_CARD.description": "[gold]Elemental[/gold].\nSummon a [blue]1/3[/blue] [red]Ice Walker[/red]. Your Hero Power also gives the target 1 [gold]Freeze[/gold].",
   "JAINA_CARD_WILDFIRE_CARD.title": "Wildfire",
-  "JAINA_CARD_WILDFIRE_CARD.description": "Your Hero Power deals {Damage:diff()} more damage. Can be upgraded indefinitely.",
+  "JAINA_CARD_WILDFIRE_CARD.description": "Your Hero Power deals {Damage:diff()} more damage. Can be upgraded indefinitely. Automatically upgrades when passing a campfire.",
   "JAINA_CARD_HEARTHSTONE_FORM_CARD.title": "Hearthstone Form",
   "JAINA_CARD_HEARTHSTONE_FORM_CARD.description": "{IfUpgraded:show:All your cards have [gold]Retain[/gold] and [gold]Exhaust[/gold].\nBlock no longer disappears at the start of your turn.\nWhen you draw a Status card, draw an extra card.\nStarting next turn, gain 10 Energy each turn, and draw 1 card instead of 5 at the start of your turn.\nCards drawn after your hand is full are burned.\nWhen your Draw Pile and Discard Pile are empty, enter [gold]Fatigue[/gold].|All your cards have [gold]Retain[/gold] and [gold]Exhaust[/gold].\nBlock no longer disappears at the start of your turn.\nWhen you draw a Status card, draw an extra card.\nStarting next turn, gain 10 Energy each turn, and draw 1 card instead of 5 at the start of your turn.\nCards drawn after your hand is full are burned.\nWhen your Draw Pile and Discard Pile are empty, enter [gold]Fatigue[/gold].}",
   "JAINA_CARD_NIGHTCLOAK_SANCTUM_CARD.title": "Nightcloak Sanctum",

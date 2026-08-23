@@ -52,6 +52,29 @@ public sealed class WildfireCard : JainaSpellCardTemplate
     /// </summary>
     
 
+    /// <summary>
+    /// 路过火堆自动升级：本卡在营地（RestSiteRoom）进入时自动升级一次。
+    /// 卡牌模型在 RunState.IterateHookListeners 中（含 player.Deck.Cards），
+    /// AfterRoomEntered 会被 Hook 调用于所有模型——本卡牌库实例直接自行升级，
+    /// 无需任何注册;多次路过营地可多次叠加（无限升级）。
+    /// </summary>
+    public override Task AfterRoomEntered(MegaCrit.Sts2.Core.Rooms.AbstractRoom room)
+    {
+        try
+        {
+            if (room is MegaCrit.Sts2.Core.Rooms.RestSiteRoom &&
+                IsMutable && CurrentUpgradeLevel < MaxUpgradeLevel)
+            {
+                UpgradeInternal();
+            }
+        }
+        catch (System.Exception ex)
+        {
+            MegaCrit.Sts2.Core.Logging.Log.Warn($"[Jaina] Wildfire auto-upgrade failed: {ex}");
+        }
+        return Task.CompletedTask;
+    }
+
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
         // 记录施放（倒带/罗曼斯/三派系追踪）
