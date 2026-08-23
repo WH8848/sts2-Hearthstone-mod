@@ -26,9 +26,13 @@ public sealed class RobocallerCard : JainaMinionCardTemplate
     public int[] CurrentDials { get; private set; } = new int[3];
 
     /// <summary>
-    /// 卡牌原画：炉石传说"拨号机器人"（Robocaller, 110757）官方原画
+    /// 卡牌原画：炉石传说"拨号机器人"（Robocaller, 110757）官方原画；
+    /// 升级后切换为 Signature 异画版
     /// </summary>
-    public override string CustomPortraitPath => "res://assets/card_art/robocaller.png";
+    public override string CustomPortraitPath =>
+        IsUpgraded
+            ? "res://assets/card_art/robocaller_signature.png"
+            : "res://assets/card_art/robocaller.png";
 
     /// <summary>
     /// 机械种族 + 战吼（悬停解释）+ 保留（手牌不弃置）+ 消耗（随从卡打出后消耗，模板默认）
