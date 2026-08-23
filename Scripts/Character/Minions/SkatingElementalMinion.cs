@@ -74,6 +74,22 @@ public sealed class SkatingElementalMinion : JainaMinionBase
             return;
         }
 
+        // 战吼伤害减少量（用于护甲）：冻结<b>施加前</b>的意图预览伤害 D1（含冻结修正,
+        // 此时已冻结 N 层）与<b>施加后</b>的预览 D2（N+1 层）之差 = 本次冻结的真实减少量
+        // （= 原始伤害 × 12.5%,不受已有冻结层数影响;避免"预览已扣冻结后再乘 12.5%"的
+        // 二次扣减——实测表现是格挡偏小甚至为 0）。
+        int damageBefore = 0;
+        if (enemy.Monster?.NextMove != null)
+        {
+            foreach (var intent in enemy.Monster.NextMove.Intents)
+            {
+                if (intent is AttackIntent atk)
+                {
+                    damageBefore += atk.GetTotalDamage(new[] { owner.Creature }, enemy);
+                }
+            }
+        }
+
         // 给于1层冻结（无视人工制品：滑冰元素的冻结不被人工制品阻挡）
         FreezePower.BypassArtifactNextApply = true;
         try
@@ -85,23 +101,19 @@ public sealed class SkatingElementalMinion : JainaMinionBase
             FreezePower.BypassArtifactNextApply = false;
         }
 
-        // 获得等同于其减少的总体伤害的格挡：
-        // 1层冻结使该敌方攻击伤害减少 12.5%——按敌方当前意图攻击伤害计算减少量。
-        // GetTotalDamage(targets, owner) 的 targets = 被攻击的目标（玩家方），
-        // 不是敌人自己——传错目标会导致伤害计算错误（力量/易伤等修正按目标判定），
-        // 表现为"冻结给了但格挡没正确获得"。
-        int totalAttack = 0;
+        // 冻结后预览（N+1 层）;减少量 = D1 - D2
+        int damageAfter = 0;
         if (enemy.Monster?.NextMove != null)
         {
             foreach (var intent in enemy.Monster.NextMove.Intents)
             {
                 if (intent is AttackIntent atk)
                 {
-                    totalAttack += atk.GetTotalDamage(new[] { owner.Creature }, enemy);
+                    damageAfter += atk.GetTotalDamage(new[] { owner.Creature }, enemy);
                 }
             }
         }
-        int block = (int)(totalAttack * 0.125m);
+        int block = Math.Max(0, damageBefore - damageAfter);
         if (block > 0)
         {
             await CreatureCmd.GainBlock(owner.Creature, block, ValueProp.Move, null);
