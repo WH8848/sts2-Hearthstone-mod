@@ -13,25 +13,23 @@ namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
 /// 脱罪力证 (Exoneration) - 1费技能牌（罕见，冰霜派系）。
-/// 获得1层无实体。基础版消耗；升级后不再消耗。
+/// 获得1层无实体。升级后费用 1 -> 0。保留消耗（升级不再移除）。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
 public sealed class ExonerationCard : JainaSpellCardTemplate
 {
     /// <summary>
-    /// 可升级（升级后去除消耗）
+    /// 可升级（升级后费用 1 -> 0）
     /// </summary>
     public override int MaxUpgradeLevel => 1;
 
     /// <summary>
-    /// 法术牌 + 冰霜派系；基础版消耗（升级后不再消耗）
+    /// 法术牌 + 冰霜派系 + 消耗（升级后保留）
     /// </summary>
-    public override IEnumerable<CardKeyword> CanonicalKeywords => IsUpgraded
-        ? [jaina.Scripts.Character.Keywords.JainaKeywords.Spell,
-           jaina.Scripts.Character.Keywords.JainaKeywords.Frost]
-        : [jaina.Scripts.Character.Keywords.JainaKeywords.Spell,
-           jaina.Scripts.Character.Keywords.JainaKeywords.Frost,
-           CardKeyword.Exhaust];
+    public override IEnumerable<CardKeyword> CanonicalKeywords =>
+        [jaina.Scripts.Character.Keywords.JainaKeywords.Spell,
+         jaina.Scripts.Character.Keywords.JainaKeywords.Frost,
+         CardKeyword.Exhaust];
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [];
 
@@ -46,12 +44,11 @@ public sealed class ExonerationCard : JainaSpellCardTemplate
     }
 
     /// <summary>
-    /// 升级：移除消耗（LocalKeywords 懒初始化只算一次，升级形态 Keywords
-    /// 缓存自基础状态——需显式移除 Exhaust，否则升级后卡面仍显示"消耗"）。
+    /// 升级：费用 1 -> 0（不再移除消耗）
     /// </summary>
     protected override void OnUpgrade()
     {
-        RemoveKeyword(CardKeyword.Exhaust);
+        EnergyCost.UpgradeBy(-1);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
