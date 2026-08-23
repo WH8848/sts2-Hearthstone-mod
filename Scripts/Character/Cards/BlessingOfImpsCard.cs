@@ -75,9 +75,11 @@ public sealed class BlessingOfImpsCard : JainaSpellCardTemplate
         // 释放次数 = 灌注层数（每层灌注额外释放一次；至少 1 次防御）
         var empower = owner.Creature.GetPower<EmpowerPower>();
         int casts = Math.Max(1, empower?.EmpowerStacks ?? 0);
-        // 奥术增幅：英雄技能额外伤害（每次释放的伤害 = 1 + 增幅）
+        // 野火：英雄技能伤害永久加成（与火焰冲击等英雄技能卡一致）；
+        // 奥术增幅：英雄技能额外伤害（每次释放的伤害 = 1 + 野火 + 增幅）
+        var wildfire = owner.Creature.GetPower<WildfirePower>();
         var amplifier = owner.Creature.GetPower<ArcaneAmplifierPower>();
-        int hitDamage = 1 + (amplifier?.AmplifierBonus ?? 0);
+        int hitDamage = 1 + (wildfire?.WildfireStacks ?? 0) + (amplifier?.AmplifierBonus ?? 0);
 
         for (int i = 0; i < casts; i++)
         {
