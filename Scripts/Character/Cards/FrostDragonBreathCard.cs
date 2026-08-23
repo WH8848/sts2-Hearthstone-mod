@@ -41,10 +41,11 @@ public sealed class FrostDragonBreathCard : JainaSpellCardTemplate
         IsUpgraded ? JainaTargetTypes.AnyTargetable : TargetType.None;
 
     /// <summary>
-    /// 卡牌原画：冰龙吐息（暂用冬泉幼龙卡图，待补专属原画）/ 升级后（冰枪术）切换原画
+    /// 卡牌原画：冰龙吐息（炉石原卡 Breath of Sindragosa 原画，取自 hearthstone.wiki.gg）/
+    /// 升级后（冰枪术）切换原画
     /// </summary>
     public override string CustomPortraitPath =>
-        IsUpgraded ? "res://assets/card_art/ice_lance.png" : "res://assets/card_art/winterspring_whelp.png";
+        IsUpgraded ? "res://assets/card_art/ice_lance.png" : "res://assets/card_art/breath_of_sindragosa.png";
 
     public FrostDragonBreathCard()
         : base(0, CardType.Attack, CardRarity.Common, TargetType.None, true)
