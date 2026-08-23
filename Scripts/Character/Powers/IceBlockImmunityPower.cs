@@ -14,8 +14,9 @@ using STS2RitsuLib.Scaffolding.Content.Patches;
 namespace jaina.Scripts.Character.Powers;
 
 /// <summary>
-/// 寒冰屏障的免疫状态：获得[gold]免疫[/gold]直到下回合开始（寒冰屏障触发后挂载）。
-/// 免疫期间所有伤害归零；玩家下回合开始时移除。
+/// 寒冰屏障的免疫状态：获得[gold]免疫[/gold]直到你的下回合结束（炉石语义：
+/// 触发后对手回合全程 + 你的下回合全程免疫，下回合结束时移除）。
+/// 免疫期间所有伤害归零。
 /// </summary>
 [RegisterPower]
 public sealed class IceBlockImmunityPower : PowerModel, IModPowerAssetOverrides
@@ -52,10 +53,11 @@ public sealed class IceBlockImmunityPower : PowerModel, IModPowerAssetOverrides
     }
 
     /// <summary>
-    /// 下回合开始：免疫结束
+    /// 你的回合结束：免疫结束（炉石 "until your next turn" 语义——
+    /// 免疫持续到玩家下个回合结束，不是下回合开始）
     /// </summary>
-    public override async Task BeforeSideTurnStart(PlayerChoiceContext choiceContext, CombatSide side,
-        IReadOnlyList<Creature> participants, ICombatState combatState)
+    public override async Task AfterSideTurnEnd(PlayerChoiceContext choiceContext, CombatSide side,
+        IEnumerable<Creature> participants)
     {
         if (Owner.Side == side)
         {
