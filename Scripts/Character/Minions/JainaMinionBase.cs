@@ -253,7 +253,10 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
             }
             cardNode.UpdateVisuals(MegaCrit.Sts2.Core.Entities.Cards.PileType.None,
                 MegaCrit.Sts2.Core.Entities.Cards.CardPreviewMode.Normal);
-            cardNode.MouseFilter = Control.MouseFilterEnum.Ignore;
+            // 整棵卡面树鼠标穿透：NCard 内部子控件（卡图/名称条/文本）默认 MouseFilter=Stop，
+            // 只把根节点设 Ignore 不够——卡面贴在随从旁，重叠区域点击会被内部控件吃掉，
+            // 导致"选中随从后点击随从无法攻击"（未选中无卡面时点击正常）。
+            SetControlTreeMouseFilter(cardNode, Control.MouseFilterEnum.Ignore);
             host.AddChild(cardNode);
             // 卡面放随从旁边（横跨 ±90 起，卡面宽约 112 缩放后；稍抬高对齐卡图区域）
             cardNode.Scale = Vector2.One * 0.72f;
@@ -282,6 +285,29 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
         {
             // 悬停卡面失败不影响随从视觉/战斗
             MegaCrit.Sts2.Core.Logging.Log.Warn($"[JainaHover] error: {ex}");
+        }
+    }
+
+    /// <summary>
+    /// 递归设置控件树的鼠标过滤（卡面预览整棵穿透，不拦截任何点击）。
+    /// </summary>
+    private static void SetControlTreeMouseFilter(Node node, Control.MouseFilterEnum filter)
+    {
+        try
+        {
+            if (node is Control control)
+            {
+                control.MouseFilter = filter;
+                control.FocusMode = Control.FocusModeEnum.None;
+            }
+            foreach (var child in node.GetChildren())
+            {
+                SetControlTreeMouseFilter(child, filter);
+            }
+        }
+        catch
+        {
+            // 个别节点异常不影响卡面显示与点击
         }
     }
 
