@@ -1,55 +1,38 @@
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
-using MegaCrit.Sts2.Core.GameActions.Multiplayer;
-using MegaCrit.Sts2.Core.Localization.DynamicVars;
-using jaina.Scripts.Character.Powers;
+using jaina.Scripts.Character.Minions;
 using STS2RitsuLib.Interop.AutoRegistration;
-using STS2RitsuLib.Scaffolding.Content;
 
 namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
-/// 戏法图腾 (Trick Totem) - 1费能力牌（罕见）。
+/// 戏法图腾 (Trick Totem) - 1费随从卡（普通）。属性 0/3。
 /// 在你的回合结束时，随机施放一个费用消耗小于或等于1点的全角色卡牌。
-/// 升级后费用变为 0。
+/// 升级不减费（模板默认：去除"消耗"关键词）。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
-public sealed class TrickTotemCard : JainaSpellCardTemplate
+public sealed class TrickTotemCard : JainaMinionCardTemplate
 {
     /// <summary>
-    /// 可升级（升级后费用 1 -> 0）
+    /// 卡牌原画：炉石传说"戏法图腾"官方原画
     /// </summary>
-    public override int MaxUpgradeLevel => 1;
-
-    public override IEnumerable<CardKeyword> CanonicalKeywords => [];
-
-    protected override IEnumerable<DynamicVar> CanonicalVars => [];
-
     public override string CustomPortraitPath => "res://assets/card_art/trick_totem.png";
 
-    public TrickTotemCard()
-        : base(1, CardType.Power, CardRarity.Uncommon, TargetType.Self, true)
-    {
-    }
+    protected override Type MinionType => typeof(TrickTotemMinion);
+
+    protected override int MinionAttack => 0;
+
+    protected override int MinionHealth => 3;
 
     /// <summary>
-    /// 升级：费用 1 -> 0
+    /// 消耗（随从卡打出后消耗，模板默认；升级后自动去除）
     /// </summary>
-    protected override void OnUpgrade()
-    {
-        EnergyCost.UpgradeBy(-1);
-    }
+    public override IEnumerable<CardKeyword> CanonicalKeywords =>
+        [CardKeyword.Exhaust];
 
-    protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
+    public TrickTotemCard()
+        : base(1, CardRarity.Common)
     {
-        // 记录施放（倒带/罗曼斯/三派系追踪）
-        jaina.Scripts.Character.JainaCastTracker.RecordPlayed(this);
-
-        // 挂戏法图腾（可叠层：每张 +1 层，回合结束每层各施放一次）
-        await PowerCmd.Apply<TrickTotemPower>(
-            choiceContext, [base.Owner.Creature], 1m, base.Owner.Creature, this);
     }
 }

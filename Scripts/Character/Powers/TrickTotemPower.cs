@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
+using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
@@ -17,7 +18,8 @@ namespace jaina.Scripts.Character.Powers;
 
 /// <summary>
 /// 戏法图腾：在你的回合结束时，随机施放一个费用消耗小于或等于1点的全角色卡牌。
-/// 挂在吉安娜玩家身上（可见）。
+/// 挂在戏法图腾<b>随从</b>身上（随从死亡时 Power 随死亡清理自动移除）；
+/// 多张图腾各挂一个 Power，每张在回合结束各施放一次（等价原"可叠层"）。
 /// </summary>
 [RegisterPower]
 public sealed class TrickTotemPower : PowerModel, IModPowerAssetOverrides
@@ -34,14 +36,19 @@ public sealed class TrickTotemPower : PowerModel, IModPowerAssetOverrides
     public override PowerType Type => PowerType.Buff;
 
     /// <summary>
-    /// 可叠层：多张戏法图腾每回合结束各施放一次（Amount = 层数）
+    /// 可叠层（同一随从多张图腾各自一个 Power；层数备用）
     /// </summary>
     public override PowerStackType StackType => PowerStackType.Counter;
 
     protected override bool IsVisibleInternal => true;
 
     /// <summary>
-    /// 玩家回合结束：每层戏法图腾随机施放一个费用消耗 <= 1 的全角色卡牌
+    /// 持有者玩家：Owner 是玩家自身或随从（PetOwner 回退）
+    /// </summary>
+    private Player? OwnerPlayer => Owner?.Player ?? Owner?.PetOwner;
+
+    /// <summary>
+    /// 玩家回合结束：随机施放一个费用消耗 <= 1 的全角色卡牌
     /// （攻击/技能牌，不含英雄技能卡；按可升级级别展开；单目标随机选合法目标）。
     /// </summary>
     public override async Task AfterSideTurnEnd(PlayerChoiceContext choiceContext, CombatSide side,
@@ -51,7 +58,7 @@ public sealed class TrickTotemPower : PowerModel, IModPowerAssetOverrides
         {
             return;
         }
-        var player = Owner.Player;
+        var player = OwnerPlayer;
         if (player == null || player.Creature?.CombatState == null)
         {
             return;

@@ -29,7 +29,7 @@
   "JAINA_CARD_COLDARRA_DRAKE_CARD.title": "考达拉幼龙",
   "JAINA_CARD_COLDARRA_DRAKE_CARD.description": "召唤一个[blue]6/7[/blue]的[red]考达拉幼龙[/red]。\n你的英雄技能耗能变为1{energyPrefix:energyIcons(1)}，打出你的[gold]英雄技能[/gold]后，将其返回[gold]手牌[/gold]。",
   "JAINA_CARD_TRICK_TOTEM_CARD.title": "戏法图腾",
-  "JAINA_CARD_TRICK_TOTEM_CARD.description": "在你的回合结束时，随机打出一张耗能小于或等于{energyPrefix:energyIcons(1)}的全角色卡牌。",
+  "JAINA_CARD_TRICK_TOTEM_CARD.description": "召唤一个[blue]0/3[/blue]的[red]戏法图腾[/red]。\n在你的回合结束时，随机打出一张耗能小于或等于{energyPrefix:energyIcons(1)}的全角色卡牌。",
   "JAINA_CARD_SKATING_ELEMENTAL_CARD.title": "滑冰元素",
   "JAINA_CARD_SKATING_ELEMENTAL_CARD.description": "召唤一个[blue]3/4[/blue]的[red]滑冰元素[/red]。\n[gold]微缩[/gold]。\n[gold]战吼[/gold]:选择1名敌人，给予其1层冻结，获得等同于其减少的总体伤害的格挡。",
   "JAINA_CARD_ARCHMAGES_RUNE_CARD.title": "大法师的符文",
