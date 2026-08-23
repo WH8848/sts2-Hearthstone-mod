@@ -32,12 +32,21 @@ public sealed class FrostDragonBreathCard : JainaSpellCardTemplate
         [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Freeze, jaina.Scripts.Character.Keywords.JainaKeywords.Frost];
 
     /// <summary>
-    /// 动态伤害显示：未升级 = 2(基础,预览含力量等修正)；升级(冰枪术) = 4(每层,预览含力量)。
-    /// 分支声明(CanonicalVars 不会为升级形态重新求值,同陨石术模式)。
+    /// 动态伤害显示（原版"欺凌 Bully"同款计算式变量）：
+    /// 未升级 = DamageVar(2)（预览含力量等修正）；
+    /// 升级（冰枪术）= 0 + 4 × 目标的冻结层数（目标感知，选中目标时显示实际计算伤害，
+    /// 预览含全局修正，与战吼/OnPlay 的 每层4点 结算一致）。
+    /// 无基础值（全动态）——原版推荐 CalculationBaseVar(0) + ExtraDamageVar(每单位值)。
     /// </summary>
     protected override IEnumerable<MegaCrit.Sts2.Core.Localization.DynamicVars.DynamicVar> CanonicalVars =>
         IsUpgraded
-            ? [new MegaCrit.Sts2.Core.Localization.DynamicVars.DamageVar(4m, MegaCrit.Sts2.Core.ValueProps.ValueProp.Move)]
+            ? [new MegaCrit.Sts2.Core.Localization.DynamicVars.CalculationBaseVar(0m),
+               new MegaCrit.Sts2.Core.Localization.DynamicVars.ExtraDamageVar(4m),
+               new MegaCrit.Sts2.Core.Localization.DynamicVars.CalculatedDamageVar(MegaCrit.Sts2.Core.ValueProps.ValueProp.Move)
+                   .WithMultiplier(static (card, target) =>
+                       card is { IsMutable: true } && target != null
+                           ? target.GetPower<jaina.Scripts.Character.Powers.FreezePower>()?.Amount ?? 0m
+                           : 0m)]
             : [new MegaCrit.Sts2.Core.Localization.DynamicVars.DamageVar(2m, MegaCrit.Sts2.Core.ValueProps.ValueProp.Move)];
 
     /// <summary>

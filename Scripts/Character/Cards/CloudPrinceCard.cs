@@ -30,12 +30,19 @@ public sealed class CloudPrinceCard : JainaMinionCardTemplate
         [JainaKeywords.Elemental, JainaKeywords.Battlecry, CardKeyword.Exhaust];
 
     /// <summary>
-    /// 动态伤害变量：战吼每有一种状态造成 6 点伤害（固定值，不吃力量——
-    /// ValueProp.Unpowered，与随从实际结算一致；描述用 {Damage:diff()} 动态显示）。
+    /// 动态伤害显示（原版"欺凌 Bully"同款计算式变量）：
+    /// 伤害 = 0 + 6 × 你拥有的状态数（= 主人身上的 Power 数量，与战吼结算一致）；
+    /// 描述用 {CalculatedDamage:diff()} 显示实时值（战斗中预览含全局修正）。
+    /// 无基础值（全动态）——原版推荐 CalculationBaseVar(0) + ExtraDamageVar(每单位值)。
     /// </summary>
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new DamageVar(6m, ValueProp.Unpowered)
+        new CalculationBaseVar(0m),
+        new ExtraDamageVar(6m),
+        new CalculatedDamageVar(ValueProp.Unpowered).WithMultiplier(
+            (card, _) => card is { IsMutable: true } && card.Owner?.Creature != null
+                ? card.Owner.Creature.Powers.Count
+                : 0m)
     ];
 
     /// <summary>
