@@ -133,6 +133,35 @@ public static class AutoPlayGuard
     }
 
     /// <summary>
+    /// 当前调用栈是否处于<b>地狱狂徒</b>(原版 HellraiserPower.AfterCardDrawnEarly)发起的
+    /// 自动打出流程中(抽到打击牌被地狱狂徒光环自动打出)。
+    /// C# async 方法在栈上显示为状态机帧(声明类型形如
+    /// <c>HellraiserPower+&lt;AfterCardDrawnEarly&gt;d__xx</c>),也可保留原方法同步帧。
+    /// 用于让地狱狂徒的打击<b>按原版机制只打敌人</b>:不参与吉安娜随机释放的"目标放宽"
+    /// (放宽会让打击选到自己/队友/己方随从)。
+    /// 玩家选择入口调用频率低,该检测只在 AutoPlay 目标补全处(每次自动打出)调用,代价可接受。
+    /// </summary>
+    public static bool IsInHellraiserAutoPlay()
+    {
+        var stack = new System.Diagnostics.StackTrace(2, false);
+        for (int i = 0; i < stack.FrameCount; i++)
+        {
+            var method = stack.GetFrame(i)?.GetMethod();
+            if (method == null)
+            {
+                continue;
+            }
+            var declaring = method.DeclaringType;
+            if (declaring != null &&
+                (declaring.FullName ?? declaring.Name).Contains("HellraiserPower", StringComparison.Ordinal))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /// <summary>
     /// 从候选中随机选一张（filter 过滤后；无候选返回 null）。
     /// 用 CombatTargets RNG——两端同步执行同一流程，结果一致（确定性）。
     /// </summary>

@@ -32,10 +32,15 @@ public static class AutoPlayTargetPatch
             // 标记的清除由 OnPlayWrapper 统一处理（isAutoPlay=false 清空），
             // 玩家手打/地标使用等操作不会被残留标记误判。
             AutoPlayGuard.CurrentAutoPlayCard = card;
-            // 目标补全只对"吉安娜机制发起"的 AutoPlay（匣中古神/惊奇卡牌/球/哨塔/图腾/
-            // 重放等吉安娜卡牌发起的释放——释放的卡可为原版/其它 mod 卡）——
-            // 其它 mod 的 AutoPlay 保持原版行为（不干预其自定义目标类型处理）。
-            if (!AutoPlayGuard.CurrentAutoPlayIsJainaOrigin)
+            // 地狱狂徒（原版 HellraiserPower）光环触发的打击自动打出：
+            // 按原版机制只打敌人，不参与吉安娜随机制的目标放宽
+            // （放宽会让打击选到自己/队友/己方随从）。
+            bool hellraiserAutoPlay = AutoPlayGuard.IsInHellraiserAutoPlay();
+            // 目标补全只对"吉安娜机制发起"或"地狱狂徒机制"的 AutoPlay
+            // （匣中古神/惊奇卡牌/球/哨塔/图腾/重放等吉安娜卡牌发起的释放，
+            // 及地狱狂徒原版效果的打击自动打出）——其它 mod 的 AutoPlay 保持
+            // 原版行为（不干预其自定义目标类型处理）。
+            if (!AutoPlayGuard.CurrentAutoPlayIsJainaOrigin && !hellraiserAutoPlay)
             {
                 return;
             }
@@ -51,6 +56,18 @@ public static class AutoPlayTargetPatch
             var combatState = card.CombatState ?? card.Owner?.Creature?.CombatState;
             if (combatState == null)
             {
+                return;
+            }
+            if (hellraiserAutoPlay)
+            {
+                // 地狱狂徒：自定义单目标打击卡也只从敌人中选合法目标
+                // （无合法敌人时不设目标——卡 OnPlay 目标防御跳过，不打出伤害）
+                var hellEnemies = combatState.GetOpponentsOf(card.Owner.Creature)
+                    .Where(c => c != null && c.IsAlive && c.IsHittable && card.IsValidTarget(c))
+                    .ToList();
+                target = hellEnemies.Count > 0
+                    ? card.Owner.RunState.Rng.CombatTargets.NextItem(hellEnemies)
+                    : null;
                 return;
             }
             target = JainaRandomPoolHelper.PickRandomTarget(card.Owner, combatState, card);
