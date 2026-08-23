@@ -3,12 +3,8 @@ using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
-using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
-using MegaCrit.Sts2.Core.Models;
-using MegaCrit.Sts2.Core.ValueProps;
-using jaina.Scripts.Character.Minions;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -17,15 +13,18 @@ namespace jaina.Scripts.Character.Cards;
 /// <summary>
 /// 奥术智慧 (Arcane Intellect) - 吉安娜专属技能牌。
 /// 1费：抽两张牌。
-/// 升级后变为"时空提速 (Chrono Boost)"：抽两张牌，并召唤一个 3/4 狂热者。
+/// 升级后变为"清凉的泉水 (Cooling Spring)"：抽 2 张牌，每抽到一张法术牌获得 1 能量。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
 public sealed class ArcaneIntellect : JainaSpellCardTemplate
 {
     /// <summary>
-    /// 法术牌：攻击牌和技能牌都视为法术牌
+    /// 法术牌：攻击牌和技能牌都视为法术牌；基础版奥术派系，
+    /// 升级后（清凉的泉水）无派系。
     /// </summary>
-    public override IEnumerable<CardKeyword> CanonicalKeywords => [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Arcane];
+    public override IEnumerable<CardKeyword> CanonicalKeywords => IsUpgraded
+        ? [jaina.Scripts.Character.Keywords.JainaKeywords.Spell]
+        : [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Arcane];
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
@@ -33,12 +32,11 @@ public sealed class ArcaneIntellect : JainaSpellCardTemplate
     ];
 
     /// <summary>
-    /// 卡牌原画：炉石传说"奥术智慧"官方高清原画。
-    /// 升级后变为"时空提速 (Chrono Boost)"，卡图同步切换为 Chrono Boost 官方原画。
+    /// 卡牌原画：奥术智慧官方原画 / 升级后（清凉的泉水）切换原画
     /// </summary>
     public override string CustomPortraitPath =>
         IsUpgraded
-            ? "res://assets/card_art/chrono_boost.png"
+            ? "res://assets/card_art/refreshing_spring_water.png"
             : "res://assets/card_art/arcane_intellect.png";
 
     public ArcaneIntellect()
@@ -47,7 +45,7 @@ public sealed class ArcaneIntellect : JainaSpellCardTemplate
     }
 
     /// <summary>
-    /// 升级后卡牌名称变为"时空提速 (Chrono Boost)"
+    /// 升级后卡牌名称变为"清凉的泉水 (Cooling Spring)"
     /// </summary>
     public override string Title
     {
@@ -68,34 +66,25 @@ public sealed class ArcaneIntellect : JainaSpellCardTemplate
         // 记录施放（倒带/罗曼斯/三派系追踪）
         jaina.Scripts.Character.JainaCastTracker.RecordPlayed(this);
 
-        await CardPileCmd.Draw(choiceContext, DynamicVars.Cards.BaseValue, base.Owner);
+        var drawn = await CardPileCmd.Draw(choiceContext, DynamicVars.Cards.BaseValue, base.Owner);
 
-        // 升级后：召唤狂热者（3/4，生成时立刻攻击）
+        // 清凉的泉水（升级后）：每抽到一张法术牌（攻击/技能）获得 1 能量
         if (IsUpgraded)
         {
-            await JainaMinionPool.SummonMinion<Zealot>(choiceContext, base.Owner, maxHp: 4m, attack: 3m);
+            foreach (var card in drawn)
+            {
+                if (card.Type == CardType.Attack || card.Type == CardType.Skill)
+                {
+                    await PlayerCmd.GainEnergy(1m, base.Owner);
+                }
+            }
         }
     }
 
     protected override void OnUpgrade()
     {
-        // 升级后名称为"时空提速"，效果为抽牌+召唤狂热者
-        // 卡牌 ID 不变，通过 titleUpgraded 本地化键显示新名称
-    }
-
-    /// <summary>
-    /// 悬停提示：升级后的时空提速显示狂热者衍生物卡（参考冰冷案例）。
-    /// </summary>
-    protected override IEnumerable<IHoverTip> AdditionalHoverTips
-    {
-        get
-        {
-            if (!IsUpgraded)
-            {
-                yield break;
-            }
-            // 狂热者是时空提速召唤的衍生物（通过 ModelDb 获取已注册的 canonical 卡实例）
-            yield return new CardHoverTip(ModelDb.Card<ZealotCard>());
-        }
+        // 升级为清凉的泉水：移除奥术派系（升级形态无派系）。
+        // LocalKeywords 懒缓存可能已在未升级状态初始化——需显式移除。
+        RemoveKeyword(jaina.Scripts.Character.Keywords.JainaKeywords.Arcane);
     }
 }
