@@ -235,5 +235,9 @@
   "JAINA_CARD_EVERFIRE_ARROW_CARD.title": "Everfire Arrow",
   "JAINA_CARD_EVERFIRE_ARROW_CARD.description": "[gold]Lifesteal[/gold].\nDeal {Damage:diff()} damage to a character.{IfUpgraded:show:\nAt the start of your next turn, return this card to your hand.|}",
   "JAINA_CARD_COSMIC_ANOMALY_CARD.title": "Cosmic Anomaly",
-  "JAINA_CARD_COSMIC_ANOMALY_CARD.description": "[gold]Elemental[/gold].\nSummon a [blue]4/3[/blue] [red]Cosmic Anomaly[/red].\nStrength +2."
+  "JAINA_CARD_COSMIC_ANOMALY_CARD.description": "[gold]Elemental[/gold].\nSummon a [blue]4/3[/blue] [red]Cosmic Anomaly[/red].\nStrength +2.",
+  "JAINA_CARD_ANCIENT_TREE_CARD.title": "Ancient Tree",
+  "JAINA_CARD_ANCIENT_TREE_CARD.description": "Gain {Block:diff()} Block.",
+  "JAINA_CARD_GURUBASHI_OFFERING_CARD.title": "Gurubashi Offering",
+  "JAINA_CARD_GURUBASHI_OFFERING_CARD.description": "Gain {Block:diff()} Block."
 }
