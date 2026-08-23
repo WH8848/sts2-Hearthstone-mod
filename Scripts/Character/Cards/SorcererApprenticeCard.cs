@@ -6,7 +6,8 @@ using STS2RitsuLib.Interop.AutoRegistration;
 namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
-/// SorcererApprenticeCard - 吉安娜随从卡（罕见）。0 费，召唤 3/2 的 SorcererApprenticeMinion。
+/// SorcererApprenticeCard - 吉安娜随从卡（普通）。1 费,召唤 3/2 的 SorcererApprenticeMinion。
+/// 升级后费用 1 -> 0（保留消耗,只降费）。
 /// 效果：当 4 只巫师学徒在场时，你的法术牌费用减少 1 点（由随从光环 SorcererApprenticePower 实现）。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
@@ -28,7 +29,15 @@ public sealed class SorcererApprenticeCard : JainaMinionCardTemplate
     protected override int MinionHealth => 2;
 
     public SorcererApprenticeCard()
-        : base(0, CardRarity.Common)
+        : base(1, CardRarity.Common)
     {
+    }
+
+    /// <summary>
+    /// 升级：费用 1 -> 0（不调用 base——保留消耗词条,只降费）
+    /// </summary>
+    protected override void OnUpgrade()
+    {
+        EnergyCost.UpgradeBy(-1);
     }
 }
