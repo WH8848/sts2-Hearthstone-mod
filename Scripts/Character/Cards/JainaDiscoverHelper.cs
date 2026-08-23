@@ -300,6 +300,12 @@ public static class JainaDiscoverHelper
             {
                 return;
             }
+            // 炉石形态等"整局形态能力牌"不可被拾荒式发现三选一里出现
+            // （特殊能力牌,非普通卡;实测清道夫错误发现炉石形态）
+            if (canonical is jaina.Scripts.Character.Cards.HearthstoneFormCard)
+            {
+                return;
+            }
             // X 费卡（CostsX）费用不定：默认总是作为候选出现在发现池里；
             // excludeXCost=true 时排除（冬泉雏龙按 0 费发现——X 费卡打出时
             // 消耗全部能量，不是 0 费，不应出现在其发现池中）
