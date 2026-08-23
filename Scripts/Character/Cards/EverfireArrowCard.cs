@@ -72,14 +72,19 @@ public sealed class EverfireArrowCard : JainaSpellCardTemplate
 
         // 造成 3 点伤害（吃力量加成，与卡面预览一致）
         var dmg = (int)base.DynamicVars.Damage.BaseValue;
-        await DamageCmd.Attack(dmg)
+        var attack = DamageCmd.Attack(dmg)
             .FromCard(this, cardPlay)
             .Targeting(target)
-            .WithHitFx("vfx/vfx_attack_blunt")
-            .Execute(choiceContext);
+            .WithHitFx("vfx/vfx_attack_blunt");
+        await attack.Execute(choiceContext);
 
-        // 吸血：造成伤害时回复等量生命（本牌造成 3 点伤害 → 回复 3 点）
-        await CreatureCmd.Heal(base.Owner.Creature, dmg);
+        // 吸血：造成多少伤害吸多少血（按实际造成伤害结算，含力量增伤/易伤等修正，
+        // 与卡面预览的基础值不同——预览3点、实际打5点则回5点）
+        var actualDamage = jaina.Scripts.Character.JainaCastTracker.SumActualDamage(attack);
+        if (actualDamage > 0)
+        {
+            await CreatureCmd.Heal(base.Owner.Creature, actualDamage);
+        }
 
         // 升级后：下回合开始时，将本牌移回你的手牌（挂在玩家身上的回手 Power）
         if (IsUpgraded)
