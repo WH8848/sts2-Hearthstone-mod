@@ -6,11 +6,11 @@
   "JAINA_KEYWORD_FREEZE.title": "冻结",
   "JAINA_KEYWORD_FREEZE.description": "被冻结的角色攻击造成的伤害减少12.5%，可叠加。最大可叠加8层，回合结束全部消失。随从给予的冻结不会被[gold]人工制品[/gold]阻挡。",
   "JAINA_KEYWORD_TWINSPELL.title": "双生法术",
-  "JAINA_KEYWORD_TWINSPELL.description": "当你施放一个具有“双生法术”关键词的法术时，会立即将一张该法术的复制置入你的手牌。复制出的这张牌不再具有“双生法术”关键词。",
+  "JAINA_KEYWORD_TWINSPELL.description": "立即将一张该法术的复制置入你的手牌，并失去“双生法术”。",
   "JAINA_KEYWORD_EMPOWER.title": "灌注",
   "JAINA_KEYWORD_EMPOWER.description": "第一次打出灌注卡牌会将你的英雄技能替换为[gold]小精灵的祝福[/gold]。此后每层灌注都会让英雄技能额外释放一次。",
   "JAINA_KEYWORD_FINISHER.title": "压轴",
-  "JAINA_KEYWORD_FINISHER.description": "压轴：使用带有“压轴”的卡牌时，如果刚好消耗完你的能量，就会触发额外效果。",
+  "JAINA_KEYWORD_FINISHER.description": "此牌恰好消耗你的剩余所有能量。",
   "JAINA_KEYWORD_SPELL.title": "法术牌",
   "JAINA_KEYWORD_SPELL.description": "攻击牌和技能牌都视为法术牌。",
   "JAINA_KEYWORD_BATTLECRY.title": "战吼",
@@ -72,7 +72,7 @@
   "JAINA_KEYWORD_MINIATURIZE.title": "微缩",
   "JAINA_KEYWORD_MINIATURIZE.description": "微缩：当你使用带有“微缩”的随从牌后，会立即将一张0费1/1的复制置入你的手牌。只在从手牌中使用时触发，召唤、复活等其它方式登场不会触发。",
   "JAINA_KEYWORD_MINI.title": "微型",
-  "JAINA_KEYWORD_MINI.description": "微型：通过“微缩”效果产生的0费1/1复制卡牌本身（衍生关键词，只能通过“微缩”获得），完整保留原卡牌的所有文字效果。",
+  "JAINA_KEYWORD_MINI.description": "通过“微缩”效果产生的0费1/1复制卡牌，完整保留原卡牌的所有效果。",
   "JAINA_KEYWORD_TRADEABLE.title": "交易",
   "JAINA_KEYWORD_TRADEABLE.description": "交易：左键点击此卡牌（右键取消），3 秒内点击弃牌堆触发交易——此卡牌进入弃牌堆，抽一张牌。",
   "JAINA_KEYWORD_MINION.title":"随从",
@@ -80,5 +80,5 @@
   "JAINA_KEYWORD_SPECIAL_HERO_SKILL.title":"灌注技能",
   "JAINA_KEYWORD_SPECIAL_HERO_SKILL.description":"小精灵的祝福：召唤1个小精灵，造成1点伤害随机分配到所有敌人身上。释放次数等于灌注层数。",
   "JAINA_KEYWORD_IGNITE.title": "引燃",
-  "JAINA_KEYWORD_IGNITE.description": "引燃：被附加引燃的卡牌会在3回合后消耗。例如：第1回合某张卡被附加引燃，第3回合结束时若它还在手牌中则被消耗。"
+  "JAINA_KEYWORD_IGNITE.description": "被附加引燃的卡牌会在3回合后消耗。"
 }

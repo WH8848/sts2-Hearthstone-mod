@@ -6,11 +6,11 @@
   "JAINA_KEYWORD_FREEZE.title": "Freeze",
   "JAINA_KEYWORD_FREEZE.description": "Frozen characters deal 12.5% less damage with attacks. Stacks up to 8 times. All stacks are removed at end of turn. Freeze applied by minions is not blocked by [gold]Artifacts[/gold].",
   "JAINA_KEYWORD_TWINSPELL.title": "Twinspell",
-  "JAINA_KEYWORD_TWINSPELL.description": "When you cast a spell with Twinspell, add a copy of that spell to your hand. The copy does not have Twinspell.",
+  "JAINA_KEYWORD_TWINSPELL.description": "Immediately add a copy of this spell to your hand and lose Twinspell.",
   "JAINA_KEYWORD_EMPOWER.title": "Empower",
   "JAINA_KEYWORD_EMPOWER.description": "The first time you Empower, your Hero Power becomes [gold]Blessing of the Imps[/gold]. Each subsequent stack makes your Hero Power cast one extra time.",
   "JAINA_KEYWORD_FINISHER.title": "Finisher",
-  "JAINA_KEYWORD_FINISHER.description": "When you play a card with Finisher, if you use all your Energy, trigger an additional effect.",
+  "JAINA_KEYWORD_FINISHER.description": "This card exactly uses all of your remaining Energy.",
   "JAINA_KEYWORD_SPELL.title": "Spell",
   "JAINA_KEYWORD_SPELL.description": "Attack and Skill cards are both Spell cards.",
   "JAINA_KEYWORD_BATTLECRY.title": "Battlecry",
@@ -72,7 +72,7 @@
   "JAINA_KEYWORD_MINIATURIZE.title": "Miniaturize",
   "JAINA_KEYWORD_MINIATURIZE.description": "Miniaturize: After you play a minion with Miniaturize, add a 0-Cost 1/1 copy of it to your hand. Only triggers when played from your hand; Summoning or resurrecting does not trigger it.",
   "JAINA_KEYWORD_MINI.title": "Mini",
-  "JAINA_KEYWORD_MINI.description": "Mini: The 0-Cost 1/1 copy created by Miniaturize (a generated keyword that can only be obtained through Miniaturize). It keeps all text effects of the original card.",
+  "JAINA_KEYWORD_MINI.description": "The 0-Cost 1/1 copy created by Miniaturize, keeping all effects of the original card.",
   "JAINA_KEYWORD_TRADEABLE.title": "Tradeable",
   "JAINA_KEYWORD_TRADEABLE.description": "Tradeable: Left-click this card (right-click to cancel), then click the Discard Pile within 3 seconds to trade it — shuffle this card into your Discard Pile and draw a card.",
   "JAINA_KEYWORD_MINION.title": "Minion",
@@ -80,5 +80,5 @@
   "JAINA_KEYWORD_SPECIAL_HERO_SKILL.title": "Empowered Skill",
   "JAINA_KEYWORD_SPECIAL_HERO_SKILL.description": "Blessing of the Imps: summon 1 Imp and deal 1 damage randomly split among all enemies. Casts once per Empower stack.",
   "JAINA_KEYWORD_IGNITE.title": "Ignite",
-  "JAINA_KEYWORD_IGNITE.description": "Ignite: A card with Ignite is Exhausted after 3 turns. Example: if a card is Ignited on turn 1, it is Exhausted at the end of turn 3 if it is still in your hand."
+  "JAINA_KEYWORD_IGNITE.description": "A card with Ignite is Exhausted after 3 turns."
 }
