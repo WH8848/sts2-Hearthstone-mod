@@ -675,8 +675,8 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
     }
 
     /// <summary>
-    /// 快捷键（小键盘1-7）选中状态：显示金色选中框 + 随从卡卡面；取消时清除。
-    /// 与鼠标悬停独立：悬停离开但被快捷键选中时卡面保持显示。
+    /// 快捷键（小键盘1-7）选中状态：显示金色选中框 + <b>攻击动作</b>（可攻击时攻击意图/行动图标闪烁，
+    /// 不再弹卡面——卡面只留给鼠标悬停）。取消时清除。
     /// 选中时强制交互（防止任何原因导致 Hitbox 被 ToggleIsInteractable(false) 屏蔽，
     /// 导致"选中后点击随从无法攻击"——点击攻击入口在 Hitbox）。
     /// </summary>
@@ -695,6 +695,13 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
             {
                 var node = MegaCrit.Sts2.Core.Nodes.Rooms.NCombatRoom.Instance?.GetCreatureNode(Creature);
                 node?.ToggleIsInteractable(true);
+                // 攻击动作显示：刷新攻击意图（可攻击时红剑意图=攻击力）+ 攻击行动图标闪烁提示
+                node?.RefreshIntents();
+                var attackAction = Creature.Powers.OfType<JainaAttackAction>().FirstOrDefault();
+                if (attackAction != null && attackAction.CanAct(Creature.CombatState))
+                {
+                    attackAction.Flash();
+                }
             }
             catch (System.Exception ex)
             {
@@ -702,11 +709,16 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
             }
         }
         RefreshSelectionHighlight();
-        RefreshMinionPreview();
+        // 选中不再显示卡面（卡面只由鼠标悬停触发）；仅高亮框+攻击动作
+        if (!selected)
+        {
+            RefreshMinionPreview();
+        }
     }
 
     /// <summary>
-    /// 刷新随从预览：任一来源（悬停/交互区/快捷键选中）需要显示时显示卡面，否则隐藏。
+    /// 刷新随从预览：仅由<b>鼠标悬停</b>（Hitbox/交互区）触发显示卡面；
+    /// 快捷键选中不弹卡面（见 <see cref="SetHotkeySelected"/>）。
     /// </summary>
     private void RefreshMinionPreview()
     {
@@ -736,7 +748,7 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
         {
         }
 
-        if (_hovering || _hoveringArea || _hotkeySelected)
+        if (_hovering || _hoveringArea)
         {
             ShowMinionCard(showOnLeft);
         }
