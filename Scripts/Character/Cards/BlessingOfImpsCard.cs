@@ -9,6 +9,7 @@ using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using jaina.Scripts.Character.Keywords;
 using jaina.Scripts.Character.Minions;
 using jaina.Scripts.Character.Powers;
@@ -34,6 +35,29 @@ public sealed class BlessingOfImpsCard : JainaSpellCardTemplate
     /// </summary>
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
         [JainaKeywords.HeroPower];
+
+    /// <summary>
+    /// 动态伤害显示：每次伤害 = 1(基础) + 野火层数 + 奥术增幅(与 OnPlay 结算一致)。
+    /// 用 ComputedDamageVar(DamageVar 子类,强转安全);canonical(图鉴)显示基础 1。
+    /// </summary>
+    protected override IEnumerable<DynamicVar> CanonicalVars =>
+    [
+        new ComputedDamageVar(1m, card =>
+        {
+            if (card == null || !card.IsMutable)
+            {
+                return 1m;
+            }
+            var creature = card.Owner?.Creature;
+            if (creature == null)
+            {
+                return 1m;
+            }
+            var wildfire = creature.GetPower<WildfirePower>();
+            var amplifier = creature.GetPower<ArcaneAmplifierPower>();
+            return 1m + (wildfire?.WildfireStacks ?? 0) + (amplifier?.AmplifierBonus ?? 0);
+        })
+    ];
 
     /// <summary>
     /// 衍生英雄技能卡不可升级

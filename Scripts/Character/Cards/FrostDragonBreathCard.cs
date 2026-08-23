@@ -31,8 +31,14 @@ public sealed class FrostDragonBreathCard : JainaSpellCardTemplate
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
         [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Freeze, jaina.Scripts.Character.Keywords.JainaKeywords.Frost];
 
+    /// <summary>
+    /// 动态伤害显示：未升级 = 2(基础,预览含力量等修正)；升级(冰枪术) = 4(每层,预览含力量)。
+    /// 分支声明(CanonicalVars 不会为升级形态重新求值,同陨石术模式)。
+    /// </summary>
     protected override IEnumerable<MegaCrit.Sts2.Core.Localization.DynamicVars.DynamicVar> CanonicalVars =>
-        [];
+        IsUpgraded
+            ? [new MegaCrit.Sts2.Core.Localization.DynamicVars.DamageVar(4m, MegaCrit.Sts2.Core.ValueProps.ValueProp.Move)]
+            : [new MegaCrit.Sts2.Core.Localization.DynamicVars.DamageVar(2m, MegaCrit.Sts2.Core.ValueProps.ValueProp.Move)];
 
     /// <summary>
     /// 升级后（冰枪术）需要选择目标；未升级（冰龙吐息）随机打敌人，无需选目标
@@ -113,7 +119,7 @@ public sealed class FrostDragonBreathCard : JainaSpellCardTemplate
         {
             return;
         }
-        await DamageCmd.Attack(2m)
+        await DamageCmd.Attack(base.DynamicVars.Damage.BaseValue)
             .FromCard(this, cardPlay)
             .Targeting(target)
             .WithHitFx("vfx/vfx_attack_blunt")

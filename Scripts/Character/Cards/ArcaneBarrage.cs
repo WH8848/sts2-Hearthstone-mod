@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
+using MegaCrit.Sts2.Core.ValueProps;
 using STS2RitsuLib.Cards.DynamicVars;
 using STS2RitsuLib.Interop.AutoRegistration;
 
@@ -38,9 +39,11 @@ public sealed class ArcaneBarrage : JainaSpellCardTemplate
     /// <summary>
     /// 动态光束数显示：当前光束数 = 2（基础）+ 本局已施放的灯光表演次数 + 升级次数
     /// （与 OnPlay 实际结算一致；非战斗中仅显示基础 + 升级）。
+    /// 单次伤害 = DamageVar(2)：{Damage:diff()} 预览含力量等修正（OnPlay 吃力量）。
     /// </summary>
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
+        new DamageVar(2m, ValueProp.Move),
         ModCardVars.Computed("Beams", 2m, card =>
         {
             if (card is not ArcaneBarrage barrage || !card.IsMutable)
