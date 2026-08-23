@@ -418,24 +418,18 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
     public override bool ShouldDisappearFromDoom => true;
 
     /// <summary>
-    /// 快捷键选中时是否强制显示攻击箭头（不管当前是否可攻击——给用户"动作指示"）。
-    /// </summary>
-    private bool _hotkeyShowIntent;
-
-    /// <summary>
     /// 随从意图与行动状态机。
     /// 两种模式都使用<see cref="JainaConditionalAttackIntent"/>动态意图：
     /// 随从可以攻击时显示攻击意图（等同于攻击力），
     /// 攻击过后或不可攻击时（召唤当回合、攻击力为 0、行动点耗尽）意图消失。
-    /// 快捷键选中时强制显示攻击箭头（_hotkeyShowIntent）。
     /// </summary>
     protected override MonsterMoveStateMachine GenerateMoveStateMachine()
     {
         // 攻击意图随"当前是否可攻击"动态显示/隐藏（继承 SingleAttackIntent，
-        // 显示攻击力数值标签）；快捷键选中时强制显示（动作指示）
+        // 显示攻击力数值标签）
         var intent = new JainaConditionalAttackIntent(
             () => BaseAttackValue,
-            () => _hotkeyShowIntent || CanShowAttackIntent());
+            CanShowAttackIntent);
 
         // 手动模式：IDLE 状态机（不自动行动），意图由行动点驱动
         if (BehaviorMode == JainaMinionBehaviorMode.Manual)
@@ -701,10 +695,8 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
             {
                 var node = MegaCrit.Sts2.Core.Nodes.Rooms.NCombatRoom.Instance?.GetCreatureNode(Creature);
                 node?.ToggleIsInteractable(true);
-                // 攻击动作显示：强制显示攻击箭头（红剑+攻击力）+ 行动图标闪烁提示；
-                // 强制显示不考虑"当前是否可攻击"（动作指示，见 _hotkeyShowIntent）
-                _hotkeyShowIntent = true;
-                RefreshIntentDisplay();
+                // 攻击动作显示：刷新攻击意图（可攻击时红剑意图=攻击力）+ 攻击行动图标闪烁提示
+                node?.RefreshIntents();
                 var attackAction = Creature.Powers.OfType<JainaAttackAction>().FirstOrDefault();
                 if (attackAction != null && attackAction.CanAct(Creature.CombatState))
                 {
@@ -715,11 +707,6 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
             {
                 MegaCrit.Sts2.Core.Logging.Log.Warn($"[JainaSelect] interactable force failed: {ex.Message}");
             }
-        }
-        else
-        {
-            _hotkeyShowIntent = false;
-            RefreshIntentDisplay();
         }
         RefreshSelectionHighlight();
         // 选中不再显示卡面（卡面只由鼠标悬停触发）；仅高亮框+攻击动作
