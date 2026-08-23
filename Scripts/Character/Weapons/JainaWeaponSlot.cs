@@ -52,6 +52,12 @@ public static class JainaWeaponSlot
         power.SetWeaponStats(attack);
         await PowerCmd.Apply(choiceContext, power, player.Creature, durability, player.Creature, weaponCard);
 
+        // 兜底：确保角色拥有武器攻击行动点（1 点，幂等——已有则不动）。
+        // 战斗开始时只给"牌库中已有武器卡"的玩家挂载行动点（Entry.OnCombatBeganForWeaponAction）；
+        // 战斗中通过能力药/发现/随机释放等中途获得并装备武器时，战斗开始时牌库可能没有
+        // 武器卡 → 行动点未挂 → 装备后无法攻击。此处补挂保证"能装备就一定能攻击"。
+        await EnsureAttackAction(choiceContext, player);
+
         // 装备武器后刷新玩家攻击意图（可攻击时显示等同于攻击力的攻击意图）
         PlayerAttackIntentPatch.Refresh(player.Creature);
     }
