@@ -103,7 +103,7 @@
     "JAINA_CARD_ICE_BLOCK_CARD.title":  "寒冰屏障",
     "JAINA_CARD_ICE_BLOCK_CARD.description":  "当你将要承受致命伤害时，防止这次伤害，直到下回合开始,获得[gold]免疫[/gold]。",
     "JAINA_CARD_FORBIDDEN_FLAME_CARD.title":  "禁忌烈焰",
-    "JAINA_CARD_FORBIDDEN_FLAME_CARD.description":  "造成{IfUpgraded:show:12X|10X}点伤害。",
+    "JAINA_CARD_FORBIDDEN_FLAME_CARD.description":  "造成{Damage}点伤害(x=消耗的能量)。",
     "JAINA_CARD_FORBIDDEN_SHRINE_CARD.title":  "禁忌神龛",
     "JAINA_CARD_FORBIDDEN_SHRINE_CARD.description":  "随机打出一张耗能为{IfUpgraded:show:X+1|X}的牌。",
     "JAINA_CARD_METEOR_CARD.title":  "陨石术",

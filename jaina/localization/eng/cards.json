@@ -103,7 +103,7 @@
     "JAINA_CARD_ICE_BLOCK_CARD.title":  "Ice Block",
     "JAINA_CARD_ICE_BLOCK_CARD.description":  "When you would take fatal damage, prevent it, and gain [gold]Immune[/gold] until the start of your next turn.",
     "JAINA_CARD_FORBIDDEN_FLAME_CARD.title":  "Forbidden Flame",
-    "JAINA_CARD_FORBIDDEN_FLAME_CARD.description":  "Deal {IfUpgraded:show:12x|10x} damage to a character (x = Energy spent).",
+    "JAINA_CARD_FORBIDDEN_FLAME_CARD.description":  "Deal {Damage} damage to a character (x = Energy spent).",
     "JAINA_CARD_FORBIDDEN_SHRINE_CARD.title":  "Forbidden Shrine",
     "JAINA_CARD_FORBIDDEN_SHRINE_CARD.description":  "Cast a random {IfUpgraded:show:x+1|x}-cost card.",
     "JAINA_CARD_METEOR_CARD.title":  "Meteor",
