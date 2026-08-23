@@ -82,7 +82,7 @@
   "JAINA_CARD_AWAKEN.description": "Discover a [blue]Spell card[/blue]. It costs 1 less.{IfUpgraded:show:\n[gold]Finisher[/gold]: At the start of your next turn, return this card to your hand.|}",
   "JAINA_CARD_OBJECTION.title": "Counterspell",
   "JAINA_CARD_OBJECTION.titleUpgraded": "Objection",
-  "JAINA_CARD_OBJECTION.description": "When an enemy is about to {IfUpgraded:show:buff/debuff/defend|attack}, cancel it.",
+  "JAINA_CARD_OBJECTION.description": "When an enemy is about to {IfUpgraded:show:attack|buff/debuff/defend}, cancel it.",
   "JAINA_CARD_LUCKY_COIN.title": "The Coin",
   "JAINA_CARD_LUCKY_COIN.description": "Gain 1 Energy.",
   "JAINA_CARD_MEDIVH_ECHO.title": "Medivh's Echo",

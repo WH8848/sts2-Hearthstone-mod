@@ -82,7 +82,7 @@
   "JAINA_CARD_AWAKEN.description": "[gold]发现[/gold]一张[blue]法术牌[/blue]，使其耗能减少1点。{IfUpgraded:show:\n[gold]压轴[/gold]:下回合开始时，将本牌移回你的手牌。|}",
   "JAINA_CARD_OBJECTION.title": "法术反制",
   "JAINA_CARD_OBJECTION.titleUpgraded": "异议",
-  "JAINA_CARD_OBJECTION.description": "当一名敌人将要{IfUpgraded:show:强化/削弱/防御|攻击}时,将其取消。",
+  "JAINA_CARD_OBJECTION.description": "当一名敌人将要{IfUpgraded:show:攻击|强化/削弱/防御}时,将其取消。",
   "JAINA_CARD_LUCKY_COIN.title": "幸运币",
   "JAINA_CARD_LUCKY_COIN.description": "获得1点能量。",
   "JAINA_CARD_MEDIVH_ECHO.title": "麦迪文的残影",
