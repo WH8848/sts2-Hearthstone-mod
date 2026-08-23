@@ -675,8 +675,11 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
         // 灾厄：生命 ≤ 灾厄层数 → 回合结束死亡。
         // 游戏 DoomPower 只判定 GetCreaturesOnSide（不含随从 Pets），随从受灾厄不会死亡，
         // 这里补上随从的灾厄判定（DoomKill 是 public 静态方法）。
+        // <b>地标免疫灾厄</b>（JainaLandmarkBase.TryModifyPowerAmountReceived 已把灾厄数量改 0;
+        // 再显式跳过,双保险）。
         var doom = Creature.GetPower<MegaCrit.Sts2.Core.Models.Powers.DoomPower>();
-        if (doom != null && Creature.CurrentHp <= doom.Amount)
+        if (Creature.Monster is not JainaLandmarkBase &&
+            doom != null && Creature.CurrentHp <= doom.Amount)
         {
             await MegaCrit.Sts2.Core.Models.Powers.DoomPower.DoomKill([Creature]);
             return;

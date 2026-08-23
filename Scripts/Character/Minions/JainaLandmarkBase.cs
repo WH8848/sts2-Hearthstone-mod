@@ -166,6 +166,24 @@ public abstract class JainaLandmarkBase : JainaMinionBase
     }
 
     /// <summary>
+    /// 地标免疫负面状态：灾厄(Doom)与中毒(Poison)等"回合结束伤害/死亡"类
+    /// 施加数量一律改为 0（炉石规则：地标不会被中毒/灾厄等状态影响,
+    /// 只通过点击使用消耗耐久度）。机制与法术反制拦敌人 Power 同款。
+    /// </summary>
+    public override bool TryModifyPowerAmountReceived(PowerModel canonicalPower, Creature target,
+        decimal amount, Creature? applier, out decimal modifiedAmount)
+    {
+        modifiedAmount = amount;
+        if (canonicalPower is MegaCrit.Sts2.Core.Models.Powers.PoisonPower or
+            MegaCrit.Sts2.Core.Models.Powers.DoomPower)
+        {
+            modifiedAmount = 0m;
+            return true;
+        }
+        return base.TryModifyPowerAmountReceived(canonicalPower, target, amount, applier, out modifiedAmount);
+    }
+
+    /// <summary>
     /// 地标使用时的目标类型（默认 None：点击直接触发，不选目标）。
     /// 需要选择目标的地标（如夜隐者圣所冻结目标）覆写为对应目标类型。
     /// </summary>
