@@ -8,7 +8,7 @@ using STS2RitsuLib.Interop.AutoRegistration;
 namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
-/// 潮汐之池 (Tide Pools) - 1费地标卡（普通）。
+/// 潮汐之池 (Tide Pools) - 1费地标卡（罕见）。
 /// 占随从槽，每两个回合可点击使用一次：
 /// 发现一张费用消耗小于或等于1点的法术牌。在你施放一个法术后，重新开启本地标。耐久度3。
 /// </summary>
@@ -30,7 +30,7 @@ public sealed class TidePoolCard : JainaLandmarkCardTemplate
     protected override Type LandmarkType => typeof(TidePoolLandmark);
 
     public TidePoolCard()
-        : base(1, CardRarity.Common)
+        : base(1, CardRarity.Uncommon)
     {
     }
 }
