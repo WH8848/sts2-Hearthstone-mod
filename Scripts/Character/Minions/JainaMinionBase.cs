@@ -120,7 +120,10 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
         intent.UniqueNameInOwner = true;
         intent.Owner = root;
 
-        // 悬停交互区（覆盖缩小后的显示区域 ±125×±95）：悬停显示随从卡完整卡面（炉石式）
+        // 悬停交互区（覆盖缩小后的显示区域 ±125×±95）：悬停显示随从卡完整卡面（炉石式）。
+        // 注意：MouseFilter 必须是 Pass——Stop 会拦截鼠标事件，下层 NCreature.Hitbox
+        // （MinionLib ActionClickPatch 的点击攻击入口）将收不到点击，导致"点随从无法攻击"。
+        // Pass = 仍触发 MouseEntered/Exited(悬停卡面),但不消费点击(放行给下层 Hitbox)。
         var hoverArea = new Control
         {
             Name = "HoverArea",
@@ -128,7 +131,7 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
             OffsetTop = -95f,
             OffsetRight = 125f,
             OffsetBottom = 95f,
-            MouseFilter = Control.MouseFilterEnum.Stop
+            MouseFilter = Control.MouseFilterEnum.Pass
         };
         root.AddChild(hoverArea);
 
@@ -210,7 +213,13 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
                 MegaCrit.Sts2.Core.Logging.Log.Info("[JainaHover] canonical null");
                 return;
             }
-            var cardNode = MegaCrit.Sts2.Core.Nodes.Cards.NCard.Create(canonical);
+            // 用可变克隆渲染卡面（而非 canonical）：
+            // 战斗中卡面描述里的计算变量/动态变量（{Damage}/{CalculatedDamage}，如冰龙吐息
+            // 升级形态/云雾王子）在 canonical(不可变)上渲染会访问 Owner 抛异常
+            // （CanonicalModelException → 卡牌文本显示不正确/异常）。
+            // 可变实例：描述动态值按战斗状态渲染(与手牌卡面一致)，且不影响任何牌堆。
+            CardModel display = canonical.ToMutable();
+            var cardNode = MegaCrit.Sts2.Core.Nodes.Cards.NCard.Create(display);
             if (cardNode == null)
             {
                 MegaCrit.Sts2.Core.Logging.Log.Info("[JainaHover] NCard.Create null (TestMode?)");
