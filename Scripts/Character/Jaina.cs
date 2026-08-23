@@ -39,7 +39,7 @@ public sealed class Jaina : ModCharacterTemplate<JainaCardPool, JainaRelicPool, 
 
     public override Color NameColor => new(0.35f, 0.7f, 1f);
 
-    public override int StartingHp => 30;
+    public override int StartingHp => 40;
 
     public override int StartingGold => 99;
 
