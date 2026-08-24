@@ -441,6 +441,48 @@ public static class JainaCastTracker
     }
 
     /// <summary>
+    /// 附魔继承：旧英雄技能卡（被替换掉的）带附魔时，把附魔迁移到新英雄技能卡上
+    /// （灌注→小精灵的祝福、英雄卡→奥术爆裂/冰冷触摸等替换流程）。
+    /// 与原版 ArchaicTooth（火焰冲击→二级火焰冲击）的附魔迁移一致：
+    /// 先 MutableClone 附魔模型（避免新旧两张卡共用同一附魔实例），再 CardCmd.Enchant。
+    /// 新卡无法被该附魔附魔（附魔限定了卡类型/稀有度/牌堆等）时静默放弃——
+    /// 附魔迁移失败绝不应阻断英雄技能替换本身。
+    /// </summary>
+    public static void InheritEnchantment(IReadOnlyList<CardModel> oldCards, CardModel? newCard)
+    {
+        if (newCard == null || oldCards == null)
+        {
+            return;
+        }
+        EnchantmentModel? oldEnchantment = null;
+        foreach (var oldCard in oldCards)
+        {
+            if (oldCard?.Enchantment != null)
+            {
+                oldEnchantment = oldCard.Enchantment;
+                break;
+            }
+        }
+        if (oldEnchantment == null)
+        {
+            return;
+        }
+        try
+        {
+            var clone = (EnchantmentModel)oldEnchantment.MutableClone();
+            if (!clone.CanEnchant(newCard))
+            {
+                return;
+            }
+            MegaCrit.Sts2.Core.Commands.CardCmd.Enchant(clone, newCard, clone.Amount);
+        }
+        catch (System.Exception ex)
+        {
+            MegaCrit.Sts2.Core.Logging.Log.Warn($"[Jaina] 英雄技能附魔继承失败(忽略): {ex.Message}");
+        }
+    }
+
+    /// <summary>
     /// 创建当前英雄技能的副本（鲁莽的学徒/小精灵驾驭者战吼自动打出用）：
     /// 从手牌中同类型的英雄技能卡取升级等级（手牌没有则 0 级），创建副本。
     /// 副本打出后由调用方移出牌堆——手牌中的英雄技能卡不受影响，

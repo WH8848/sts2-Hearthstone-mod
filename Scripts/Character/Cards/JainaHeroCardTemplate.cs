@@ -171,6 +171,8 @@ public abstract class JainaHeroCardTemplate : ModCardTemplate
                 combatState, base.Owner, HeroPowerType, 0);
             if (heroPower != null)
             {
+                // 附魔继承：旧英雄技能卡（火焰冲击/奥术爆裂等）被附魔时，新英雄技能卡继承同类型同层数附魔
+                jaina.Scripts.Character.JainaCastTracker.InheritEnchantment(oldHeroPowers, heroPower);
                 await CardPileCmd.AddGeneratedCardToCombat(heroPower, PileType.Hand, base.Owner);
             }
         }

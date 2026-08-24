@@ -102,6 +102,8 @@ public sealed class EmpowerPower : PowerModel, IModPowerAssetOverrides
             combatState, player, typeof(Cards.BlessingOfImpsCard), 0);
         if (heroPower != null)
         {
+            // 附魔继承：旧英雄技能卡（火焰冲击/奥术爆裂等）被附魔时，新英雄技能卡继承同类型同层数附魔
+            jaina.Scripts.Character.JainaCastTracker.InheritEnchantment(oldHeroPowers, heroPower);
             await CardPileCmd.AddGeneratedCardToCombat(heroPower, MegaCrit.Sts2.Core.Entities.Cards.PileType.Hand, player);
         }
     }
