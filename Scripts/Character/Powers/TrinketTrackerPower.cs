@@ -37,6 +37,9 @@ public sealed class TrinketTrackerPower : PowerModel
     /// </summary>
     public override async Task AfterCardPlayed(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
+        var played = cardPlay?.Card;
+        MegaCrit.Sts2.Core.Logging.Log.Info(
+            $"[JainaTrinket] AfterCardPlayed: played={(played == null ? "null" : $"{played.Id}({played.GetType().Name})")} drawn={(DrawnCard == null ? "null" : $"{DrawnCard.Id}({DrawnCard.GetType().Name})")} same={played != null && played == DrawnCard}");
         if (DrawnCard == null || cardPlay.Card == null || cardPlay.Card != DrawnCard)
         {
             return;

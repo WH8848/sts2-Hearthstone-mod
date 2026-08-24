@@ -150,17 +150,24 @@ public abstract class JainaLandmarkBase : JainaMinionBase
     {
         if (!Creature.IsAlive)
         {
+            MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaTrinket] Reactivate skip: dead {GetType().Name}");
             return;
         }
         var cooldown = Creature.GetPower<LandmarkCooldownPower>();
         if (cooldown != null)
         {
             await PowerCmd.Remove(cooldown);
+            MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaTrinket] Reactivate {GetType().Name}: cooldown removed");
         }
         if (Creature.GetPower<JainaLandmarkUseAction>() == null)
         {
             var applier = Creature.PetOwner?.Creature ?? Creature;
             await PowerCmd.Apply<JainaLandmarkUseAction>(choiceContext, Creature, 1m, applier, null);
+            MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaTrinket] Reactivate {GetType().Name}: use action granted (had none)");
+        }
+        else
+        {
+            MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaTrinket] Reactivate {GetType().Name}: use action already present");
         }
         RefreshIntentDisplay();
     }

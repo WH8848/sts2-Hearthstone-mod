@@ -55,6 +55,9 @@ public sealed class TrinketShopLandmark : JainaLandmarkBase
         if (tracker != null)
         {
             tracker.DrawnCard = drawn.FirstOrDefault();
+            var card = tracker.DrawnCard;
+            MegaCrit.Sts2.Core.Logging.Log.Info(
+                $"[JainaTrinket] draw=1 card={(card == null ? "null" : $"{card.Id}({card.GetType().Name})")} tracker={(tracker == null ? "null" : "ok")} durability={Creature.GetPower<jaina.Scripts.Character.Powers.LandmarkDurabilityPower>()?.Amount}");
         }
     }
 
