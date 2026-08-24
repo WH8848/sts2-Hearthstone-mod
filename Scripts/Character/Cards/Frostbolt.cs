@@ -34,8 +34,8 @@ public sealed class Frostbolt : JainaSpellCardTemplate
     public override IEnumerable<CardKeyword> CanonicalKeywords => [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Freeze, jaina.Scripts.Character.Keywords.JainaKeywords.Frost];
 
     /// <summary>
-    /// 动态伤害显示：未升级 = 3(基础,预览含力量等修正)；升级(冰锥术) = 1(每击基础,
-    /// 吃力量加成——每击 = 1 + 力量,预览含力量)。
+    /// 伤害变量：未升级 = 3(基础,预览含力量等修正)；升级(冰锥术) = 1(每击基数,
+    /// 吃力量加成——每击 = 1 + 力量；卡面文字固定"1点/次"，实际伤害动态编码)。
     /// (分支声明:CanonicalVars 不会为升级形态重新求值,与陨石术/模拟残像同模式)
     /// </summary>
     protected override IEnumerable<DynamicVar> CanonicalVars =>
@@ -105,8 +105,8 @@ public sealed class Frostbolt : JainaSpellCardTemplate
                 {
                     break;
                 }
-                // 冰锥术：每击 1 点伤害基数 ×3 次（Powered 默认吃力量加成，每击 = 1 + 力量；
-                // 卡面 {Damage:diff()} 同源动态显示，与 GreaterArcaneMissiles 同模式）
+                // 冰锥术：每击 1 点伤害基数 ×3 次（Powered 默认吃力量加成——每击 = 1 + 力量；
+                // 卡面文字固定"1点"/次，实际伤害动态编码随力量变化）
                 await DamageCmd.Attack(base.DynamicVars.Damage.BaseValue)
                     .FromCard(this, cardPlay)
                     .Targeting(randomTarget)
@@ -137,5 +137,5 @@ public sealed class Frostbolt : JainaSpellCardTemplate
     }
 
     // 升级为冰锥术：不再升级基础伤害（冰锥术每击基础 1 点×3 次，吃力量加成
-    // ——伤害构成差异由卡面 {Damage:diff()} 动态描述体现）
+    // ——实际伤害动态编码（每击 = 1 + 力量），卡面文字固定"1点/次"）
 }
