@@ -16,8 +16,8 @@ namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
 /// 寒冰箭 (Frostbolt) - 0费：对一个角色造成 3 点伤害，并使其获得 1 层冻结。
-/// 升级后变为冰锥术 (Cone of Cold)：随机对敌人造成 1 点伤害 3 次，
-/// 每次伤害都会给予被击中的敌人 1 层冻结（无需选择目标，冰霜派系）。
+/// 升级后变为冰锥术 (Cone of Cold)：随机对敌人造成 1 点伤害 3 次（吃力量，
+/// 每击 = 1 + 力量），每次伤害都会给予被击中的敌人 1 层冻结（无需选择目标，冰霜派系）。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
 [RegisterCharacterStarterCard(typeof(Jaina), 1, Order = 3)]
@@ -34,7 +34,8 @@ public sealed class Frostbolt : JainaSpellCardTemplate
     public override IEnumerable<CardKeyword> CanonicalKeywords => [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Freeze, jaina.Scripts.Character.Keywords.JainaKeywords.Frost];
 
     /// <summary>
-    /// 动态伤害显示：未升级 = 3(基础,预览含力量等修正)；升级(冰锥术) = 1(每击,预览含力量)。
+    /// 动态伤害显示：未升级 = 3(基础,预览含力量等修正)；升级(冰锥术) = 1(每击基础,
+    /// 吃力量加成——每击 = 1 + 力量,预览含力量)。
     /// (分支声明:CanonicalVars 不会为升级形态重新求值,与陨石术/模拟残像同模式)
     /// </summary>
     protected override IEnumerable<DynamicVar> CanonicalVars =>
@@ -43,7 +44,7 @@ public sealed class Frostbolt : JainaSpellCardTemplate
             : [new DamageVar(3m, ValueProp.Move)];
 
     /// <summary>
-    /// 升级后（冰锥术）无需选择目标：随机对敌人造成 1 点伤害 3 次
+    /// 升级后（冰锥术）无需选择目标：随机对敌人造成 1 点伤害 3 次（吃力量，每击 = 1 + 力量）
     /// </summary>
     public override TargetType TargetType =>
         IsUpgraded ? TargetType.None : JainaTargetTypes.AnyTargetable;
@@ -81,7 +82,8 @@ public sealed class Frostbolt : JainaSpellCardTemplate
         // 记录施放（倒带/罗曼斯/三派系追踪）
         jaina.Scripts.Character.JainaCastTracker.RecordPlayed(this);
 
-        // 冰锥术（升级后）：随机对敌人造成 1 点伤害 3 次，每次伤害给予被击中的敌人 1 层冻结
+        // 冰锥术（升级后）：随机对敌人造成 1 点伤害 3 次（吃力量——每击 = 1 + 力量），
+        // 每次伤害给予被击中的敌人 1 层冻结
         if (IsUpgraded)
         {
             var combatState = base.Owner.Creature.CombatState;
@@ -103,9 +105,9 @@ public sealed class Frostbolt : JainaSpellCardTemplate
                 {
                     break;
                 }
-                // 冰锥术：固定 1 点伤害 ×3 次（Unpowered：不吃力量加成，与卡面"1点"一致）
+                // 冰锥术：每击 1 点伤害基数 ×3 次（Powered 默认吃力量加成，每击 = 1 + 力量；
+                // 卡面 {Damage:diff()} 同源动态显示，与 GreaterArcaneMissiles 同模式）
                 await DamageCmd.Attack(base.DynamicVars.Damage.BaseValue)
-                    .Unpowered()
                     .FromCard(this, cardPlay)
                     .Targeting(randomTarget)
                     .WithHitFx("vfx/vfx_attack_blunt")
@@ -134,5 +136,6 @@ public sealed class Frostbolt : JainaSpellCardTemplate
         await PowerCmd.Apply<FreezePower>(choiceContext, [target], 1m, base.Owner.Creature, this);
     }
 
-    // 升级为冰锥术：不再升级基础伤害（冰锥术为固定 1 点伤害×3 次，效果差异由卡面描述体现）
+    // 升级为冰锥术：不再升级基础伤害（冰锥术每击基础 1 点×3 次，吃力量加成
+    // ——伤害构成差异由卡面 {Damage:diff()} 动态描述体现）
 }
