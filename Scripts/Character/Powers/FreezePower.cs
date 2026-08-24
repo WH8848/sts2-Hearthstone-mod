@@ -70,6 +70,18 @@ public sealed class FreezePower : PowerModel, IModPowerAssetOverrides
     /// </summary>
     public override Task BeforeApplied(Creature target, decimal amount, Creature? applier, CardModel? cardSource)
     {
+        MegaCrit.Sts2.Core.Logging.Log.Info(
+            $"[JainaFreeze] apply target={target.Name}(side={target.Side}) amount={amount} existing={Amount} card={(cardSource == null ? "null" : cardSource.Id.Entry)}");
+        return Task.CompletedTask;
+    }
+
+    /// <summary>
+    /// 施加完成：打印最终层数（若为 0 = 被抵挡/免疫）
+    /// </summary>
+    public override Task AfterApplied(Creature? applier, CardModel? cardSource)
+    {
+        MegaCrit.Sts2.Core.Logging.Log.Info(
+            $"[JainaFreeze] applied result owner={Owner?.Name}(side={Owner?.Side}) stacks={Amount} by={cardSource?.Id.Entry}");
         return Task.CompletedTask;
     }
 
