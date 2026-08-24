@@ -10,6 +10,9 @@
   "JAINA_CHARACTER_JAINA.cardsModifierDescription": "Jaina's icy power",
   "JAINA_CHARACTER_JAINA.eventDeathPrevention": "The frost shield saved you at the last moment!",
   "JAINA_CHARACTER_JAINA.aromaPrinciple": "I have lost much to war and walked the line between frost and flame; yet through every storm, protecting those I love remains my creed.",
+  "JAINA_CHARACTER_JAINA.goldMonologue": "Gold fades, but knowledge endures. I'll leave these coins to those who truly need them.",
+  "JAINA_CHARACTER_JAINA.banter.alive.endTurnPing": "I'm ready. Let the frost witness my turn.",
+  "JAINA_CHARACTER_JAINA.banter.dead.endTurnPing": "…The frost will cover all in the end.",
   "JAINA_CHARACTER_JAINA.bestiaryQuote": "Jaina has left her frosty footsteps across the land.",
   "JAINA_CHARACTER_JAINA.unlockText": "{Prerequisite}",
   "JAINA_CHARACTER_JAINA.characterSelect": "Jaina"
