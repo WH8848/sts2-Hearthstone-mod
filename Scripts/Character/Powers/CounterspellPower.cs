@@ -36,7 +36,7 @@ public sealed class CounterspellPower : PowerModel, IModPowerAssetOverrides
     public override PowerStackType StackType => PowerStackType.Counter;
 
     /// <summary>
-    /// 敌人施加的任何 Power（增益/减益）数量改为 0
+    /// 敌人施加的任何 Power（增益/减益）数量改为 0（仅当反制层数 > 0）
     /// </summary>
     public override bool TryModifyPowerAmountReceived(PowerModel canonicalPower, Creature target, decimal amount, Creature? applier, out decimal modifiedAmount)
     {
@@ -51,6 +51,18 @@ public sealed class CounterspellPower : PowerModel, IModPowerAssetOverrides
         }
         modifiedAmount = 0m;
         return true;
+    }
+
+    /// <summary>
+    /// 每拦截一次施加消耗 1 层反制（与原版人工制品 ArtifactPower 同款）：
+    /// 层数归零自动移除——保证"反制下一个非攻击意图"只拦一次，
+    /// 不会把整场战斗所有敌人来源的施加全部清零
+    /// （否则柔嫩 TenderPower 每张牌造成的 -1 力量/-1 敏捷会被整体清零，
+    /// 导致"柔嫩9层却只减了1点敏捷/没减力量"）。
+    /// </summary>
+    public override async Task AfterModifyingPowerAmountReceived(PowerModel power)
+    {
+        await PowerCmd.Decrement(this);
     }
 
     /// <summary>
