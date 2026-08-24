@@ -62,7 +62,10 @@ public sealed class FreezePower : PowerModel, IModPowerAssetOverrides
         {
             return 1m;
         }
-        return Math.Max(0m, 1m - 0.125m * Amount);
+        var multiplier = Math.Max(0m, 1m - 0.125m * Amount);
+        MegaCrit.Sts2.Core.Logging.Log.Info(
+            $"[JainaFreeze] damageMod owner={Owner?.Name}(side={Owner?.Side}) stacks={Amount} multi={multiplier} dealer={dealer?.Name} card={(cardSource == null ? "null" : cardSource.Id.Entry)}");
+        return multiplier;
     }
 
     /// <summary>

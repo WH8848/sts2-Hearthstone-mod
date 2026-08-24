@@ -10,8 +10,8 @@ namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
 /// 点燃 (Ignite) - 1费攻击牌（普通，火焰派系）。
-/// 造成 8 点伤害，将一张升级过的"点燃"洗入你的弃牌堆。
-/// 可无限升级，每次升级伤害 +4。消耗。
+/// 造成 8 点伤害，将一张升级过的"点燃"洗入你的抽牌堆。
+/// 可无限升级，每次升级伤害 +4。打出后进入弃牌堆（不消耗）。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
 public sealed class IgniteCard : JainaSpellCardTemplate
@@ -28,11 +28,10 @@ public sealed class IgniteCard : JainaSpellCardTemplate
     public override int DiscoverPoolMaxUpgradeLevel => 0;
 
     /// <summary>
-    /// 法术牌 + 火焰派系 + 消耗（打出后从本场战斗移除）
+    /// 法术牌 + 火焰派系（无消耗：打出的点燃进入弃牌堆，之后随弃牌堆洗回可再次抽到）
     /// </summary>
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
-        [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Fire,
-         CardKeyword.Exhaust];
+        [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Fire];
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
