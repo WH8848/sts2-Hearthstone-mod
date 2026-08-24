@@ -12,7 +12,7 @@
     "JAINA_CARD_FLAME_WARD.description":  "{IfUpgraded:show:|受到攻击时，}随机造成{Damage:diff()}点伤害7次。",
     "JAINA_CARD_ARCANE_INTELLECT.title":  "奥术智慧",
     "JAINA_CARD_ARCANE_INTELLECT.titleUpgraded":  "清凉的泉水",
-    "JAINA_CARD_ARCANE_INTELLECT.description":  "抽{Cards}张牌。{IfUpgraded:show:每抽到一张[blue]法术牌[/blue],获得{energyPrefix:energyIcons(1)}。|}",
+    "JAINA_CARD_ARCANE_INTELLECT.description":  "抽{Cards}张牌。{IfUpgraded:show:每抽到一张[blue]法术牌[/blue],复原{energyPrefix:energyIcons(1)}（不超过能量上限）。|}",
     "JAINA_CARD_ICE_BARRIER.title":  "寒冰护盾",
     "JAINA_CARD_ICE_BARRIER.titleUpgraded":  "冰冷案例",
     "JAINA_CARD_ICE_BARRIER.description":  "{IfUpgraded:show:召唤2个[blue]2/2[/blue]的[red]不稳定的骷髅[/red]。战场上放不下的骷髅会立即爆炸，并|本回合内，当你受到攻击时，}获得{Block:diff()}点[gold]格挡[/gold]。",

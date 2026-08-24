@@ -13,7 +13,8 @@ namespace jaina.Scripts.Character.Cards;
 /// <summary>
 /// 奥术智慧 (Arcane Intellect) - 吉安娜专属技能牌。
 /// 1费：抽两张牌。
-/// 升级后变为"清凉的泉水 (Cooling Spring)"：抽 2 张牌，每抽到一张法术牌获得 1 能量。
+/// 升级后变为"清凉的泉水 (Cooling Spring)"：抽 2 张牌，每抽到一张法术牌复原 1 能量
+/// （复原：只补到能量上限，不超出上限——与"获得"不同，不会产生超额能量）。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
 public sealed class ArcaneIntellect : JainaSpellCardTemplate
@@ -68,14 +69,19 @@ public sealed class ArcaneIntellect : JainaSpellCardTemplate
 
         var drawn = await CardPileCmd.Draw(choiceContext, DynamicVars.Cards.BaseValue, base.Owner);
 
-        // 清凉的泉水（升级后）：每抽到一张法术牌（攻击/技能）获得 1 能量
+        // 清凉的泉水（升级后）：每抽到一张法术牌（攻击/技能）复原 1 能量——
+        // 复原 = 只补到能量上限（不超出上限；能量已满则不再增加）
         if (IsUpgraded)
         {
+            var pcs = base.Owner.PlayerCombatState;
             foreach (var card in drawn)
             {
                 if (card.Type == CardType.Attack || card.Type == CardType.Skill)
                 {
-                    await PlayerCmd.GainEnergy(1m, base.Owner);
+                    if (pcs != null && pcs.Energy < pcs.MaxEnergy)
+                    {
+                        await PlayerCmd.GainEnergy(Math.Min(1m, pcs.MaxEnergy - pcs.Energy), base.Owner);
+                    }
                 }
             }
         }
