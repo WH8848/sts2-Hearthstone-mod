@@ -162,6 +162,17 @@ public static class MinionSelectHotkeys
             _selected = target;
             target.SetHotkeySelected(true);
             // 攻击动作：等同点击该随从 → 直接进入"选择攻击目标"（红色瞄准箭头）
+            // 目标选择进行中（红色箭头已出）再触发会复用 NTargetManager：
+            // StartTargeting 会替换 _completionSource，上一个随从的
+            // TargetingActors 条目永不释放 → 该随从"有攻击意图但点击点不动"（卡死）。
+            // 先取消当前瞄准（干净释放上一个随从），再触发新的瞄准。
+            var targetManager = MegaCrit.Sts2.Core.Nodes.Combat.NTargetManager.Instance;
+            if (targetManager?.IsInSelection == true)
+            {
+                MegaCrit.Sts2.Core.Logging.Log.Info(
+                    $"[JainaSelect] cancel active targeting before {target.GetType().Name} attack");
+                targetManager.CancelTargeting();
+            }
             target.TriggerAttackAsAction();
         }
         catch (System.Exception ex)
