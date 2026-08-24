@@ -184,6 +184,15 @@ public abstract class JainaLandmarkBase : JainaMinionBase
         decimal amount, Creature? applier, out decimal modifiedAmount)
     {
         modifiedAmount = amount;
+        // <b>只作用于"被施加到地标自己身上"的状态</b>：
+        // Hook.ModifyPowerAmountReceived 会遍历全体钩子监听者——没有 target 校验时，
+        // 地标的状态免疫会对<b>任一目标</b>(玩家/敌人/随从)的所有 Power 施加把关
+        // （冻结/力量/敏捷等全被清 0——实测:小玩物小屋在场时柔嫩-1力量/-1敏捷与
+        // 暴风雪7层冻结全部被清零）。非本目标的施加直接放行。
+        if (target != Creature)
+        {
+            return false;
+        }
         // 地标内建状态放行（不拦截）
         if (canonicalPower is LandmarkDurabilityPower or
             LandmarkCooldownPower or
