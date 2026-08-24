@@ -12,9 +12,10 @@ using STS2RitsuLib.Scaffolding.Content.Patches;
 namespace jaina.Scripts.Character.Powers;
 
 /// <summary>
-/// 灌注：第一次打出灌注卡牌（灵体采集者/小精灵驾驭者）会将你的英雄技能
-/// 替换为"小精灵的祝福"；此后每层灌注都会让英雄技能额外释放一次
-/// （小精灵的祝福释放次数 = 灌注层数，见 <see cref="Cards.BlessingOfImpsCard"/>）。
+/// 灌注：每次灌注（灵体采集者/小精灵驾驭者）都会让英雄技能伤害 +1 层，并在
+/// <b>当前英雄技能不是"小精灵的祝福"时，同时把英雄技能替换为"小精灵的祝福"</b>
+/// （英雄技能已换成奥术爆裂/冰冷触摸等时,下一次灌注仍会换成祝福）；
+/// 已是祝福时只叠层（祝福释放次数 = 灌注层数，见 <see cref="Cards.BlessingOfImpsCard"/>）。
 /// 挂在吉安娜玩家身上，由灵体采集者等卡施加。
 /// </summary>
 [RegisterPower]
@@ -39,16 +40,14 @@ public sealed class EmpowerPower : PowerModel, IModPowerAssetOverrides
     public int EmpowerStacks => (int)Amount;
 
     /// <summary>
-    /// 第一次灌注（层数 0 → 1）：将玩家的英雄技能替换为"小精灵的祝福"。
-    /// 此后每层灌注不再替换（已替换），只增加层数（祝福释放次数随之 +1）。
+    /// 灌注（层数 +1，框架完成）后的替换流程：
+    /// <b>若当前英雄技能不是"小精灵的祝福"，则在叠层的同时将英雄技能替换为祝福</b>
+    /// （即使之前用英雄卡把技能换成了奥术爆裂/冰冷触摸等——下一次灌注会重新换成祝福）；
+    /// 若当前已经是祝福，则不替换（只叠层，祝福释放次数随之 +1）。
     /// 联机：PowerCmd.Apply 两端确定性执行，替换流程两端一致。
     /// </summary>
     public override async Task AfterApplied(Creature? applier, CardModel? cardSource)
     {
-        if (EmpowerStacks != 1)
-        {
-            return; // 仅第一次灌注触发替换
-        }
         var player = Owner.Player;
         if (player == null || Owner.IsDead)
         {
@@ -60,7 +59,7 @@ public sealed class EmpowerPower : PowerModel, IModPowerAssetOverrides
             return;
         }
         var rec = jaina.Scripts.Character.JainaCastTracker.For(combatState);
-        // 英雄技能已是小精灵的祝福（重复触发防御）：不重复替换
+        // 英雄技能已是小精灵的祝福：只叠层（重复触发防御），不重复替换
         if (rec.CurrentHeroPowerTypeByPlayer.TryGetValue(player.NetId, out var current) &&
             current == typeof(Cards.BlessingOfImpsCard))
         {
