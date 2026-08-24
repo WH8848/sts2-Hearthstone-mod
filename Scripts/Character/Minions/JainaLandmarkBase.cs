@@ -176,7 +176,8 @@ public abstract class JainaLandmarkBase : JainaMinionBase
     /// 地标不可被上任何状态（炉石规则：地标不受任何状态影响,只通过点击使用消耗耐久度）。
     /// 全部正面(Buff)与全部负面(Debuff:灾厄/中毒/冻结/虚弱/易伤/力量/狂怒等)施加一律 0;
     /// <b>仅放行地标自身机制所需的内建状态</b>：
-    /// 耐久度/冷却/使用行动点/随从标记(MinionPower)。
+    /// 耐久度/冷却/使用行动点/随从标记(MinionPower)/地标追踪器
+    /// (小玩物小屋抽牌追踪 TrinketTrackerPower/潮汐之池重新开启追踪 TidePoolTrackerPower)。
     /// 机制与法术反制拦敌人 Power 同款（TryModifyPowerAmountReceived 全局施加入口）。
     /// </summary>
     public override bool TryModifyPowerAmountReceived(PowerModel canonicalPower, Creature target,
@@ -187,6 +188,8 @@ public abstract class JainaLandmarkBase : JainaMinionBase
         if (canonicalPower is LandmarkDurabilityPower or
             LandmarkCooldownPower or
             JainaLandmarkUseAction or
+            TrinketTrackerPower or
+            TidePoolTrackerPower or
             MegaCrit.Sts2.Core.Models.Powers.MinionPower)
         {
             return false;
