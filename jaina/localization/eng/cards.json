@@ -141,7 +141,7 @@
     "JAINA_CARD_FROST_ELEMENTAL_CARD.title":  "Frost Elemental",
     "JAINA_CARD_FROST_ELEMENTAL_CARD.description":  "[gold]Elemental[/gold].\nSummon a [blue]1/1[/blue] [red]Frost Elemental[/red]. Any character damaged by this minion gains 1 [gold]Freeze[/gold].",
     "JAINA_CARD_IGNITE_CARD.title":  "Ignite",
-    "JAINA_CARD_IGNITE_CARD.description":  "Deal {Damage:diff()} damage.\nAdd an [gold]Ignite+{Upgraded}[/gold] to your [gold]draw pile[/gold].\nCan be upgraded infinitely.",
+    "JAINA_CARD_IGNITE_CARD.description":  "Deal {Damage:diff()} damage.\nAdd an [gold]Ignite+{Upgraded}[/gold] to your [gold]discard pile[/gold].\nCan be upgraded infinitely.",
     "JAINA_CARD_JAINAS_GIFT_CARD.title":  "Jaina\u0027s Gift",
     "JAINA_CARD_JAINAS_GIFT_CARD.titleUpgraded":  "Rewind",
     "JAINA_CARD_JAINAS_GIFT_CARD.description":  "{IfUpgraded:show:Discover a copy of another [blue]Spell card[/blue] you have cast this combat.|Discover a Frostbolt, Arcane Intellect, or Fireball with [gold]Ethereal[/gold].}",

@@ -10,8 +10,9 @@ namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
 /// 点燃 (Ignite) - 1费攻击牌（普通，火焰派系）。
-/// 造成 8 点伤害，将一张升级过的"点燃"洗入你的抽牌堆。
-/// 可无限升级，每次升级伤害 +4。打出后进入弃牌堆（不消耗）。
+/// 造成 8 点伤害，将一张升级过的"点燃"洗入你的弃牌堆。
+/// 可无限升级，每次升级伤害 +4。消耗（打出的点燃从本场战斗移除，
+/// 只留弃牌堆里那张升级后的点燃继续循环）。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
 public sealed class IgniteCard : JainaSpellCardTemplate
@@ -28,10 +29,11 @@ public sealed class IgniteCard : JainaSpellCardTemplate
     public override int DiscoverPoolMaxUpgradeLevel => 0;
 
     /// <summary>
-    /// 法术牌 + 火焰派系（无消耗：打出的点燃进入弃牌堆，之后随弃牌堆洗回可再次抽到）
+    /// 法术牌 + 火焰派系 + 消耗（打出后从本场战斗移除）
     /// </summary>
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
-        [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Fire];
+        [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Fire,
+         CardKeyword.Exhaust];
 
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
@@ -65,7 +67,8 @@ public sealed class IgniteCard : JainaSpellCardTemplate
                 .Execute(choiceContext);
         }
 
-        // 将一张升级过的"点燃"洗入抽牌堆（升级等级 = 本卡当前升级等级 + 1）
+        // 将一张升级过的"点燃"洗入弃牌堆（升级等级 = 本卡当前升级等级 + 1）；
+        // 之后随弃牌堆洗回抽牌堆可再次抽到（打出的本卡消耗，本场战斗不再循环）
         var combatState = base.Owner.Creature.CombatState;
         var upgraded = jaina.Scripts.Character.JainaCastTracker.CreateCardWithUpgrade(
             combatState, base.Owner, typeof(IgniteCard), base.CurrentUpgradeLevel + 1);
@@ -74,10 +77,10 @@ public sealed class IgniteCard : JainaSpellCardTemplate
             return;
         }
         jaina.Scripts.Character.JainaCastTracker.MarkGenerated(upgraded);
-        // 塞入抽牌堆动画 + 抽牌堆计数刷新（生成卡没有 NCard 节点，原版 tween 流程
+        // 塞入弃牌堆动画 + 弃牌堆计数刷新（生成卡没有 NCard 节点，原版 tween 流程
         // 不会为它们创建动画/触发 CardAddFinished → 这里用原版生成卡塞堆流程 + 手动刷计数）
         var results = await CardPileCmd.AddGeneratedCardsToCombat(
-            [upgraded], PileType.Draw, base.Owner, CardPilePosition.Bottom);
+            [upgraded], PileType.Discard, base.Owner, CardPilePosition.Bottom);
         CardCmd.PreviewCardPileAdd(results, 1.0f);
         foreach (var r in results)
         {
