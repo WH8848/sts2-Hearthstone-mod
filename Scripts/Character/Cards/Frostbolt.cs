@@ -103,7 +103,9 @@ public sealed class Frostbolt : JainaSpellCardTemplate
                 {
                     break;
                 }
+                // 冰锥术：固定 1 点伤害 ×3 次（Unpowered：不吃力量加成，与卡面"1点"一致）
                 await DamageCmd.Attack(base.DynamicVars.Damage.BaseValue)
+                    .Unpowered()
                     .FromCard(this, cardPlay)
                     .Targeting(randomTarget)
                     .WithHitFx("vfx/vfx_attack_blunt")
