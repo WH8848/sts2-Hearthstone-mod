@@ -51,11 +51,11 @@ public sealed class CommanderSivaraCard : JainaMinionCardTemplate
     protected override int MinionHealth => 5;
 
     /// <summary>
-    /// 纳迦种族 + 战吼（悬停解释）+ 消耗（随从卡打出后消耗，模板默认）
+    /// 纳迦种族 + 战吼（悬停解释）+ 保留（回合结束留在手牌）+ 消耗（随从卡打出后消耗，模板默认）
     /// </summary>
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
         [jaina.Scripts.Character.Keywords.JainaKeywords.Naga,
-         jaina.Scripts.Character.Keywords.JainaKeywords.Battlecry, CardKeyword.Exhaust];
+         jaina.Scripts.Character.Keywords.JainaKeywords.Battlecry, CardKeyword.Retain, CardKeyword.Exhaust];
 
     public CommanderSivaraCard()
         : base(1, CardRarity.Rare)
