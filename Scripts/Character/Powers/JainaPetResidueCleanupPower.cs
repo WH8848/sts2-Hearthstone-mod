@@ -36,21 +36,23 @@ public sealed class JainaPetResidueCleanupPower : PowerModel
     protected override bool IsVisibleInternal => false;
 
     /// <summary>
-    /// 玩家回合开始前：清理玩家侧已死亡且仍挂接战斗状态的 Jaina 随从
-    /// （含 CombatState 已 null 但仍残留在 creature 列表的——RemoveCreature 幂等:
-    /// 没挂接的随从此摘除自身引用/从列表移除;已 null 的在下次 start 前被此处移除）。
+    /// <b>任意侧</b>回合开始前：清理玩家侧已死亡且仍挂接战斗状态的 Jaina 随从。
+    /// 重要：不能只在自己回合清理——敌方回合开始的 AfterTurnStart→ClearBlock
+    /// 同样会遍历玩家侧死随从（ShouldClearBlock(null) NRE → "turn loop died"
+    /// 战斗卡死,后续回合随从行动点不再恢复——实测 2026-08-24 SPINY_TOAD 战斗 #11,
+    /// 死于敌人回合的星术师索兰莉安正是 NRE 来源）。
     /// </summary>
     public override async Task BeforeSideTurnStart(PlayerChoiceContext choiceContext, CombatSide side,
         IReadOnlyList<Creature> participants, ICombatState combatState)
     {
-        if (Owner == null || Owner.Side != side || combatState == null)
+        if (Owner == null || combatState == null)
         {
             return;
         }
         // 玩家侧 creatures 快照（含主身/随从/地标）;只处理死亡且属于玩家随从的
         foreach (var creature in combatState.Creatures
                      .Where(c => c != null && !c.IsAlive && !c.IsPlayer &&
-                                 c.Side == side && c.PetOwner != null &&
+                                 c.Side == Owner.Side && c.PetOwner != null &&
                                  c.Monster is jaina.Scripts.Character.Minions.JainaMinionBase)
                      .ToList())
         {
@@ -59,6 +61,8 @@ public sealed class JainaPetResidueCleanupPower : PowerModel
                 if (creature.CombatState == combatState)
                 {
                     combatState.RemoveCreature(creature);
+                    MegaCrit.Sts2.Core.Logging.Log.Warn(
+                        $"[JainaDiag] residue pet {creature.Monster?.GetType().Name} removed at side {side} start");
                 }
                 else if (creature.CombatState == null && creature.Monster is { } m)
                 {
