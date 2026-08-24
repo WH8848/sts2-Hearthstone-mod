@@ -179,7 +179,7 @@
     "JAINA_CARD_ICY_TOUCH_CARD.title":  "Icy Touch",
     "JAINA_CARD_ICY_TOUCH_CARD.description":  "[gold]Hero Power[/gold].\nDeal {Damage:diff()} damage. If this Hero Power kills a character, summon a [blue]3/6[/blue] [red]Water Elemental[/red]. Automatically added to your hand at the start of each turn.",
     "JAINA_CARD_BLESSING_OF_IMPS_CARD.title":  "Blessing of the Imps",
-    "JAINA_CARD_BLESSING_OF_IMPS_CARD.description":  "[gold]Hero Power[/gold].\nSummon 1 Imp. Deal {Damage:diff()} damage randomly split among all enemies.",
+    "JAINA_CARD_BLESSING_OF_IMPS_CARD.description":  "[gold]Hero Power[/gold].\nSummon 1 Imp. Deal {Damage:diff()} damage randomly split among all enemies.\n(Released {Casts} times — each Empower adds one more release!)",
     "JAINA_CARD_CRAM_SESSION_CARD.title":  "Cram Session",
     "JAINA_CARD_CRAM_SESSION_CARD.titleUpgraded":  "Stargazing",
     "JAINA_CARD_CRAM_SESSION_CARD.description":  "{IfUpgraded:show:Draw a different [blue]Arcane spell card[/blue]. That [blue]Arcane spell card[/blue] has [gold]Replay 1[/gold] this turn.|Draw 1 card, plus 1 for each Strength.}",

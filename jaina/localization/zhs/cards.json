@@ -179,7 +179,7 @@
     "JAINA_CARD_ICY_TOUCH_CARD.title":  "冰冷触摸",
     "JAINA_CARD_ICY_TOUCH_CARD.description":  "[gold]英雄技能[/gold]。\n造成{Damage:diff()}点伤害。[gold]斩杀[/gold]时，召唤一个[blue]3/6[/blue]的[red]水元素[/red]。",
     "JAINA_CARD_BLESSING_OF_IMPS_CARD.title":  "小精灵的祝福",
-    "JAINA_CARD_BLESSING_OF_IMPS_CARD.description":  "[gold]英雄技能[/gold]。\n召唤1个小精灵。造成{Damage:diff()}点伤害，随机分配到所有敌人身上。",
+    "JAINA_CARD_BLESSING_OF_IMPS_CARD.description":  "[gold]英雄技能[/gold]。\n召唤1个小精灵。造成{Damage:diff()}点伤害，随机分配到所有敌人身上。\n(释放{Casts}次——每次灌注额外释放一次！)",
     "JAINA_CARD_CRAM_SESSION_CARD.title":  "考前刷夜",
     "JAINA_CARD_CRAM_SESSION_CARD.titleUpgraded":  "观星",
     "JAINA_CARD_CRAM_SESSION_CARD.description":  "{IfUpgraded:show:抽一张不同的[blue]奥术法术牌[/blue]。这张奥术法术牌本回合内具有[gold]重放[/gold]1。|抽1张牌，你每有1点[gold]力量[/gold]，多抽1张牌。}",

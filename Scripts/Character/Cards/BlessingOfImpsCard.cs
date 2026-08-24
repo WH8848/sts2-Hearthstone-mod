@@ -13,6 +13,7 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using jaina.Scripts.Character.Keywords;
 using jaina.Scripts.Character.Minions;
 using jaina.Scripts.Character.Powers;
+using STS2RitsuLib.Cards.DynamicVars;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -39,6 +40,7 @@ public sealed class BlessingOfImpsCard : JainaSpellCardTemplate
     /// <summary>
     /// 动态伤害显示：每次伤害 = 1(基础) + 野火层数 + 奥术增幅(与 OnPlay 结算一致)。
     /// 用 ComputedDamageVar(DamageVar 子类,强转安全);canonical(图鉴)显示基础 1。
+    /// 动态释放次数 Casts：= max(1, 灌注层数)——每层灌注额外释放一次(与 OnPlay 一致)。
     /// </summary>
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
@@ -56,6 +58,21 @@ public sealed class BlessingOfImpsCard : JainaSpellCardTemplate
             var wildfire = creature.GetPower<WildfirePower>();
             var amplifier = creature.GetPower<ArcaneAmplifierPower>();
             return 1m + (wildfire?.WildfireStacks ?? 0) + (amplifier?.AmplifierBonus ?? 0);
+        }),
+        ModCardVars.Computed("Casts", 1m, card =>
+        {
+            if (card == null || !card.IsMutable)
+            {
+                return 1m;
+            }
+            var creature = card.Owner?.Creature;
+            if (creature == null)
+            {
+                return 1m;
+            }
+            var empower = creature.GetPower<EmpowerPower>();
+            int stacks = empower?.EmpowerStacks ?? 0;
+            return System.Math.Max(1, stacks);
         })
     ];
 
