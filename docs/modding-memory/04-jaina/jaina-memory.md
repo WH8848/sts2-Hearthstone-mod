@@ -112,6 +112,14 @@
 - **必做流程（血泪教训 ×2）**：①每次改动后 `dotnet build`（PostBuild 自动部署 dll+pck 到 `E:\SteamLibrary\steamapps\common\Slay the Spire 2\mods\Jaina\`）；**②git 回退/回滚源码后必须重新 build——用户运行的是已部署的旧 dll**（曾出现"源码已回退但运行旧版带 bug/dll 初始化失败的 dll"）；③验证部署：`get-item ...Jaina.dll | LastWriteTime` + 二进制搜字符串（`[System.Text.Encoding]::Unicode.GetString(...)` Contains('JainaFreeze') 等确认诊断在/不在）。
 - **已知遗留问题（等用户复测/提供日志）**：a) "角色死亡没有动画"（ENTOMANCER_ELITE 落败场次；日志无动画相关报错，怀疑 `Entry.OnPlayerCreatureDied` 火并即忘 Kill(pet) 与死亡演出并行/或角色模型动画配置，需用户指明哪个角色+表现）；b) 原版怪物掉冻/其它 mod 干扰（MonsterPredictorLite / CardReplaceMod1 日志噪音已排除为本项目问题）。
 
+### 08-25 会话：联机断联定位（MinionLib 版本不一致，非本项目 bug）
+- **现象**：8-25 21:44/21:48 三次多人局分别于 `After player turn start` checksum 436/103 分歧 → `[RunLobby] Disconnected. Reason: StateDivergence` 断线。
+- **诊断入口**：分歧转储 zip 在 `%AppData%\Roaming\SlayTheSpire2\logs\ritsulib_state_divergence_*.zip`（含 `state-divergence-report.txt` / `metadata.json` / 双方 logs）。报告头部 `savedProperties.netIdMap` **直接列出两端 SavedProperty 映射差异**（`xxx: local=X; remote=Y`）。
+- **根因**：SavedProperty net-id 映射 **local=51 项 / remote=52 项**，唯一差异 = 0051 槽：本地 `Missing` vs 对方 `MinionLibComponentStateBlob`（MinionLib `ComponentsCardModel` 的 [SavedProperty]，属 MinionLib **新版 Components 系统**）。本地工坊 MinionLib.dll（`E:\SteamLibrary\steamapps\workshop\content\2868840\3747595039\MinionLib\`）为 **8/10 旧快照**（0.6.2.0、**无 BaseLib 依赖**）；对方是更新内容（**依赖 BaseLib v3.4.5**——本地 mod 列表里根本没有 BaseLib）。MinionLib 作者**更新工坊内容但未升版本号**，两端"都 0.6.2"但内容不同。
+- **影响链**：SavedProperty 集合差 1 项 → 多播包解码表差 1 项 → 卡牌/玩家状态序列化字节两端不同 → checksum 分歧 → 断联。**我们的 `DeterministicSavedPropertyNetIdPatch` 只保证"同集合下确定性排序"，修复不了集合本身不一致**——这是 mod 版本/依赖不匹配，不是确定性 bug。
+- **处理**：双方 MinionLib 更新到同一内容版本（本地 3747595039 检查更新/重新下载）+ 本地补装 BaseLib（工坊 3737335127, v3.4.5，对方有）；更新后 `savedProperties.count` 两端应=52。
+- **工具词法教训**：dll 二进制搜类型名（`ComponentsCardModel`）**必须用 UTF8 编码**（类型名在元数据 #Strings 堆，UTF-8）；只有常量字符串（如 `MinionLibComponentStateBlob` 的 nameof 常量在使用者字符串堆 #US）才是 UTF-16——之前用 `Unicode.GetString` 检查"ComponentsCardModel"得 False 是**假阴性**。另一个字符串搜索陷阱：字符串"在文件中存在"≠"运行时已注册"（还要看类型是否被 ModelDb/属性收集）。
+
 ## 5. 用户确认过的卡牌数值（炉石原版→Mod）
 - 炎枪术 5→2费、深度冻结 7→2、匣中古神 7→3、咒术洪流 4→2、克苏恩面具 7→2、夕阳漫射 9→2、艾露尼斯 6→2、水元素 4→1、灰贤鹦鹉 6→2、奥术师晨拥 5→2；源生之石升级前后都 1 费。
 - 冰霜女巫吉安娜：3费英雄卡（稀有），战吼：召唤一个 3/6 水元素 + 本局对战所有元素吸血，英雄技能替换为冰冷触摸（0费攻击衍生：造成 1 点伤害 + 召唤一个 3/6 水元素）。
