@@ -153,7 +153,11 @@ public static class JainaRandomPoolHelper
         var rng = owner.RunState.Rng.CombatTargets;
         var allCreatures = combatState.Creatures
             .Concat(combatState.Players.SelectMany(p => p.PlayerCombatState?.Pets ?? []))
-            .Where(c => c != null && c.IsAlive)
+            // 地标（JainaLandmarkBase）不参与随机释放目标选择：
+            // 地标只能被玩家点击使用,不能成为随机释放的卡（匣中古神/惊奇卡牌/戏法图腾/
+            // 诈骗犯重放/AutoPlay 等）的选中目标——与 LandmarkUnselectablePatch
+            // (手打/随机经 IsValidTarget 判定不可选)语义一致,此处兜底放宽池。
+            .Where(c => c != null && c.IsAlive && c.Monster is not Minions.JainaLandmarkBase)
             .ToList();
         if (allCreatures.Count == 0)
         {
