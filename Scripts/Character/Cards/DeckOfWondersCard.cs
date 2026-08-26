@@ -113,6 +113,11 @@ public sealed class DeckOfWondersCard : JainaSpellCardTemplate
                 {
                     continue;
                 }
+                // <b>同名不可自变</b>：愚人套牌不能把法术变形为愚人套牌（否则连环套牌）
+                if (canonical.GetType() == typeof(DeckOfWondersCard))
+                {
+                    continue;
+                }
                 // 吉安娜非法术能力牌（戏法图腾/炉石形态）不在范围内
                 if (jaina.Scripts.Character.JainaCastTracker.IsExcludedFromSpellPool(canonical.GetType()))
                 {

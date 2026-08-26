@@ -67,6 +67,7 @@ public sealed class EvocationCard : JainaSpellCardTemplate
 
         // 用随机法师法术牌填满手牌（不占手牌位的英雄技能卡不影响容量）。
         // 每种法术牌按可升级级别展开：未升级形态与升级形态（+）都可能被填入手牌。
+        // <b>同名不可自随</b>：唤醒不能随机生成唤醒（否则手牌会被唤醒连环填充）。
         var pool = jaina.Scripts.Character.JainaCastTracker.BuildAllSpellPool();
 
         while (!jaina.Scripts.Character.JainaHandHelper.IsHandFull(base.Owner))
@@ -85,6 +86,10 @@ public sealed class EvocationCard : JainaSpellCardTemplate
             if (entry.Type == null)
             {
                 break;
+            }
+            if (entry.Type == typeof(EvocationCard))
+            {
+                continue; // 同名不可自随:唤起不生成唤起
             }
             var card = jaina.Scripts.Character.JainaCastTracker.CreateCardWithUpgrade(
                 combatState, base.Owner, entry.Type, entry.UpgradeLevel);
