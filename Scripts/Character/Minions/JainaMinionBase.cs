@@ -1012,6 +1012,10 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
         // 下回合开始 StartTurn → AfterTurnStart → ClearBlock → ShouldClearBlock(null)
         // NRE → "turn loop died" 战斗卡死）。
         // 放在亡语之后（亡语需要 CombatState 正常）；try/catch 保护，不影响核心死亡收尾。
+        // <b>联机对称性</b>：CombatState==null 但仍留在列表的"残留尸体"直接摘除——
+        // 否则主机端此处移除成功、客户端 CombatState 已先被置 null 移除失败
+        // （CombatState.RemoveCreature 对 null 早退）→ 两端 creature 列表不一致
+        // → 下个回合结束 checksum 分歧 StateDivergence 断联（实测莫扎奇 checksum #93）。
         if (Creature.CombatState is { } deathState && Creature.CombatState == deathState)
         {
             try
@@ -1022,6 +1026,26 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
             {
                 MegaCrit.Sts2.Core.Logging.Log.Warn(
                     $"[JainaDeathrattle] remove-from-combat failed on {GetType().Name}: {ex}");
+            }
+        }
+        else if (Creature.CombatState == null)
+        {
+            // 残留尸体（已在 CombatManager/CombatState 列表但 CombatState 被置 null）：
+            // 强制从私列表摘除（两端确定性钩子内执行，结果对称）；
+            // CombatState 引用已丢 → 从随从主人（玩家 Creature）取当前战斗状态
+            var owner = Creature.PetOwner;
+            if (owner?.Creature?.CombatState is { } ownerState)
+            {
+                try
+                {
+                    jaina.Scripts.Character.Powers.JainaPetResidueCleanupPower.ForceRemoveLingering(
+                        ownerState, Creature);
+                }
+                catch (System.Exception ex)
+                {
+                    MegaCrit.Sts2.Core.Logging.Log.Warn(
+                        $"[JainaDeathrattle] force lingering remove failed on {GetType().Name}: {ex}");
+                }
             }
         }
     }

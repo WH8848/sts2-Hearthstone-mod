@@ -66,10 +66,16 @@ public sealed class JainaPetResidueCleanupPower : PowerModel
                 }
                 else if (creature.CombatState == null && creature.Monster is { } m)
                 {
-                    // CombatState 已被 detach 但仍残留引用:无需再移除(不在列表),
-                    // 仅记录(诊断用)
+                    // CombatState 已 detach 但仍残留引用（"残留尸体"）：
+                    // 原版 CombatState.RemoveCreature 对 CombatState==null 直接早退,
+                    // 尸体将永久留在玩家侧列表——主机端在 AfterDeath 时移除成功、
+                    // 客户端 CombatState 已先被置 null 移除失败 → 两端 creature 列表
+                    // 不一致 → 下个回合结束 checksum 分歧(StateDivergence 断联,
+                    // 实测:莫扎奇尸体 客户端[4]0/8 残留 vs 主机无 — checksum #93)。
+                    // 这里直接从私列表强制摘除(两端确定性执行,彻底对称)。
+                    ForceRemoveLingering(combatState, creature);
                     MegaCrit.Sts2.Core.Logging.Log.Warn(
-                        $"[JainaDiag] residue pet {m.GetType().Name} already detached but lingering");
+                        $"[JainaDiag] residue pet {m.GetType().Name} lingering -> force removed");
                 }
             }
             catch (System.Exception ex)
@@ -77,6 +83,50 @@ public sealed class JainaPetResidueCleanupPower : PowerModel
                 MegaCrit.Sts2.Core.Logging.Log.Warn(
                     $"[JainaDiag] residue cleanup failed on {creature.Monster?.GetType().Name}: {ex}");
             }
+        }
+    }
+
+    /// <summary>
+    /// 从 CombatState 私列表(<c>_allies/_enemies</c>)强制摘除"残留尸体"
+    /// (CombatState 已被置 null 但仍留在玩家侧/敌方列表中的已死生物)。
+    /// 原版 <see cref="CombatState.RemoveCreature"/> 对 CombatState==null 直接早退,
+    /// 无法清理该状态;这里是联机确定性修复(caller 均为两端的确定性钩子,
+    /// 两端各自执行等价摘除,结果一致)。反射访问私列表,失败静默不阻断战斗。
+    /// </summary>
+    internal static void ForceRemoveLingering(ICombatState combatState, Creature creature)
+    {
+        try
+        {
+            if (combatState is not MegaCrit.Sts2.Core.Combat.CombatState cs)
+            {
+                return;
+            }
+            bool removed = false;
+            foreach (var fieldName in new[] { "_allies", "_enemies" })
+            {
+                var field = HarmonyLib.AccessTools.Field(typeof(MegaCrit.Sts2.Core.Combat.CombatState), fieldName);
+                if (field?.GetValue(cs) is System.Collections.Generic.List<Creature> list)
+                {
+                    if (list.Remove(creature))
+                    {
+                        removed = true;
+                    }
+                }
+            }
+            if (removed)
+            {
+                // CreaturesChanged 是事件,外部只能经反射触发(失败静默——纯 UI 通知)
+                var evtField = HarmonyLib.AccessTools.Field(
+                    typeof(MegaCrit.Sts2.Core.Combat.CombatState), "CreaturesChanged");
+                if (evtField?.GetValue(cs) is System.Action<MegaCrit.Sts2.Core.Combat.CombatState> action)
+                {
+                    action(cs);
+                }
+            }
+        }
+        catch (System.Exception ex)
+        {
+            MegaCrit.Sts2.Core.Logging.Log.Warn($"[JainaDiag] force remove lingering failed: {ex}");
         }
     }
 
