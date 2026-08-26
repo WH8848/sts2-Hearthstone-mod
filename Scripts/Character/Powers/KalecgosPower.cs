@@ -33,6 +33,16 @@ public sealed class KalecgosPower : PowerModel
     public override bool TryModifyEnergyCostInCombat(CardModel card, decimal originalCost, out decimal modifiedCost)
     {
         modifiedCost = originalCost;
+        if (!_usedThisTurn)
+        {
+            // 随从是本回合中途登场：若本回合第一张攻击/技能牌已在登场前打出，
+            // 减费窗口已过（"当前回合第一张法术"——不是"登场后下一张"）
+            if (Owner?.PetOwner is { } po &&
+                jaina.Scripts.Character.JainaCastTracker.HasPlayedAttackOrSkillThisTurn(po))
+            {
+                _usedThisTurn = true;
+            }
+        }
         if (_usedThisTurn)
         {
             return false;
@@ -77,6 +87,11 @@ public sealed class KalecgosPower : PowerModel
         if (side == Owner.Side)
         {
             _usedThisTurn = false;
+            if (Owner.PetOwner is { } po)
+            {
+                // 清零本回合法术计数（与落难的大法师同步;幂等）
+                jaina.Scripts.Character.JainaCastTracker.ResetTurnAttackSkillCount(po);
+            }
         }
         return Task.CompletedTask;
     }

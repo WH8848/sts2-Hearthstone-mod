@@ -46,17 +46,33 @@ public sealed class MaroonedArchmageMinion : JainaMinionBase
         if (side == CombatSide.Player)
         {
             _spellsCastThisTurn = 0;
+            if (Creature.PetOwner is { } po)
+            {
+                // 清零本回合法术计数（与卡雷苟斯同步;幂等）
+                jaina.Scripts.Character.JainaCastTracker.ResetTurnAttackSkillCount(po);
+            }
         }
     }
 
     /// <summary>
     /// 你每个回合使用的第一张法术牌的费用消耗减少1点：
     /// 战斗中费用解析时调用——主人（吉安娜）的法术牌且本回合尚未施放过法术时减 1 费。
+    /// 随从为本回合中途登场：若本回合第一张法术已在登场前打出，减费窗口已过
+    /// （"当前回合第一张法术"——不是"登场后下一张"）。
     /// </summary>
     public override bool TryModifyEnergyCostInCombat(CardModel card, decimal originalCost, out decimal modifiedCost)
     {
         modifiedCost = originalCost;
-        if (!Creature.IsAlive || _spellsCastThisTurn > 0)
+        if (!Creature.IsAlive)
+        {
+            return false;
+        }
+        if (_spellsCastThisTurn == 0 && Creature.PetOwner is { } po &&
+            jaina.Scripts.Character.JainaCastTracker.HasPlayedAttackOrSkillThisTurn(po))
+        {
+            _spellsCastThisTurn = 1; // 窗口已过:本回合第一张法术已在登场前打出
+        }
+        if (_spellsCastThisTurn > 0)
         {
             return false;
         }

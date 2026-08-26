@@ -114,6 +114,13 @@ public static class JainaCastTracker
         public readonly Dictionary<ulong, (Type Type, int UpgradeLevel, bool IsGenerated)?> LastPlayedCardByPlayer = [];
 
         /// <summary>
+        /// 各玩家<b>本回合</b>已手打的攻击/技能牌数量（卡雷苟斯/落难的大法师
+        /// "当前回合第一张法术减费"判定用——随从登场时若本回合已打过法术，
+        /// 减费窗口已过，不再给后续法术减费）。玩家回合开始清零。
+        /// </summary>
+        public readonly Dictionary<ulong, int> AttackOrSkillCountThisTurnByPlayer = [];
+
+        /// <summary>
         /// 取某玩家的类型集合（不存在则创建）
         /// </summary>
         public HashSet<Type> SetFor(Dictionary<ulong, HashSet<Type>> map, ulong netId)
@@ -221,6 +228,32 @@ public static class JainaCastTracker
     public static CombatRecord For(ICombatState combatState) => Records.GetValue(combatState, _ => new CombatRecord());
 
     /// <summary>
+    /// 该玩家<b>本回合</b>是否已手打过攻击/技能牌（卡雷苟斯/落难的大法师
+    /// "当前回合第一张法术减费"窗口判定用——随从登场时已打过 → 窗口已过）。
+    /// </summary>
+    public static bool HasPlayedAttackOrSkillThisTurn(Player player)
+    {
+        if (player?.Creature?.CombatState == null || !Records.TryGetValue(player.Creature.CombatState, out var rec))
+        {
+            return false;
+        }
+        return rec.AttackOrSkillCountThisTurnByPlayer.TryGetValue(player.NetId, out var n) && n > 0;
+    }
+
+    /// <summary>
+    /// 玩家回合开始：清零该玩家的"本回合攻击/技能牌计数"。
+    /// 由卡雷苟斯/落难的大法师的 BeforeSideTurnStart 调用（幂等）。
+    /// </summary>
+    public static void ResetTurnAttackSkillCount(Player player)
+    {
+        if (player?.Creature?.CombatState == null || !Records.TryGetValue(player.Creature.CombatState, out var rec))
+        {
+            return;
+        }
+        rec.AttackOrSkillCountThisTurnByPlayer.Remove(player.NetId);
+    }
+
+    /// <summary>
     /// 卡牌打出时记录（各攻击/技能牌 OnPlay 首行调用）。
     /// 法术牌 = 攻击牌/技能牌，或挂"法术牌"关键词的卡（任务线卡、寒冰屏障等能力卡视为法术牌，
     /// 可被倒带/西瓦拉复制）。
@@ -259,6 +292,15 @@ public static class JainaCastTracker
         if (!isSpellCard)
         {
             return;
+        }
+
+        // 卡雷苟斯/落难的大法师"当前回合第一张法术"窗口判定：
+        // 只计玩家手打的<b>攻击/技能牌</b>（随从卡/能力牌不计；自动打出不计——
+        // 与 KalecgosPower.AfterCardPlayed 的 IsAutoPlay 排除一致）；玩家回合开始清零。
+        if (isHandPlayed && (card.Type == CardType.Attack || card.Type == CardType.Skill))
+        {
+            rec.AttackOrSkillCountThisTurnByPlayer.TryGetValue(ownerId, out var n);
+            rec.AttackOrSkillCountThisTurnByPlayer[ownerId] = n + 1;
         }
 
         // "本局施放过的攻击/技能牌"集合（吉安娜的礼物+倒带候选池用）：
