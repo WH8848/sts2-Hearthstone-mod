@@ -193,9 +193,6 @@ public static class MinionSelectHotkeys
 
     /// <summary>
     /// 本地玩家自己的 Jaina 随从列表（宠物顺序 = 召唤顺序）。
-    /// <b>地标（JainaLandmarkBase）不参与快捷键选择</b>：地标只能被玩家点击使用,
-    /// 不能通过快捷键选中/攻击——否则地标会占用一个数字槽,
-    /// 后续随从的编号与数字键错位（如按 3 选中地标而不是第 3 个随从）。
     /// </summary>
     private static List<JainaMinionBase> EnumerateOwnMinions(Player player)
     {
@@ -211,8 +208,7 @@ public static class MinionSelectHotkeys
             {
                 continue;
             }
-            if (pet.Monster is JainaMinionBase minion && minion.Creature == pet &&
-                pet.Monster is not jaina.Scripts.Character.Minions.JainaLandmarkBase)
+            if (pet.Monster is JainaMinionBase minion && minion.Creature == pet)
             {
                 result.Add(minion);
             }
