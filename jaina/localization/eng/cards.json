@@ -9,7 +9,7 @@
     "JAINA_CARD_APEXIS_BLAST.description":  "{IfUpgraded:show:|}Deal {Damage:diff()} damage. {IfUpgraded:show:Summon a random minion that costs 2.|If your draw pile has no minion cards, summon a random minion that costs 1.}",
     "JAINA_CARD_FLAME_WARD.title":  "Flame Ward",
     "JAINA_CARD_FLAME_WARD.titleUpgraded":  "Fire Sale",
-    "JAINA_CARD_FLAME_WARD.description":  "{IfUpgraded:show:Deal 3 damage to all minions. Deal 7 instances of 3 damage. Split randomly among all enemies.|When you are attacked, deal 7 instances of 3 damage. Split randomly among all enemies.}",
+    "JAINA_CARD_FLAME_WARD.description":  "{IfUpgraded:show:Deal {Damage:diff()} damage to all minions. Deal 7 instances of {Damage:diff()} damage. Split randomly among all enemies.|When you are attacked, deal 7 instances of {Damage:diff()} damage. Split randomly among all enemies.}",
     "JAINA_CARD_ARCANE_INTELLECT.title":  "Arcane Intellect",
     "JAINA_CARD_ARCANE_INTELLECT.titleUpgraded":  "Cooling Spring",
     "JAINA_CARD_ARCANE_INTELLECT.description":  "Draw {Cards} cards. {IfUpgraded:show:Restore 1 energy for each [blue]Spell card[/blue] drawn (up to your max energy).|}",
