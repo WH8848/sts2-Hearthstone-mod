@@ -7,7 +7,6 @@ using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
-using MegaCrit.Sts2.Core.ValueProps;
 using jaina.Scripts.Character.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -15,16 +14,16 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
-/// 寒冰箭 (Frostbolt) - 0费：对一个角色造成 3 点伤害，并使其获得 1 层冻结。
-/// 升级后变为冰锥术 (Cone of Cold)：随机对敌人造成 1 点伤害 3 次（吃力量，
-/// 每击 = 1 + 力量），每次伤害都会给予被击中的敌人 1 层冻结（无需选择目标，冰霜派系）。
+/// 寒冰箭 (Frostbolt) - 0费普通攻击牌（冰霜派系）。
+/// 对一个角色造成 3 点伤害，并使其获得 1 层冻结。
+/// 升级后变为冰枪术 (Icy Lance)：给予一个角色 1 层冻结，造成 0 点基础伤害；
+/// 该角色身上每有一层冻结，就对其额外造成 4 点伤害（按施放后层数计算，需选择目标）。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
-[RegisterCharacterStarterCard(typeof(Jaina), 1, Order = 3)]
 public sealed class Frostbolt : JainaSpellCardTemplate
 {
     /// <summary>
-    /// 只能升级 1 次（升级变为冰锥术）
+    /// 只能升级 1 次（升级变为冰枪术）
     /// </summary>
     public override int MaxUpgradeLevel => 1;
 
@@ -34,35 +33,43 @@ public sealed class Frostbolt : JainaSpellCardTemplate
     public override IEnumerable<CardKeyword> CanonicalKeywords => [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Freeze, jaina.Scripts.Character.Keywords.JainaKeywords.Frost];
 
     /// <summary>
-    /// 伤害变量（单一 Computed——分支声明(IsUpgraded ? DamageVar(1) : DamageVar(3))
-    /// 不会为升级形态重新求值,升级形态会显示基础值;改用 CurrentUpgradeLevel 分支):
-    /// 未升级 = 3(预览含力量等修正)；升级(冰锥术) = 1(每击基数,吃力量——每击 = 1 + 力量)。
+    /// 伤害变量（单一 Computed + 目标感知——分支声明(IsUpgraded ? ... : ...)不会为
+    /// 升级形态重新求值,改用 CurrentUpgradeLevel 分支):
+    /// 未升级 = 3(预览含力量等修正)；升级(冰枪术) = (目标当前冻结层数 + 本卡 1 层) × 4
+    /// ——卡面按施放后层数显示(3 层敌人 → 16；0 层 → 4；无目标 → 0)。
     /// </summary>
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
-        new ComputedDamageVar(3m, card =>
-            card is Frostbolt f && f.CurrentUpgradeLevel >= 1 ? 1m : 3m)
+        new ComputedDamageVar(3m, (card, target) =>
+        {
+            if (card is not Frostbolt f || f.CurrentUpgradeLevel < 1)
+            {
+                return 3m;
+            }
+            // 冰枪术：0 + (目标已有冻结层数 + 本卡 1 层) × 4（target 感知；无目标 → 0）
+            var freeze = target?.GetPower<FreezePower>();
+            return ((freeze?.Amount ?? 0m) + 1m) * 4m;
+        })
     ];
 
     /// <summary>
-    /// 升级后（冰锥术）无需选择目标：随机对敌人造成 1 点伤害 3 次（吃力量，每击 = 1 + 力量）
+    /// 升级后（冰枪术）选择目标；基础（寒冰箭）选择角色
     /// </summary>
-    public override TargetType TargetType =>
-        IsUpgraded ? TargetType.None : JainaTargetTypes.AnyTargetable;
+    public override TargetType TargetType => JainaTargetTypes.AnyTargetable;
 
     /// <summary>
-    /// 卡牌原画：寒冰箭 / 升级后（冰锥术）切换原画
+    /// 卡牌原画：寒冰箭 / 升级后（冰枪术）切换原画
     /// </summary>
     public override string CustomPortraitPath =>
-        IsUpgraded ? "res://assets/card_art/cone_of_cold.png" : "res://assets/card_art/frostbolt.png";
+        IsUpgraded ? "res://assets/card_art/ice_lance.png" : "res://assets/card_art/frostbolt.png";
 
     public Frostbolt()
-        : base(0, CardType.Attack, CardRarity.Basic, JainaTargetTypes.AnyTargetable, true)
+        : base(0, CardType.Attack, CardRarity.Common, JainaTargetTypes.AnyTargetable, true)
     {
     }
 
     /// <summary>
-    /// 升级后卡牌名称变为"冰锥术 (Cone of Cold)"
+    /// 升级后卡牌名称变为"冰枪术 (Icy Lance)"
     /// </summary>
     public override string Title
     {
@@ -83,41 +90,26 @@ public sealed class Frostbolt : JainaSpellCardTemplate
         // 记录施放（倒带/罗曼斯/三派系追踪）
         jaina.Scripts.Character.JainaCastTracker.RecordPlayed(this);
 
-        // 冰锥术（升级后）：随机对敌人造成 1 点伤害 3 次（吃力量——每击 = 1 + 力量），
-        // 每次伤害给予被击中的敌人 1 层冻结
+        // 冰枪术（升级后）：给予一个角色 1 层冻结，造成 0 点基础伤害；
+        // 该角色身上每有一层冻结，额外造成 4 点伤害——
+        // 按施放后的层数计算（先叠 1 层，再结算：3 层敌人→叠至 4 层→16 点；
+        // 卡面预览同口径：显示 (当前层数 + 1) × 4）
         if (IsUpgraded)
         {
-            var combatState = base.Owner.Creature.CombatState;
-            if (combatState == null)
+            if (cardPlay.Target is not { IsAlive: true } icyTarget)
             {
                 return;
             }
-            for (int i = 0; i < 3; i++)
+            await PowerCmd.Apply<FreezePower>(choiceContext, [icyTarget], 1m, base.Owner.Creature, this);
+            var afterFreeze = icyTarget.GetPower<FreezePower>();
+            var stacks = afterFreeze?.Amount ?? 0m;
+            if (stacks > 0)
             {
-                var enemies = combatState.GetOpponentsOf(base.Owner.Creature)
-                    .Where(e => e != null && e.IsAlive && e.IsHittable)
-                    .ToList();
-                if (enemies.Count == 0)
-                {
-                    break;
-                }
-                var randomTarget = combatState.RunState.Rng.CombatTargets.NextItem(enemies);
-                if (randomTarget == null)
-                {
-                    break;
-                }
-                // 冰锥术：每击 1 点伤害基数 ×3 次（Powered 默认吃力量加成——每击 = 1 + 力量；
-                // 卡面文字固定"1点"/次，实际伤害动态编码随力量变化）
-                await DamageCmd.Attack(base.DynamicVars.Damage.BaseValue)
+                await DamageCmd.Attack(stacks * 4m)
                     .FromCard(this, cardPlay)
-                    .Targeting(randomTarget)
+                    .Targeting(icyTarget)
                     .WithHitFx("vfx/vfx_attack_blunt")
                     .Execute(choiceContext);
-                // 每次伤害给予被命中的敌人 1 层冻结（目标已死则不需要挂）
-                if (randomTarget.IsAlive)
-                {
-                    await PowerCmd.Apply<FreezePower>(choiceContext, [randomTarget], 1m, base.Owner.Creature, this);
-                }
             }
             return;
         }
@@ -137,6 +129,6 @@ public sealed class Frostbolt : JainaSpellCardTemplate
         await PowerCmd.Apply<FreezePower>(choiceContext, [target], 1m, base.Owner.Creature, this);
     }
 
-    // 升级为冰锥术：不再升级基础伤害（冰锥术每击基础 1 点×3 次，吃力量加成
-    // ——实际伤害动态编码（每击 = 1 + 力量），卡面文字固定"1点/次"）
+    // 升级为冰枪术：不再升级基础伤害（冰枪术 = 0 基础 + 施放后冻结层数 × 4，
+    // 卡面 {Damage:diff()} 目标感知动态显示）
 }

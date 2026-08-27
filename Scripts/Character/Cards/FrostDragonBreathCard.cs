@@ -12,16 +12,17 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
-/// 冰龙吐息 (Frost Dragon Breath) - 0费攻击牌（普通，冰霜派系）。
+/// 冰龙吐息 (Frost Dragon Breath) - 0费初始攻击牌（冰霜派系）。
 /// 随机对一个敌人造成 2 点伤害，并给予 1 层冻结。
-/// 升级后变为冰枪术 (Icy Lance)：给予一个角色 1 层冻结，造成 0 点伤害；
-/// 该敌人身上每有一层冻结，就对其额外造成 4 点伤害（需选择目标）。
+/// 升级后变为冰锥术 (Cone of Cold)：随机对敌人造成 1 点伤害 3 次（吃力量，
+/// 每击 = 1 + 力量），每次伤害都会给予被击中的敌人 1 层冻结（无需选择目标）。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
+[RegisterCharacterStarterCard(typeof(Jaina), 1, Order = 3)]
 public sealed class FrostDragonBreathCard : JainaSpellCardTemplate
 {
     /// <summary>
-    /// 只能升级 1 次（升级变为冰枪术）
+    /// 只能升级 1 次（升级变为冰锥术）
     /// </summary>
     public override int MaxUpgradeLevel => 1;
 
@@ -32,47 +33,36 @@ public sealed class FrostDragonBreathCard : JainaSpellCardTemplate
         [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Freeze, jaina.Scripts.Character.Keywords.JainaKeywords.Frost];
 
     /// <summary>
-    /// 动态伤害显示(单一 Computed + 目标感知,参考原版"欺凌 Bully"计算式):
-    /// 未升级 = DamageVar(2)（预览含力量等修正）；
-    /// 升级（冰枪术）= <b>0 基础</b> + (目标当前冻结层数 + 1,本卡将给予的 1 层) × 4
-    /// ——卡面按<b>施放后</b>层数显示(3 层敌人 → 显示 16；0 层 → 4)；
-    /// 无目标/不可变时显示 0。
-    /// 分支声明(IsUpgraded ? ... : ...)不会为升级形态重新求值——用 CurrentUpgradeLevel 分支。
+    /// 伤害变量（单一 Computed——分支声明(IsUpgraded ? ... : ...)不会为升级形态
+    /// 重新求值,改用 CurrentUpgradeLevel 分支):
+    /// 未升级 = 2(预览含力量等修正)；升级(冰锥术) = 1(每击基数,吃力量——每击 = 1 + 力量)。
     /// </summary>
     protected override IEnumerable<MegaCrit.Sts2.Core.Localization.DynamicVars.DynamicVar> CanonicalVars =>
     [
-        new ComputedDamageVar(0m, (card, target) =>
-        {
-            if (card is not FrostDragonBreathCard f || f.CurrentUpgradeLevel < 1)
-            {
-                return 2m;
-            }
-            // 冰枪术：0 + (目标已有冻结层数 + 本卡 1 层) × 4（target 感知；无目标 → 0）
-            var freeze = target?.GetPower<FreezePower>();
-            return ((freeze?.Amount ?? 0m) + 1m) * 4m;
-        })
+        new ComputedDamageVar(2m, card =>
+            card is FrostDragonBreathCard f && f.CurrentUpgradeLevel >= 1 ? 1m : 2m)
     ];
 
     /// <summary>
-    /// 升级后（冰枪术）需要选择目标；未升级（冰龙吐息）随机打敌人，无需选目标
+    /// 升级后（冰锥术）无需选择目标：随机对敌人造成 1 点伤害 3 次（吃力量，每击 = 1 + 力量）；
+    /// 未升级（冰龙吐息）随机打敌人，无需选目标
     /// </summary>
-    public override TargetType TargetType =>
-        IsUpgraded ? JainaTargetTypes.AnyTargetable : TargetType.None;
+    public override TargetType TargetType => TargetType.None;
 
     /// <summary>
-    /// 卡牌原画：冰龙吐息（炉石原卡 Breath of Sindragosa 原画，取自 hearthstone.wiki.gg）/
-    /// 升级后（冰枪术）切换原画
+    /// 卡牌原画：冰龙吐息（炉石原卡 Breath of Sindragosa 原画）/
+    /// 升级后（冰锥术）切换原画
     /// </summary>
     public override string CustomPortraitPath =>
-        IsUpgraded ? "res://assets/card_art/ice_lance.png" : "res://assets/card_art/breath_of_sindragosa.png";
+        IsUpgraded ? "res://assets/card_art/cone_of_cold.png" : "res://assets/card_art/breath_of_sindragosa.png";
 
     public FrostDragonBreathCard()
-        : base(0, CardType.Attack, CardRarity.Common, TargetType.None, true)
+        : base(0, CardType.Attack, CardRarity.Basic, TargetType.None, true)
     {
     }
 
     /// <summary>
-    /// 升级后卡牌名称变为"冰枪术 (Icy Lance)"
+    /// 升级后卡牌名称变为"冰锥术 (Cone of Cold)"
     /// </summary>
     public override string Title
     {
@@ -93,44 +83,58 @@ public sealed class FrostDragonBreathCard : JainaSpellCardTemplate
         // 记录施放（倒带/罗曼斯/三派系追踪）
         jaina.Scripts.Character.JainaCastTracker.RecordPlayed(this);
 
-        // 冰枪术（升级后）：给予一个角色 1 层冻结，造成 0 点基础伤害；
-        // 该角色身上每有一层冻结，额外造成 4 点伤害——
-        // <b>按施放后的层数计算</b>（先叠 1 层，再结算：3 层敌人→叠至 4 层→16 点；
-        // 卡面预览同口径：显示 (当前层数 + 1) × 4）
+        // 冰锥术（升级后）：随机对敌人造成 1 点伤害 3 次（吃力量——每击 = 1 + 力量），
+        // 每次伤害给予被击中的敌人 1 层冻结
         if (IsUpgraded)
         {
-            if (cardPlay.Target is not { IsAlive: true } icyTarget)
+            var combatState = base.Owner.Creature.CombatState;
+            if (combatState == null)
             {
                 return;
             }
-            await PowerCmd.Apply<FreezePower>(choiceContext, [icyTarget], 1m, base.Owner.Creature, this);
-            var afterFreeze = icyTarget.GetPower<FreezePower>();
-            var stacks = afterFreeze?.Amount ?? 0m;
-            if (stacks > 0)
+            for (int i = 0; i < 3; i++)
             {
-                await DamageCmd.Attack(stacks * 4m)
+                var enemies = combatState.GetOpponentsOf(base.Owner.Creature)
+                    .Where(e => e != null && e.IsAlive && e.IsHittable)
+                    .ToList();
+                if (enemies.Count == 0)
+                {
+                    break;
+                }
+                var randomTarget = combatState.RunState.Rng.CombatTargets.NextItem(enemies);
+                if (randomTarget == null)
+                {
+                    break;
+                }
+                // 冰锥术：每击 1 点伤害基数 ×3 次（Powered 默认吃力量加成——每击 = 1 + 力量）
+                await DamageCmd.Attack(base.DynamicVars.Damage.BaseValue)
                     .FromCard(this, cardPlay)
-                    .Targeting(icyTarget)
+                    .Targeting(randomTarget)
                     .WithHitFx("vfx/vfx_attack_blunt")
                     .Execute(choiceContext);
+                // 每次伤害给予被命中的敌人 1 层冻结（目标已死则不需要挂）
+                if (randomTarget.IsAlive)
+                {
+                    await PowerCmd.Apply<FreezePower>(choiceContext, [randomTarget], 1m, base.Owner.Creature, this);
+                }
             }
             return;
         }
 
         // 冰龙吐息（未升级）：随机对一个敌人造成 2 点伤害，并给予 1 层冻结
-        var combatState = base.Owner.Creature.CombatState;
-        if (combatState == null)
+        var combatState2 = base.Owner.Creature.CombatState;
+        if (combatState2 == null)
         {
             return;
         }
-        var enemies = combatState.GetOpponentsOf(base.Owner.Creature)
+        var enemies2 = combatState2.GetOpponentsOf(base.Owner.Creature)
             .Where(e => e != null && e.IsAlive && e.IsHittable)
             .ToList();
-        if (enemies.Count == 0)
+        if (enemies2.Count == 0)
         {
             return;
         }
-        var target = combatState.RunState.Rng.CombatTargets.NextItem(enemies);
+        var target = combatState2.RunState.Rng.CombatTargets.NextItem(enemies2);
         if (target == null)
         {
             return;
@@ -146,4 +150,7 @@ public sealed class FrostDragonBreathCard : JainaSpellCardTemplate
             await PowerCmd.Apply<FreezePower>(choiceContext, [target], 1m, base.Owner.Creature, this);
         }
     }
+
+    // 升级为冰锥术：不再升级基础伤害（冰锥术每击基础 1 点×3 次，吃力量加成——
+    // 实际伤害动态编码（每击 = 1 + 力量），卡面 {Damage:diff()} 动态显示）
 }
