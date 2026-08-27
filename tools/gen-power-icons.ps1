@@ -1,4 +1,4 @@
-﻿# ============================================================
+# ============================================================
 # Jaina MOD 力量图标生成工具
 # 用法: powershell -ExecutionPolicy Bypass -File gen-power-icons.ps1
 # 作用: 为可见力量(Power)生成 128x128 程序绘制图标
@@ -348,7 +348,6 @@ Save-Icon 'jaina_power_objection_power'    (Get-Command Draw-Objection)
 Save-Icon 'jaina_power_counterspell_power' (Get-Command Draw-Counterspell)
 Save-Icon 'jaina_power_aegwynn_legacy_power' (Get-Command Draw-AegwynnLegacy)
 Save-Icon 'jaina_power_empower_power'         (Get-Command Draw-Empower)
-Save-Icon 'jaina_power_unfair_game_power'     (Get-Command Draw-UnfairGame)
 Save-Icon 'jaina_power_jaina_weapon_power'        (Get-Command Draw-JainaWeaponPower)
 Save-Icon 'jaina_power_jaina_weapon_attack_action' (Get-Command Draw-JainaWeaponAttackAction)
 Save-Icon 'jaina_power_frost_lich_jaina_power'     (Get-Command Draw-FrostLichJaina)

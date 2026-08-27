@@ -1,4 +1,10 @@
+using MegaCrit.Sts2.Core.Combat;
+using MegaCrit.Sts2.Core.Context;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Creatures;
+using MegaCrit.Sts2.Core.Models;
+using jaina.Scripts.Character.Minions;
+using MinionLib.Action;
 using MinionLib.Targeting;
 using MinionLib.Targeting.Pets;
 
@@ -19,4 +25,48 @@ public static class JainaTargetTypes
     public static readonly TargetType AnyTargetable = CustomTargetTypeManager.Register(
         new AnyCreatureTargetType(),
         "jaina", nameof(AnyTargetable));
+
+    /// <summary>
+    /// 自己场上的一个小精灵（ImpMinion）——巫卜（非公平游戏升级形态）
+    /// "消灭1个小精灵，抽3张牌"的代价目标：只有场上存在自己的小精灵时才能打出。
+    /// 联机：手打选择/随机释放补全统一走 MinionLib 的自定义目标类型链路
+    /// （CustomTargetTypeCardPatch 的 CardModel.IsValidTarget 路由），两端确定性。
+    /// </summary>
+    public static readonly TargetType AnyOwnImp = CustomTargetTypeManager.Register(
+        new OwnImpTargetType(),
+        "jaina", nameof(AnyOwnImp));
+
+    /// <summary>
+    /// "自己的小精灵"目标类型：仅玩家自己的存活小精灵（ImpMinion）可选。
+    /// </summary>
+    private sealed class OwnImpTargetType : ICustomTargetType
+    {
+        public bool IsSingleTarget => true;
+
+        public bool IsValidTargetPreview(Creature target)
+        {
+            return IsValidTarget(target) && LocalContext.IsMe(target.PetOwner);
+        }
+
+        public bool IsValidTarget(CardModel card, Creature target)
+        {
+            return IsValidTarget(target) && target.PetOwner == card.Owner;
+        }
+
+        public bool IsValidTarget(PotionModel potion, Creature target)
+        {
+            return IsValidTarget(target) && target.PetOwner == potion.Owner;
+        }
+
+        public bool IsValidTarget(ActionModel action, Creature target)
+        {
+            return IsValidTarget(target) &&
+                   (target.PetOwner == action.Owner.PetOwner || target.PetOwner == action.Owner.Player);
+        }
+
+        private static bool IsValidTarget(Creature target)
+        {
+            return target is { IsAlive: true, Side: CombatSide.Player, IsPet: true, Monster: ImpMinion };
+        }
+    }
 }
