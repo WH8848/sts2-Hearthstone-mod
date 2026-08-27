@@ -35,7 +35,7 @@
   "JAINA_POWER_EMPOWER_POWER.description": "第一次打出灌注卡牌会将你的英雄技能替换为[gold]小精灵的祝福[/gold]。此后每层灌注都会让英雄技能额外释放一次。",
   "JAINA_POWER_EMPOWER_POWER.smartDescription": "第一次灌注：英雄技能替换为[gold]小精灵的祝福[/gold]；此后每层灌注额外释放一次英雄技能。",
   "JAINA_POWER_FLAME_WARD_POWER.title": "火焰结界",
-  "JAINA_POWER_FLAME_WARD_POWER.description": "在你的回合结束前，吉安娜或其随从受到攻击时，随机对敌人造成{Amount}点伤害7次，随后消失。",
+  "JAINA_POWER_FLAME_WARD_POWER.description": "在你的下一个回合开始前，吉安娜或其随从受到攻击时，随机对敌人造成{Amount}点伤害7次，触发后或下一个回合开始消失。",
   "JAINA_POWER_OPEN_TIME_GATE_POWER.title": "打开时空之门（任务）",
   "JAINA_POWER_OPEN_TIME_GATE_POWER.description": "施放8个你的牌组之外的法术牌后获得奖励：时空扭曲。当前进度：{Count}/8。",
   "JAINA_POWER_FORBIDDEN_SEQUENCE_POWER.title": "禁忌序列（任务）",
