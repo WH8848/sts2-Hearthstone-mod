@@ -34,8 +34,9 @@ public sealed class FrostDragonBreathCard : JainaSpellCardTemplate
     /// <summary>
     /// 动态伤害显示(单一 Computed + 目标感知,参考原版"欺凌 Bully"计算式):
     /// 未升级 = DamageVar(2)（预览含力量等修正）；
-    /// 升级（冰枪术）= <b>0 基础</b> + 目标已有冻结层数 × 4（选中目标时显示实际计算伤害,
-    /// 无目标/不可变时显示 0——'造成0点伤害,每层冻结额外4点'语义)。
+    /// 升级（冰枪术）= <b>0 基础</b> + (目标当前冻结层数 + 1,本卡将给予的 1 层) × 4
+    /// ——卡面按<b>施放后</b>层数显示(3 层敌人 → 显示 16；0 层 → 4)；
+    /// 无目标/不可变时显示 0。
     /// 分支声明(IsUpgraded ? ... : ...)不会为升级形态重新求值——用 CurrentUpgradeLevel 分支。
     /// </summary>
     protected override IEnumerable<MegaCrit.Sts2.Core.Localization.DynamicVars.DynamicVar> CanonicalVars =>
@@ -46,9 +47,9 @@ public sealed class FrostDragonBreathCard : JainaSpellCardTemplate
             {
                 return 2m;
             }
-            // 冰枪术：0 + 目标已有冻结层数 × 4（target 感知；无目标 → 0）
+            // 冰枪术：0 + (目标已有冻结层数 + 本卡 1 层) × 4（target 感知；无目标 → 0）
             var freeze = target?.GetPower<FreezePower>();
-            return (freeze?.Amount ?? 0m) * 4m;
+            return ((freeze?.Amount ?? 0m) + 1m) * 4m;
         })
     ];
 
@@ -92,24 +93,27 @@ public sealed class FrostDragonBreathCard : JainaSpellCardTemplate
         // 记录施放（倒带/罗曼斯/三派系追踪）
         jaina.Scripts.Character.JainaCastTracker.RecordPlayed(this);
 
-        // 冰枪术（升级后）：给予一个角色 1 层冻结；若已有冻结，每层冻结额外造成 4 点伤害
-        // （伤害按施放前已有层数计算，与炉石冰枪术一致；随后再挂 1 层）
+        // 冰枪术（升级后）：给予一个角色 1 层冻结，造成 0 点基础伤害；
+        // 该角色身上每有一层冻结，额外造成 4 点伤害——
+        // <b>按施放后的层数计算</b>（先叠 1 层，再结算：3 层敌人→叠至 4 层→16 点；
+        // 卡面预览同口径：显示 (当前层数 + 1) × 4）
         if (IsUpgraded)
         {
             if (cardPlay.Target is not { IsAlive: true } icyTarget)
             {
                 return;
             }
-            var existingFreeze = icyTarget.GetPower<FreezePower>();
-            if (existingFreeze != null && existingFreeze.Amount > 0)
+            await PowerCmd.Apply<FreezePower>(choiceContext, [icyTarget], 1m, base.Owner.Creature, this);
+            var afterFreeze = icyTarget.GetPower<FreezePower>();
+            var stacks = afterFreeze?.Amount ?? 0m;
+            if (stacks > 0)
             {
-                await DamageCmd.Attack(existingFreeze.Amount * 4m)
+                await DamageCmd.Attack(stacks * 4m)
                     .FromCard(this, cardPlay)
                     .Targeting(icyTarget)
                     .WithHitFx("vfx/vfx_attack_blunt")
                     .Execute(choiceContext);
             }
-            await PowerCmd.Apply<FreezePower>(choiceContext, [icyTarget], 1m, base.Owner.Creature, this);
             return;
         }
 
