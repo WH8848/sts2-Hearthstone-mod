@@ -360,15 +360,15 @@ public static class JainaDiscoverHelper
     }
 
     /// <summary>
-    /// 发现一张<b>任意角色（全职业）</b>的卡牌，使其费用减少 1 点（棱光元素战吼用）。
+    /// 三选一发现（可跳过）一张<b>任意角色（全职业）</b>的卡牌并加入手牌。
     /// 池：任意角色全部卡牌（ModelDb.AllCards，应用 Jaina 随机池统一排除：
     /// 非角色/衍生池、任务卡、先古稀有度、多人专属），并排除英雄技能卡/英雄卡/任务线卡；
     /// 按可升级级别展开；同名卡不可自发现（排除 <paramref name="excludeType"/>，发起发现的卡自身）。
-    /// 选中的牌加入手牌，并减少 1 点<b>展示费用</b>（SetUntilPlayed：打出前减费，打出后恢复；
-    /// 0 费/X 费卡不减费——同远古雕文口径）。
+    /// <paramref name="minCost"/>：最小能量消耗过滤（当前基础费用，含升级减费；
+    /// 3 费及以上发现用 = 3）。费用处理由调用方负责（棱光元素减 1 费/列王遗宝本回合 0 费）。
     /// </summary>
-    public static async Task<CardModel?> DiscoverAllClassesCardAndReduceCostByOne(
-        PlayerChoiceContext choiceContext, Player player, Type? excludeType = null)
+    public static async Task<CardModel?> DiscoverAllClassesCardAndAddToHand(
+        PlayerChoiceContext choiceContext, Player player, Type? excludeType = null, int? minCost = null)
     {
         if (player?.Creature?.CombatState == null)
         {
@@ -400,13 +400,15 @@ public static class JainaDiscoverHelper
             {
                 var card = jaina.Scripts.Character.JainaCastTracker.CreateCardWithUpgrade(
                     combatState, player, canonical.GetType(), level);
-                if (card != null)
+                // 最小费用过滤用当前基础费用（含升级减费）：升级后减费的形态按实际费用匹配
+                if (card != null && (minCost == null ||
+                    card.EnergyCost.GetWithModifiers(MegaCrit.Sts2.Core.Entities.Cards.CostModifiers.None) >= minCost))
                 {
                     pool.Add(card);
                 }
             }
         }
-        MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaDiag] DiscoverAllClassesReduceCost pool={pool.Count}");
+        MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaDiag] DiscoverAllClasses minCost={minCost?.ToString() ?? "null"} pool={pool.Count}");
 
         if (pool.Count == 0)
         {
@@ -427,12 +429,6 @@ public static class JainaDiscoverHelper
         var chosen = await CardSelectCmd.FromChooseACardScreen(choiceContext, picked, player, canSkip: true);
         if (chosen != null)
         {
-            // 减少 1 点展示费用（当前基础费用 > 0 才减；0 费/X 费卡不减）
-            if (chosen.EnergyCost.GetWithModifiers(MegaCrit.Sts2.Core.Entities.Cards.CostModifiers.None) > 0)
-            {
-                chosen.EnergyCost.SetUntilPlayed(
-                    (int)chosen.EnergyCost.GetWithModifiers(MegaCrit.Sts2.Core.Entities.Cards.CostModifiers.None) - 1);
-            }
             // 手牌满时 AddGeneratedCardToCombat 自动改道弃牌堆（原版满手语义，牌不消失不消耗）
             jaina.Scripts.Character.JainaCastTracker.MarkGenerated(chosen);
             await CardPileCmd.AddGeneratedCardToCombat(chosen, PileType.Hand, player);

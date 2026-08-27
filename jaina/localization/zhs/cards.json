@@ -214,6 +214,8 @@
     "JAINA_CARD_WINTERSPRING_WHELP_CARD.description":  "[gold]龙[/gold]。\n召唤一个[blue]1/2[/blue]的[red]冬泉雏龙[/red]。\n[gold]战吼[/gold]:[gold]发现[/gold]一张任意角色的能量消耗为0{energyPrefix:energyIcons(1)}的卡牌。",
     "JAINA_CARD_PRISMATIC_ELEMENTAL_CARD.title":  "棱光元素",
     "JAINA_CARD_PRISMATIC_ELEMENTAL_CARD.description":  "[gold]元素[/gold]。\n召唤一个[blue]1/3[/blue]的[red]棱光元素[/red]。\n[gold]战吼[/gold]:[gold]发现[/gold]一张任意角色的卡牌，使其耗能减少{energyPrefix:energyIcons(1)}。",
+    "JAINA_CARD_ROYAL_TREASURE_CARD.title":  "列王遗宝",
+    "JAINA_CARD_ROYAL_TREASURE_CARD.description":  "[gold]发现[/gold]一张任意角色耗能3{energyPrefix:energyIcons(1)}及以上的卡牌，该牌本回合耗能为0。",
     "JAINA_CARD_SCRAPPY_SCAVENGER_CARD.title":  "拾荒清道夫",
     "JAINA_CARD_SCRAPPY_SCAVENGER_CARD.description":  "召唤一个[blue]1/1[/blue]的[red]拾荒清道夫[/red]。\n[gold]战吼[/gold]:[gold]发现[/gold]一张耗能等同于你剩余能量的牌。",
     "JAINA_CARD_CONJURE_MANA_BISCUIT_CARD.title":  "制造法力饼干",

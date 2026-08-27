@@ -26,6 +26,7 @@ public sealed class PrismaticElementalMinion : JainaMinionBase
     /// 战吼：发现一张任意角色（全职业）的卡牌，使其费用减少1点。
     /// 全角色池（ModelDb.AllCards，应用 Jaina 随机池统一排除）；
     /// 同名卡不可自发现（排除棱光元素自身）。
+    /// 减费 = 打出前展示费用 -1（SetUntilPlayed，同远古雕文口径；0 费/X 费卡不减）。
     /// </summary>
     public override async Task OnBattlecry(PlayerChoiceContext choiceContext)
     {
@@ -35,7 +36,12 @@ public sealed class PrismaticElementalMinion : JainaMinionBase
             return;
         }
         var ownCardType = JainaMinionCardMap.GetCardType(GetType());
-        await JainaDiscoverHelper.DiscoverAllClassesCardAndReduceCostByOne(
+        var chosen = await JainaDiscoverHelper.DiscoverAllClassesCardAndAddToHand(
             choiceContext, owner, ownCardType);
+        if (chosen != null && chosen.EnergyCost.GetWithModifiers(MegaCrit.Sts2.Core.Entities.Cards.CostModifiers.None) > 0)
+        {
+            chosen.EnergyCost.SetUntilPlayed(
+                (int)chosen.EnergyCost.GetWithModifiers(MegaCrit.Sts2.Core.Entities.Cards.CostModifiers.None) - 1);
+        }
     }
 }
