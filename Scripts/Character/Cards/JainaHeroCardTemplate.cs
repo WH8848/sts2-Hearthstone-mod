@@ -29,12 +29,6 @@ public abstract class JainaHeroCardTemplate : ModCardTemplate
     protected abstract int HeroArmor { get; }
 
     /// <summary>
-    /// 打出获得护甲（英雄护甲 5;自助指南事件:伶俐 Nimble.CanEnchant 要求 GainsBlock——
-    /// 原版护甲卡均显式覆写;英雄卡同样声明）
-    /// </summary>
-    public override bool GainsBlock => true;
-
-    /// <summary>
     /// 替换后的英雄技能卡类型（null = 不替换英雄技能）
     /// </summary>
     protected virtual System.Type? HeroPowerType => null;
