@@ -10,7 +10,7 @@ using STS2RitsuLib.Interop.AutoRegistration;
 namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
-/// 滑冰元素 (Sleet Skater) - 1费随从卡（罕见）。
+/// 滑冰元素 (Sleet Skater) - 1费随从卡（普通）。
 /// 微缩，战吼：选择1名敌人，给予其1层冻结，获得等同于其减少的总体伤害的格挡。属性 3/4。
 /// 微型复制品（0费1/1）由微缩系统自动生成，保留全部文字效果。
 /// </summary>
@@ -41,7 +41,7 @@ public sealed class SkatingElementalCard : JainaMinionCardTemplate
     protected override int MinionHealth => 4;
 
     public SkatingElementalCard()
-        : base(1, CardRarity.Uncommon)
+        : base(1, CardRarity.Common)
     {
     }
 
