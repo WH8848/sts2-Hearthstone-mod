@@ -21,12 +21,24 @@ public sealed class ComputedDamageVar : DamageVar
 {
     private readonly Func<CardModel, decimal> _compute;
 
+    /// <summary>目标感知计算（冰枪术等"选中目标时显示按目标计算"的卡用；无目标时回退基础值）。</summary>
+    private readonly Func<CardModel, Creature?, decimal>? _targetCompute;
+
     /// <param name="baseValue">基础值（升级预览/附魔计算用，通常是未升级时的静态值）</param>
     /// <param name="compute">动态显示值（card 为当前卡实例；canonical 不可变实例访问 Owner 会抛异常，委托内需自行判 IsMutable）</param>
     public ComputedDamageVar(decimal baseValue, Func<CardModel, decimal> compute)
         : base(baseValue, ValueProp.Move)
     {
         _compute = compute;
+    }
+
+    /// <param name="baseValue">基础值</param>
+    /// <param name="compute">按目标计算的动态值（如冰枪术=目标冻结层数×4）</param>
+    public ComputedDamageVar(decimal baseValue, Func<CardModel, Creature?, decimal> compute)
+        : base(baseValue, ValueProp.Move)
+    {
+        _targetCompute = compute;
+        _compute = (card) => compute(card, null);
     }
 
     /// <summary>
@@ -42,6 +54,7 @@ public sealed class ComputedDamageVar : DamageVar
     /// 先跑原版 base（附魔加成/力量等全局 hooks 作用于 BaseValue），
     /// 再以"动态值替换基础值"的方式叠加委托计算值——附魔/力量对基础部分的
     /// 加成保留，动态部分（升级形态/施放次数/派系加成等）实时跟随。
+    /// 目标感知计算在有 target 时用 target 版（如冰枪术=目标冻结层数×4）。
     /// </summary>
     public override void UpdateCardPreview(CardModel card, CardPreviewMode previewMode, Creature? target, bool runGlobalHooks)
     {
@@ -52,7 +65,10 @@ public sealed class ComputedDamageVar : DamageVar
         }
         try
         {
-            base.PreviewValue = base.PreviewValue - base.BaseValue + _compute(card);
+            var dynamicValue = _targetCompute != null && target != null
+                ? _targetCompute(card, target)
+                : _compute(card);
+            base.PreviewValue = base.PreviewValue - base.BaseValue + dynamicValue;
         }
         catch
         {

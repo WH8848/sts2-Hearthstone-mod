@@ -51,12 +51,13 @@ public sealed class GreaterArcaneMissilesCard : JainaSpellCardTemplate
         new ComputedDamageVar(3m, card =>
         {
             // 升级（星辰能量）：5 + 力量（起始值）；基础（强能奥术飞弹）：3
-            // canonical（图鉴渲染等）不可变：访问 Owner 会抛异常，直接返回基础值
-            if (card is not GreaterArcaneMissilesCard g || !card.IsMutable)
+            // 用 CurrentUpgradeLevel 分支（分支声明不会为升级形态重新求值；
+            // 不按 IsMutable 早退——升级预览等克隆/不可变场景也能正确显示 5）
+            if (card is not GreaterArcaneMissilesCard g)
             {
                 return 3m;
             }
-            if (g.IsUpgraded)
+            if (g.CurrentUpgradeLevel >= 1)
             {
                 if (card.Owner?.Creature?.CombatState != null)
                 {

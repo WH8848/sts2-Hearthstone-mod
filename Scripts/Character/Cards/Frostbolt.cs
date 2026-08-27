@@ -34,14 +34,15 @@ public sealed class Frostbolt : JainaSpellCardTemplate
     public override IEnumerable<CardKeyword> CanonicalKeywords => [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Freeze, jaina.Scripts.Character.Keywords.JainaKeywords.Frost];
 
     /// <summary>
-    /// 伤害变量：未升级 = 3(基础,预览含力量等修正)；升级(冰锥术) = 1(每击基数,
-    /// 吃力量加成——每击 = 1 + 力量；卡面文字固定"1点/次"，实际伤害动态编码)。
-    /// (分支声明:CanonicalVars 不会为升级形态重新求值,与陨石术/模拟残像同模式)
+    /// 伤害变量（单一 Computed——分支声明(IsUpgraded ? DamageVar(1) : DamageVar(3))
+    /// 不会为升级形态重新求值,升级形态会显示基础值;改用 CurrentUpgradeLevel 分支):
+    /// 未升级 = 3(预览含力量等修正)；升级(冰锥术) = 1(每击基数,吃力量——每击 = 1 + 力量)。
     /// </summary>
     protected override IEnumerable<DynamicVar> CanonicalVars =>
-        IsUpgraded
-            ? [new DamageVar(1m, ValueProp.Move)]
-            : [new DamageVar(3m, ValueProp.Move)];
+    [
+        new ComputedDamageVar(3m, card =>
+            card is Frostbolt f && f.CurrentUpgradeLevel >= 1 ? 1m : 3m)
+    ];
 
     /// <summary>
     /// 升级后（冰锥术）无需选择目标：随机对敌人造成 1 点伤害 3 次（吃力量，每击 = 1 + 力量）
