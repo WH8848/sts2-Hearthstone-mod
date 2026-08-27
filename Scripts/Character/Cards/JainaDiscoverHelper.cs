@@ -358,4 +358,85 @@ public static class JainaDiscoverHelper
         }
         return chosen;
     }
+
+    /// <summary>
+    /// 发现一张<b>任意角色（全职业）</b>的卡牌，使其费用减少 1 点（棱光元素战吼用）。
+    /// 池：任意角色全部卡牌（ModelDb.AllCards，应用 Jaina 随机池统一排除：
+    /// 非角色/衍生池、任务卡、先古稀有度、多人专属），并排除英雄技能卡/英雄卡/任务线卡；
+    /// 按可升级级别展开；同名卡不可自发现（排除 <paramref name="excludeType"/>，发起发现的卡自身）。
+    /// 选中的牌加入手牌，并减少 1 点<b>展示费用</b>（SetUntilPlayed：打出前减费，打出后恢复；
+    /// 0 费/X 费卡不减费——同远古雕文口径）。
+    /// </summary>
+    public static async Task<CardModel?> DiscoverAllClassesCardAndReduceCostByOne(
+        PlayerChoiceContext choiceContext, Player player, Type? excludeType = null)
+    {
+        if (player?.Creature?.CombatState == null)
+        {
+            return null;
+        }
+        var combatState = player.Creature.CombatState;
+        var pool = new List<CardModel>();
+        foreach (var canonical in ModelDb.AllCards)
+        {
+            if (canonical == null || (excludeType != null && canonical.GetType() == excludeType))
+            {
+                continue;
+            }
+            // 应用 Jaina 随机池统一排除（非角色/衍生池/任务卡/先古稀有度/多人专属）
+            if (!jaina.Scripts.Character.JainaRandomPoolHelper.IsEligible(canonical))
+            {
+                continue;
+            }
+            // 英雄技能卡、英雄卡与任务线卡不可被发现
+            if (canonical.CanonicalKeywords?.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.HeroPower) == true ||
+                canonical.CanonicalKeywords?.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Quest) == true ||
+                canonical.Type == JainaCardTypes.Hero)
+            {
+                continue;
+            }
+            // 展开升级形态（未升级 + 允许的升级级别）
+            int maxLevel = jaina.Scripts.Character.JainaCastTracker.GetDiscoverPoolMaxUpgradeLevel(canonical.GetType());
+            for (int level = 0; level <= maxLevel; level++)
+            {
+                var card = jaina.Scripts.Character.JainaCastTracker.CreateCardWithUpgrade(
+                    combatState, player, canonical.GetType(), level);
+                if (card != null)
+                {
+                    pool.Add(card);
+                }
+            }
+        }
+        MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaDiag] DiscoverAllClassesReduceCost pool={pool.Count}");
+
+        if (pool.Count == 0)
+        {
+            return null;
+        }
+        // 随机三选一（不足 3 张时全给）
+        var picked = new List<CardModel>();
+        while (picked.Count < 3 && pool.Count > 0)
+        {
+            var card = player.RunState.Rng.CombatTargets.NextItem(pool);
+            if (card == null)
+            {
+                break;
+            }
+            picked.Add(card);
+            pool.Remove(card);
+        }
+        var chosen = await CardSelectCmd.FromChooseACardScreen(choiceContext, picked, player, canSkip: true);
+        if (chosen != null)
+        {
+            // 减少 1 点展示费用（当前基础费用 > 0 才减；0 费/X 费卡不减）
+            if (chosen.EnergyCost.GetWithModifiers(MegaCrit.Sts2.Core.Entities.Cards.CostModifiers.None) > 0)
+            {
+                chosen.EnergyCost.SetUntilPlayed(
+                    (int)chosen.EnergyCost.GetWithModifiers(MegaCrit.Sts2.Core.Entities.Cards.CostModifiers.None) - 1);
+            }
+            // 手牌满时 AddGeneratedCardToCombat 自动改道弃牌堆（原版满手语义，牌不消失不消耗）
+            jaina.Scripts.Character.JainaCastTracker.MarkGenerated(chosen);
+            await CardPileCmd.AddGeneratedCardToCombat(chosen, PileType.Hand, player);
+        }
+        return chosen;
+    }
 }

@@ -212,6 +212,8 @@
     "JAINA_CARD_TIDE_POOL_CARD.description":  "[gold]Landmark[/gold].\nDiscover a [blue]spell[/blue] that costs 1 or less. After you cast a spell, reactivate this.\n[gold]Durability[/gold]: {Durability}.",
     "JAINA_CARD_WINTERSPRING_WHELP_CARD.title":  "Winterspring Whelp",
     "JAINA_CARD_WINTERSPRING_WHELP_CARD.description":  "[gold]Dragon[/gold].\nSummon a [blue]1/2[/blue] [red]Winterspring Whelp[/red].\n[gold]Battlecry[/gold]: [gold]Discover[/gold] a card that costs (0) from any character.",
+    "JAINA_CARD_PRISMATIC_ELEMENTAL_CARD.title":  "Prismatic Elemental",
+    "JAINA_CARD_PRISMATIC_ELEMENTAL_CARD.description":  "[gold]Elemental[/gold].\nSummon a [blue]1/2[/blue] [red]Prismatic Elemental[/red].\n[gold]Battlecry[/gold]: [gold]Discover[/gold] a card from any character. It costs 1 less.",
     "JAINA_CARD_SCRAPPY_SCAVENGER_CARD.title":  "Scrappy Scavenger",
     "JAINA_CARD_SCRAPPY_SCAVENGER_CARD.description":  "Summon a [blue]1/1[/blue] [red]Scrappy Scavenger[/red].\n[gold]Battlecry[/gold]: Discover a card that costs the same as your remaining Energy.",
     "JAINA_CARD_CONJURE_MANA_BISCUIT_CARD.title":  "Conjure Mana Biscuit",
