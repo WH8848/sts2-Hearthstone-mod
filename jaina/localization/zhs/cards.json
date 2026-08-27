@@ -9,7 +9,7 @@
     "JAINA_CARD_FIREBLAST.description":  "[gold]英雄技能[/gold]。\n造成{Damage:diff()}点伤害。",
     "JAINA_CARD_FLAME_WARD.title":  "火焰结界",
     "JAINA_CARD_FLAME_WARD.titleUpgraded":  "火热促销",
-    "JAINA_CARD_FLAME_WARD.description":  "{IfUpgraded:show:对所有随从造成{Damage:diff()}点伤害。对敌人造成7次{Damage:diff()}点伤害。随机分配到所有敌人身上。|受到攻击时，对敌人造成7次{Damage:diff()}点伤害。随机分配到所有敌人身上。}",
+    "JAINA_CARD_FLAME_WARD.description":  "{IfUpgraded:show:对所有随从造成{Damage:diff()}点伤害。对敌人造成{Damage:diff()}点伤害7次。随机分配到所有敌人身上。|受到攻击时，对敌人造成{Damage:diff()}点伤害7次。随机分配到所有敌人身上。}",
     "JAINA_CARD_ARCANE_INTELLECT.title":  "奥术智慧",
     "JAINA_CARD_ARCANE_INTELLECT.titleUpgraded":  "清凉的泉水",
     "JAINA_CARD_ARCANE_INTELLECT.description":  "抽{Cards}张牌。{IfUpgraded:show:每抽到一张[blue]法术牌[/blue],复原{energyPrefix:energyIcons(1)}（不超过能量上限）。|}",
