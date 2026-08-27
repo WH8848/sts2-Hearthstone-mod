@@ -14,9 +14,9 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
-/// 模拟幻影 (Simulacrum) - 1费技能牌（普通，冰霜派系）。
+/// 模拟幻影 (Simulacrum) - 0费技能牌（普通，冰霜派系）。
 /// 复制你手牌中法力值消耗最低的随从牌。
-/// 升级后变为"熔岩镜像 (Molten Mirror)"（1费，火焰派系）：
+/// 升级后变为"熔岩镜像 (Molten Mirror)"（0费，火焰派系）：
 /// 选择一个友方随从，召唤一个该随从的复制（当前属性，不触发战吼）。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
@@ -65,12 +65,12 @@ public sealed class SimulacrumCard : JainaSpellCardTemplate
     }
 
     public SimulacrumCard()
-        : base(1, CardType.Skill, CardRarity.Common, TargetType.None, true)
+        : base(0, CardType.Skill, CardRarity.Common, TargetType.None, true)
     {
     }
 
     /// <summary>
-    /// 升级为熔岩镜像：费用保持 1；派系 冰霜 -> 火焰（LocalKeywords 懒初始化只算一次，
+    /// 升级为熔岩镜像：费用保持 0；派系 冰霜 -> 火焰（LocalKeywords 懒初始化只算一次，
     /// 需显式切换关键词，参考 Awaken 的模式）
     /// </summary>
     protected override void OnUpgrade()
