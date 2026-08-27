@@ -37,8 +37,6 @@
     "JAINA_CARD_ARCHMAGES_RUNE_CARD.description":  "对敌人施放耗能总计{TotalCost:diff()}{energyPrefix:energyIcons(1)}的法师法术。\n可无限升级。",
     "JAINA_CARD_FONT_OF_POWER_CARD.title":  "能量之泉",
     "JAINA_CARD_FONT_OF_POWER_CARD.description":  "[gold]发现[/gold]一张法师随从牌。如果你的抽牌堆中没有随从牌，改为获取全部三张牌。",
-    "JAINA_CARD_CLOUD_PRINCE_CARD.title":  "云雾王子",
-    "JAINA_CARD_CLOUD_PRINCE_CARD.description":  "[gold]元素[/gold]。\n召唤一个[blue]4/4[/blue]的[red]云雾王子[/red]。\n[gold]战吼[/gold]:你每有1种能力，便对一个目标造成6点伤害。",
     "JAINA_CARD_GREATER_ARCANE_MISSILES_CARD.title":  "强能奥术飞弹",
     "JAINA_CARD_GREATER_ARCANE_MISSILES_CARD.titleUpgraded":  "星辰能量",
     "JAINA_CARD_GREATER_ARCANE_MISSILES_CARD.description":  "{IfUpgraded:show:随机对一个敌方造成{Damage:diff()}点伤害。重复此效果，每次伤害减少1点。|对随机敌人造成{Damage:diff()}点伤害3次。}",

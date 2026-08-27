@@ -37,8 +37,6 @@
     "JAINA_CARD_ARCHMAGES_RUNE_CARD.description":  "Cast spells that cost {TotalCost:diff()} in total at enemies. Can be upgraded infinitely; each upgrade adds 1 to the total. Exhaust.",
     "JAINA_CARD_FONT_OF_POWER_CARD.title":  "Font of Power",
     "JAINA_CARD_FONT_OF_POWER_CARD.description":  "Discover a Mage minion. If your Draw Pile has no minions, get all 3 instead.",
-    "JAINA_CARD_CLOUD_PRINCE_CARD.title":  "Cloud Prince",
-    "JAINA_CARD_CLOUD_PRINCE_CARD.description":  "[gold]Elemental[/gold].\nSummon a [blue]4/4[/blue] [red]Cloud Prince[/red]. [gold]Battlecry[/gold]: Choose an enemy. For each status on you, deal 6 damage to it.",
     "JAINA_CARD_GREATER_ARCANE_MISSILES_CARD.title":  "Greater Arcane Missiles",
     "JAINA_CARD_GREATER_ARCANE_MISSILES_CARD.titleUpgraded":  "Star Power",
     "JAINA_CARD_GREATER_ARCANE_MISSILES_CARD.description":  "{IfUpgraded:show:Deal {Damage:diff()} damage to a random enemy. Repeat this, reducing the damage by 1 each time.|Deal {Damage:diff()} damage to a random enemy 3 times.}",
