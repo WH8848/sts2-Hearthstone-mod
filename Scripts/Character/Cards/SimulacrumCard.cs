@@ -116,12 +116,16 @@ public sealed class SimulacrumCard : JainaSpellCardTemplate
         // 手牌中法力值消耗最低的随从牌（不含英雄技能卡；按<b>当前费用</b>——GetResolved
         // 含临时减费（巫师学徒/咒术洪流等），不是原始费用——炉石"当前费用最低"语义）
         var hand = PileType.Hand.GetPile(player);
-        var cheapest = hand?.Cards
+        var minionCards = hand?.Cards
             .Where(c => c != null &&
                         c.Type == JainaCardTypes.Minion &&
                         !jaina.Scripts.Character.Powers.HeroPowerHandHelper.IsHeroPowerCard(c))
+            .ToList() ?? [];
+        var cheapest = minionCards
             .OrderBy(c => c.EnergyCost.GetResolved())
             .FirstOrDefault();
+        MegaCrit.Sts2.Core.Logging.Log.Info(
+            $"[JainaSimu] candidates={minionCards.Count} list=[{string.Join(",", minionCards.Select(c => $"{c.Id.Entry}(type={c.Type},cost={c.EnergyCost.GetResolved()})"))}] picked={(cheapest == null ? "null" : $"{cheapest.Id.Entry}(type={cheapest.Type},cost={cheapest.EnergyCost.GetResolved()})")}");
         if (cheapest == null)
         {
             return;

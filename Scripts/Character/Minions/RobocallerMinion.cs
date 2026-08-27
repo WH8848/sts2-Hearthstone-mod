@@ -59,6 +59,8 @@ public sealed class RobocallerMinion : JainaMinionBase
         var dial = _sourceCard is Cards.RobocallerCard rc
             ? rc.CurrentDials
             : new int[] { 0, 0, 0 };
+        MegaCrit.Sts2.Core.Logging.Log.Info(
+            $"[JainaDiag] Robocaller dials=[{string.Join(",", dial)}] drawPile={owner.PlayerCombatState?.DrawPile?.Cards.Count} discard={owner.PlayerCombatState?.DiscardPile?.Cards.Count}");
 
         foreach (var digit in dial)
         {
