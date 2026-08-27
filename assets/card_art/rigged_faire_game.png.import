@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bokl2uus8ji2c"
-path="res://.godot/imported/volume_up.png-c77a6c8e29f0f2e487ba2c1be08ca515.ctex"
+uid="uid://dav34ju6d58ly"
+path="res://.godot/imported/rigged_faire_game.png-4b4998e23169aa950eb8461cd1ae3628.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/card_art/volume_up.png"
-dest_files=["res://.godot/imported/volume_up.png-c77a6c8e29f0f2e487ba2c1be08ca515.ctex"]
+source_file="res://assets/card_art/rigged_faire_game.png"
+dest_files=["res://.godot/imported/rigged_faire_game.png-4b4998e23169aa950eb8461cd1ae3628.ctex"]
 
 [params]
 

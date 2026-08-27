@@ -36,7 +36,7 @@ public sealed class UnfairGame : JainaSpellCardTemplate
     protected override IEnumerable<DynamicVar> CanonicalVars => [];
 
     public override string CustomPortraitPath =>
-        IsUpgraded ? "res://assets/card_art/volume_up.png" : "res://assets/card_art/manufacturing_error.png";
+        IsUpgraded ? "res://assets/card_art/divination.png" : "res://assets/card_art/rigged_faire_game.png";
 
     /// <summary>
     /// 升级后（巫卜）需要选择目标（自己场上的一个小精灵）；基础版不需要目标。

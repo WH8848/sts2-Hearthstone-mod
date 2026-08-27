@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://278bwyxugfdh"
-path="res://.godot/imported/manufacturing_error.png-c605fab34d2d25a182b2a422b70e63bc.ctex"
+uid="uid://d2ctwmjckygfx"
+path="res://.godot/imported/divination.png-67193d3b2fc2cd0cab7820b719379623.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/card_art/manufacturing_error.png"
-dest_files=["res://.godot/imported/manufacturing_error.png-c605fab34d2d25a182b2a422b70e63bc.ctex"]
+source_file="res://assets/card_art/divination.png"
+dest_files=["res://.godot/imported/divination.png-67193d3b2fc2cd0cab7820b719379623.ctex"]
 
 [params]
 

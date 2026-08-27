@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cxdfwxv03jrh0"
-path="res://.godot/imported/royal_treasure.png-6bda195f8509f58ea264d9535d7e33a5.ctex"
+uid="uid://xpwcs3ib1eay"
+path="res://.godot/imported/relic_of_kings.png-2369896d644272686ff21ab582b50e81.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/card_art/royal_treasure.png"
-dest_files=["res://.godot/imported/royal_treasure.png-6bda195f8509f58ea264d9535d7e33a5.ctex"]
+source_file="res://assets/card_art/relic_of_kings.png"
+dest_files=["res://.godot/imported/relic_of_kings.png-2369896d644272686ff21ab582b50e81.ctex"]
 
 [params]
 

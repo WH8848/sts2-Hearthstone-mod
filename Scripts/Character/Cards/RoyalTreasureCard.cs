@@ -28,9 +28,9 @@ public sealed class RoyalTreasureCard : JainaSpellCardTemplate
     protected override IEnumerable<DynamicVar> CanonicalVars => [];
 
     /// <summary>
-    /// 卡牌原画：程序绘制占位图（网络恢复后可从 wiki.gg 下载炉石原画替换）
+    /// 卡牌原画：炉石传说"列王遗宝"（Relic of Kings）官方原画（wiki.gg）
     /// </summary>
-    public override string CustomPortraitPath => "res://assets/card_art/royal_treasure.png";
+    public override string CustomPortraitPath => "res://assets/card_art/relic_of_kings.png";
 
     protected override IEnumerable<IHoverTip> AdditionalHoverTips => [HoverTipFactory.FromKeyword(JainaKeywords.Discover)];
 
