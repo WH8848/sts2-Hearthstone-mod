@@ -31,7 +31,7 @@ public sealed class PrismaticElementalCard : JainaMinionCardTemplate
 
     protected override int MinionAttack => 1;
 
-    protected override int MinionHealth => 2;
+    protected override int MinionHealth => 3;
 
     /// <summary>
     /// 元素种族 + 战吼（悬停解释）+ 消耗（随从卡打出后消耗，模板默认）

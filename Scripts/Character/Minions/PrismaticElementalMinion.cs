@@ -18,9 +18,9 @@ public sealed class PrismaticElementalMinion : JainaMinionBase
     /// </summary>
     protected override string MinionVisualsPath => "res://assets/card_art/prismatic_elemental.png";
 
-    public override int MinInitialHp => 2;
+    public override int MinInitialHp => 3;
 
-    public override int MaxInitialHp => 2;
+    public override int MaxInitialHp => 3;
 
     /// <summary>
     /// 战吼：发现一张任意角色（全职业）的卡牌，使其费用减少1点。
