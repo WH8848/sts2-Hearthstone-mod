@@ -41,7 +41,7 @@
     "JAINA_CARD_CLOUD_PRINCE_CARD.description":  "[gold]Elemental[/gold].\nSummon a [blue]4/4[/blue] [red]Cloud Prince[/red]. [gold]Battlecry[/gold]: Choose an enemy. For each status on you, deal 6 damage to it.",
     "JAINA_CARD_GREATER_ARCANE_MISSILES_CARD.title":  "Greater Arcane Missiles",
     "JAINA_CARD_GREATER_ARCANE_MISSILES_CARD.titleUpgraded":  "Star Power",
-    "JAINA_CARD_GREATER_ARCANE_MISSILES_CARD.description":  "{IfUpgraded:show:Deal {Damage:diff()} damage to a random enemy. Repeat this, reducing the damage by 1 each time.|Deal {Damage:diff()} damage to a random enemy 3 times.}",
+    "JAINA_CARD_GREATER_ARCANE_MISSILES_CARD.description":  "{IfUpgraded:show:Deal 5 damage to a random enemy. Repeat this, reducing the damage by 1 each time.|Deal {Damage:diff()} damage to a random enemy 3 times.}",
     "JAINA_CARD_SIMULACRUM_CARD.title":  "Simulacrum",
     "JAINA_CARD_SIMULACRUM_CARD.titleUpgraded":  "Molten Mirror",
     "JAINA_CARD_SIMULACRUM_CARD.description":  "{IfUpgraded:show:Summon a copy of a friendly minion.|Copy the minion with the lowest Cost in your hand.}",
