@@ -14,8 +14,8 @@ namespace jaina.Scripts.Character.Cards;
 /// <summary>
 /// 冰龙吐息 (Frost Dragon Breath) - 0费攻击牌（普通，冰霜派系）。
 /// 随机对一个敌人造成 2 点伤害，并给予 1 层冻结。
-/// 升级后变为冰枪术 (Icy Lance)：给予一个角色 1 层冻结，
-/// 若该角色已拥有冻结，则每层冻结对其额外造成 4 点伤害（需选择目标）。
+/// 升级后变为冰枪术 (Icy Lance)：给予一个角色 1 层冻结，造成 0 点伤害；
+/// 该敌人身上每有一层冻结，就对其额外造成 4 点伤害（需选择目标）。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
 public sealed class FrostDragonBreathCard : JainaSpellCardTemplate
@@ -32,27 +32,23 @@ public sealed class FrostDragonBreathCard : JainaSpellCardTemplate
         [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Freeze, jaina.Scripts.Character.Keywords.JainaKeywords.Frost];
 
     /// <summary>
-    /// 动态伤害显示(单一 Computed + 目标感知):
+    /// 动态伤害显示(单一 Computed + 目标感知,参考原版"欺凌 Bully"计算式):
     /// 未升级 = DamageVar(2)（预览含力量等修正）；
-    /// 升级（冰枪术）= 目标已有冻结层数 × 4(选中目标时显示实际计算伤害；
-    /// 未指向目标/不可变实例回退基础值 4——'每层4点'语义)。
+    /// 升级（冰枪术）= <b>0 基础</b> + 目标已有冻结层数 × 4（选中目标时显示实际计算伤害,
+    /// 无目标/不可变时显示 0——'造成0点伤害,每层冻结额外4点'语义)。
     /// 分支声明(IsUpgraded ? ... : ...)不会为升级形态重新求值——用 CurrentUpgradeLevel 分支。
     /// </summary>
     protected override IEnumerable<MegaCrit.Sts2.Core.Localization.DynamicVars.DynamicVar> CanonicalVars =>
     [
-        new ComputedDamageVar(4m, (card, target) =>
+        new ComputedDamageVar(0m, (card, target) =>
         {
             if (card is not FrostDragonBreathCard f || f.CurrentUpgradeLevel < 1)
             {
                 return 2m;
             }
-            // 冰枪术：目标已有冻结层数 × 4（target 感知；不可变/无目标 → 基础 4）
-            if (target is { IsAlive: true })
-            {
-                var freeze = target.GetPower<FreezePower>();
-                return (freeze?.Amount ?? 0m) * 4m;
-            }
-            return 4m;
+            // 冰枪术：0 + 目标已有冻结层数 × 4（target 感知；无目标 → 0）
+            var freeze = target?.GetPower<FreezePower>();
+            return (freeze?.Amount ?? 0m) * 4m;
         })
     ];
 
