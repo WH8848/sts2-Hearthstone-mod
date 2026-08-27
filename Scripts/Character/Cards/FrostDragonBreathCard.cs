@@ -106,8 +106,9 @@ public sealed class FrostDragonBreathCard : JainaSpellCardTemplate
                 {
                     break;
                 }
-                // 冰锥术：每击 1 点伤害基数 ×3 次（Powered 默认吃力量加成——每击 = 1 + 力量）
-                await DamageCmd.Attack(base.DynamicVars.Damage.BaseValue)
+                // 冰锥术：每击 1 点伤害基数 ×3 次（Powered 默认吃力量加成——每击 = 1 + 力量；
+                // 卡面文本固定"1点"，实际动态吃力量）
+                await DamageCmd.Attack(1m)
                     .FromCard(this, cardPlay)
                     .Targeting(randomTarget)
                     .WithHitFx("vfx/vfx_attack_blunt")
