@@ -31,7 +31,7 @@ public sealed class JainaLandmarkUseAction : ActionModel, IModPowerAssetOverride
 
     /// <summary>
     /// 目标类型由地标实体决定：默认 None（点击直接触发，不选目标）；
-    /// 需要选目标的地标（如夜隐者圣所：任意活物）覆写 UseTargetType。
+    /// 需要选目标的地标覆写 UseTargetType。
     /// </summary>
     public override TargetType TargetType =>
         (Owner?.Monster as JainaLandmarkBase)?.UseTargetType ?? TargetType.None;
@@ -59,7 +59,7 @@ public sealed class JainaLandmarkUseAction : ActionModel, IModPowerAssetOverride
         // 地标使用是玩家操作：清空 AutoPlay 实例标记——
         // 地标触发选择（潮汐之池发现等）应正常弹界面等待玩家（不是随机释放）。
         Powers.AutoPlayGuard.CurrentAutoPlayCard = null;
-        // 无目标地标（潮汐之池/小玩物小屋）target 为 null；有目标地标（夜隐者圣所）target 必非 null
+        // 无目标地标（潮汐之池/小玩物小屋）target 为 null；选择目标的地标 target 必非 null
         var landmark = Owner.Monster as JainaLandmarkBase;
         if (landmark == null)
         {

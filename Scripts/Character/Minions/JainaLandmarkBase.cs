@@ -210,7 +210,7 @@ public abstract class JainaLandmarkBase : JainaMinionBase
 
     /// <summary>
     /// 地标使用时的目标类型（默认 None：点击直接触发，不选目标）。
-    /// 需要选择目标的地标（如夜隐者圣所冻结目标）覆写为对应目标类型。
+    /// 需要选择目标的地标覆写为对应目标类型。
     /// </summary>
     public virtual MegaCrit.Sts2.Core.Entities.Cards.TargetType UseTargetType =>
         MegaCrit.Sts2.Core.Entities.Cards.TargetType.None;
