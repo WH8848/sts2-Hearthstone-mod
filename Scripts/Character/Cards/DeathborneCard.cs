@@ -17,8 +17,8 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
-/// 死神之躯 (Deathborne) - 2费技能牌（罕见，冰霜派系）。
-/// 对所有随从造成2点伤害，对敌人造成7次2点伤害。每消灭一个角色，召唤一个2/2的不稳定的骷髅。
+/// 死神之躯 (Deathborne) - 2费攻击牌（罕见，冰霜派系，卡面类型标签"攻击丨法术"）。
+/// 对所有随从造成2点伤害（不伤害队友的随从），对敌人造成7次2点伤害。每消灭一个角色，召唤一个2/2的不稳定的骷髅。
 /// 战场上放不下的骷髅会立即爆炸（对随机敌人造成 2 点伤害）。
 /// 升级后变为"暴风雪 (Blizzard)"：造成7次2点伤害，随机分配到所有敌人身上。给予敌方全体7层冻结。
 /// </summary>
@@ -44,7 +44,7 @@ public sealed class DeathborneCard : JainaSpellCardTemplate
         IsUpgraded ? "res://assets/card_art/blizzard.png" : "res://assets/card_art/deathborne.png";
 
     public DeathborneCard()
-        : base(2, CardType.Skill, CardRarity.Uncommon, TargetType.None, true)
+        : base(2, CardType.Attack, CardRarity.Uncommon, TargetType.None, true)
     {
     }
 
@@ -101,11 +101,13 @@ public sealed class DeathborneCard : JainaSpellCardTemplate
 
         // 死神之躯：对所有随从造成 2 点伤害；对敌人造成 7 次 2 点伤害；
         // 每消灭一个角色，召唤一个 2/2 的不稳定的骷髅。
-        // "所有随从" = 所有非英雄生物（我方随从 + 队友随从 + 敌方随从）——
-        // 排除玩家主身体（自己 + 队友英雄;多人联机下队友英雄也在 Creatures 中，
+        // "所有随从" = 所有非英雄生物（我方随从 + 敌方随从）——
+        // 不伤害队友（其它玩家）的随从：PetOwner 为其它玩家的随从排除；
+        // 同时排除玩家主身体（自己 + 队友英雄;多人联机下队友英雄也在 Creatures 中，
         // 不排除会把队友英雄当随从打,实测多人错误对队友造成伤害）。
         var victims = combatState.Creatures
             .Where(c => c != null && c.IsAlive && !c.IsPlayer && c != base.Owner.Creature)
+            .Where(c => c.PetOwner == null || c.PetOwner == base.Owner)
             .ToList();
 
         // 1) 对所有随从造成 2 点伤害（记录消灭数）
