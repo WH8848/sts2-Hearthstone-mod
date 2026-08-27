@@ -173,39 +173,11 @@ public static class HeroPowerUncopyablePatch
     }
 
     /// <summary>
-    /// 佩尔的成长：附 Clone 附魔的候选排除英雄技能卡
-    /// （英雄技能不可被复制 → 不可被选中复制）。
-    /// <b>注意</b>：原方法是 async Task，Prefix 跳过时必须补 __result=CompletedTask
-    /// （否则 null Task 在 AfterObtained 调用处 await NRE，同 MusicBoxPatch 注释）。
+    /// (已移除 PaelsGrowth.Prefix——原实现把"玩家从牌库自选一张卡附 Clone 附魔"
+    /// 改成了随机选 1 张自动附魔,导致"只能克隆卡组里的一张卡,其他卡没附魔也没法选择"。
+    /// 现恢复原版玩家选择流程;英雄技能卡排除改由 CanEnchant 层拦截
+    /// (见 LandmarkEnchantBlockPatch.EnchantmentModel.CanEnchant 的 Clone+英雄技能 分支)。
     /// </summary>
-    [HarmonyPatch(typeof(PaelsGrowth), nameof(PaelsGrowth.AfterObtained))]
-    public static class PaelsGrowthPatch
-    {
-        private static bool Prefix(PaelsGrowth __instance, ref Task __result)
-        {
-            // 用过滤后的牌库卡直接附 Clone 附魔（Amount=4，与原版一致）
-            var owner = __instance.Owner;
-            var candidates = PileType.Deck.GetPile(owner)?.Cards
-                .Where(c => c != null && !IsHeroPower(c) && ModelDb.Enchantment<Clone>().CanEnchant(c))
-                .ToList() ?? [];
-            if (candidates.Count == 0)
-            {
-                __result = Task.CompletedTask;
-                return false;
-            }
-            // 随机选 1 张（与原版 FromDeckForEnchantment 1 张语义一致）
-            var picked = owner.RunState.Rng.Niche.NextItem(candidates);
-            if (picked == null)
-            {
-                __result = Task.CompletedTask;
-                return false;
-            }
-            CardCmd.Enchant<Clone>(picked, 4m);
-            CardCmd.Preview(picked);
-            __result = Task.CompletedTask;
-            return false;
-        }
-    }
 
     /// <summary>
     /// 音乐盒：打出英雄技能卡不复制（英雄技能不可被复制）。
