@@ -56,6 +56,12 @@ public sealed class IceBarrier : JainaSpellCardTemplate
     }
 
     /// <summary>
+    /// 获得护甲（自助指南事件:伶俐 Nimble.CanEnchant 要求 GainsBlock——
+    /// 原版护甲卡均显式覆写;mod 卡不声明则事件误判"无可附魔技能牌"）
+    /// </summary>
+    public override bool GainsBlock => true;
+
+    /// <summary>
     /// 升级后卡牌名称变为"冰冷案例 (Cold Case)"
     /// </summary>
     public override string Title

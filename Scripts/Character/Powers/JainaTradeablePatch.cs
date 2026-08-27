@@ -162,9 +162,19 @@ public static class JainaTradeAction
                 return;
             }
             var card = NetCombatCard.ForTesting(ctx.Message.CombatCardIndex).ToCardModelOrNull();
-            if (card == null || card.Pile?.Type != PileType.Hand)
+            MegaCrit.Sts2.Core.Logging.Log.Info(
+                $"[JainaTrade] resolve id={ctx.Message.CombatCardIndex} card={(card == null ? "null" : $"{card.Id.Entry}({card.GetType().Name})")} pile={card?.Pile?.Type} owner={(card?.Owner?.NetId)} player={player.NetId}");
+            if (card == null || card.Pile?.Type != PileType.Hand || card.Owner != player)
             {
                 return; // 卡已不在手牌（排队期间被打出等）：跳过
+            }
+            // 防御：只有带"交易"关键词的卡可被交易（若两端战斗卡索引/ID 数据库不一致,
+            // 索引解析到非交易卡时跳过——防止把错误的卡洗入弃牌堆导致状态分歧）
+            if (!card.Keywords.Contains(JainaKeywords.Tradeable))
+            {
+                MegaCrit.Sts2.Core.Logging.Log.Warn(
+                    $"[JainaTrade] resolve id={ctx.Message.CombatCardIndex} -> non-tradeable card {card.Id.Entry}, skip");
+                return;
             }
             // 洗入弃牌堆
             await CardPileCmd.Add(card, PileType.Discard);
