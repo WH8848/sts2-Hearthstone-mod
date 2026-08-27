@@ -58,7 +58,7 @@ public sealed class VolatileSkeleton : JainaMinionBase
                 $"[JainaDeathrattle] VolatileSkeleton: no combat state at death (creatureStateNull={Creature.CombatState == null})");
             return;
         }
-        // 记录本局死亡过的骷髅（天定之灾克尔苏加德战吼"复活你的不稳定的骷髅"用；按主人区分）
+        // 记录本局死亡过的骷髅（统计/预留，按主人区分）
         var rec = jaina.Scripts.Character.JainaCastTracker.For(state);
         if (Creature.PetOwner != null)
         {
@@ -81,7 +81,7 @@ public sealed class VolatileSkeleton : JainaMinionBase
             return;
         }
         // 亡语伤害：来源改为骷髅的主人（玩家）——引擎禁止"已死 dealer"造成伤害，
-        // 与克尔苏加德战吼爆炸/冰冷案例/死神之躯的"放不下骷髅爆炸"一致：
+        // 与死神之躯的"放不下骷髅爆炸"一致：
         // 玩家作 dealer + ValueProp.Unpowered 固定 2 点（不吃力量/专注，炉石亡语伤害语义）。
         var dealer = Creature.PetOwner?.Creature;
         if (dealer == null)

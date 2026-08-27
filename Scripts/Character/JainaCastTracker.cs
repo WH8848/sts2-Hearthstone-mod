@@ -103,7 +103,7 @@ public static class JainaCastTracker
         public readonly Dictionary<ulong, int> HeroPowerDamageDealtByPlayer = [];
 
         /// <summary>
-        /// 各玩家本局对战中死亡过的不稳定的骷髅数量（天定之灾克尔苏加德战吼用）。
+        /// 各玩家本局对战中死亡过的不稳定的骷髅数量（统计/预留）。
         /// </summary>
         public readonly Dictionary<ulong, int> SkeletonDeathsByPlayer = [];
 

@@ -29,7 +29,7 @@ public sealed class MordreshFireEyeMinion : JainaMinionBase
     /// <summary>
     /// 战吼：英雄技能本局累计造成 10 点伤害后，对随机敌人造成 8 次 10 点伤害。
     /// 随从战吼伤害走 CreatureCmd.Damage（无强化、不触发"被攻击命中"效果）——
-    /// 与克尔苏加德"放不下的骷髅立即爆炸"同口径；每次独立随机目标、目标死亡后剔除。
+    /// 与不稳定的骷髅"放不下的骷髅立即爆炸"同口径；每次独立随机目标、目标死亡后剔除。
     /// </summary>
     public override async Task OnBattlecry(PlayerChoiceContext choiceContext)
     {
