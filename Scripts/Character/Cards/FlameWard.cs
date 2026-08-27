@@ -15,10 +15,10 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
-/// 火焰结界 (Flame Ward) - 吉安娜专属攻击牌（罕见，2 费）。
+/// 火焰结界 (Flame Ward) - 吉安娜专属攻击牌（稀有，1 费，火焰派系）。
 /// 受到攻击时，对敌人造成 7 次 3 点伤害，随机分配到所有敌人身上。
-/// 升级后变为"火热促销 (Fire Sale)"（2 费）：交易。对敌人造成 7 次 3 点伤害，
-/// 随机分配到所有敌人身上。
+/// 升级后变为"火热促销 (Fire Sale)"（1 费）：交易。对所有随从造成 3 点伤害；
+/// 对敌人造成 7 次 3 点伤害，随机分配到所有敌人身上。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
 public sealed class FlameWard : JainaSpellCardTemplate
@@ -46,12 +46,12 @@ public sealed class FlameWard : JainaSpellCardTemplate
         IsUpgraded ? "res://assets/card_art/fire_sale.png" : "res://assets/card_art/flame_ward.png";
 
     public FlameWard()
-        : base(2, CardType.Attack, CardRarity.Uncommon, TargetType.None, true)
+        : base(1, CardType.Attack, CardRarity.Rare, TargetType.None, true)
     {
     }
 
     /// <summary>
-    /// 升级后卡牌名称变为"火热促销 (Fire Sale)"，费用保持 2 费不变
+    /// 升级后卡牌名称变为"火热促销 (Fire Sale)"，费用保持 1 费不变
     /// </summary>
     public override string Title
     {
@@ -74,7 +74,8 @@ public sealed class FlameWard : JainaSpellCardTemplate
 
         if (IsUpgraded)
         {
-            // 火热促销：立即造成 7 次伤害，随机分配到所有敌人
+            // 火热促销：对所有随从造成 3 点伤害；对敌人造成 7 次 3 点伤害，随机分配到所有敌人
+            await DealAllMinionDamage(choiceContext, cardPlay);
             await DealRandomDamage(choiceContext, cardPlay);
         }
         else
@@ -82,6 +83,36 @@ public sealed class FlameWard : JainaSpellCardTemplate
             // 火焰结界：挂一次性结界（受击时触发 7 次随机伤害）
             await PowerCmd.Apply<FlameWardPower>(
                 choiceContext, [base.Owner.Creature], base.DynamicVars.Damage.BaseValue, base.Owner.Creature, this);
+        }
+    }
+
+    /// <summary>
+    /// 对所有随从造成 3 点伤害（我方随从 + 敌方随从；不伤害队友的随从，
+    /// 与死神之躯同口径——多人联机不误伤队友；玩家英雄不受影响）。
+    /// 走 AttackCommand（DamageCmd.Attack）：吃力量加成，触发"被攻击命中"类效果（如胆小）；
+    /// AttackCommand 无自定义多目标列表 API → 逐个目标独立攻击命令（行为等价）。
+    /// </summary>
+    private async Task DealAllMinionDamage(PlayerChoiceContext choiceContext, CardPlay cardPlay)
+    {
+        var combatState = base.Owner.Creature.CombatState;
+        if (combatState == null)
+        {
+            return;
+        }
+        var victims = combatState.Creatures
+            .Where(c => c != null && c.IsAlive && !c.IsPlayer && c != base.Owner.Creature)
+            .Where(c => c.PetOwner == null || c.PetOwner == base.Owner)
+            .ToList();
+        foreach (var victim in victims)
+        {
+            if (!victim.IsAlive)
+            {
+                continue;
+            }
+            await DamageCmd.Attack(base.DynamicVars.Damage.BaseValue)
+                .FromCard(this, cardPlay)
+                .Targeting(victim)
+                .Execute(choiceContext);
         }
     }
 
@@ -112,7 +143,7 @@ public sealed class FlameWard : JainaSpellCardTemplate
 
     protected override void OnUpgrade()
     {
-        // 升级为火热促销：费用保持 2 费不变；伤害保持 3 点不变；
+        // 升级为火热促销：费用保持 1 费不变；伤害保持 3 点不变；
         // 显式加入交易关键词（LocalKeywords 懒初始化只算一次，升级形态 Keywords 缓存自基础状态）
         AddKeyword(jaina.Scripts.Character.Keywords.JainaKeywords.Tradeable);
     }
