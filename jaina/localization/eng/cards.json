@@ -20,7 +20,7 @@
     "JAINA_CARD_VOLATILE_SKELETON_CARD.description":  "[gold]Undead[/gold].\nSummon a [blue]2/2[/blue] [red]Volatile Skeleton[/red].\n[gold]Deathrattle[/gold]: Deal 2 damage to a random enemy.",
     "JAINA_CARD_FROSTBOLT.title":  "Frostbolt",
     "JAINA_CARD_FROSTBOLT.titleUpgraded":  "Icy Lance",
-    "JAINA_CARD_FROSTBOLT.description":  "{IfUpgraded:show:Give a character 1 [gold]Freeze[/gold].\nDeal {Lance:diff()} damage to it.|Give 1 [gold]Freeze[/gold].\nDeal {Damage:diff()} damage.}",
+    "JAINA_CARD_FROSTBOLT.description":  "{IfUpgraded:show:Give 1 [gold]Freeze[/gold], then deal {Lance:diff()} damage. Deal an extra 4 damage for every [gold]Freeze[/gold] stack on that character.|Give 1 [gold]Freeze[/gold].\nDeal {Damage:diff()} damage.}",
     "JAINA_CARD_FROST_DRAGON_BREATH_CARD.title":  "Frost Dragon Breath",
     "JAINA_CARD_FROST_DRAGON_BREATH_CARD.titleUpgraded":  "Cone of Cold",
     "JAINA_CARD_FROST_DRAGON_BREATH_CARD.description":  "{IfUpgraded:show:Randomly deal {Damage:diff()} damage 3 times (each hit includes Strength). Each damage gives the enemy 1 [gold]Freeze[/gold].|Randomly deal {Damage:diff()} damage to an enemy and give it 1 [gold]Freeze[/gold].}",
