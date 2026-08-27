@@ -6,6 +6,7 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
+using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.ValueProps;
 using jaina.Scripts.Character.Keywords;
 using STS2RitsuLib.Cards.DynamicVars;
@@ -36,38 +37,34 @@ public sealed class GreaterArcaneMissilesCard : JainaSpellCardTemplate
         [JainaKeywords.Spell, JainaKeywords.Arcane];
 
     /// <summary>
-    /// 动态伤害变量（STS2 原版机制：指向目标时 {Damage} 预览实际伤害，含力量/虚弱/易伤）：
-    /// 基础 = 3；升级（星辰能量）= 5 + 力量（起始值，随后每次递减 1）。
-    /// 注意：用<b>单一 Computed 变量</b>（lambda 内按 IsUpgraded 分支）而非
-    /// "IsUpgraded ? [Computed(5m)] : [DamageVar(3m)]"——升级形态 clone 基础形态的
-    /// DynamicVars（CanonicalVars 不会为升级形态重新求值），分支声明会导致升级形态
-    /// 的 Damage 仍是基础值 3（实测：卡面显示 3 而实际伤害从 5 开始）。
+    /// 动态伤害变量（参考陨石术模式：命名变量 + 分支声明 + 基础形态声明全部变量）：
+    /// 未升级 = "Damage"（强能奥术飞弹，3 点，普通 DamageVar 走原版力量/虚弱/易伤预览）；
+    /// 升级（星辰能量）= "Star"（5 + 力量，起始值随后每次递减 1）。
+    /// 升级分支描述引用的 "Star" 在<b>基础形态也声明</b>（占位 5）——
+    /// 升级形态克隆基础形态的 CanonicalVars，变量缺失会导致整个 IfUpgraded 模板
+    /// 显示为字面文本（陨石术 Blast 同为"基础声明升级变量"）。
     /// </summary>
-    protected override IEnumerable<DynamicVar> CanonicalVars =>
-    [
-        // ComputedDamageVar（DamageVar 子类）："Damage" 槽强转 DamageVar 安全——
-        // 用 RitsuLib ComputedDynamicVar 放 "Damage" 槽会在打出/附魔/牌库网格
-        // 访问 DynamicVars.Damage 时抛 InvalidCastException（卡打出无伤害进弃牌堆）。
-        new ComputedDamageVar(3m, card =>
+    protected override IEnumerable<DynamicVar> CanonicalVars => IsUpgraded
+        ? [new ComputedDamageVar("Star", 5m, ComputeStar)]
+        : [new ComputedDamageVar("Star", 5m, ComputeStar),
+           new DamageVar("Damage", 3m, ValueProp.Move)];
+
+    /// <summary>
+    /// 星辰能量（升级形态）伤害计算（Star 变量）：5 + 力量（起始值）。
+    /// 基础（强能奥术飞弹）形态不引用 Star，返回占位 5。
+    /// </summary>
+    private static decimal ComputeStar(CardModel card)
+    {
+        if (card is not GreaterArcaneMissilesCard g || g.CurrentUpgradeLevel < 1)
         {
-            // 升级（星辰能量）：5 + 力量（起始值）；基础（强能奥术飞弹）：3
-            // 用 CurrentUpgradeLevel 分支（分支声明不会为升级形态重新求值；
-            // 不按 IsMutable 早退——升级预览等克隆/不可变场景也能正确显示 5）
-            if (card is not GreaterArcaneMissilesCard g)
-            {
-                return 3m;
-            }
-            if (g.CurrentUpgradeLevel >= 1)
-            {
-                if (card.Owner?.Creature?.CombatState != null)
-                {
-                    return 5m + card.Owner.Creature.GetPowerAmount<MegaCrit.Sts2.Core.Models.Powers.StrengthPower>();
-                }
-                return 5m;
-            }
-            return 3m;
-        })
-    ];
+            return 5m;
+        }
+        if (card.Owner?.Creature?.CombatState != null)
+        {
+            return 5m + card.Owner.Creature.GetPowerAmount<MegaCrit.Sts2.Core.Models.Powers.StrengthPower>();
+        }
+        return 5m;
+    }
 
     /// <summary>
     /// 卡牌原画：强能奥术飞弹 / 升级后（星辰能量）切换原画

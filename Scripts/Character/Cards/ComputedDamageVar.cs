@@ -42,6 +42,25 @@ public sealed class ComputedDamageVar : DamageVar
     }
 
     /// <summary>
+    /// 命名版（陨石术模式：升级/基础形态各自命名变量，如冰枪术 "Lance"/寒冰箭 "Damage"）。
+    /// </summary>
+    public ComputedDamageVar(string name, decimal baseValue, Func<CardModel, decimal> compute)
+        : base(name, baseValue, ValueProp.Move)
+    {
+        _compute = compute;
+    }
+
+    /// <summary>
+    /// 命名版 + 目标感知（陨石术模式：如冰枪术 "Lance" = (目标冻结层数+1)×4）。
+    /// </summary>
+    public ComputedDamageVar(string name, decimal baseValue, Func<CardModel, Creature?, decimal> compute)
+        : base(name, baseValue, ValueProp.Move)
+    {
+        _targetCompute = compute;
+        _compute = (card) => compute(card, null);
+    }
+
+    /// <summary>
     /// 显示路径（无 formatter 的 {Damage} 等 IConvertible 取值）：委托计算值。
     /// </summary>
     protected override decimal GetBaseValueForIConvertible()

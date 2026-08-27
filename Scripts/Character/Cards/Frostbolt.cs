@@ -7,6 +7,8 @@ using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
+using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.ValueProps;
 using jaina.Scripts.Character.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -33,24 +35,18 @@ public sealed class Frostbolt : JainaSpellCardTemplate
     public override IEnumerable<CardKeyword> CanonicalKeywords => [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Freeze, jaina.Scripts.Character.Keywords.JainaKeywords.Frost];
 
     /// <summary>
-    /// 伤害变量（单一 Computed + 目标感知——分支声明(IsUpgraded ? ... : ...)不会为
-    /// 升级形态重新求值,改用 CurrentUpgradeLevel 分支):
-    /// 未升级 = 3(预览含力量等修正)；升级(冰枪术) = (目标当前冻结层数 + 本卡 1 层) × 4
-    /// ——卡面按施放后层数显示(3 层敌人 → 16；0 层 → 4；无目标 → 0)。
+    /// 动态伤害变量（参考陨石术模式：命名变量 + 分支声明 + 基础形态声明全部变量）：
+    /// 未升级 = "Damage"（寒冰箭，3 点，普通 DamageVar 走原版力量/虚弱/易伤预览）；
+    /// 升级（冰枪术）= "Lance"（(目标当前冻结层数 + 1) × 4——按施放后层数显示：
+    /// 3 层敌人 → 16；0 层 → 4；未选中目标 → 回退基础 4）。
+    /// 升级分支描述引用的 "Lance" 在<b>基础形态也声明</b>（占位 4）——
+    /// 升级形态克隆基础形态的 CanonicalVars，变量缺失会导致整个 IfUpgraded 模板
+    /// 显示为字面文本（陨石术 Blast 同为"基础声明升级变量"）。
     /// </summary>
-    protected override IEnumerable<DynamicVar> CanonicalVars =>
-    [
-        new ComputedDamageVar(3m, (card, target) =>
-        {
-            if (card is not Frostbolt f || f.CurrentUpgradeLevel < 1)
-            {
-                return 3m;
-            }
-            // 冰枪术：0 + (目标已有冻结层数 + 本卡 1 层) × 4（target 感知；无目标 → 0）
-            var freeze = target?.GetPower<FreezePower>();
-            return ((freeze?.Amount ?? 0m) + 1m) * 4m;
-        })
-    ];
+    protected override IEnumerable<DynamicVar> CanonicalVars => IsUpgraded
+        ? [new ComputedDamageVar("Lance", 4m, ComputeLance)]
+        : [new ComputedDamageVar("Lance", 4m, ComputeLance),
+           new DamageVar("Damage", 3m, ValueProp.Move)];
 
     /// <summary>
     /// 升级后（冰枪术）选择目标；基础（寒冰箭）选择角色
@@ -83,6 +79,21 @@ public sealed class Frostbolt : JainaSpellCardTemplate
             LocString? upgraded = LocString.GetIfExists("cards", base.Id.Entry + ".titleUpgraded");
             return upgraded?.GetFormattedText() ?? title.GetFormattedText() + "+";
         }
+    }
+
+    /// <summary>
+    /// 冰枪术（升级形态）伤害计算（Lance 变量）：造成（施放后冻结层数）×4 点伤害——
+    /// 卡面显示同口径（当前层数 + 1）×4；未选中目标回退基础 4；
+    /// 基础（寒冰箭）形态不引用 Lance，返回占位 4。
+    /// </summary>
+    private static decimal ComputeLance(CardModel card, Creature? target)
+    {
+        if (card is not Frostbolt f || f.CurrentUpgradeLevel < 1)
+        {
+            return 4m;
+        }
+        var freeze = target?.GetPower<FreezePower>();
+        return ((freeze?.Amount ?? 0m) + 1m) * 4m;
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
