@@ -205,6 +205,10 @@ public class Entry
                 // 不依赖牌库检测——任意玩家手牌都可能出现带引燃的卡）
                 _ = MegaCrit.Sts2.Core.Helpers.TaskHelper.RunSafely(
                     jaina.Scripts.Character.Powers.IgniteClockPower.EnsureAppliedAsync(ctx, player));
+                // 打出记录兜底钩子：对所有玩家幂等挂载——原版卡(如"熵")打出时
+                // 也能被 RecordPlayed 记录,蓄谋诈骗犯战吼才能正确重放"上一张"
+                _ = MegaCrit.Sts2.Core.Helpers.TaskHelper.RunSafely(
+                    jaina.Scripts.Character.Powers.PlayedRecordHookPower.EnsureAppliedAsync(ctx, player));
                 // 联机：角色死亡时清空其随从槽（参考故障机器人/亡灵契约师）。
                 // 玩家角色死亡是确定性事件，两端各自触发 → 两端随从清理一致。
                 player.Creature.Died -= OnPlayerCreatureDied;
