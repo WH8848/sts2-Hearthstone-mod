@@ -87,8 +87,9 @@ public sealed class FlameWard : JainaSpellCardTemplate
     }
 
     /// <summary>
-    /// 对所有随从造成 3 点伤害（我方随从 + 敌方随从；不伤害队友的随从，
-    /// 与死神之躯同口径——多人联机不误伤队友；玩家英雄不受影响）。
+    /// 对所有随从造成 3 点伤害（我方随从 + 敌方随从；手打不伤害队友的随从，
+    /// 与死神之躯同口径——多人联机手打不误伤队友；随机打出（AutoPlay）保持全范围，
+    /// 可以攻击队友随从；玩家英雄不受影响）。
     /// 走 AttackCommand（DamageCmd.Attack）：吃力量加成，触发"被攻击命中"类效果（如胆小）；
     /// AttackCommand 无自定义多目标列表 API → 逐个目标独立攻击命令（行为等价）。
     /// </summary>
@@ -101,7 +102,7 @@ public sealed class FlameWard : JainaSpellCardTemplate
         }
         var victims = combatState.Creatures
             .Where(c => c != null && c.IsAlive && !c.IsPlayer && c != base.Owner.Creature)
-            .Where(c => c.PetOwner == null || c.PetOwner == base.Owner)
+            .Where(c => cardPlay.IsAutoPlay || c.PetOwner == null || c.PetOwner == base.Owner)
             .ToList();
         foreach (var victim in victims)
         {

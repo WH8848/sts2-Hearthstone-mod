@@ -1,10 +1,10 @@
-{
+﻿{
     "JAINA_CARD_FIREBALL.title":  "火球术",
     "JAINA_CARD_FIREBALL.titleUpgraded":  "炎爆术",
     "JAINA_CARD_FIREBALL.description":  "造成{Damage:diff()}点伤害。",
     "JAINA_CARD_APEXIS_BLAST.title":  "埃匹希斯冲击",
     "JAINA_CARD_APEXIS_BLAST.titleUpgraded":  "火焰之地传送门",
-    "JAINA_CARD_APEXIS_BLAST.description":  "{IfUpgraded:show:|}造成{Damage:diff()}点伤害。{IfUpgraded:show:|如果你的抽牌堆中没有随从牌，}随机召唤一个耗能为{IfUpgraded:show:2|1}的随从。",
+    "JAINA_CARD_APEXIS_BLAST.description":  "{IfUpgraded:show:|}造成{Damage:diff()}点伤害。\n{IfUpgraded:show:|如果你的抽牌堆中没有随从牌，}随机召唤一个耗能为{IfUpgraded:show:2|1}的随从。",
     "JAINA_CARD_FIREBLAST.title":  "火焰冲击",
     "JAINA_CARD_FIREBLAST.description":  "[gold]英雄技能[/gold]。\n造成{Damage:diff()}点伤害。",
     "JAINA_CARD_FLAME_WARD.title":  "火焰结界",
@@ -20,7 +20,7 @@
     "JAINA_CARD_VOLATILE_SKELETON_CARD.description":  "[gold]亡灵[/gold]。\n召唤一个[blue]2/2[/blue]的[red]不稳定的骷髅[/red]。\n[gold]亡语[/gold]:随机对一个敌人造成2点伤害。",
     "JAINA_CARD_FROSTBOLT.title":  "寒冰箭",
     "JAINA_CARD_FROSTBOLT.titleUpgraded":  "冰枪术",
-    "JAINA_CARD_FROSTBOLT.description":  "给予一个角色1层[gold]冻结[/gold]，造成{IfUpgraded:show:{Lance:diff()}|{Damage:diff()}}点伤害。{IfUpgraded:show:该敌人身上每有一层[gold]冻结[/gold]就额外造成4点伤害。|}",
+    "JAINA_CARD_FROSTBOLT.description":  "给予1层[gold]冻结[/gold]，造成{IfUpgraded:show:{Lance:diff()}|{Damage:diff()}}点伤害。\n{IfUpgraded:show:该敌人身上每有一层[gold]冻结[/gold]就额外造成4点伤害。|}",
     "JAINA_CARD_FROST_DRAGON_BREATH_CARD.title":  "冰龙吐息",
     "JAINA_CARD_FROST_DRAGON_BREATH_CARD.titleUpgraded":  "冰锥术",
     "JAINA_CARD_FROST_DRAGON_BREATH_CARD.description":  "随机对敌人{IfUpgraded:show:造成1点伤害3次，每次伤害都会|造成{Damage:diff()}点伤害，并}给予1层[gold]冻结[/gold]。",
