@@ -1,8 +1,6 @@
 using System;
 using System.Linq;
-using System.Threading.Tasks;
 using HarmonyLib;
-using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Relics;
@@ -21,13 +19,15 @@ namespace jaina.Scripts.Character.Relics;
 /// （ArchaicTooth 的 Transform 会替换，DustyTome 只是 Add）。
 ///
 /// 修复：AfterObtained Prefix 拦截——当 AncientCard 为二级火焰冲击时，从牌库移除所有火焰冲击。
-/// 火焰冲击/Eternal：程序化移除走 CardPileCmd.RemoveFromDeck（不检查 IsRemovable），
-/// 前置剥离 Eternal 与古老牙齿超越补丁同做法（防"不可移除"语义的其它拦截）。
+/// <b>Prefix 必须为同步 void</b>（Harmony 前缀不支持 async——曾因此 PatchAll 失败初始化）。
+/// 移除走与 CardPileCmd.RemoveFromDeck 核心一致的同步路径（记录移除历史 +
+/// RemoveFromCurrentPile + RemoveFromState；跳过 async 动画/预览——获得遗物流程中无碍）。
+/// 火焰冲击/Eternal：前置剥离 Eternal（同古老牙齿超越补丁，"不可移除"语义的其它拦截不受影响）。
 /// </summary>
 [HarmonyPatch(typeof(DustyTome), nameof(DustyTome.AfterObtained))]
 public static class DustyTomeFireblastCleanupPatch
 {
-    private static async Task Prefix(DustyTome __instance)
+    private static void Prefix(DustyTome __instance)
     {
         try
         {
@@ -54,9 +54,16 @@ public static class DustyTomeFireblastCleanupPatch
                     card.RemoveKeyword(CardKeyword.Eternal);
                 }
             }
+            // 同步移除（CardPileCmd.RemoveFromDeck 核心：移除历史记录 + 移出牌堆 + 移出状态）
+            foreach (var card in toRemove)
+            {
+                card.Owner.RunState.CurrentMapPointHistoryEntry?
+                    .GetEntry(card.Owner.NetId).CardsRemoved.Add(card.ToSerializable());
+                card.RemoveFromCurrentPile();
+                card.RemoveFromState();
+            }
             MegaCrit.Sts2.Core.Logging.Log.Info(
                 $"[JainaHeroPower] DustyTome removed {toRemove.Count} Fireblast from deck (ancient=FireblastAncient)");
-            await CardPileCmd.RemoveFromDeck(toRemove);
         }
         catch (Exception ex)
         {
