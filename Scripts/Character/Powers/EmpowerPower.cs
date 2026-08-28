@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -65,6 +66,8 @@ public sealed class EmpowerPower : PowerModel, IModPowerAssetOverrides
         {
             return;
         }
+        MegaCrit.Sts2.Core.Logging.Log.Info(
+            $"[JainaEmpower] applying empower: currentHeroPower={(current?.Name ?? "null")} stacks={Amount} player={player.NetId}");
 
         // 替换：从所有战斗牌堆移除旧英雄技能卡（火焰冲击/二级火焰冲击/奥术爆裂/冰冷触摸），
         // 再置入小精灵的祝福（与英雄卡替换英雄技能同一流程，见 JainaHeroCardTemplate.OnPlay）
@@ -93,6 +96,9 @@ public sealed class EmpowerPower : PowerModel, IModPowerAssetOverrides
             // 不能用 skipVisuals=true（RemoveFromCombat 会跳过手牌节点移除，UI 残留）
             await CardPileCmd.RemoveFromCombat(oldHeroPowers, skipVisuals: false);
         }
+        MegaCrit.Sts2.Core.Logging.Log.Info(
+            $"[JainaEmpower] replacing hero power: removed={oldHeroPowers.Count} cards=[" +
+            string.Join(",", oldHeroPowers.Select(c => c.GetType().Name)) + "]");
 
         rec.CurrentHeroPowerTypeByPlayer[player.NetId] = typeof(Cards.BlessingOfImpsCard);
 
@@ -108,6 +114,11 @@ public sealed class EmpowerPower : PowerModel, IModPowerAssetOverrides
             // 附魔继承：旧英雄技能卡（火焰冲击/奥术爆裂等）被附魔时，新英雄技能卡继承同类型同层数附魔
             jaina.Scripts.Character.JainaCastTracker.InheritEnchantment(oldHeroPowers, heroPower);
             await CardPileCmd.AddGeneratedCardToCombat(heroPower, MegaCrit.Sts2.Core.Entities.Cards.PileType.Hand, player);
+            MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaEmpower] blessing created & added to hand for {player.NetId}");
+        }
+        else
+        {
+            MegaCrit.Sts2.Core.Logging.Log.Warn($"[JainaEmpower] blessing card creation returned null for {player.NetId}");
         }
     }
 }
