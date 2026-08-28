@@ -60,14 +60,16 @@ public sealed class EmpowerPower : PowerModel, IModPowerAssetOverrides
             return;
         }
         var rec = jaina.Scripts.Character.JainaCastTracker.For(combatState);
-        // 英雄技能已是小精灵的祝福：只叠层（重复触发防御），不重复替换
-        if (rec.CurrentHeroPowerTypeByPlayer.TryGetValue(player.NetId, out var current) &&
-            current == typeof(Cards.BlessingOfImpsCard))
-        {
-            return;
-        }
+        // 早退分支也先打日志（灌注#2 若走到这里，'skip' 行即证明 rec 读到的是祝福而非变身后的技能）
+        rec.CurrentHeroPowerTypeByPlayer.TryGetValue(player.NetId, out var current);
         MegaCrit.Sts2.Core.Logging.Log.Info(
             $"[JainaEmpower] applying empower: currentHeroPower={(current?.Name ?? "null")} stacks={Amount} player={player.NetId}");
+        // 英雄技能已是小精灵的祝福：只叠层（重复触发防御），不重复替换
+        if (current == typeof(Cards.BlessingOfImpsCard))
+        {
+            MegaCrit.Sts2.Core.Logging.Log.Info("[JainaEmpower] skip: already blessing");
+            return;
+        }
 
         // 替换：从所有战斗牌堆移除旧英雄技能卡（火焰冲击/二级火焰冲击/奥术爆裂/冰冷触摸），
         // 再置入小精灵的祝福（与英雄卡替换英雄技能同一流程，见 JainaHeroCardTemplate.OnPlay）
