@@ -5,6 +5,8 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
+using MegaCrit.Sts2.Core.ValueProps;
 using jaina.Scripts.Character.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -33,15 +35,18 @@ public sealed class FrostDragonBreathCard : JainaSpellCardTemplate
         [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Freeze, jaina.Scripts.Character.Keywords.JainaKeywords.Frost];
 
     /// <summary>
-    /// 伤害变量（单一 Computed——分支声明(IsUpgraded ? ... : ...)不会为升级形态
-    /// 重新求值,改用 CurrentUpgradeLevel 分支):
-    /// 未升级 = 2(预览含力量等修正)；升级(冰锥术) = 1(每击基数,吃力量——每击 = 1 + 力量)。
+    /// 动态伤害变量（参考陨石术模式：命名变量 + 分支声明 + 基础形态声明全部变量）：
+    /// 未升级 = "Damage"（冰龙吐息，2 点，普通 DamageVar 走原版力量/虚弱/易伤预览）；
+    /// 升级（冰锥术）= "Cone"（每击基数 1，恒 1——力量/附魔由基类预览管道修正）。
+    /// <b>升级分支描述引用的 "Cone" 在基础形态也声明</b>（占位 1）：升级形态克隆基础形态的
+    /// CanonicalVars，且图鉴升级预览以 canonical 实例（CurrentUpgradeLevel=0）渲染 show 分支——
+    /// 若委托依赖 CurrentUpgradeLevel 分支会显示基础值（冰锥术图鉴显示 2 的 bug）；
+    /// Cone 恒 1 与实例形态解耦，canonical/克隆/战斗实例各路径均正确。
     /// </summary>
-    protected override IEnumerable<MegaCrit.Sts2.Core.Localization.DynamicVars.DynamicVar> CanonicalVars =>
-    [
-        new ComputedDamageVar(2m, card =>
-            card is FrostDragonBreathCard f && f.CurrentUpgradeLevel >= 1 ? 1m : 2m)
-    ];
+    protected override IEnumerable<MegaCrit.Sts2.Core.Localization.DynamicVars.DynamicVar> CanonicalVars => IsUpgraded
+        ? [new ComputedDamageVar("Cone", 1m, _ => 1m)]
+        : [new ComputedDamageVar("Cone", 1m, _ => 1m),
+           new DamageVar("Damage", 2m, ValueProp.Move)];
 
     /// <summary>
     /// 升级后（冰锥术）无需选择目标：随机对敌人造成 1 点伤害 3 次（吃力量，每击 = 1 + 力量）；

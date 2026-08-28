@@ -20,7 +20,7 @@
     "JAINA_CARD_FROSTBOLT.description":  "Give a character 1 [gold]Freeze[/gold] and deal {IfUpgraded:show:{Lance:diff()}|{Damage:diff()}} damage.{IfUpgraded:show: Deal an extra 4 damage for each [gold]Freeze[/gold] stack on that character.|}",
     "JAINA_CARD_FROST_DRAGON_BREATH_CARD.title":  "Frost Dragon Breath",
     "JAINA_CARD_FROST_DRAGON_BREATH_CARD.titleUpgraded":  "Cone of Cold",
-    "JAINA_CARD_FROST_DRAGON_BREATH_CARD.description":  "Randomly deal {IfUpgraded:show:{Damage:diff()} damage 3 times, each hit|{Damage:diff()} damage and} give 1 [gold]Freeze[/gold].",
+    "JAINA_CARD_FROST_DRAGON_BREATH_CARD.description":  "Randomly deal {IfUpgraded:show:{Cone:diff()} damage 3 times, each hit|{Damage:diff()} damage and} give 1 [gold]Freeze[/gold].",
     "JAINA_CARD_RAY_OF_FROST_CARD.title":  "Ray of Frost",
     "JAINA_CARD_RAY_OF_FROST_CARD.titleUpgraded":  "Go with the Flow",
     "JAINA_CARD_RAY_OF_FROST_CARD.description":  "{IfUpgraded:show:Choose a character. If it\u0027s an enemy, give it 1 [gold]Freeze[/gold]; if it\u0027s a friendly minion, it gains: While it is alive, you gain 1 [gold]Strength[/gold].|[gold]Twinspell[/gold].\n[gold]Freeze[/gold] a minion or enemy.}",
