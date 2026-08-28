@@ -130,6 +130,8 @@ public abstract class JainaHeroCardTemplate : ModCardTemplate
             var rec = jaina.Scripts.Character.JainaCastTracker.For(combatState);
             // 英雄技能已是指定的新技能（如重复打出同一张英雄卡）：不重复创建（按玩家区分）
             rec.CurrentHeroPowerTypeByPlayer.TryGetValue(base.Owner.NetId, out var currentHeroPowerType);
+            MegaCrit.Sts2.Core.Logging.Log.Info(
+                $"[JainaHeroPower] hero card played by {base.Owner.NetId}: replacing to {HeroPowerType?.Name}, current={currentHeroPowerType?.Name ?? "null"}");
             if (currentHeroPowerType == HeroPowerType)
             {
                 return;
@@ -163,6 +165,9 @@ public abstract class JainaHeroCardTemplate : ModCardTemplate
             }
 
             rec.CurrentHeroPowerTypeByPlayer[base.Owner.NetId] = HeroPowerType;
+            MegaCrit.Sts2.Core.Logging.Log.Info(
+                $"[JainaHeroPower] replaced: removed={oldHeroPowers.Count} cards=[" +
+                string.Join(",", oldHeroPowers.Select(c => c.GetType().Name)) + "] -> " + HeroPowerType?.Name);
 
             // 继承旧英雄技能的升级伤害增量：差量 = 旧技能卡伤害变量 BaseValue − 其形态基础值
             // （火焰冲击升 1 次 +1 → 差 1；二级火焰冲击升 1 次 +2 → 差 2；奥术爆裂/冰冷触摸/
