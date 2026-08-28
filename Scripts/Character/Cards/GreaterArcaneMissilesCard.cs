@@ -19,8 +19,8 @@ namespace jaina.Scripts.Character.Cards;
 /// 强能奥术飞弹 (Greater Arcane Missiles) - 1费攻击牌（稀有，火焰派系）。
 /// 对随机敌人造成 3 次 3 点伤害。
 /// 升级后变为"星辰能量 (Star Power)"（奥术派系）：随机对一个敌方造成 5 点伤害。
-/// 重复此效果，每次伤害减少 1 点（直到 1）。力量并入序列起点（吃力量——每段 = (5+力量) 递减，
-/// 如 +2 力量 → 7、6、5、4、3、2、1），力量不逐段重复加成。
+/// 重复此效果，每次伤害减少 1 点（直到 1）。力量/附魔并入序列起点——每段 = (5+力量+附魔) 递减，
+/// 如 +2 力量 +3 锋利 → 10、9、8、…、1，加成不逐段重复。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
 public sealed class GreaterArcaneMissilesCard : JainaSpellCardTemplate
@@ -113,11 +113,20 @@ public sealed class GreaterArcaneMissilesCard : JainaSpellCardTemplate
 
         if (IsUpgraded)
         {
-            // 星辰能量：随机对一个敌方造成 (5+力量) 点伤害，重复此效果每次伤害减少 1 点（直到 1）。
-            // 力量只并入序列起点（+2 力量 → 7、6、5、4、3、2、1），每段为固定序列值——
-            // 必须 Unpowered()：否则 Attack 管线会把力量/附魔再加一遍（+2 力量 → 9…3 双重加成）。
+            // 星辰能量：随机对一个敌方造成 (5+力量+附魔) 点伤害，重复此效果每次伤害减少 1 点（直到 1）。
+            // 力量/附魔全部并入序列起点（+2 力量 +3 锋利 → 10、9、8、…、1），每段为固定序列值——
+            // Unpowered()：否则 Attack 管线会把力量/附魔逐段再加一遍（双重加成）。
             int strength = base.Owner.Creature.GetPowerAmount<MegaCrit.Sts2.Core.Models.Powers.StrengthPower>();
-            for (int damage = 5 + strength; damage >= 1; damage--)
+            decimal enchantAdd = 0m, enchantMul = 1m;
+            if (base.Enchantment != null)
+            {
+                // 附魔加值按原版规则读取（Sharp/Vigorous/Momentum/TezcatarasEmber 均按
+                // IsPoweredAttack 判定加值；乘算同理）——保持与预览管道一致。
+                enchantAdd = base.Enchantment.EnchantDamageAdditive(5m, ValueProp.Move);
+                enchantMul = base.Enchantment.EnchantDamageMultiplicative(5m, ValueProp.Move);
+            }
+            int startDamage = (int)Math.Floor((5m + enchantAdd) * enchantMul + strength);
+            for (int damage = startDamage; damage >= 1; damage--)
             {
                 var enemies = combatState.GetOpponentsOf(base.Owner.Creature)
                     .Where(e => e != null && e.IsAlive && e.IsHittable)
