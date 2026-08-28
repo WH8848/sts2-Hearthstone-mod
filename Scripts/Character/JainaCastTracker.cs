@@ -98,6 +98,15 @@ public static class JainaCastTracker
         public readonly Dictionary<ulong, System.Type?> CurrentHeroPowerTypeByPlayer = [];
 
         /// <summary>
+        /// 各玩家被替换时继承的英雄技能升级伤害加成（累计，按玩家区分）。
+        /// 玩家升级过英雄技能（火焰冲击/二级火焰冲击，伤害 +1/+2）后被打出英雄卡
+        /// 替换（魔导师晨拥→奥术爆裂、冰霜女巫吉安娜→冰冷触摸）时，升级伤害增量随之
+        /// 转移；再次替换沿袭累计值（只加"旧技能自身升级差量"，链式不丢失）。
+        /// 替换流程两端同步执行同一动作，记录两端确定性一致。
+        /// </summary>
+        public readonly Dictionary<ulong, int> HeroPowerInheritedDamageByPlayer = [];
+
+        /// <summary>
         /// 各玩家本局对战中英雄技能累计造成的伤害（火眼莫德雷斯战吼条件用）。
         /// </summary>
         public readonly Dictionary<ulong, int> HeroPowerDamageDealtByPlayer = [];
@@ -107,8 +116,42 @@ public static class JainaCastTracker
         /// </summary>
         public readonly Dictionary<ulong, int> SkeletonDeathsByPlayer = [];
 
-        /// <summary>
-        /// 各玩家最近施放的一张攻击/技能牌（蓄谋诈骗犯战吼"再次使用你使用过的上一张卡牌"用）。
+    /// <summary>
+    /// 英雄技能被替换时继承旧技能的<b>升级伤害增量</b>（按玩家累计）：
+    /// 差量 = 旧技能卡伤害变量 BaseValue − 其形态基础值——火焰冲击升 1 次 +1（差 1）、
+    /// 二级火焰冲击升 1 次 +2（差 2）；奥术爆裂/冰冷触摸/小精灵的祝福不可升级（差 0，
+    /// 不重置累计——链式替换沿袭）。调用点：英雄卡替换（JainaHeroCardTemplate.OnPlay）、
+    /// 灌注替换（EmpowerPower.AfterApplied）——两端同步执行同一动作，记录确定性一致。
+    /// </summary>
+    public void AccumulateInheritedHeroPowerDamage(
+        ulong ownerNetId, IReadOnlyList<CardModel> oldHeroPowers, string logTag)
+    {
+        int inheritedDelta = 0;
+        foreach (var old in oldHeroPowers)
+        {
+            if (old == null || old.DynamicVars.Damage == null)
+            {
+                continue;
+            }
+            var canonicalOld = ModelDb.GetByIdOrNull<CardModel>(ModelDb.GetId(old.GetType()));
+            var canonicalBase = canonicalOld?.DynamicVars.Damage?.BaseValue ?? 0m;
+            var oldDelta = old.DynamicVars.Damage.BaseValue - canonicalBase;
+            if (oldDelta > 0)
+            {
+                inheritedDelta += (int)oldDelta;
+            }
+        }
+        if (inheritedDelta > 0)
+        {
+            HeroPowerInheritedDamageByPlayer.TryGetValue(ownerNetId, out var prevInherited);
+            HeroPowerInheritedDamageByPlayer[ownerNetId] = prevInherited + inheritedDelta;
+            MegaCrit.Sts2.Core.Logging.Log.Info(
+                $"[{logTag}] inherited hero power upgrade damage +{inheritedDelta} (total={prevInherited + inheritedDelta}) for {ownerNetId}");
+        }
+    }
+
+    /// <summary>
+    /// 各玩家最近施放的一张攻击/技能牌（蓄谋诈骗犯战吼"再次使用你使用过的上一张卡牌"用）。
         /// 记录 (类型, 施放时的升级级别, 是否本局衍生)；未施放过为 null。
         /// </summary>
         public readonly Dictionary<ulong, (Type Type, int UpgradeLevel, bool IsGenerated)?> LastPlayedCardByPlayer = [];

@@ -96,6 +96,9 @@ public sealed class EmpowerPower : PowerModel, IModPowerAssetOverrides
 
         rec.CurrentHeroPowerTypeByPlayer[player.NetId] = typeof(Cards.BlessingOfImpsCard);
 
+        // 继承旧英雄技能的升级伤害增量（与英雄卡替换同一规则/同一累计——小精灵的祝福也是英雄技能）
+        rec.AccumulateInheritedHeroPowerDamage(player.NetId, oldHeroPowers, "JainaEmpower");
+
         // 创建小精灵的祝福实例并加入手牌（英雄技能卡不占手牌位；
         // 不标记"衍生"——之后每回合由该卡自己的 BeforeHandDraw 重新入手）
         var heroPower = jaina.Scripts.Character.JainaCastTracker.CreateCardWithUpgrade(

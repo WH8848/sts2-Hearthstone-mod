@@ -32,7 +32,7 @@ public sealed class IcyTouchCard : JainaSpellCardTemplate
 
     /// <summary>
     /// 动态伤害变量（STS2 原版机制：指向目标时 {Damage} 预览实际伤害）：
-    /// 当前伤害 = 1 + 野火加成（与 OnPlay 实际结算一致）。
+    /// 当前伤害 = 1 + 替换继承的升级伤害 + 野火加成（与 OnPlay 实际结算一致）。
     /// </summary>
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
@@ -43,9 +43,12 @@ public sealed class IcyTouchCard : JainaSpellCardTemplate
             {
                 return 1m;
             }
+            var combatState = card.Owner.Creature.CombatState;
+            var rec = jaina.Scripts.Character.JainaCastTracker.For(combatState);
+            rec.HeroPowerInheritedDamageByPlayer.TryGetValue(card.Owner.NetId, out var inherited);
             var wildfire = card.Owner.Creature.GetPower<jaina.Scripts.Character.Powers.WildfirePower>();
             var amplifier = card.Owner.Creature.GetPower<jaina.Scripts.Character.Powers.ArcaneAmplifierPower>();
-            return 1m + (wildfire?.WildfireStacks ?? 0) + (amplifier?.AmplifierBonus ?? 0);
+            return 1m + inherited + (wildfire?.WildfireStacks ?? 0) + (amplifier?.AmplifierBonus ?? 0);
         })
     ];
 
@@ -71,12 +74,17 @@ public sealed class IcyTouchCard : JainaSpellCardTemplate
         // 记录施放（倒带/罗曼斯/三派系追踪）
         jaina.Scripts.Character.JainaCastTracker.RecordPlayed(this);
 
-        // 野火：英雄技能伤害永久加成（可叠加，本局对战）；奥术增幅：英雄技能额外伤害
+        // 野火：英雄技能伤害永久加成（可叠加，本局对战）；奥术增幅：英雄技能额外伤害；
+        // 替换继承：英雄技能被替换时继承旧技能（火焰冲击等）升级伤害增量
         var wildfire = base.Owner.Creature.GetPower<jaina.Scripts.Character.Powers.WildfirePower>();
         var wildfireStacks = wildfire?.WildfireStacks ?? 0;
         var amplifier = base.Owner.Creature.GetPower<jaina.Scripts.Character.Powers.ArcaneAmplifierPower>();
         var amplifierBonus = amplifier?.AmplifierBonus ?? 0;
-        var totalDamage = 1 + wildfireStacks + amplifierBonus;
+        var combatState = base.Owner.Creature.CombatState;
+        var rec = combatState != null ? jaina.Scripts.Character.JainaCastTracker.For(combatState) : null;
+        int inheritedDamage = 0;
+        rec?.HeroPowerInheritedDamageByPlayer.TryGetValue(base.Owner.NetId, out inheritedDamage);
+        var totalDamage = 1 + inheritedDamage + wildfireStacks + amplifierBonus;
 
         // 造成伤害（参考火焰冲击）
         if (cardPlay.Target is { IsAlive: true } target)

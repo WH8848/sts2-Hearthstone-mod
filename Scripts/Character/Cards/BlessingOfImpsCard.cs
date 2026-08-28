@@ -38,9 +38,9 @@ public sealed class BlessingOfImpsCard : JainaSpellCardTemplate
         [JainaKeywords.HeroPower];
 
     /// <summary>
-    /// 动态伤害显示：每次伤害 = 1(基础) + 野火层数 + 奥术增幅(与 OnPlay 结算一致)。
-    /// 用 ComputedDamageVar(DamageVar 子类,强转安全);canonical(图鉴)显示基础 1。
-    /// 动态释放次数 Casts：= max(1, 灌注层数)——每层灌注额外释放一次(与 OnPlay 一致)。
+    /// 动态伤害显示：每次伤害 = 1(基础) + 替换继承的升级伤害 + 野火层数 + 奥术增幅
+    /// (与 OnPlay 结算一致)。用 ComputedDamageVar(DamageVar 子类,强转安全);
+    /// canonical(图鉴)显示基础 1。动态释放次数 Casts：= max(1, 灌注层数)——每层灌注额外释放一次(与 OnPlay 一致)。
     /// </summary>
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
@@ -55,9 +55,15 @@ public sealed class BlessingOfImpsCard : JainaSpellCardTemplate
             {
                 return 1m;
             }
+            int inherited = 0;
+            if (creature.CombatState != null)
+            {
+                var rec = jaina.Scripts.Character.JainaCastTracker.For(creature.CombatState);
+                rec.HeroPowerInheritedDamageByPlayer.TryGetValue(card.Owner.NetId, out inherited);
+            }
             var wildfire = creature.GetPower<WildfirePower>();
             var amplifier = creature.GetPower<ArcaneAmplifierPower>();
-            return 1m + (wildfire?.WildfireStacks ?? 0) + (amplifier?.AmplifierBonus ?? 0);
+            return 1m + inherited + (wildfire?.WildfireStacks ?? 0) + (amplifier?.AmplifierBonus ?? 0);
         }),
         ModCardVars.Computed("Casts", 1m, card =>
         {
@@ -117,10 +123,13 @@ public sealed class BlessingOfImpsCard : JainaSpellCardTemplate
         var empower = owner.Creature.GetPower<EmpowerPower>();
         int casts = Math.Max(1, empower?.EmpowerStacks ?? 0);
         // 野火：英雄技能伤害永久加成（与火焰冲击等英雄技能卡一致）；
-        // 奥术增幅：英雄技能额外伤害（每次释放的伤害 = 1 + 野火 + 增幅）
+        // 奥术增幅：英雄技能额外伤害；替换继承：英雄技能被替换时继承旧技能升级伤害增量
+        // （每次释放的伤害 = 1 + 继承 + 野火 + 增幅）
         var wildfire = owner.Creature.GetPower<WildfirePower>();
         var amplifier = owner.Creature.GetPower<ArcaneAmplifierPower>();
-        int hitDamage = 1 + (wildfire?.WildfireStacks ?? 0) + (amplifier?.AmplifierBonus ?? 0);
+        var rec2 = jaina.Scripts.Character.JainaCastTracker.For(combatState);
+        rec2.HeroPowerInheritedDamageByPlayer.TryGetValue(owner.NetId, out var inheritedDamage);
+        int hitDamage = 1 + inheritedDamage + (wildfire?.WildfireStacks ?? 0) + (amplifier?.AmplifierBonus ?? 0);
 
         for (int i = 0; i < casts; i++)
         {

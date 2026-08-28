@@ -31,7 +31,7 @@ public sealed class ArcaneBurstCard : JainaSpellCardTemplate
         [jaina.Scripts.Character.Keywords.JainaKeywords.HeroPower];
 
     /// <summary>
-    /// 动态伤害显示：当前伤害 = 2 + 本局已打出次数×2 + 野火加成
+    /// 动态伤害显示：当前伤害 = 2 + 本局已打出次数×2 + 替换继承的升级伤害 + 野火加成
     /// （与 OnPlay 实际结算一致，按玩家区分；非战斗中显示基础 2 点）。
     /// </summary>
     protected override IEnumerable<DynamicVar> CanonicalVars =>
@@ -47,9 +47,10 @@ public sealed class ArcaneBurstCard : JainaSpellCardTemplate
             var combatState = card.Owner.Creature.CombatState;
             var rec = jaina.Scripts.Character.JainaCastTracker.For(combatState);
             rec.ArcaneBurstCastsByPlayer.TryGetValue(card.Owner.NetId, out var casts);
+            rec.HeroPowerInheritedDamageByPlayer.TryGetValue(card.Owner.NetId, out var inherited);
             var wildfire = card.Owner.Creature.GetPower<WildfirePower>();
             var amplifier = card.Owner.Creature.GetPower<ArcaneAmplifierPower>();
-            return 2 + casts * 2 + (wildfire?.WildfireStacks ?? 0) + (amplifier?.AmplifierBonus ?? 0);
+            return 2 + casts * 2 + inherited + (wildfire?.WildfireStacks ?? 0) + (amplifier?.AmplifierBonus ?? 0);
         })
     ];
 
@@ -85,12 +86,14 @@ public sealed class ArcaneBurstCard : JainaSpellCardTemplate
         rec.ArcaneBurstCastsByPlayer.TryGetValue(base.Owner.NetId, out var burstCasts);
         rec.ArcaneBurstCastsByPlayer[base.Owner.NetId] = burstCasts + 1;
 
-        // 野火：英雄技能伤害永久加成（可叠加，本局对战）；奥术增幅：英雄技能额外伤害
+        // 野火：英雄技能伤害永久加成（可叠加，本局对战）；奥术增幅：英雄技能额外伤害；
+        // 替换继承：英雄技能被替换时继承旧技能（火焰冲击等）升级伤害增量
         var wildfire = base.Owner.Creature.GetPower<WildfirePower>();
         var wildfireStacks = wildfire?.WildfireStacks ?? 0;
         var amplifier = base.Owner.Creature.GetPower<ArcaneAmplifierPower>();
         var amplifierBonus = amplifier?.AmplifierBonus ?? 0;
-        var totalDamage = 2 + burstCasts * 2 + wildfireStacks + amplifierBonus;
+        rec.HeroPowerInheritedDamageByPlayer.TryGetValue(base.Owner.NetId, out var inheritedDamage);
+        var totalDamage = 2 + burstCasts * 2 + inheritedDamage + wildfireStacks + amplifierBonus;
 
         if (cardPlay.Target is { IsAlive: true } target)
         {

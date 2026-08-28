@@ -164,6 +164,11 @@ public abstract class JainaHeroCardTemplate : ModCardTemplate
 
             rec.CurrentHeroPowerTypeByPlayer[base.Owner.NetId] = HeroPowerType;
 
+            // 继承旧英雄技能的升级伤害增量：差量 = 旧技能卡伤害变量 BaseValue − 其形态基础值
+            // （火焰冲击升 1 次 +1 → 差 1；二级火焰冲击升 1 次 +2 → 差 2；奥术爆裂/冰冷触摸/
+            // 小精灵的祝福不可升级 → 差 0，不重置累计——链式替换沿袭）。
+            rec.AccumulateInheritedHeroPowerDamage(base.Owner.NetId, oldHeroPowers, "JainaHeroPower");
+
             // 创建新英雄技能卡实例并加入手牌（英雄技能卡不占手牌位）。
             // 与火焰冲击一致：不标记"衍生"（无蓝光、不计入牌库外法术计数），
             // 之后每回合由该卡自己的 BeforeHandDraw 重新入手。
