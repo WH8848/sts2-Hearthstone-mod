@@ -7,7 +7,7 @@ namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
 /// SorcererApprenticeCard - 吉安娜随从卡（普通）。1 费,召唤 3/2 的 SorcererApprenticeMinion。
-/// 升级后费用 1 -> 0（保留消耗,只降费）。
+/// 升级后费用 1 -> 0 且<b>移除消耗</b>（巫师学徒+ 打出后不进消耗堆）。
 /// 效果：当 4 只巫师学徒在场时，你的法术牌费用减少 1 点（由随从光环 SorcererApprenticePower 实现）。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
@@ -34,10 +34,12 @@ public sealed class SorcererApprenticeCard : JainaMinionCardTemplate
     }
 
     /// <summary>
-    /// 升级：费用 1 -> 0（不调用 base——保留消耗词条,只降费）
+    /// 升级：费用 1 -> 0 + 移除消耗（升级后巫师学徒+ 打出后不再消耗；
+    /// 升级形态本地关键词懒缓存自基础状态，需显式 RemoveKeyword）
     /// </summary>
     protected override void OnUpgrade()
     {
         EnergyCost.UpgradeBy(-1);
+        RemoveKeyword(CardKeyword.Exhaust);
     }
 }
