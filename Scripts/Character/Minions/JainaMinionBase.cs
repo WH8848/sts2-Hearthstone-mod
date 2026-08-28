@@ -271,6 +271,11 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
             {
             }
             var hoverCardSize = cardNode.Size * cardNode.Scale;
+            // AddChild 后布局未跑时 Control.Size 可能为 (0,0)——按 NCard 标准尺寸兜底
+            if (hoverCardSize.X <= 0f || hoverCardSize.Y <= 0f)
+            {
+                hoverCardSize = MegaCrit.Sts2.Core.Nodes.Cards.NCard.defaultSize * cardNode.Scale;
+            }
             var targetGlobal = showOnLeft
                 ? anchor + new Vector2(-hoverCardSize.X - 100f, -190f)
                 : anchor + new Vector2(100f, -190f);
@@ -389,8 +394,14 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
                 return;
             }
             var vpRect = viewport.GetVisibleRect();
-            // 卡面缩放后的实际尺寸（Control 的 Size 为布局尺寸，Scale 缩放绘制）
+            // 卡面缩放后的实际尺寸（Control 的 Size 为布局尺寸，Scale 缩放绘制；
+            // AddChild 后布局未跑时 Size 可能为 (0,0)——按 NCard 标准尺寸兜底，
+            // 否则视口约束会把卡面左缘压到屏幕右缘（卡面整体出屏））
             var cardSize = cardNode.Size * cardNode.Scale;
+            if (cardSize.X <= 0f || cardSize.Y <= 0f)
+            {
+                cardSize = MegaCrit.Sts2.Core.Nodes.Cards.NCard.defaultSize * cardNode.Scale;
+            }
             // 卡面当前全局左上角（host 局部坐标 → 全局）
             var globalTopLeft = canvasTransform * cardNode.Position;
             const float margin = 8f;
