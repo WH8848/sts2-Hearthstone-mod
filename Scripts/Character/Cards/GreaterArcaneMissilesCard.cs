@@ -19,7 +19,8 @@ namespace jaina.Scripts.Character.Cards;
 /// 强能奥术飞弹 (Greater Arcane Missiles) - 1费攻击牌（稀有，火焰派系）。
 /// 对随机敌人造成 3 次 3 点伤害。
 /// 升级后变为"星辰能量 (Star Power)"（奥术派系）：随机对一个敌方造成 5 点伤害。
-/// 重复此效果，每次伤害减少 1 点。星辰能量吃力量（起始伤害 = 5 + 力量）。
+/// 重复此效果，每次伤害减少 1 点（直到 1）。力量并入序列起点（吃力量——每段 = (5+力量) 递减，
+/// 如 +2 力量 → 7、6、5、4、3、2、1），力量不逐段重复加成。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
 public sealed class GreaterArcaneMissilesCard : JainaSpellCardTemplate
@@ -39,7 +40,7 @@ public sealed class GreaterArcaneMissilesCard : JainaSpellCardTemplate
     /// <summary>
     /// 动态伤害变量（参考陨石术模式：命名变量 + 分支声明 + 基础形态声明全部变量）：
     /// 未升级 = "Damage"（强能奥术飞弹，3 点，普通 DamageVar 走原版力量/虚弱/易伤预览）；
-    /// 升级（星辰能量）= "Star"（5 + 力量，起始值随后每次递减 1）。
+    /// 升级（星辰能量）= "Star"（基数 5，力量/附魔由基类预览管道修正——起始显示 = 5 + 力量）。
     /// 升级分支描述引用的 "Star" 在<b>基础形态也声明</b>（占位 5）——
     /// 升级形态克隆基础形态的 CanonicalVars，变量缺失会导致整个 IfUpgraded 模板
     /// 显示为字面文本（陨石术 Blast 同为"基础声明升级变量"）。
@@ -50,19 +51,14 @@ public sealed class GreaterArcaneMissilesCard : JainaSpellCardTemplate
            new DamageVar("Damage", 3m, ValueProp.Move)];
 
     /// <summary>
-    /// 星辰能量（升级形态）伤害计算（Star 变量）：5 + 力量（起始值）。
+    /// 星辰能量（升级形态）伤害变量（Star）：固定返回基数 5。
+    /// 力量/附魔修正由 DamageVar 基类预览管道负责（UpdateCardPreview →
+    /// Hook.ModifyDamage + 附魔），<b>不能在此叠加力量</b>——否则 +2 力量会
+    /// 显示 9（基类预览已加 2，此处再加 2）。
     /// 基础（强能奥术飞弹）形态不引用 Star，返回占位 5。
     /// </summary>
     private static decimal ComputeStar(CardModel card)
     {
-        if (card is not GreaterArcaneMissilesCard g || g.CurrentUpgradeLevel < 1)
-        {
-            return 5m;
-        }
-        if (card.Owner?.Creature?.CombatState != null)
-        {
-            return 5m + card.Owner.Creature.GetPowerAmount<MegaCrit.Sts2.Core.Models.Powers.StrengthPower>();
-        }
         return 5m;
     }
 
@@ -118,7 +114,8 @@ public sealed class GreaterArcaneMissilesCard : JainaSpellCardTemplate
         if (IsUpgraded)
         {
             // 星辰能量：随机对一个敌方造成 (5+力量) 点伤害，重复此效果每次伤害减少 1 点（直到 1）。
-            // 力量只加在起始值上（1 点力量 → 6、5、4、3、2、1；10 点力量 → 15、…、1）。
+            // 力量只并入序列起点（+2 力量 → 7、6、5、4、3、2、1），每段为固定序列值——
+            // 必须 Unpowered()：否则 Attack 管线会把力量/附魔再加一遍（+2 力量 → 9…3 双重加成）。
             int strength = base.Owner.Creature.GetPowerAmount<MegaCrit.Sts2.Core.Models.Powers.StrengthPower>();
             for (int damage = 5 + strength; damage >= 1; damage--)
             {
@@ -134,8 +131,11 @@ public sealed class GreaterArcaneMissilesCard : JainaSpellCardTemplate
                 {
                     break;
                 }
-                // 走 AttackCommand（DamageCmd.Attack）：触发"被攻击命中"类效果（如胆小）
-                await DamageCmd.Attack(damage).FromCard(this, cardPlay).Targeting(target).Execute(choiceContext);
+                // 走 AttackCommand（触发"被攻击命中"类效果，如胆小）
+                await DamageCmd.Attack(damage).Unpowered()
+                    .FromCard(this, cardPlay)
+                    .Targeting(target)
+                    .Execute(choiceContext);
             }
             return;
         }
