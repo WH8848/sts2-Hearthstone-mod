@@ -24,6 +24,28 @@ function New-IconBase {
     $bg.Dispose()
 }
 
+function Draw-FlameWard {
+    param($g)
+    New-IconBase $g
+    # 盾牌轮廓(蓝白)
+    $pen = [System.Drawing.Pen]::new([System.Drawing.Color]::FromArgb(255, 150, 190, 255), 6)
+    $pts = @()
+    $pts += New-Object System.Drawing.PointF(64, 30)
+    $pts += New-Object System.Drawing.PointF(42, 42)
+    $pts += New-Object System.Drawing.PointF(42, 66)
+    $pts += New-Object System.Drawing.PointF(64, 96)
+    $pts += New-Object System.Drawing.PointF(86, 66)
+    $pts += New-Object System.Drawing.PointF(86, 42)
+    $g.DrawPolygon($pen, $pts)
+    $pen.Dispose()
+    # 盾上的火焰(橙黄三束 = 多次反击)
+    $fire = [System.Drawing.SolidBrush]::new($flame)
+    $core = [System.Drawing.SolidBrush]::new($gold)
+    $g.FillEllipse($fire, 52, 46, 24, 34)
+    $g.FillEllipse($core, 57, 52, 14, 22)
+    $fire.Dispose(); $core.Dispose()
+}
+
 function Draw-MinionSquad {
     param($g)
     New-IconBase $g
@@ -321,6 +343,7 @@ function Save-Icon {
     Write-Host "  OK  $name.png"
 }
 
+Save-Icon 'jaina_power_flame_ward_power' (Get-Command Draw-FlameWard)
 Save-Icon 'jaina_power_minion_squad_power' (Get-Command Draw-MinionSquad)
 Save-Icon 'jaina_power_freeze_power'       (Get-Command Draw-Freeze)
 Save-Icon 'jaina_power_jaina_attack_action' (Get-Command Draw-AttackAction)

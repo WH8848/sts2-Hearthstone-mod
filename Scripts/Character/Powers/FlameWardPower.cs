@@ -10,6 +10,8 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
 using STS2RitsuLib.Interop.AutoRegistration;
+using STS2RitsuLib.Scaffolding.Content;
+using STS2RitsuLib.Scaffolding.Content.Patches;
 
 namespace jaina.Scripts.Character.Powers;
 
@@ -19,8 +21,17 @@ namespace jaina.Scripts.Character.Powers;
 /// 挂一次性（参照火焰结界模式）：受击触发后移除；若整回合未被攻击，下个玩家回合开始兜底移除。
 /// </summary>
 [RegisterPower]
-public sealed class FlameWardPower : PowerModel
+public sealed class FlameWardPower : PowerModel, IModPowerAssetOverrides
 {
+    /// <inheritdoc />
+    public PowerAssetProfile AssetProfile => new("res://assets/power_icons/jaina_power_flame_ward_power.png");
+
+    /// <inheritdoc />
+    public string? CustomIconPath => AssetProfile.IconPath;
+
+    /// <inheritdoc />
+    public string? CustomBigIconPath => AssetProfile.BigIconPath;
+
     /// <summary>随机攻击次数</summary>
     private const int Hits = 7;
 
