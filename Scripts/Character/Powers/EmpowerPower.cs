@@ -46,8 +46,27 @@ public sealed class EmpowerPower : PowerModel, IModPowerAssetOverrides
     /// （即使之前用英雄卡把技能换成了奥术爆裂/冰冷触摸等——下一次灌注会重新换成祝福）；
     /// 若当前已经是祝福，则不替换（只叠层，祝福释放次数随之 +1）。
     /// 联机：PowerCmd.Apply 两端确定性执行，替换流程两端一致。
+    /// <b>触发点（关键）</b>：PowerCmd 对"已有实例叠层"走 <c>ModifyAmount</c> ——
+    /// 该路径【不调用 AfterApplied】，只有 <c>AfterPowerAmountChanged</c> 钩子触发；
+    /// 因此替换流程改挂在 AfterPowerAmountChanged（幂等，AfterApplied 也保留——
+    /// 新建路径两者都会触发，同逻辑重复执行由"已是祝福"防御兜底）。
     /// </summary>
-    public override async Task AfterApplied(Creature? applier, CardModel? cardSource)
+    public override Task AfterApplied(Creature? applier, CardModel? cardSource)
+    {
+        return ReplaceHeroPowerIfNeededAsync(cardSource);
+    }
+
+    public override Task AfterPowerAmountChanged(PlayerChoiceContext choiceContext, PowerModel power, decimal amount,
+        Creature? applier, CardModel? cardSource)
+    {
+        if (power != this)
+        {
+            return Task.CompletedTask;
+        }
+        return ReplaceHeroPowerIfNeededAsync(cardSource);
+    }
+
+    private async Task ReplaceHeroPowerIfNeededAsync(CardModel? cardSource)
     {
         var player = Owner.Player;
         if (player == null || Owner.IsDead)
