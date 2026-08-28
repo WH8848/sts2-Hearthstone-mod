@@ -24,25 +24,6 @@ function New-IconBase {
     $bg.Dispose()
 }
 
-function Draw-IceBarrier {
-    param($g)
-    New-IconBase $g
-    $pen = [System.Drawing.Pen]::new($iceBlue, 7)
-    $pts = @()
-    $pts += New-Object System.Drawing.PointF(64, 22)
-    $pts += New-Object System.Drawing.PointF(100, 38)
-    $pts += New-Object System.Drawing.PointF(100, 70)
-    $pts += New-Object System.Drawing.PointF(64, 106)
-    $pts += New-Object System.Drawing.PointF(28, 70)
-    $pts += New-Object System.Drawing.PointF(28, 38)
-    $g.DrawPolygon($pen, $pts)
-    $pen2 = [System.Drawing.Pen]::new($white, 4)
-    $g.DrawLine($pen2, 64, 46, 64, 82)
-    $g.DrawLine($pen2, 48, 60, 80, 60)
-    $g.DrawLine($pen2, 50, 92, 78, 92)
-    $pen.Dispose(); $pen2.Dispose()
-}
-
 function Draw-MinionSquad {
     param($g)
     New-IconBase $g
@@ -340,7 +321,6 @@ function Save-Icon {
     Write-Host "  OK  $name.png"
 }
 
-Save-Icon 'jaina_power_ice_barrier_power'  (Get-Command Draw-IceBarrier)
 Save-Icon 'jaina_power_minion_squad_power' (Get-Command Draw-MinionSquad)
 Save-Icon 'jaina_power_freeze_power'       (Get-Command Draw-Freeze)
 Save-Icon 'jaina_power_jaina_attack_action' (Get-Command Draw-AttackAction)

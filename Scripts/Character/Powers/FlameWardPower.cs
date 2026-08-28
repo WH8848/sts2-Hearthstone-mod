@@ -16,7 +16,7 @@ namespace jaina.Scripts.Character.Powers;
 /// <summary>
 /// 火焰结界：吉安娜或其随从受到攻击时，对敌人造成 7 次 Amount 点伤害（每次随机分配到一个敌人），随后消失。
 /// 只要被敌方攻击就触发——哪怕伤害被格挡（零点伤害）也触发（用户口径）。
-/// 挂一次性（参照寒冰护盾 IceBarrierPower 模式）：受击触发后移除；若整回合未被攻击，下个玩家回合开始兜底移除。
+/// 挂一次性（参照火焰结界模式）：受击触发后移除；若整回合未被攻击，下个玩家回合开始兜底移除。
 /// </summary>
 [RegisterPower]
 public sealed class FlameWardPower : PowerModel

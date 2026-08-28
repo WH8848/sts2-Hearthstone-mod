@@ -15,8 +15,8 @@ namespace jaina.Scripts.Character.Powers;
 
 /// <summary>
 /// 随机施放法师法术工具（魔法智慧之球 / 终极索兰莉安共用）。
-/// 魔法智慧之球：固定六张有用法师法术（火球术/寒冰箭/烈焰风暴/暴风雪/法术反制/寒冰护盾，
-/// 卡面具体写明这六张，不展开升级形态）。
+/// 魔法智慧之球：固定五张有用法师法术（火球术/寒冰箭/烈焰风暴/暴风雪/法术反制，
+/// 卡面具体写明这五张，不展开升级形态）。
 /// 终极索兰莉安：从吉安娜全部法术牌池（含升级形态）随机施放。
 /// </summary>
 public static class MageSpellCaster
@@ -32,11 +32,10 @@ public static class MageSpellCaster
         (typeof(FlameWard), 1),   // 烈焰风暴
         (typeof(DeathborneCard), 1), // 暴风雪
         (typeof(Objection), 0),   // 法术反制（基础形态）
-        (typeof(IceBarrier), 0),
     ];
 
     /// <summary>
-    /// 随机施放一个有用的法师法术（魔法智慧之球固定六张池：
+    /// 随机施放一个有用的法师法术（魔法智慧之球固定五张池：
     /// 免费自动打出，随机目标；单目标法术优先选敌人）。
     /// 火焰冲击等英雄技能卡不是法术牌，绝不会被施放（池内无 + 实例过滤兜底）。
     /// </summary>
