@@ -92,6 +92,8 @@ public sealed class EmpowerPower : PowerModel, IModPowerAssetOverrides
                     oldHeroPowers.Add(card);
                 }
             }
+            MegaCrit.Sts2.Core.Logging.Log.Info(
+                $"[JainaEmpower] pile {pileType}={pile.Cards.Count} heroPowerCards={pile.Cards.Count(c => c != null && c.CanonicalKeywords?.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.HeroPower) == true)}");
         }
         if (oldHeroPowers.Count > 0)
         {
