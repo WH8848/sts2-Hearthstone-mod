@@ -152,8 +152,15 @@ public static class JainaTradeAction
     /// 托管动作广播时反序列化查不到 opcode（未知托管动作）会被静默丢弃 →
     /// 远端不执行交易 → 两端牌堆分歧 → StateDivergence 断联
     /// （实测现象：只在一端有 [JainaTrade] resolve 日志、players[0].piles.Draw 差 1 张）。
+    /// <b>日志输出注册的 action key</b>——两端日志应一致：若远端日志缺此行，
+    /// 说明远端加载的是未含本调用的旧版 dll（典型：mods 目录存在"Jaina (1)"旧副本）。
     /// </summary>
-    public static void EnsureRegistered() => _ = Descriptor;
+    public static void EnsureRegistered()
+    {
+        _ = Descriptor;
+        MegaCrit.Sts2.Core.Logging.Log.Info(
+            $"[JainaTrade] managed-action descriptor registered: {Descriptor.ModuleId}/{Descriptor.ActionKey} ({GameActionType.CombatPlayPhaseOnly})");
+    }
 
     /// <summary>请求交易动作（由操作玩家本机发起；两端同步执行）。</summary>
     public static bool Request(TradePayload payload, Player player)
