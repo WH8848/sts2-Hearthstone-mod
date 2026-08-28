@@ -146,6 +146,15 @@ public static class JainaTradeAction
         ExecuteAsync,
         GameActionType.CombatPlayPhaseOnly);
 
+    /// <summary>
+    /// 确保托管动作描述符在<b>所有进程（含联机远端）</b>尽早注册。
+    /// 描述符是惰性静态实例：若远端进程从未触发过本类静态初始化，远端收到
+    /// 托管动作广播时反序列化查不到 opcode（未知托管动作）会被静默丢弃 →
+    /// 远端不执行交易 → 两端牌堆分歧 → StateDivergence 断联
+    /// （实测现象：只在一端有 [JainaTrade] resolve 日志、players[0].piles.Draw 差 1 张）。
+    /// </summary>
+    public static void EnsureRegistered() => _ = Descriptor;
+
     /// <summary>请求交易动作（由操作玩家本机发起；两端同步执行）。</summary>
     public static bool Request(TradePayload payload, Player player)
     {

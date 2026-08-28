@@ -63,6 +63,11 @@ public class Entry
         // 自动注册内容
         ModTypeDiscoveryHub.RegisterModAssembly(ModId, assembly);
 
+        // 交易托管动作描述符预注册（联机远端也须注册：惰性静态初始化若未触发，
+        // 远端收到动作广播时 opcode 未知被静默丢弃 → 交易只在主机执行 →
+        // 两端牌堆分歧 → StateDivergence 断联。此处确保所有进程启动即注册。）
+        jaina.Scripts.Character.Powers.JainaTradeAction.EnsureRegistered();
+
         // 衍生卡金色手牌高亮（RitsuLib gold 通道）：本局对战内衍生出来的
         // Jaina 法术/随从卡在手牌中金色发光；非衍生卡保持原版行为
         RegisterCardHandGlow(assembly);
