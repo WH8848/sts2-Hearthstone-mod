@@ -86,22 +86,30 @@ public sealed class RiggedFaireGameCard : JainaSpellCardTemplate
             // 巫卜：消灭1个小精灵（选择自己场上的一个小精灵），抽3张牌。
             // 目标合法性由 AnyOwnImp 目标类型保证（手打只能选自己的小精灵；
             // 随机释放经 PickRandomTarget 按 IsValidTarget 过滤，兜底选错时防御跳过）。
-            // 诊断：联机重放中 targetid 解析可能丢失/错位（日志见 targetid:0 + Canceled 警告），
-            // 记录目标判定各分支供定位。
-            MegaCrit.Sts2.Core.Logging.Log.Info(
-                $"[JainaFaire] divination play: targetNull={cardPlay.Target == null} " +
-                $"target={(cardPlay.Target == null ? "null" : $"{cardPlay.Target.CombatId}:{cardPlay.Target.Monster?.GetType().Name}/alive={cardPlay.Target.IsAlive}/pet={cardPlay.Target.PetOwner?.NetId}")} " +
-                $"owner={base.Owner.NetId}");
-            if (cardPlay.Target is not { IsAlive: true } imp ||
-                imp.Monster is not ImpMinion ||
-                imp.PetOwner != base.Owner)
+            // 已知风险：联机重放中目标解析可能丢失/错位（日志 targetid:0 + Canceled 警告，
+            // 选择界面中断后 CardPlay.Target 可能为 null 或被解析成他人）——
+            // <b>兜底</b>：目标无效时从自己场上取一个存活小精灵（FirstOrDefault 两端确定性，
+            // 保证"出牌=一定消灭一只自己的小精灵"，而不是整张卡无效）。
+            var combatState0 = base.Owner.Creature.CombatState;
+            var imp = cardPlay.Target;
+            if (imp is not { IsAlive: true } || imp.Monster is not ImpMinion || imp.PetOwner != base.Owner)
             {
                 MegaCrit.Sts2.Core.Logging.Log.Warn(
-                    $"[JainaFaire] divination SKIP (target invalid): " +
-                    $"imp={cardPlay.Target?.Monster?.GetType().Name ?? "null"} " +
-                    $"alive={cardPlay.Target?.IsAlive} pet={cardPlay.Target?.PetOwner?.NetId} owner={base.Owner.NetId}");
-                return;
+                    $"[JainaFaire] divination target invalid, falling back: " +
+                    $"target={(cardPlay.Target == null ? "null" : $"{cardPlay.Target.Monster?.GetType().Name}/alive={cardPlay.Target.IsAlive}/pet={cardPlay.Target.PetOwner?.NetId}")} " +
+                    $"owner={base.Owner.NetId}");
+                imp = combatState0 == null
+                    ? null
+                    : combatState0.Creatures.FirstOrDefault(c =>
+                        c != null && c.IsAlive && c.PetOwner == base.Owner && c.Monster is ImpMinion);
+                if (imp == null)
+                {
+                    MegaCrit.Sts2.Core.Logging.Log.Warn("[JainaFaire] divination skipped: no own imp on field");
+                    return;
+                }
             }
+            MegaCrit.Sts2.Core.Logging.Log.Info(
+                $"[JainaFaire] divination target: {imp.CombatId}:{imp.Monster?.GetType().Name} pet={imp.PetOwner?.NetId}");
             await CreatureCmd.Kill(imp);
             MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaFaire] divination killed imp (aliveAfter={imp.IsAlive})");
             // 抽3张牌（满手自动改道弃牌堆，原版语义）
