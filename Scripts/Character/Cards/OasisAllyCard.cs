@@ -7,6 +7,7 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.ValueProps;
 using jaina.Scripts.Character.Keywords;
 using jaina.Scripts.Character.Minions;
 using jaina.Scripts.Character.Powers;
@@ -35,7 +36,13 @@ public sealed class OasisAllyCard : JainaSpellCardTemplate
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
         [JainaKeywords.Spell, JainaKeywords.Frost];
 
-    protected override IEnumerable<DynamicVar> CanonicalVars => [];
+    /// <summary>
+    /// 动态伤害变量（"Damage"）：升级版（霜巫十字绣）造成 3 点基础伤害，
+    /// 走原版力量/附魔预览（{Damage:diff()} 动态显示，与寒冰箭同模式）。
+    /// 基础形态也声明（IfUpgraded 模板全分支解析，变量缺失会显示字面文本）。
+    /// </summary>
+    protected override IEnumerable<DynamicVar> CanonicalVars =>
+        [new DamageVar("Damage", 3m, ValueProp.Move)];
 
     /// <summary>
     /// 卡牌原画：绿洲盟军 / 升级后（霜巫十字绣 Frost Lich Cross-Stitch）切换原画
@@ -86,12 +93,12 @@ public sealed class OasisAllyCard : JainaSpellCardTemplate
 
         if (IsUpgraded)
         {
-            // 霜巫十字绣：对一个角色造成 3 点伤害，召唤一个 3/6 的水元素
+            // 霜巫十字绣：对一个角色造成 3 点伤害（吃力量/附魔——卡面 {Damage:diff()} 动态显示），召唤一个 3/6 的水元素
             if (cardPlay.Target is not { IsAlive: true } target)
             {
                 return;
             }
-            await DamageCmd.Attack(3m)
+            await DamageCmd.Attack(base.DynamicVars.Damage.BaseValue)
                 .FromCard(this, cardPlay)
                 .Targeting(target)
                 .WithHitFx("vfx/vfx_attack_blunt")
