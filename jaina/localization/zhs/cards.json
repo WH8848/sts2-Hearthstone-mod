@@ -1,4 +1,4 @@
-﻿{
+{
     "JAINA_CARD_FIREBALL.title":  "火球术",
     "JAINA_CARD_FIREBALL.titleUpgraded":  "炎爆术",
     "JAINA_CARD_FIREBALL.description":  "造成{Damage:diff()}点伤害。",
@@ -85,6 +85,9 @@
     "JAINA_CARD_OBJECTION.title":  "法术反制",
     "JAINA_CARD_OBJECTION.titleUpgraded":  "异议",
     "JAINA_CARD_OBJECTION.description":  "当一名敌人将要{IfUpgraded:show:攻击|强化/削弱/防御}时,将其取消。",
+    "JAINA_CARD_OASIS_ALLY_CARD.title":  "绿洲盟军",
+    "JAINA_CARD_OASIS_ALLY_CARD.titleUpgraded":  "霜巫十字绣",
+    "JAINA_CARD_OASIS_ALLY_CARD.description":  "{IfUpgraded:show:对1个角色造成3点伤害，|受到攻击时，}召唤一个水元素。",
     "JAINA_CARD_LUCKY_COIN.title":  "幸运币",
     "JAINA_CARD_LUCKY_COIN.description":  "获得1{energyPrefix:energyIcons(1)}。",
     "JAINA_CARD_MEDIVH_ECHO.title":  "麦迪文的残影",
