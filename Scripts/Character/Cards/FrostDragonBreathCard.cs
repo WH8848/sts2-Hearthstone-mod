@@ -83,7 +83,7 @@ public sealed class FrostDragonBreathCard : JainaSpellCardTemplate
         // 记录施放（倒带/罗曼斯/三派系追踪）
         jaina.Scripts.Character.JainaCastTracker.RecordPlayed(this);
 
-        // 冰锥术（升级后）：随机对敌人造成 1 点伤害 3 次（吃力量——每击 = 1 + 力量），
+        // 冰锥术（升级后）：随机对敌人造成 1 点伤害 3 次（吃力量/附魔——每击 = 1 + 力量 + 附魔），
         // 每次伤害给予被击中的敌人 1 层冻结
         if (IsUpgraded)
         {
@@ -106,8 +106,8 @@ public sealed class FrostDragonBreathCard : JainaSpellCardTemplate
                 {
                     break;
                 }
-                // 冰锥术：每击 1 点伤害基数 ×3 次（Powered 默认吃力量加成——每击 = 1 + 力量；
-                // 卡面文本固定"1点"，实际动态吃力量）
+                // 冰锥术：每击 1 点伤害基数 ×3 次（Powered 吃力量/附魔——每击 = 1 + 力量 + 附魔；
+                // 卡面 {Damage:diff()} 动态显示同值）
                 await DamageCmd.Attack(1m)
                     .FromCard(this, cardPlay)
                     .Targeting(randomTarget)
