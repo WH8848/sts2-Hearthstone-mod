@@ -66,16 +66,14 @@ public static class SpellCardTypePlaquePatch
                         // 展示层补丁：忽略
                     }
                 }).CallDeferred();
-                // 诊断（仅用户反馈"类型牌框太小"的卡 + 同批正常卡作对照）
-                var entry = __instance.Model.Id.Entry;
-                if (entry is "JAINA_CARD_DEATHBORNE_CARD" or "JAINA_CARD_FORBIDDEN_SHRINE_CARD"
-                    or "JAINA_CARD_APEXIS_BLAST" or "JAINA_CARD_CRAM_SESSION_CARD")
+                // 兜底告警：任何法术卡若框宽仍小于文本需求（min + 17），打出日志便于复查
+                var plaqueCheck = __instance.GetNodeOrNull<NinePatchRect>("%TypePlaque");
+                var minCheck = label.GetCombinedMinimumSize();
+                if (plaqueCheck != null && plaqueCheck.Size.X + 0.5f < minCheck.X + 17f)
                 {
-                    var plaque = __instance.GetNodeOrNull<NinePatchRect>("%TypePlaque");
-                    MegaCrit.Sts2.Core.Logging.Log.Info(
-                        $"[JainaPlaque] {entry} ready={__instance.IsNodeReady()} " +
-                        $"labelSize={label.Size} labelMin={label.GetCombinedMinimumSize()} " +
-                        $"plaqueSize={plaque?.Size.ToString() ?? "null"} text='{label.Text}'");
+                    MegaCrit.Sts2.Core.Logging.Log.Warn(
+                        $"[JainaPlaque] NARROW {__instance.Model.Id.Entry} plaque={plaqueCheck.Size.X} " +
+                        $"need={minCheck.X + 17f} labelSize={label.Size.X} text='{label.Text}'");
                 }
             }
             catch
