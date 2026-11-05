@@ -109,6 +109,12 @@ public static class SpellCardTypePlaquePatch
                 {
                     fontSize = fsize;
                 }
+                // MegaLabel 会按容器高度自动放大渲染字号（AutoSize），而 Label 默认不裁剪文本——
+                // 仅按 theme 字号(16)测量会低估（实测 min=80、框 97 仍溢出：真实渲染约 22px/字≈110px 宽）。
+                // 这里把渲染字号固定为"填充标签高度"的字号并据此测量，保证测量值≈真实渲染宽度。
+                int fitSize = Mathf.Max(10, Mathf.RoundToInt(Mathf.Max(fontSize, label.Size.Y * 0.85f)));
+                label.AddThemeFontSizeOverride("font_size", fitSize);
+                fontSize = fitSize;
                 if (font != null)
                 {
                     measured = font.GetStringSize(text, HorizontalAlignment.Left, -1, fontSize).X;
@@ -154,6 +160,11 @@ public static class SpellCardTypePlaquePatch
             {
                 // 诊断失败忽略
             }
+            // 关键：先设最小尺寸——原版/NCard 的布局会按最小尺寸修正 Size，
+            // 只写 Size 会被后续 layout 回写覆盖（实测图鉴中部分卡回到 61）。
+            // 放在早退判断之前，保证即使框宽已对、label 最小尺寸也被稳定住。
+            plaque.CustomMinimumSize = new Vector2(want, plaque.Size.Y);
+            label.CustomMinimumSize = new Vector2(need, label.Size.Y);
             if (Mathf.Abs(plaque.Size.X - want) < 0.5f)
             {
                 return;
