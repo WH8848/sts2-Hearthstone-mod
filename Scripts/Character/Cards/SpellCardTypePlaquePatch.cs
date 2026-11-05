@@ -86,7 +86,10 @@ public static class SpellCardTypePlaquePatch
 
         /// <summary>
         /// 把类型标签撑到其最小宽度（长文案所需宽度），并按原版公式同步类型牌宽度、
-        /// 保持中心点不动。仅在 label 被压扁（图鉴网格）时生效，正常路径无变化。
+        /// 保持中心点不动。
+        /// <b>宽度以 label 的最小尺寸（GetCombinedMinimumSize，文本真实需求）为准</b>——
+        /// 不能用 label.Size：图鉴网格中布局会把它重置回旧文案宽度（44），
+        /// 用它算框宽会把正常卡也压成 61。
         /// </summary>
         private static void EnsureLabelAndPlaqueWidths(NCard card, MegaLabel label)
         {
@@ -100,7 +103,7 @@ public static class SpellCardTypePlaquePatch
             {
                 return;
             }
-            float want = Mathf.Max(label.Size.X + 17f, 61f);
+            float want = Mathf.Max(min.X + 17f, 61f);
             if (Mathf.Abs(plaque.Size.X - want) < 0.5f)
             {
                 return;
