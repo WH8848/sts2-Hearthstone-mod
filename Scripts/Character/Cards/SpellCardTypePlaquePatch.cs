@@ -47,6 +47,18 @@ public static class SpellCardTypePlaquePatch
                 // 基础类型文本（攻击/技能/能力…）+ "丨法术"（分隔符用中文竖线"丨"）
                 var baseText = __instance.Model.Type.ToLocString().GetFormattedText();
                 label.SetTextAutoSize(baseText + "丨" + SpellSuffixLoc.GetFormattedText());
+                // 诊断（仅用户反馈"类型牌框太小"的卡 + 同批正常卡作对照）：
+                // 记录 label/plaque 尺寸与节点就绪状态，定位"框宽未随长文案扩张"的差异点。
+                var entry = __instance.Model.Id.Entry;
+                if (entry is "JAINA_CARD_DEATHBORNE_CARD" or "JAINA_CARD_FORBIDDEN_SHRINE_CARD"
+                    or "JAINA_CARD_APEXIS_BLAST" or "JAINA_CARD_CRAM_SESSION_CARD")
+                {
+                    var plaque = __instance.GetNodeOrNull<NinePatchRect>("%TypePlaque");
+                    MegaCrit.Sts2.Core.Logging.Log.Info(
+                        $"[JainaPlaque] {entry} ready={__instance.IsNodeReady()} " +
+                        $"labelSize={label.Size} labelMin={label.GetCombinedMinimumSize()} " +
+                        $"plaqueSize={plaque?.Size.ToString() ?? "null"} text='{label.Text}'");
+                }
             }
             catch
             {
