@@ -23,6 +23,11 @@ public static class SpellCardTypePlaquePatch
     /// </summary>
     private static readonly LocString SpellSuffixLoc = new LocString("gameplay_ui", "CARD_TYPE.SPELL");
 
+    /// <summary>
+    /// 已输出过诊断的键（避免每帧重复打印）
+    /// </summary>
+    private static readonly System.Collections.Generic.HashSet<string> LoggedKeys = [];
+
     [HarmonyPatch(typeof(NCard), "UpdateTypePlaque")]
     private static class UpdateTypePlaquePostfix
     {
@@ -83,25 +88,72 @@ public static class SpellCardTypePlaquePatch
         }
 
         /// <summary>
-        /// 把类型标签撑到其最小宽度（长文案所需宽度），并按原版公式同步类型牌宽度、
-        /// 保持中心点不动。
-        /// <b>宽度以 label 的最小尺寸（GetCombinedMinimumSize，文本真实需求）为准</b>——
-        /// 不能用 label.Size：图鉴网格中布局会把它重置回旧文案宽度（44），
-        /// 用它算框宽会把正常卡也压成 61。
+        /// 把类型标签撑到其<b>真实文本宽度</b>并按原版公式同步类型牌宽度、保持中心点不动。
+        /// 宽度取值顺序（取最大）：字体实测宽度（Label theme font 的 GetStringSize）＞
+        /// 按字号估算（中文 1em、西文 0.55em）＞ label 最小尺寸。
+        /// <b>为什么不能用 label.Size / GetCombinedMinimumSize</b>：图鉴网格里 label 被压到旧宽度 44，
+        /// 而 GetCombinedMinimumSize 返回 80 仍小于实际渲染宽度（"技能丨法术"5 字按 20px 字号约 100px），
+        /// 框宽按 80+17=97 仍会溢出（实测截图文字超出右边框）。
         /// </summary>
         private static void EnsureLabelAndPlaqueWidths(NCard card, MegaLabel label)
         {
+            var text = label.Text ?? string.Empty;
             var min = label.GetCombinedMinimumSize();
-            if (label.Size.X < min.X - 0.5f)
+            int fontSize = 20;
+            float measured = 0f;
+            try
             {
-                label.Size = new Vector2(min.X, label.Size.Y);
+                var font = label.GetThemeFont("font");
+                var fsize = label.GetThemeFontSize("font_size");
+                if (fsize > 0)
+                {
+                    fontSize = fsize;
+                }
+                if (font != null)
+                {
+                    measured = font.GetStringSize(text, HorizontalAlignment.Left, -1, fontSize).X;
+                }
+            }
+            catch
+            {
+                // 取字体失败则用估算兜底
+            }
+            // need 优先取"字体实测宽度"，其次 label 最小尺寸；两者都不可用时才按字号估算
+            float need = Mathf.Max(min.X, measured);
+            if (need <= 0.5f)
+            {
+                float estimated = 0f;
+                foreach (var ch in text)
+                {
+                    estimated += ch >= 0x2E80 ? fontSize : fontSize * 0.55f;
+                }
+                need = estimated;
+            }
+            if (label.Size.X < need - 0.5f)
+            {
+                label.Size = new Vector2(need, label.Size.Y);
             }
             var plaque = card.GetNodeOrNull<NinePatchRect>("%TypePlaque");
             if (plaque == null)
             {
                 return;
             }
-            float want = Mathf.Max(min.X + 17f, 61f);
+            float want = Mathf.Max(need + 17f, 61f);
+            // 详细诊断（每张卡每种结果只打一次，避免刷屏）：真实文本宽度/需求/框宽
+            try
+            {
+                var key = card.Model.Id.Entry + "|" + ((int)want) + "|" + ((int)need);
+                if (LoggedKeys.Add(key))
+                {
+                    MegaCrit.Sts2.Core.Logging.Log.Info(
+                        $"[JainaPlaque] {card.Model.Id.Entry} text='{text}' min={min.X} measured={measured} " +
+                        $"need={need} want={want} plaqueBefore={plaque.Size.X} labelBefore={label.Size.X} fontSize={fontSize}");
+                }
+            }
+            catch
+            {
+                // 诊断失败忽略
+            }
             if (Mathf.Abs(plaque.Size.X - want) < 0.5f)
             {
                 return;
