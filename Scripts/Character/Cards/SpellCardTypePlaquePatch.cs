@@ -47,8 +47,26 @@ public static class SpellCardTypePlaquePatch
                 // 基础类型文本（攻击/技能/能力…）+ "丨法术"（分隔符用中文竖线"丨"）
                 var baseText = __instance.Model.Type.ToLocString().GetFormattedText();
                 label.SetTextAutoSize(baseText + "丨" + SpellSuffixLoc.GetFormattedText());
-                // 诊断（仅用户反馈"类型牌框太小"的卡 + 同批正常卡作对照）：
-                // 记录 label/plaque 尺寸与节点就绪状态，定位"框宽未随长文案扩张"的差异点。
+                // 图鉴网格里 label.Size 可能停留在旧文案宽度（44，"攻击"两字宽），
+                // 而新文案的最小宽度已是 80 —— 原版框宽公式 max(label.Size.X + 17, 61)
+                // 会得到 61 的小框（文字溢出）；放大预览路径布局正常则无此问题。
+                // 这里把 label 撑到最小宽度并同步框宽（结果与其它卡一致，不额外放大）。
+                EnsureLabelAndPlaqueWidths(__instance, label);
+                Callable.From(() =>
+                {
+                    try
+                    {
+                        if (GodotObject.IsInstanceValid(__instance) && GodotObject.IsInstanceValid(label))
+                        {
+                            EnsureLabelAndPlaqueWidths(__instance, label);
+                        }
+                    }
+                    catch
+                    {
+                        // 展示层补丁：忽略
+                    }
+                }).CallDeferred();
+                // 诊断（仅用户反馈"类型牌框太小"的卡 + 同批正常卡作对照）
                 var entry = __instance.Model.Id.Entry;
                 if (entry is "JAINA_CARD_DEATHBORNE_CARD" or "JAINA_CARD_FORBIDDEN_SHRINE_CARD"
                     or "JAINA_CARD_APEXIS_BLAST" or "JAINA_CARD_CRAM_SESSION_CARD")
@@ -64,6 +82,32 @@ public static class SpellCardTypePlaquePatch
             {
                 // 展示层补丁：任何异常都不影响原版标签
             }
+        }
+
+        /// <summary>
+        /// 把类型标签撑到其最小宽度（长文案所需宽度），并按原版公式同步类型牌宽度、
+        /// 保持中心点不动。仅在 label 被压扁（图鉴网格）时生效，正常路径无变化。
+        /// </summary>
+        private static void EnsureLabelAndPlaqueWidths(NCard card, MegaLabel label)
+        {
+            var min = label.GetCombinedMinimumSize();
+            if (label.Size.X < min.X - 0.5f)
+            {
+                label.Size = new Vector2(min.X, label.Size.Y);
+            }
+            var plaque = card.GetNodeOrNull<NinePatchRect>("%TypePlaque");
+            if (plaque == null)
+            {
+                return;
+            }
+            float want = Mathf.Max(label.Size.X + 17f, 61f);
+            if (Mathf.Abs(plaque.Size.X - want) < 0.5f)
+            {
+                return;
+            }
+            float centerX = plaque.Position.X + plaque.Size.X * 0.5f;
+            plaque.Size = new Vector2(want, plaque.Size.Y);
+            plaque.Position = new Vector2(centerX - want * 0.5f, plaque.Position.Y);
         }
     }
 }
