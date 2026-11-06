@@ -44,7 +44,8 @@ public static class JainaMinionPool
             return 0;
         }
         int count = 0;
-        foreach (var pet in player.PlayerCombatState.Pets)
+        var pets = player.PlayerCombatState.Pets;
+        foreach (var pet in pets)
         {
             if (pet != null && pet.IsAlive && pet.Monster is JainaMinionBase)
             {
@@ -198,6 +199,11 @@ public static class JainaMinionPool
         {
             return null!;
         }
+
+        // 确定性排序（联机修复）：candidates 来自 Dictionary<Type,Type>.Keys 的迭代顺序，
+        // 该顺序依赖 Type 哈希，跨进程不保证一致——两端顺序不同时，同一个 RNG 索引会选出
+        // 不同随从（实测：一端召唤大法师安东尼达斯、另一端召唤别的/不召唤 → checksum 分歧断联）。
+        jaina.Scripts.DeterministicPool.SortByTypeName(candidates);
 
         var combatState = player.Creature.CombatState;
         var chosen = combatState.RunState.Rng.CombatTargets.NextItem(candidates) ?? candidates[0];
