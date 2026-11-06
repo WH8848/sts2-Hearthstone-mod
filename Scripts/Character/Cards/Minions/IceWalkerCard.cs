@@ -26,10 +26,8 @@ public sealed class IceWalkerCard : JainaMinionCardTemplate
 
     protected override int MinionHealth => 3;
 
-    /// <summary>
-    /// 自身特性悬停：冻结能力解释（"随从"关键词解释由模板兜底）
-    /// </summary>
-    protected override IEnumerable<IHoverTip> ExtraMinionHoverTips => [HoverTipFactory.FromPower<FreezePower>()];
+    // 冻结的悬停解释由 CanonicalKeywords 里的 Freeze 关键词自动提供（金色词条），
+    // 这里不再重复返回 FromPower<FreezePower>()——否则会出现两个"冻结"解释栏。
 
     /// <summary>
     /// 元素种族 + 冻结（悬停解释,英雄技能额外给予冻结）+ 消耗（随从卡打出后消耗,模板默认）
