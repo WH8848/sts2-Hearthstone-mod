@@ -1,4 +1,4 @@
-{
+﻿{
     "JAINA_CARD_FIREBALL.title":  "火球术",
     "JAINA_CARD_FIREBALL.titleUpgraded":  "炎爆术",
     "JAINA_CARD_FIREBALL.description":  "造成{Damage:diff()}点伤害。",
@@ -194,7 +194,7 @@
     "JAINA_CARD_TEAR_REALITY_CARD.titleUpgraded":  "操控时间",
     "JAINA_CARD_TEAR_REALITY_CARD.description":  "{IfUpgraded:show:[gold]发现[/gold]|随机将}两张来自过去的{IfUpgraded:show:[gold]奥术[/gold]|法师}法术牌置入你的[gold]手牌[/gold]，其耗能减少{energyPrefix:energyIcons(1)}。",
     "JAINA_CARD_DECK_OF_WONDERS_CARD.title":  "愚人套牌",
-    "JAINA_CARD_DECK_OF_WONDERS_CARD.description":  "将你[gold]抽牌堆[/gold]和[gold]弃牌堆[/gold]中的法术牌变形成为耗能增加{energyPrefix:energyIcons(1)}的全角色卡牌。(保留其原始耗能。)",
+    "JAINA_CARD_DECK_OF_WONDERS_CARD.description":  "将你[gold]抽牌堆[/gold]和[gold]弃牌堆[/gold]中的法术牌[gold]变化[/gold]为耗能增加{energyPrefix:energyIcons(1)}的全角色卡牌。\n(保留其原始耗能。)",
     "JAINA_CARD_EVOCATION_CARD.title":  "唤醒",
     "JAINA_CARD_EVOCATION_CARD.description":  "用随机的法师法术牌填满你的手牌。\n这些牌具有[gold]虚无[/gold]。",
     "JAINA_CARD_IMP_WRANGLER_CARD.title":  "小精灵驾驭者",
@@ -212,7 +212,7 @@
     "JAINA_CARD_TIDE_POOL_CARD.title":  "潮汐之池",
     "JAINA_CARD_TIDE_POOL_CARD.description":  "[gold]地标[/gold]。\n[gold]发现[/gold]一张耗能小于或等于{energyPrefix:energyIcons(1)}的法术牌。\n在你使用一张法术牌后，重新开启本[gold]地标[/gold]。\n[gold]耐久度[/gold]:{Durability}。",
     "JAINA_CARD_WINTERSPRING_WHELP_CARD.title":  "冬泉雏龙",
-    "JAINA_CARD_WINTERSPRING_WHELP_CARD.description":  "[gold]龙[/gold]。\n[gold]召唤[/gold]一个[blue]1/2[/blue]的[red]冬泉雏龙[/red]。\n[gold]战吼[/gold]:[gold]发现[/gold]一张能量消耗为0{energyPrefix:energyIcons(1)}的全角色卡牌。",
+    "JAINA_CARD_WINTERSPRING_WHELP_CARD.description":  "[gold]龙[/gold]。\n[gold]召唤[/gold]一个[blue]1/2[/blue]的[red]冬泉雏龙[/red]。\n[gold]战吼[/gold]:[gold]发现[/gold]一张耗能为0{energyPrefix:energyIcons(1)}的全角色卡牌。",
     "JAINA_CARD_PRISMATIC_ELEMENTAL_CARD.title":  "棱光元素",
     "JAINA_CARD_PRISMATIC_ELEMENTAL_CARD.description":  "[gold]元素[/gold]。\n[gold]召唤[/gold]一个[blue]1/3[/blue]的[red]棱光元素[/red]。\n[gold]战吼[/gold]:[gold]发现[/gold]一张全角色卡牌，使其耗能减少{energyPrefix:energyIcons(1)}。",
     "JAINA_CARD_ROYAL_TREASURE_CARD.title":  "列王遗宝",
@@ -237,5 +237,5 @@
     "JAINA_CARD_ICEBLOOD_TOWER_CARD.title":  "冰血哨塔",
     "JAINA_CARD_ICEBLOOD_TOWER_CARD.description":  "在你的回合结束时，随机从你的[gold]抽牌堆[/gold]中施放另一张法术牌。\n持续3回合。",
     "JAINA_CARD_SHIFTING_SCROLL_CARD.title":  "变形卷轴",
-    "JAINA_CARD_SHIFTING_SCROLL_CARD.description":  "如果这张牌在你的[gold]手牌[/gold]中，每个回合都会变成一张随机法师法术牌{IfUpgraded:show:\n（变形后的牌也具有保留）|}。"
+    "JAINA_CARD_SHIFTING_SCROLL_CARD.description":  "如果这张牌在你的[gold]手牌[/gold]中，每个回合都会[gold]变化[/gold]成一张随机法师法术牌{IfUpgraded:show:\n（变形后的牌也具有保留）|}。"
 }
