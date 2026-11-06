@@ -12,7 +12,7 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
-/// 唤醒 (Evocation) - 0费技能牌（稀有，奥术派系）。
+/// 唤醒 (Evocation) - 1费技能牌（稀有，奥术派系），升级后 0 费。
 /// 用随机法师法术牌填满你的手牌。这些牌具有虚无。
 /// 基础版消耗；升级后不再消耗。
 /// </summary>
@@ -37,7 +37,7 @@ public sealed class EvocationCard : JainaSpellCardTemplate
     public override string CustomPortraitPath => "res://assets/card_art/evocation.png";
 
     public EvocationCard()
-        : base(0, CardType.Skill, CardRarity.Rare, TargetType.None, true)
+        : base(1, CardType.Skill, CardRarity.Rare, TargetType.None, true)
     {
     }
 
@@ -47,6 +47,8 @@ public sealed class EvocationCard : JainaSpellCardTemplate
     /// </summary>
     protected override void OnUpgrade()
     {
+        // 升级：费用 1 -> 0；不消耗（移除 Exhaust，升级后不再进消耗堆）
+        EnergyCost.UpgradeBy(-1);
         RemoveKeyword(CardKeyword.Exhaust);
     }
 

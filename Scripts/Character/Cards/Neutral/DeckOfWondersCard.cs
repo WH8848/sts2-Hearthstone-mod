@@ -14,7 +14,7 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
-/// 愚人套牌 (Deck of Lunacy) - 0费技能牌（稀有，奥术派系）。
+/// 愚人套牌 (Deck of Lunacy) - 1费技能牌（稀有，奥术派系），升级后 0 费。
 /// 将你抽牌堆和弃牌堆中的法术牌变形成为费用消耗增加1点的全角色攻击/技能/能力牌
 /// （Attack/Skill/Power——含吉安娜法术牌，吉安娜的非法术能力牌
 /// 如戏法图腾/炉石形态不在范围内）。（保留其原始费用消耗。）
@@ -43,7 +43,7 @@ public sealed class DeckOfWondersCard : JainaSpellCardTemplate
     public override string CustomPortraitPath => "res://assets/card_art/deck_of_lunacy.png";
 
     public DeckOfWondersCard()
-        : base(0, CardType.Skill, CardRarity.Rare, TargetType.None, true)
+        : base(1, CardType.Skill, CardRarity.Rare, TargetType.None, true)
     {
     }
 
@@ -54,6 +54,8 @@ public sealed class DeckOfWondersCard : JainaSpellCardTemplate
     /// </summary>
     protected override void OnUpgrade()
     {
+        // 升级：费用 1 -> 0；不消耗（移除 Exhaust，升级后不再进消耗堆）
+        EnergyCost.UpgradeBy(-1);
         RemoveKeyword(CardKeyword.Exhaust);
     }
 
