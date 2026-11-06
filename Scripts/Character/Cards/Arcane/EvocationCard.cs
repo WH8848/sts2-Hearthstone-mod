@@ -20,17 +20,16 @@ namespace jaina.Scripts.Character.Cards;
 public sealed class EvocationCard : JainaSpellCardTemplate
 {
     /// <summary>
-    /// 法术牌 + 奥术派系；基础版消耗（升级后不再消耗）
+    /// 法术牌 + 奥术派系；基础版与升级版都消耗（升级后保留消耗）
     /// </summary>
-    public override IEnumerable<CardKeyword> CanonicalKeywords => IsUpgraded
-        ? [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Arcane]
-        : [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Arcane,
-           CardKeyword.Exhaust];
+    public override IEnumerable<CardKeyword> CanonicalKeywords =>
+        [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Arcane,
+         CardKeyword.Exhaust];
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [];
 
     /// <summary>
-    /// 可升级（升级后去除消耗）
+    /// 可升级（升级后 0 费，保留消耗）
     /// </summary>
     public override int MaxUpgradeLevel => 1;
 
@@ -47,9 +46,8 @@ public sealed class EvocationCard : JainaSpellCardTemplate
     /// </summary>
     protected override void OnUpgrade()
     {
-        // 升级：费用 1 -> 0；不消耗（移除 Exhaust，升级后不再进消耗堆）
+        // 升级：费用 1 -> 0；消耗保留（升级后仍进消耗堆，不移除 Exhaust）
         EnergyCost.UpgradeBy(-1);
-        RemoveKeyword(CardKeyword.Exhaust);
     }
 
     /// <summary>
