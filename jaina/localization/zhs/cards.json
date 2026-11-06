@@ -79,7 +79,7 @@
     "JAINA_CARD_AWAKEN.description":  "[gold]发现[/gold]一张法术牌，使其耗能减少{energyPrefix:energyIcons(1)}。{IfUpgraded:show:\n[gold]压轴[/gold]:在你的下回合开始时，将本牌移回你的[gold]手牌[/gold]。|}",
     "JAINA_CARD_OBJECTION.title":  "法术反制",
     "JAINA_CARD_OBJECTION.titleUpgraded":  "异议",
-    "JAINA_CARD_OBJECTION.description":  "{IfUpgraded:show:敌人的下一个[gold]攻击[/gold]意图不会造成任何伤害。|敌人的下一个[gold]非攻击[/gold]意图不会触发任何效果。}",
+    "JAINA_CARD_OBJECTION.description":  "当一名敌人将要{IfUpgraded:show:[gold]攻击[/gold]|[gold]强化[/gold]/[gold]削弱[/gold]/[gold]格挡[/gold]}时,将其取消。",
     "JAINA_CARD_OASIS_ALLY_CARD.title":  "绿洲盟军",
     "JAINA_CARD_OASIS_ALLY_CARD.titleUpgraded":  "霜巫十字绣",
     "JAINA_CARD_OASIS_ALLY_CARD.description":  "{IfUpgraded:show:对1个角色造成{Damage:diff()}点伤害，|受到攻击时，}[gold]召唤[/gold]一个[red]水元素[/red]。",
