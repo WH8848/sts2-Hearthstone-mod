@@ -1,5 +1,8 @@
 using System;
+using System.Collections.Generic;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Models;
 using jaina.Scripts.Character.Minions;
 using STS2RitsuLib.Interop.AutoRegistration;
 
@@ -25,6 +28,15 @@ public sealed class AntonidasCard : JainaMinionCardTemplate
     protected override int MinionAttack => 5;
 
     protected override int MinionHealth => 7;
+
+    /// <summary>
+    /// 衍生卡悬停：大法师安东尼达斯的效果与"火球术"相关（施放法术后获得火球术），
+    /// 卡面悬停显示火球术衍生卡（同深度冻结/绿洲盟军做法）。
+    /// </summary>
+    protected override IEnumerable<IHoverTip> ExtraMinionHoverTips =>
+    [
+        new CardHoverTip(ModelDb.Card<Fireball>())
+    ];
 
     public AntonidasCard()
         : base(2, CardRarity.Rare)
