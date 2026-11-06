@@ -80,19 +80,25 @@ public static class JainaPendingRewardQueue
         new Type[] { typeof(CardModel), typeof(PileType), typeof(CardPilePosition), typeof(AbstractModel), typeof(bool) })]
     public static class AddPostfix
     {
-        private static async void Postfix(CardModel card)
+        private static void Postfix(CardModel card)
         {
-            try
+            // fire-and-forget：明确用 RunSafely，异常不会吞掉进程（内部记录日志）
+            _ = MegaCrit.Sts2.Core.Helpers.TaskHelper.RunSafely(FlushAsync(card));
+
+            static async Task FlushAsync(CardModel card)
             {
-                var owner = card?.Owner;
-                if (owner != null)
+                try
                 {
-                    await TryFlush(owner);
+                    var owner = card?.Owner;
+                    if (owner != null)
+                    {
+                        await TryFlush(owner);
+                    }
                 }
-            }
-            catch
-            {
-                // 奖励发放失败不影响原流程
+                catch (System.Exception ex)
+                {
+                    MegaCrit.Sts2.Core.Logging.Log.Warn($"[JainaPendingReward] flush failed: {ex.Message}");
+                }
             }
         }
     }
@@ -103,22 +109,27 @@ public static class JainaPendingRewardQueue
     [HarmonyPatch(typeof(CardPileCmd), nameof(CardPileCmd.AddGeneratedCardToCombat))]
     public static class AddGeneratedPostfix
     {
-        private static async void Postfix(CardModel card, Player? creator)
+        private static void Postfix(CardModel card, Player? creator)
         {
-            try
+            _ = MegaCrit.Sts2.Core.Helpers.TaskHelper.RunSafely(FlushAsync(card, creator));
+
+            static async Task FlushAsync(CardModel card, Player? creator)
             {
-                if (card?.Owner != null)
+                try
                 {
-                    await TryFlush(card.Owner);
+                    if (card?.Owner != null)
+                    {
+                        await TryFlush(card.Owner);
+                    }
+                    else if (creator != null)
+                    {
+                        await TryFlush(creator);
+                    }
                 }
-                else if (creator != null)
+                catch (System.Exception ex)
                 {
-                    await TryFlush(creator);
+                    MegaCrit.Sts2.Core.Logging.Log.Warn($"[JainaPendingReward] flush failed: {ex.Message}");
                 }
-            }
-            catch
-            {
-                // 奖励发放失败不影响原流程
             }
         }
     }

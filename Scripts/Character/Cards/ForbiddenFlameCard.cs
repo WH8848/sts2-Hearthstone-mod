@@ -14,9 +14,9 @@ namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
 /// 禁忌烈焰 (Forbidden Flame) - X费攻击牌（罕见，火焰派系）。
-/// 对一个角色造成 10x 点伤害（x = 消耗的能量）。
+/// 对一个角色造成 9x 点伤害（x = 消耗的能量）。
 /// 升级后（禁忌烈焰+）：造成 12x 点伤害。
-/// 卡面文案固定显示倍率（10X/12X，不显示当前能量动态值）。
+/// 卡面文案固定显示倍率（9X/12X，X = 消耗的能量）。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
 public sealed class ForbiddenFlameCard : JainaSpellCardTemplate
@@ -51,9 +51,9 @@ public sealed class ForbiddenFlameCard : JainaSpellCardTemplate
         // 记录施放（倒带/罗曼斯/三派系追踪）
         jaina.Scripts.Character.JainaCastTracker.RecordPlayed(this);
 
-        // x = 消耗的能量；伤害 = (10 或 12) × x
+        // x = 消耗的能量；伤害 = (9 或 12) × x
         int x = ResolveEnergyXValue();
-        int damage = (IsUpgraded ? 12 : 10) * x;
+        int damage = (IsUpgraded ? 12 : 9) * x;
         if (cardPlay.Target is { IsAlive: true } target)
         {
             // 攻击伤害：吃力量加成（与原版多次攻击牌一致）

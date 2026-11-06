@@ -13,8 +13,7 @@ namespace jaina.Scripts.Character.Minions;
 /// <summary>
 /// 滑冰元素 (Sleet Skater) - 吉安娜专属随从。
 /// 属性：攻击 3，生命 4。
-/// 战吼：选择1名敌人，给予其1层冻结，获得等同于其减少的总体伤害的格挡。
-/// （1层冻结使敌方攻击伤害减少 12.5%；减少的总体伤害 = 该敌方意图攻击伤害 × 12.5%）
+/// 战吼：选择1名敌人，给予其1层冻结，获得等同于其冻结层数的格挡。
 /// 冻结不受人工制品阻挡（炉石规则：冻结无视人工制品）。
 /// </summary>
 [RegisterMonster]
@@ -38,8 +37,7 @@ public sealed class SkatingElementalMinion : JainaMinionBase
 
     /// <summary>
     /// 战吼：选择1名敌人，给予其1层冻结（无视人工制品）；
-    /// 获得格挡 = 该敌方因冻结减少的总体伤害
-    /// （1层冻结使敌方攻击伤害减少 12.5%——按该敌方当前意图攻击伤害 × 12.5% 计算）。
+    /// 获得格挡 = 该敌方当前的冻结层数（含本次施加的 1 层）。
     /// 选择目标失效时回退随机一名存活敌人。
     /// </summary>
     public override async Task OnBattlecry(PlayerChoiceContext choiceContext)
@@ -74,22 +72,6 @@ public sealed class SkatingElementalMinion : JainaMinionBase
             return;
         }
 
-        // 战吼伤害减少量（用于护甲）：冻结<b>施加前</b>的意图预览伤害 D1（含冻结修正,
-        // 此时已冻结 N 层）与<b>施加后</b>的预览 D2（N+1 层）之差 = 本次冻结的真实减少量
-        // （= 原始伤害 × 12.5%,不受已有冻结层数影响;避免"预览已扣冻结后再乘 12.5%"的
-        // 二次扣减——实测表现是格挡偏小甚至为 0）。
-        int damageBefore = 0;
-        if (enemy.Monster?.NextMove != null)
-        {
-            foreach (var intent in enemy.Monster.NextMove.Intents)
-            {
-                if (intent is AttackIntent atk)
-                {
-                    damageBefore += atk.GetTotalDamage(new[] { owner.Creature }, enemy);
-                }
-            }
-        }
-
         // 给于1层冻结（无视人工制品：滑冰元素的冻结不被人工制品阻挡）
         FreezePower.BypassArtifactNextApply = true;
         try
@@ -101,19 +83,8 @@ public sealed class SkatingElementalMinion : JainaMinionBase
             FreezePower.BypassArtifactNextApply = false;
         }
 
-        // 冻结后预览（N+1 层）;减少量 = D1 - D2
-        int damageAfter = 0;
-        if (enemy.Monster?.NextMove != null)
-        {
-            foreach (var intent in enemy.Monster.NextMove.Intents)
-            {
-                if (intent is AttackIntent atk)
-                {
-                    damageAfter += atk.GetTotalDamage(new[] { owner.Creature }, enemy);
-                }
-            }
-        }
-        int block = Math.Max(0, damageBefore - damageAfter);
+        // 获得等同于目标冻结层数的格挡（施加后读取，含本次的 1 层）
+        int block = Math.Max(0, (int)enemy.GetPowerAmount<FreezePower>());
         if (block > 0)
         {
             await CreatureCmd.GainBlock(owner.Creature, block, ValueProp.Move, null);

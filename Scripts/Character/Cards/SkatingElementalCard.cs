@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.HoverTips;
 using jaina.Scripts.Character.Keywords;
 using jaina.Scripts.Character.Minions;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -28,6 +29,56 @@ public sealed class SkatingElementalCard : JainaMinionCardTemplate
     /// </summary>
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
         [JainaKeywords.Miniaturize, JainaKeywords.Battlecry, JainaKeywords.Freeze, CardKeyword.Exhaust];
+
+    /// <summary>
+    /// 悬停提示：显示微缩生成的衍生物「滑冰元素（微型）」卡面
+    /// （与实战中微缩生成的复制品一致：0 费 1/1、带「微型」、去掉「微缩」与「消耗」、保留全部文字效果）。
+    /// </summary>
+    protected override IEnumerable<IHoverTip> ExtraMinionHoverTips
+    {
+        get
+        {
+            var mini = MiniDerivative;
+            if (mini != null)
+            {
+                yield return new CardHoverTip(mini);
+            }
+        }
+    }
+
+    /// <summary>
+    /// 微型衍生物卡（仅用于悬停展示，懒加载一次后复用）
+    /// </summary>
+    private static SkatingElementalCard? _miniDerivative;
+
+    private static SkatingElementalCard? MiniDerivative
+    {
+        get
+        {
+            if (_miniDerivative != null)
+            {
+                return _miniDerivative;
+            }
+            try
+            {
+                var canonical = MegaCrit.Sts2.Core.Models.ModelDb.Card<SkatingElementalCard>();
+                var mini = (SkatingElementalCard)canonical.ToMutable();
+                mini.AddKeyword(JainaKeywords.Mini);
+                mini.RemoveKeyword(JainaKeywords.Miniaturize);
+                mini.RemoveKeyword(CardKeyword.Exhaust);
+                mini.EnergyCost.SetCustomBaseCost(0);
+                mini.SetOverrideStats(1, 1);
+                _miniDerivative = mini;
+                return mini;
+            }
+            catch (System.Exception ex)
+            {
+                MegaCrit.Sts2.Core.Logging.Log.Warn(
+                    $"[Jaina] build mini skating derivative failed: {ex.Message}");
+                return null;
+            }
+        }
+    }
 
     /// <summary>
     /// 战吼选择 1 名敌人（打出时进入目标选择）

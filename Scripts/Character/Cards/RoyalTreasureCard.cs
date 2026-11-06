@@ -15,7 +15,7 @@ namespace jaina.Scripts.Character.Cards;
 /// <summary>
 /// 列王遗宝 (Royal Treasure) - 3费技能牌（罕见）。
 /// 发现一张3费及以上的任意角色（全职业）卡牌，该牌本回合费用为0点。
-/// 升级后：费用 3 -> 2（其余不变）。
+/// 升级后：费用不变（3 费），获得「保留」。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
 public sealed class RoyalTreasureCard : JainaSpellCardTemplate
@@ -41,8 +41,8 @@ public sealed class RoyalTreasureCard : JainaSpellCardTemplate
 
     protected override void OnUpgrade()
     {
-        // 升级：费用 3 -> 2（其余不变；升级后名称仍为"列王遗宝"）
-        EnergyCost.UpgradeBy(-1);
+        // 升级：费用保持 3 费不变，改为获得「保留」
+        AddKeyword(CardKeyword.Retain);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)

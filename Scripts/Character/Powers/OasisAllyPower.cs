@@ -8,6 +8,8 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.ValueProps;
 using STS2RitsuLib.Interop.AutoRegistration;
+using STS2RitsuLib.Scaffolding.Content;
+using STS2RitsuLib.Scaffolding.Content.Patches;
 
 namespace jaina.Scripts.Character.Powers;
 
@@ -18,16 +20,32 @@ namespace jaina.Scripts.Character.Powers;
 /// 下个玩家回合开始兜底移除。
 /// </summary>
 [RegisterPower]
-public sealed class OasisAllyPower : PowerModel
+public sealed class OasisAllyPower : PowerModel, IModPowerAssetOverrides
 {
+    /// <inheritdoc />
+    public PowerAssetProfile AssetProfile => new("res://assets/power_icons/jaina_power_oasis_ally_power.png");
+
+    /// <inheritdoc />
+    public string? CustomIconPath => AssetProfile.IconPath;
+
+    /// <inheritdoc />
+    public string? CustomBigIconPath => AssetProfile.BigIconPath;
+
     public override PowerType Type => PowerType.Buff;
 
     public override PowerStackType StackType => PowerStackType.Single;
 
     /// <summary>
-    /// 隐藏：召唤提示由卡面效果本身展示（无图标，同 PlayedRecordHookPower 风格）
+    /// 可见：让玩家能看到结界已挂上（此前隐藏导致"看起来没挂"）
     /// </summary>
-    protected override bool IsVisibleInternal => false;
+    protected override bool IsVisibleInternal => true;
+
+    public override Task AfterApplied(Creature? applier, CardModel? cardSource)
+    {
+        MegaCrit.Sts2.Core.Logging.Log.Info(
+            $"[JainaOasis] applied owner={Owner?.Name} stacks={Amount}");
+        return Task.CompletedTask;
+    }
 
     public override async Task BeforeDamageReceived(PlayerChoiceContext choiceContext, Creature target, decimal amount, ValueProp props, Creature? dealer, CardModel? cardSource)
     {
@@ -36,6 +54,9 @@ public sealed class OasisAllyPower : PowerModel
         // 只有敌方造成的伤害才算"受到攻击"：吉安娜自己/己方效果对随从造成的伤害不触发
         bool isEnemyDamage = dealer != null && dealer.Side != Owner.Side;
         // 只要被敌方攻击就触发——哪怕伤害被格挡（零点伤害）也触发（用户口径）
+        MegaCrit.Sts2.Core.Logging.Log.Info(
+            $"[JainaOasis] damage received: target={target?.Name} amount={amount} " +
+            $"dealer={dealer?.Name} isOwnerOrPet={isOwnerOrPet} isEnemyDamage={isEnemyDamage} stacks={Amount}");
         if (!isOwnerOrPet || !isEnemyDamage || Amount <= 0)
         {
             return;
@@ -64,6 +85,8 @@ public sealed class OasisAllyPower : PowerModel
     {
         if (side == Owner.Side && Amount > 0)
         {
+            MegaCrit.Sts2.Core.Logging.Log.Info(
+                $"[JainaOasis] removing at turn start (not triggered last turn) stacks={Amount}");
             await PowerCmd.Remove(this);
         }
     }

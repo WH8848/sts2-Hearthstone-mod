@@ -95,8 +95,9 @@ public static class PlayerHoverPetsHealthBarPatch
                 }
             }
         }
-        catch
+        catch (System.Exception ex)
         {
+            MegaCrit.Sts2.Core.Logging.Log.Warn($"[Jaina] {ex.Message}");
         }
     }
 
@@ -131,8 +132,9 @@ public static class PlayerHoverPetsHealthBarPatch
                 }
             }
         }
-        catch
+        catch (System.Exception ex)
         {
+            MegaCrit.Sts2.Core.Logging.Log.Warn($"[Jaina] {ex.Message}");
         }
     }
 }

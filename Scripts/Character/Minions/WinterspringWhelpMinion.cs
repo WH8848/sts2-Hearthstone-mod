@@ -29,7 +29,7 @@ public sealed class WinterspringWhelpMinion : JainaMinionBase
     /// </summary>
     public override async Task OnBattlecry(PlayerChoiceContext choiceContext)
     {
-        MegaCrit.Sts2.Core.Logging.Log.Info("[JainaDiag] WinterspringWhelp OnBattlecry triggered");
+        MegaCrit.Sts2.Core.Logging.Log.Debug("[JainaDiag] WinterspringWhelp OnBattlecry triggered");
         var owner = Creature.PetOwner;
         if (owner == null)
         {

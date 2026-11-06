@@ -95,38 +95,60 @@ public sealed class JainaPetResidueCleanupPower : PowerModel
     /// </summary>
     internal static void ForceRemoveLingering(ICombatState combatState, Creature creature)
     {
-        try
+        if (combatState is not MegaCrit.Sts2.Core.Combat.CombatState cs)
         {
-            if (combatState is not MegaCrit.Sts2.Core.Combat.CombatState cs)
+            return;
+        }
+        // 1) 公开 API 优先：CombatState 仍匹配时直接用官方移除（不依赖反射）
+        if (creature.CombatState == cs)
+        {
+            try
             {
+                cs.RemoveCreature(creature);
                 return;
             }
-            bool removed = false;
-            foreach (var fieldName in new[] { "_allies", "_enemies" })
+            catch (System.Exception ex)
             {
-                var field = HarmonyLib.AccessTools.Field(typeof(MegaCrit.Sts2.Core.Combat.CombatState), fieldName);
-                if (field?.GetValue(cs) is System.Collections.Generic.List<Creature> list)
-                {
-                    if (list.Remove(creature))
-                    {
-                        removed = true;
-                    }
-                }
+                MegaCrit.Sts2.Core.Logging.Log.Warn(
+                    $"[Jaina] ForceRemoveLingering public API failed ({creature?.Name}): {ex.Message}");
             }
-            if (removed)
+        }
+        // 2) 反射兜底：CombatState 已被置 null（RemoveCreature 会早退），只能从私列表摘除
+        bool removed = false;
+        foreach (var fieldName in new[] { "_allies", "_enemies" })
+        {
+            var field = jaina.Scripts.GameReflection.Field(typeof(MegaCrit.Sts2.Core.Combat.CombatState), fieldName);
+            if (field == null)
             {
-                // CreaturesChanged 是事件,外部只能经反射触发(失败静默——纯 UI 通知)
-                var evtField = HarmonyLib.AccessTools.Field(
+                MegaCrit.Sts2.Core.Logging.Log.Warn(
+                    $"[Jaina] ForceRemoveLingering: CombatState.{fieldName} not found (game update?)");
+                continue;
+            }
+            if (field.GetValue(cs) is System.Collections.Generic.List<Creature> list && list.Remove(creature))
+            {
+                removed = true;
+            }
+        }
+        if (removed)
+        {
+            try
+            {
+                var evtField = jaina.Scripts.GameReflection.Field(
                     typeof(MegaCrit.Sts2.Core.Combat.CombatState), "CreaturesChanged");
                 if (evtField?.GetValue(cs) is System.Action<MegaCrit.Sts2.Core.Combat.CombatState> action)
                 {
                     action(cs);
                 }
             }
+            catch (System.Exception ex)
+            {
+                MegaCrit.Sts2.Core.Logging.Log.Warn($"[Jaina] ForceRemoveLingering notify failed: {ex.Message}");
+            }
         }
-        catch (System.Exception ex)
+        else
         {
-            MegaCrit.Sts2.Core.Logging.Log.Warn($"[JainaDiag] force remove lingering failed: {ex}");
+            MegaCrit.Sts2.Core.Logging.Log.Warn(
+                $"[Jaina] ForceRemoveLingering: {creature?.Name} not found in either list");
         }
     }
 

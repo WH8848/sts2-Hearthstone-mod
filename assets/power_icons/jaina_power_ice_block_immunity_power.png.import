@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bqqg4jidvbqlr"
-path="res://.godot/imported/.tmp_w.png-00847d8f4cfde0426eabc56fcbe6307a.ctex"
+uid="uid://d3d8yitdf5o8y"
+path="res://.godot/imported/jaina_power_ice_block_immunity_power.png-2c40dcf2b8d8b0cae1b7bcc0ea25738b.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://.tmp_w.png"
-dest_files=["res://.godot/imported/.tmp_w.png-00847d8f4cfde0426eabc56fcbe6307a.ctex"]
+source_file="res://assets/power_icons/jaina_power_ice_block_immunity_power.png"
+dest_files=["res://.godot/imported/jaina_power_ice_block_immunity_power.png-2c40dcf2b8d8b0cae1b7bcc0ea25738b.ctex"]
 
 [params]
 

@@ -63,6 +63,14 @@ public sealed class MinionSquadPower : PowerModel, IModPowerAssetOverrides
         {
             return amount;
         }
+        // 预测模拟防御：RandomForeseer（随机数预测 mod）的 CombatPredictionSimulator 会调用
+        // Hook.ModifyHpLost 做"预览"，而本 Hook 会真实扣随从血（LoseHpInternal）——预测产生
+        // 真实副作用：每次预测敌人伤害，随从就被真实扣一次血（表现为"敌人掉多少随从掉多少"）。
+        // 预测调用直接跳过（不拦截、不扣血），真实伤害照常挡伤。
+        if (IsPredictionCall(cardSource))
+        {
+            return amount;
+        }
         // 罗曼斯重放的额外法术对自己造成的伤害不承担（直接生效）
         if (cardSource != null && RommathReplayTracker.IsMarked(cardSource))
         {
@@ -107,5 +115,27 @@ public sealed class MinionSquadPower : PowerModel, IModPowerAssetOverrides
         }
 
         return amount;
+    }
+
+    /// <summary>
+    /// 是否为第三方预测模拟调用（RandomForeseer 的预测卡 / 预测模拟栈）。
+    /// 预测调用不得产生真实副作用（扣随从血 / Kill）。
+    /// </summary>
+    private static bool IsPredictionCall(CardModel? cardSource)
+    {
+        try
+        {
+            if (cardSource != null &&
+                cardSource.GetType().FullName?.Contains("PredictedCard", System.StringComparison.Ordinal) == true)
+            {
+                return true;
+            }
+            return new System.Diagnostics.StackTrace().ToString()
+                .Contains("RandomForeseer", System.StringComparison.Ordinal);
+        }
+        catch
+        {
+            return false;
+        }
     }
 }

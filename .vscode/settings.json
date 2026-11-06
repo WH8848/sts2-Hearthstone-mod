@@ -1,5 +1,7 @@
 {
     "sts2.installDir": "E:/SteamLibrary/steamapps/common/Slay the Spire 2",
     "sts2.gameExeName": "SlayTheSpire2.exe",
-    "sts2.modId": "jaina"
+    "sts2.modId": "jaina",
+    "files.encoding": "utf8",
+    "files.autoGuessEncoding": false
 }

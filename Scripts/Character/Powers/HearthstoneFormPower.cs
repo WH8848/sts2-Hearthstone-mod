@@ -20,7 +20,7 @@ namespace jaina.Scripts.Character.Powers;
 
 /// <summary>
 /// 炉石形态：你的全部卡牌获得保留和消耗；当你抽到状态卡时额外抽一张。
-/// 此后每回合你获得十点能量，回合开始抽五张卡变为抽一张卡。
+/// 此后每回合你获得十点能量。
 /// 当你手牌上限再抽牌时，抽到的牌会被消耗。
 /// 当你抽牌堆和弃牌堆无牌可抽时，进入疲劳（第1次扣1血，第2次扣2血，以此类推）。
 /// 挂在吉安娜玩家身上（可见）。
@@ -56,20 +56,6 @@ public sealed class HearthstoneFormPower : PowerModel, IModPowerAssetOverrides
         keywords.Add(CardKeyword.Retain);
         keywords.Add(CardKeyword.Exhaust);
         return true;
-    }
-
-    /// <summary>
-    /// 每回合只能抽一张卡：回合开始初始抽牌数改为 1（替代默认 5 张）。
-    /// 注意：初始抽牌是单次 Draw(5) 调用，ShouldDraw 只能拦截整次抽牌，
-    /// 必须用 ModifyHandDraw 修改抽牌数才能按张生效。
-    /// </summary>
-    public override decimal ModifyHandDraw(Player player, decimal count)
-    {
-        if (player == Owner?.Player)
-        {
-            return 1m;
-        }
-        return count;
     }
 
     /// <summary>

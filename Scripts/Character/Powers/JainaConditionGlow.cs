@@ -62,7 +62,7 @@ public static class JainaConditionGlow
         var count = typeof(JainaConditionGlow).Assembly.GetTypes()
             .Count(t => !t.IsAbstract && !t.IsInterface && !t.ContainsGenericParameters &&
                         typeof(IJainaConditionGlowCard).IsAssignableFrom(t));
-        MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaDiag] condition-glow cards registered: {count} types");
+        MegaCrit.Sts2.Core.Logging.Log.Debug($"[JainaDiag] condition-glow cards registered: {count} types");
 
         ModCardHandOutlineRegistry.Register(
             typeof(CardModel),

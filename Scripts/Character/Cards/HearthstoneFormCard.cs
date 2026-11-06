@@ -15,8 +15,8 @@ namespace jaina.Scripts.Character.Cards;
 /// <summary>
 /// 炉石形态 (Hearthstone Form) - 3费能力牌（稀有）。
 /// 你的全部卡牌获得保留和消耗；格挡不再在你的回合开始时消失；
-/// 当你抽到状态牌时额外抽一张卡牌；下回合开始每回合获得十点能量，
-/// 抽五张牌变为抽一张牌；手牌上限之后抽到的牌会被消耗；
+/// 当你抽到状态牌时额外抽一张卡牌；下回合开始每回合获得十点能量；
+/// 手牌上限之后抽到的牌会被消耗；
 /// 抽牌堆和弃牌堆无牌可抽时进入疲劳。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
@@ -76,7 +76,7 @@ public sealed class HearthstoneFormCard : JainaSpellCardTemplate
         // 记录施放（倒带/罗曼斯/三派系追踪）
         jaina.Scripts.Character.JainaCastTracker.RecordPlayed(this);
 
-        // 挂炉石形态光环（全卡保留+消耗 / 格挡不消失 / 10 能量 / 限抽 1 张 / 状态卡补抽 / 烧牌 / 疲劳）
+        // 挂炉石形态光环（全卡保留+消耗 / 格挡不消失 / 10 能量 / 状态卡补抽 / 烧牌 / 疲劳）
         await PowerCmd.Apply<HearthstoneFormPower>(
             choiceContext, [base.Owner.Creature], 1m, base.Owner.Creature, this);
     }

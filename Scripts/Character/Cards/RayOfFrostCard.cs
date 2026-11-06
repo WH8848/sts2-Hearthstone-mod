@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using jaina.Scripts.Character.Keywords;
@@ -21,7 +22,7 @@ namespace jaina.Scripts.Character.Cards;
 /// 如果是友方随从，给吉安娜力量+1（随从死亡时该力量消失，见 GoWithTheFlowStrengthPower）。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
-public sealed class RayOfFrostCard : JainaSpellCardTemplate
+public sealed class RayOfFrostCard : JainaSpellCardTemplate, MinionLib.Utilities.DescriptionPostProcess.IDescriptionPostProcessCard
 {
     /// <summary>
     /// 双生法术复制品标记：复制品打出时不再复制（替代依赖 Keywords 的判断，
@@ -35,11 +36,63 @@ public sealed class RayOfFrostCard : JainaSpellCardTemplate
     public override int MaxUpgradeLevel => 1;
 
     /// <summary>
-    /// 关键词：基础版 双生法术 + 冻结 + 冰霜；升级版（顺水漂流）冰霜（无冻结/双生词条）
+    /// 关键词：基础版 双生法术 + 冻结 + 冰霜 + 保留；升级版（顺水漂流）冰霜 + 保留（无冻结/双生词条）
     /// </summary>
     public override IEnumerable<CardKeyword> CanonicalKeywords => IsUpgraded
-        ? [JainaKeywords.Spell, JainaKeywords.Frost]
-        : [JainaKeywords.Twinspell, JainaKeywords.Spell, JainaKeywords.Freeze, JainaKeywords.Frost];
+        ? [JainaKeywords.Spell, JainaKeywords.Frost, CardKeyword.Retain]
+        : [JainaKeywords.Twinspell, JainaKeywords.Spell, JainaKeywords.Freeze, JainaKeywords.Frost, CardKeyword.Retain];
+
+    /// <summary>
+    /// 悬停提示：显示双生法术生成的复制品卡面
+    /// （复制品与实战一致：去掉「双生法术」、标记为复制品，其余关键词/费用不变）。
+    /// 升级后（顺水漂流）不再生成双生复制品，因此不显示。
+    /// </summary>
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips
+    {
+        get
+        {
+            if (IsUpgraded)
+            {
+                yield break;
+            }
+            var copy = TwinspellCopyPreview;
+            if (copy != null)
+            {
+                yield return new CardHoverTip(copy);
+            }
+        }
+    }
+
+    /// <summary>
+    /// 双生法术复制品（仅用于悬停展示，懒加载一次后复用）
+    /// </summary>
+    private static RayOfFrostCard? _twinspellCopyPreview;
+
+    private static RayOfFrostCard? TwinspellCopyPreview
+    {
+        get
+        {
+            if (_twinspellCopyPreview != null)
+            {
+                return _twinspellCopyPreview;
+            }
+            try
+            {
+                var canonical = MegaCrit.Sts2.Core.Models.ModelDb.Card<RayOfFrostCard>();
+                var copy = (RayOfFrostCard)canonical.ToMutable();
+                copy.RemoveKeyword(JainaKeywords.Twinspell);
+                copy.IsTwinspellCopy = true;
+                _twinspellCopyPreview = copy;
+                return copy;
+            }
+            catch (System.Exception ex)
+            {
+                MegaCrit.Sts2.Core.Logging.Log.Warn(
+                    $"[Jaina] build twinspell copy preview failed: {ex.Message}");
+                return null;
+            }
+        }
+    }
 
     /// <summary>
     /// 卡牌原画：霜冻射线 / 升级后（顺水漂流）切换原画
@@ -67,6 +120,25 @@ public sealed class RayOfFrostCard : JainaSpellCardTemplate
             LocString? upgraded = LocString.GetIfExists("cards", base.Id.Entry + ".titleUpgraded");
             return upgraded?.GetFormattedText() ?? title.GetFormattedText() + "+";
         }
+    }
+
+    /// <summary>
+    /// 描述后处理：双生法术复制品的卡面不再显示「双生法术」词条
+    /// （实战复制品去掉的是关键词，但描述文本里也写死了该词条，这里一并移除）
+    /// </summary>
+    public string PostProcessDescription(
+        string description,
+        MegaCrit.Sts2.Core.Entities.Cards.PileType pileType,
+        MinionLib.Utilities.BetterExtraArgs.DescriptionPreviewType previewType,
+        MegaCrit.Sts2.Core.Entities.Creatures.Creature? target = null)
+    {
+        if (IsTwinspellCopy)
+        {
+            description = description
+                .Replace("[gold]双生法术[/gold]。\n", "")
+                .Replace("[gold]双生法术[/gold]。", "");
+        }
+        return description;
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)

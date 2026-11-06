@@ -268,7 +268,7 @@ public abstract class JainaMinionCardTemplate : ModCardTemplate,
     /// </summary>
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
-        MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaDiag] MinionCard OnPlay: {GetType().Name} autoPlay={cardPlay.IsAutoPlay} minionType={MinionType.Name}");
+        MegaCrit.Sts2.Core.Logging.Log.Debug($"[JainaDiag] MinionCard OnPlay: {GetType().Name} autoPlay={cardPlay.IsAutoPlay} minionType={MinionType.Name}");
         LastSummonedMinion = await JainaMinionPool.SummonMinionByType(
             choiceContext,
             base.Owner,
@@ -282,6 +282,6 @@ public abstract class JainaMinionCardTemplate : ModCardTemplate,
         // 若先记录自己再触发战吼，战吼读到的是刚打出的诈骗犯自己 → 重放诈骗犯
         // （bug："火妖打出后打诈骗犯，诈骗犯重放诈骗犯而不是火妖"）
         jaina.Scripts.Character.JainaCastTracker.RecordPlayed(this);
-        MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaDiag] MinionCard summon result: {GetType().Name} summoned={(LastSummonedMinion != null)}");
+        MegaCrit.Sts2.Core.Logging.Log.Debug($"[JainaDiag] MinionCard summon result: {GetType().Name} summoned={(LastSummonedMinion != null)}");
     }
 }

@@ -203,14 +203,14 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
             var cardType = JainaMinionCardMap.GetCardType(GetType());
             if (cardType == null)
             {
-                MegaCrit.Sts2.Core.Logging.Log.Info("[JainaHover] cardType null");
+                MegaCrit.Sts2.Core.Logging.Log.Debug("[JainaHover] cardType null");
                 return;
             }
             var canonical = MegaCrit.Sts2.Core.Models.ModelDb.GetByIdOrNull<MegaCrit.Sts2.Core.Models.CardModel>(
                 MegaCrit.Sts2.Core.Models.ModelDb.GetId(cardType));
             if (canonical == null)
             {
-                MegaCrit.Sts2.Core.Logging.Log.Info("[JainaHover] canonical null");
+                MegaCrit.Sts2.Core.Logging.Log.Debug("[JainaHover] canonical null");
                 return;
             }
             // 用"战斗真实实例"渲染卡面（而非 canonical/ToMutable）：
@@ -238,7 +238,7 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
             var cardNode = MegaCrit.Sts2.Core.Nodes.Cards.NCard.Create(display);
             if (cardNode == null)
             {
-                MegaCrit.Sts2.Core.Logging.Log.Info("[JainaHover] NCard.Create null (TestMode?)");
+                MegaCrit.Sts2.Core.Logging.Log.Debug("[JainaHover] NCard.Create null (TestMode?)");
                 return;
             }
             // 挂到战斗房间根（所有随从之上，避免多随从时卡面被其他随从视觉遮挡"图层忽高忽低"）；
@@ -267,8 +267,9 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
             {
                 anchor = ((CanvasItem?)creatureNode ?? _visualsRoot)?.GetGlobalTransformWithCanvas().Origin ?? Vector2.Zero;
             }
-            catch
+            catch (System.Exception ex)
             {
+                MegaCrit.Sts2.Core.Logging.Log.Warn($"[Jaina] {ex.Message}");
             }
             var hoverCardSize = cardNode.Size * cardNode.Scale;
             // AddChild 后布局未跑时 Control.Size 可能为 (0,0)——按 NCard 标准尺寸兜底
@@ -283,7 +284,7 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
             cardNode.ZIndex = 500;
             // 视口约束：卡面必须完整出现在屏幕内（含 8px 边距），超出部分平移到视口内
             ClampCardToViewport(host, cardNode);
-            MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaHover] card shown: {canonical.Id} host={(host == _visualsRoot ? "visuals-root" : "creature-node")} insideTree={cardNode.IsInsideTree()} ready={cardNode.IsNodeReady()}");
+            MegaCrit.Sts2.Core.Logging.Log.Debug($"[JainaHover] card shown: {canonical.Id} host={(host == _visualsRoot ? "visuals-root" : "creature-node")} insideTree={cardNode.IsInsideTree()} ready={cardNode.IsNodeReady()}");
             _hoverCardNode = cardNode;
         }
         catch (System.Exception ex)
@@ -662,7 +663,7 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
                     creatureNode.Hitbox.MouseEntered += OnMinionHoverEnter;
                     creatureNode.Hitbox.MouseExited += OnMinionHoverExit;
                     _hoverConnected = true;
-                    MegaCrit.Sts2.Core.Logging.Log.Info("[JainaHover] hitbox hover connected");
+                    MegaCrit.Sts2.Core.Logging.Log.Debug("[JainaHover] hitbox hover connected");
                 }
                 else
                 {
@@ -688,8 +689,9 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
                 creatureNode?.ToggleIsInteractable(true);
             }
         }
-        catch
+        catch (System.Exception ex)
         {
+            MegaCrit.Sts2.Core.Logging.Log.Warn($"[Jaina] {ex.Message}");
         }
     }
 
@@ -728,7 +730,7 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
             return;
         }
         _hotkeySelected = selected;
-        MegaCrit.Sts2.Core.Logging.Log.Info(
+        MegaCrit.Sts2.Core.Logging.Log.Debug(
             $"[JainaSelect] {(selected ? "select" : "deselect")} {GetType().Name} hovered={_hovering} area={_hoveringArea}");
         if (selected)
         {
@@ -782,8 +784,9 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
                 showOnLeft = screenX > viewportWidth / 2f;
             }
         }
-        catch
+        catch (System.Exception ex)
         {
+            MegaCrit.Sts2.Core.Logging.Log.Warn($"[Jaina] {ex.Message}");
         }
 
         if (_hovering || _hoveringArea || _hotkeySelected)
@@ -1027,7 +1030,8 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
         // 否则主机端此处移除成功、客户端 CombatState 已先被置 null 移除失败
         // （CombatState.RemoveCreature 对 null 早退）→ 两端 creature 列表不一致
         // → 下个回合结束 checksum 分歧 StateDivergence 断联（实测莫扎奇 checksum #93）。
-        if (Creature.CombatState is { } deathState && Creature.CombatState == deathState)
+        // 1) 正常路径：从当前 CombatState 移除（unattach=true 会把 CombatState 置 null）
+        if (Creature.CombatState is { } deathState)
         {
             try
             {
@@ -1039,24 +1043,24 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
                     $"[JainaDeathrattle] remove-from-combat failed on {GetType().Name}: {ex}");
             }
         }
-        else if (Creature.CombatState == null)
+
+        // 2) 幂等兜底：无论上面是否成功，都从主人当前的 CombatState 私列表强制摘除。
+        // 原因：CombatState.RemoveCreature 对 CombatState==null 直接早退（残留尸体留在 _allies）；
+        // 或死亡的先后顺序使 RemoveCreature 抛 "was not found"。
+        // 残留尸体会在回合开始 AfterTurnStart → ClearBlock → ShouldClearBlock(null) 抛 NRE，
+        // 打死 turn loop、战斗永久卡死（实测 AegwynnMinion）。
+        var owner = Creature.PetOwner;
+        if (owner?.Creature?.CombatState is { } ownerState)
         {
-            // 残留尸体（已在 CombatManager/CombatState 列表但 CombatState 被置 null）：
-            // 强制从私列表摘除（两端确定性钩子内执行，结果对称）；
-            // CombatState 引用已丢 → 从随从主人（玩家 Creature）取当前战斗状态
-            var owner = Creature.PetOwner;
-            if (owner?.Creature?.CombatState is { } ownerState)
+            try
             {
-                try
-                {
-                    jaina.Scripts.Character.Powers.JainaPetResidueCleanupPower.ForceRemoveLingering(
-                        ownerState, Creature);
-                }
-                catch (System.Exception ex)
-                {
-                    MegaCrit.Sts2.Core.Logging.Log.Warn(
-                        $"[JainaDeathrattle] force lingering remove failed on {GetType().Name}: {ex}");
-                }
+                jaina.Scripts.Character.Powers.JainaPetResidueCleanupPower.ForceRemoveLingering(
+                    ownerState, Creature);
+            }
+            catch (System.Exception ex)
+            {
+                MegaCrit.Sts2.Core.Logging.Log.Warn(
+                    $"[JainaDeathrattle] force lingering remove failed on {GetType().Name}: {ex}");
             }
         }
     }

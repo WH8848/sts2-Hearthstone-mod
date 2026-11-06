@@ -214,6 +214,13 @@ public class Entry
                 // 也能被 RecordPlayed 记录,蓄谋诈骗犯战吼才能正确重放"上一张"
                 _ = MegaCrit.Sts2.Core.Helpers.TaskHelper.RunSafely(
                     jaina.Scripts.Character.Powers.PlayedRecordHookPower.EnsureAppliedAsync(ctx, player));
+
+                // 死亡随从残留兜底清理：对所有玩家幂等挂载。
+                // 已死随从（CombatState 已被置 null）仍可能留在 CombatState 的玩家侧列表，
+                // 回合开始 AfterTurnStart → ClearBlock → ShouldClearBlock(null) → NRE
+                // 会直接打死 turn loop、战斗永久卡死（实测 AegwynnMinion）。
+                _ = MegaCrit.Sts2.Core.Helpers.TaskHelper.RunSafely(
+                    jaina.Scripts.Character.Powers.JainaPetResidueCleanupPower.EnsureAppliedAsync(ctx, player));
                 // 联机：角色死亡时清空其随从槽（参考故障机器人/亡灵契约师）。
                 // 玩家角色死亡是确定性事件，两端各自触发 → 两端随从清理一致。
                 player.Creature.Died -= OnPlayerCreatureDied;

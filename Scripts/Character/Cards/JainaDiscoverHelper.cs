@@ -101,7 +101,7 @@ public static class JainaDiscoverHelper
             pool = pool.Where(c => c.EnergyCost.GetWithModifiers(MegaCrit.Sts2.Core.Entities.Cards.CostModifiers.None) <= max).ToList();
         }
         // 【诊断】打印发现池实际内容（排查随从/武器等非法术牌混入）
-        MegaCrit.Sts2.Core.Logging.Log.Info(
+        MegaCrit.Sts2.Core.Logging.Log.Debug(
             $"[JainaDiag] RollCandidates count={pool.Count} maxCost={(maxCost?.ToString() ?? "null")}: " +
             string.Join(", ", pool.Select(c => $"{c.Id}({c.Type})")));
         var picked = new List<CardModel>();
@@ -331,7 +331,7 @@ public static class JainaDiscoverHelper
                 AddCandidates(canonical.GetType());
             }
         }
-        MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaDiag] DiscoverCardOfCost cost={cost} allClasses={allClasses} pool={pool.Count}");
+        MegaCrit.Sts2.Core.Logging.Log.Debug($"[JainaDiag] DiscoverCardOfCost cost={cost} allClasses={allClasses} pool={pool.Count}");
 
         if (pool.Count == 0)
         {
@@ -408,7 +408,7 @@ public static class JainaDiscoverHelper
                 }
             }
         }
-        MegaCrit.Sts2.Core.Logging.Log.Info($"[JainaDiag] DiscoverAllClasses minCost={minCost?.ToString() ?? "null"} pool={pool.Count}");
+        MegaCrit.Sts2.Core.Logging.Log.Debug($"[JainaDiag] DiscoverAllClasses minCost={minCost?.ToString() ?? "null"} pool={pool.Count}");
 
         if (pool.Count == 0)
         {
