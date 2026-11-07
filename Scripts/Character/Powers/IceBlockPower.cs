@@ -63,6 +63,13 @@ public sealed class IceBlockPower : PowerModel, IModPowerAssetOverrides
         decimal unblocked = amount - target.Block;
         if (unblocked >= target.CurrentHp)
         {
+            // 预测模拟防御：RandomForeseer 的 CombatPredictionSimulator 会调用本 hook 做预览，
+            // 若在这里设置 _pendingTrigger，预测（界面上每次刷新）就会污染真实状态，
+            // 导致 AfterDamageReceived 误消耗层数/误挂免疫——两端预测次数不同即分岔断联。
+            if (IsPredictionCall(cardSource))
+            {
+                return 0m;
+            }
             _pendingTrigger = true;
             // 联机诊断：两端触发不一致时（StateDivergence——一端屏障消耗+免疫、
             // 另一端未触发）对比 amount/hp/block，定位伤害或状态分歧
@@ -81,6 +88,11 @@ public sealed class IceBlockPower : PowerModel, IModPowerAssetOverrides
         DamageResult result, ValueProp props, Creature? dealer, CardModel? cardSource)
     {
         if (target != Owner || !_pendingTrigger)
+        {
+            return;
+        }
+        // 预测模拟防御：预测调用不得消耗真实层数/挂免疫
+        if (IsPredictionCall(cardSource))
         {
             return;
         }
@@ -104,6 +116,28 @@ public sealed class IceBlockPower : PowerModel, IModPowerAssetOverrides
         if (immunity != null)
         {
             immunity.LockedHp = Owner.CurrentHp;
+        }
+    }
+
+    /// <summary>
+    /// 是否为第三方预测模拟调用（RandomForeseer 的预测卡 / 预测模拟栈）。
+    /// 预测调用不得产生真实副作用（设置 _pendingTrigger / 消耗层数 / 挂免疫）。
+    /// </summary>
+    private static bool IsPredictionCall(CardModel? cardSource)
+    {
+        try
+        {
+            if (cardSource != null &&
+                cardSource.GetType().FullName?.Contains("PredictedCard", System.StringComparison.Ordinal) == true)
+            {
+                return true;
+            }
+            return new System.Diagnostics.StackTrace().ToString()
+                .Contains("RandomForeseer", System.StringComparison.Ordinal);
+        }
+        catch
+        {
+            return false;
         }
     }
 }
