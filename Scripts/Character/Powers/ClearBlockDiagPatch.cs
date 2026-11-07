@@ -18,7 +18,7 @@ public static class ClearBlockDiagPatch
     [HarmonyPatch(typeof(Creature), "ClearBlock")]
     public static class ClearBlockPrefix
     {
-        private static bool Prefix(Creature __instance)
+        private static bool Prefix(Creature __instance, ref System.Threading.Tasks.Task __result)
         {
             if (__instance.CombatState != null)
             {
@@ -31,6 +31,10 @@ public static class ClearBlockDiagPatch
                     $"[Jaina] skip ClearBlock on detached creature {__instance.Name} " +
                     $"(side={__instance.Side} pet={__instance.IsPet} alive={__instance.IsAlive})");
             }
+            // 关键：ClearBlock 是 async Task 方法，Prefix 返回 false 时必须显式给 __result
+            // 赋一个已完成的 Task——否则返回 null，调用方 await ClearBlock() 抛 NRE，
+            // 打死 turn loop（实测 Combat #8：AfterTurnStart → await ClearBlock() → NRE）。
+            __result = System.Threading.Tasks.Task.CompletedTask;
             return false;
         }
     }
