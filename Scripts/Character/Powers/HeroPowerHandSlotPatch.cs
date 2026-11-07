@@ -12,12 +12,11 @@ using MegaCrit.Sts2.Core.Models;
 namespace jaina.Scripts.Character.Powers;
 
 /// <summary>
-/// 英雄技能卡（HeroPower 关键词，如火焰冲击）不占手牌位：
-/// 1. CardPileCmd.Add 的满手判定豁免——英雄技能卡永远可入手（不触发满手改道弃牌堆）；
-///    其余卡判定时，手牌中已有的英雄技能卡不计入 10 张上限。
-/// 2. CardPileCmd.Draw 的抽牌空间计算排除英雄技能卡——
-///    手牌中英雄技能卡不占位，抽牌空间 = 上限 - 非英雄技能卡数。
-/// 通过 Transpiler 修改原版 Add / DrawInternal 状态机实现。
+/// 手牌容量判定（已取消"英雄技能卡不占手牌位"特性）：
+/// 英雄技能卡与普通卡一样占手牌位，满手判定 = 手牌总数 >= MaxCardsInHand（10），
+/// 与原版 CardPileCmd.Add/Draw 行为一致。
+/// 保留这些 Helper/patch 便于集中管理，但语义与游戏原版相同：
+/// GetNonHeroPowerCardCountFromPile/FromCards 现在直接返回总卡数（历史命名保留供调用点兼容）。
 /// </summary>
 public static class HeroPowerHandHelper
 {
@@ -30,49 +29,35 @@ public static class HeroPowerHandHelper
     }
 
     /// <summary>
-    /// 手牌中非英雄技能卡数量（英雄技能卡不占位）
+    /// 手牌卡牌总数（取消"英雄技能卡不占位"后，英雄技能卡也计入上限）。
+    /// 历史命名保留：调用点仍使用 GetNonHeroPowerCardCountFromPile，但语义已改为总计数。
     /// </summary>
     public static int GetNonHeroPowerCardCountFromPile(CardPile hand)
     {
-        int count = 0;
-        foreach (var c in hand.Cards)
-        {
-            if (!IsHeroPowerCard(c))
-            {
-                count++;
-            }
-        }
-        return count;
+        return hand.Cards.Count;
     }
 
     /// <summary>
-    /// 卡牌集合中非英雄技能卡数量（CrashLanding 用 CardPile.GetCards(...).Count() 模式）
+    /// 卡牌集合总数（取消"英雄技能卡不占位"后与 Count() 等价）。
+    /// 历史命名保留供调用点兼容。
     /// </summary>
     public static int GetNonHeroPowerCardCountFromCards(IEnumerable<CardModel> cards)
     {
         int count = 0;
-        foreach (var c in cards)
+        foreach (var _ in cards)
         {
-            if (!IsHeroPowerCard(c))
-            {
-                count++;
-            }
+            count++;
         }
         return count;
     }
 
     /// <summary>
-    /// Add 满手判定（替代原版 cardPile.Cards.Count >= MaxCardsInHand）：
-    /// 英雄技能卡永不视为满手；其余卡按非英雄技能卡数 >= 上限 判定。
+    /// Add 满手判定（与游戏原版一致：手牌总数 >= MaxCardsInHand）。
+    /// 英雄技能卡同样占位，不再豁免。
     /// </summary>
     public static bool IsFullHandAdd(CardPile hand, CardModel card)
     {
-        // 英雄技能卡不占手牌位：永远可入手
-        if (IsHeroPowerCard(card))
-        {
-            return false;
-        }
-        return GetNonHeroPowerCardCountFromPile(hand) >= CardPile.MaxCardsInHand;
+        return hand.Cards.Count >= CardPile.MaxCardsInHand;
     }
 }
 

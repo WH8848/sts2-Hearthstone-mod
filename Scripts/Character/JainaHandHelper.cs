@@ -10,7 +10,7 @@ namespace jaina.Scripts.Character;
 /// 0.111.1 手牌上限 10（CardPile.MaxCardsInHand）；满手时 CardPileCmd.Add 会把牌
 /// 静默改道弃牌堆（CardPileCmd.cs 的 isFullHandAdd 分支），玩家只看到 "HAND_FULL" 气泡。
 /// 生成/自动入手前先检查，避免"选中的牌消失/直接进弃牌堆"。
-/// 英雄技能卡（HeroPower 关键词）不占手牌位：手牌容量只统计非英雄技能卡。
+/// 已取消"英雄技能卡不占手牌位"：容量按手牌总数统计（与原版一致）。
 /// </summary>
 public static class JainaHandHelper
 {
@@ -25,8 +25,7 @@ public static class JainaHandHelper
         {
             return false;
         }
-        int nonHeroPowerCount = hand.Cards.Count(c => !Powers.HeroPowerHandHelper.IsHeroPowerCard(c));
-        return nonHeroPowerCount >= CardPile.MaxCardsInHand;
+        return hand.Cards.Count >= CardPile.MaxCardsInHand;
     }
 
     /// <summary>
