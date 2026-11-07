@@ -16,8 +16,8 @@ using STS2RitsuLib.Scaffolding.Content.Patches;
 namespace jaina.Scripts.Character.Powers;
 
 /// <summary>
-/// 冻结：每层使被冻结的角色攻击造成的伤害减少12.5%，最多减少 50%。
-/// 回合结束减少 4 层。
+/// 冻结：每层使被冻结的角色攻击造成的伤害减少12.5%，最多减少 25%。
+/// 回合结束减少 2 层。
 /// 随从给予的冻结不会被人工制品阻挡（滑冰元素/瓦尔登·晨拥，见 ArtifactFreezeBypassPatch）。
 /// </summary>
 [RegisterPower]
@@ -50,7 +50,7 @@ public sealed class FreezePower : PowerModel, IModPowerAssetOverrides
     public override PowerStackType StackType => PowerStackType.Counter;
 
     /// <summary>
-    /// 冻结者攻击时，其造成的伤害减少 12.5% × 层数，最多减少 50%
+    /// 冻结者攻击时，其造成的伤害减少 12.5% × 层数，最多减少 25%
     /// </summary>
     public override decimal ModifyDamageMultiplicative(Creature? target, decimal amount, ValueProp props, Creature? dealer, CardModel? cardSource, CardPlay? cardPlay)
     {
@@ -62,7 +62,7 @@ public sealed class FreezePower : PowerModel, IModPowerAssetOverrides
         {
             return 1m;
         }
-        var multiplier = Math.Max(0.5m, 1m - 0.125m * Amount);
+        var multiplier = Math.Max(0.75m, 1m - 0.125m * Amount);
         return multiplier;
     }
 
@@ -87,7 +87,7 @@ public sealed class FreezePower : PowerModel, IModPowerAssetOverrides
     /// 这里补日志，保证两端每一层变化都有记录可对比。
     /// </summary>
     /// <summary>
-    /// 回合结束时减少 4 层（不足 4 层则全部消失）
+    /// 回合结束时减少 2 层（不足 2 层则全部消失）
     /// </summary>
     public override async Task BeforeSideTurnEnd(PlayerChoiceContext choiceContext, CombatSide side, IEnumerable<Creature> participants)
     {
@@ -95,7 +95,7 @@ public sealed class FreezePower : PowerModel, IModPowerAssetOverrides
         {
             return;
         }
-        int next = Amount - 4;
+        int next = Amount - 2;
         if (next <= 0)
         {
             await PowerCmd.Remove(this);
