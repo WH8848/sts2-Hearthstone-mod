@@ -151,8 +151,10 @@ public static class JainaRandomPoolHelper
             return null;
         }
         var rng = owner.RunState.Rng.CombatTargets;
+        // 注意：combatState.Creatures 已包含玩家宠物（_allies 内含随从），
+        // 不能再 Concat(Pets)——否则宠物在池中出现两次，池大小/顺序受 Pets 列表状态影响，
+        // 两端 Pets 列表不同时随机目标就会分岔（实测匣中古神冰霜箭命中不同史莱姆）。
         var allCreatures = combatState.Creatures
-            .Concat(combatState.Players.SelectMany(p => p.PlayerCombatState?.Pets ?? []))
             // 地标（JainaLandmarkBase）不参与随机释放目标选择：
             // 地标只能被玩家点击使用,不能成为随机释放的卡（匣中古神/惊奇卡牌/戏法图腾/
             // 诈骗犯重放/AutoPlay 等）的选中目标——与 LandmarkUnselectablePatch

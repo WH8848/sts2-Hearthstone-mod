@@ -142,13 +142,7 @@ public sealed class TrickTotemPower : PowerModel, IModPowerAssetOverrides
     /// </summary>
     private static IEnumerable<Creature> GetAllAliveCreatures(ICombatState combatState)
     {
-        var list = combatState.Creatures
-            .Where(c => c != null && c.IsAlive)
-            .ToList();
-        foreach (var player in combatState.Players)
-        {
-            list.AddRange(player.PlayerCombatState?.Pets.Where(p => p != null && p.IsAlive) ?? []);
-        }
-        return list;
+        // combatState.Creatures 已含玩家宠物，不再重复 AddRange(Pets)
+        return combatState.Creatures.Where(c => c != null && c.IsAlive).ToList();
     }
 }
