@@ -158,6 +158,12 @@ public static class JainaRandomPoolHelper
             // 诈骗犯重放/AutoPlay 等）的选中目标——与 LandmarkUnselectablePatch
             // (手打/随机经 IsValidTarget 判定不可选)语义一致,此处兜底放宽池。
             .Where(c => c != null && c.IsAlive && c.Monster is not Minions.JainaLandmarkBase)
+            // 确定性排序（联机修复）：combatState.Creatures 与 Pets 的列表顺序可能因
+            // 召唤/移除历史在两端不同（实测：匣中古神随机施放冰霜箭命中不同的史莱姆，
+            // checksum #131 分歧断联）。按 CombatId（战斗内确定性分配）排序，
+            // 保证同一 RNG 索引在两端选中同一目标。
+            .OrderBy(c => c.CombatId ?? uint.MaxValue)
+            .ThenBy(c => c.Name, StringComparer.Ordinal)
             .ToList();
         if (allCreatures.Count == 0)
         {
