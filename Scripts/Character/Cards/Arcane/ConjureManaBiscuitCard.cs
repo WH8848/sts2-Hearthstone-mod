@@ -14,19 +14,19 @@ namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
 /// 制造法力饼干 (Conjure Mana Biscuit) - 0费技能牌（罕见，奥术派系）。
-/// 将一张可以复原 1 费的法力饼干置入你的手牌（不消耗）。
-/// 升级后：将一张可以复原 2 费的法力饼干置入你的手牌。消耗。
+/// 将一张可以复原两费的法力饼干置入你的手牌。消耗。
+/// 升级后：将一张可以复原两费的法力饼干置入你的手牌（不再消耗）。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
 public sealed class ConjureManaBiscuitCard : JainaSpellCardTemplate
 {
     /// <summary>
-    /// 法术牌 + 奥术派系；基础版不消耗（饼干只复原 1 费），升级版消耗（饼干复原 2 费）
+    /// 法术牌 + 奥术派系；基础版消耗（升级后不再消耗）
     /// </summary>
     public override IEnumerable<CardKeyword> CanonicalKeywords => IsUpgraded
-        ? [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Arcane,
-           CardKeyword.Exhaust]
-        : [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Arcane];
+        ? [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Arcane]
+        : [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Arcane,
+           CardKeyword.Exhaust];
 
     protected override IEnumerable<DynamicVar> CanonicalVars => [];
 
@@ -66,12 +66,12 @@ public sealed class ConjureManaBiscuitCard : JainaSpellCardTemplate
     }
 
     /// <summary>
-    /// 升级：改为消耗（LocalKeywords 懒初始化只算一次，升级形态 Keywords
-    /// 缓存自基础状态——需显式加入 Exhaust，否则升级后卡面不显示"消耗"）。
+    /// 升级：移除消耗（LocalKeywords 懒初始化只算一次，升级形态 Keywords
+    /// 缓存自基础状态——需显式移除 Exhaust，否则升级后卡面仍显示"消耗"）。
     /// </summary>
     protected override void OnUpgrade()
     {
-        AddKeyword(CardKeyword.Exhaust);
+        RemoveKeyword(CardKeyword.Exhaust);
     }
 
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
@@ -85,11 +85,6 @@ public sealed class ConjureManaBiscuitCard : JainaSpellCardTemplate
         if (canonical != null && combatState != null)
         {
             var biscuit = combatState.CreateCard(canonical, base.Owner);
-            // 基础形态饼干复原 1 费（不消耗）；升级形态复原 2 费（消耗）
-            if (biscuit is ManaBiscuitCard manaBiscuit)
-            {
-                manaBiscuit.RestoreAmount = IsUpgraded ? 2 : 1;
-            }
             jaina.Scripts.Character.JainaCastTracker.MarkGenerated(biscuit);
             await CardPileCmd.AddGeneratedCardToCombat(biscuit, PileType.Hand, base.Owner);
         }
