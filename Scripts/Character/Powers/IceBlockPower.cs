@@ -78,6 +78,9 @@ public sealed class IceBlockPower : PowerModel, IModPowerAssetOverrides
                 new System.Diagnostics.StackTrace(1, false).ToString().Substring(0, Math.Min(900, new System.Diagnostics.StackTrace(1, false).ToString().Length)));
             return 0m;
         }
+        // 诊断：非致命也打印（对比两端同一发伤害的 amount/hp/block 是否一致）
+        MegaCrit.Sts2.Core.Logging.Log.Info(
+            $"[JainaIceBlock] no-trigger: dealer={dealer?.Name ?? "null"} amount={amount} hp={target.CurrentHp} block={target.Block} unblocked={unblocked} stacks={Amount} card={(cardSource == null ? "null" : cardSource.Id.Entry)}");
         return 1m;
     }
 
