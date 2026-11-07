@@ -131,7 +131,7 @@ public sealed class MinionSquadPower : PowerModel, IModPowerAssetOverrides
                 return true;
             }
             return new System.Diagnostics.StackTrace().ToString()
-                .Contains("RandomForeseer", System.StringComparison.Ordinal);
+                .Contains("CombatPredictionSimulator", System.StringComparison.Ordinal);
         }
         catch
         {
