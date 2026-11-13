@@ -22,14 +22,8 @@ public sealed class HeroPowerDamageVar : DamageVar
     {
     }
 
-    /// <summary>
-    /// 显示路径（无 formatter 的 {Damage} 等 IConvertible 取值）：
-    /// 基础 + 野火/奥术增幅加成。
-    /// </summary>
-    protected override decimal GetBaseValueForIConvertible()
-    {
-        return BaseValue + GetBonus(_owner as CardModel);
-    }
+    // 0.113 移除了 DynamicVar.GetBaseValueForIConvertible 虚方法；显示路径改用
+    // ShownValue（= PreviewValue），由下方 UpdateCardPreview 负责写入加成。
 
     /// <summary>
     /// 预览路径（{Damage:diff()} 取 PreviewValue）：

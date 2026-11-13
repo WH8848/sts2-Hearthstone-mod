@@ -37,10 +37,8 @@ public abstract class JainaLandmarkBase : JainaMinionBase
 
     public override int MaxInitialHp => 999;
 
-    /// <summary>
-    /// 显示血条（数值 = 生命值 = 剩余耐久度）
-    /// </summary>
-    public override bool IsHealthBarVisible => true;
+    // 0.113 移除了 MonsterModel.IsHealthBarVisible 虚属性——地标血条显示由
+    // MinionLib/NCreature 默认逻辑处理（生命值 = 耐久度）。
 
     /// <summary>
     /// 被召唤时初始化：设置高生命兜底、挂耐久度，并立即授予本回合的使用行动点

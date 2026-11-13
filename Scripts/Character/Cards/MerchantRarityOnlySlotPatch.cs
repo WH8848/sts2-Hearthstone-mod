@@ -86,10 +86,10 @@ public static class MerchantRarityOnlySlotPatch
             {
                 continue;
             }
-            var entry = new MerchantCardEntry(player, inventory, cardPool, rarity);
+            var entry = new MerchantCardEntry(player, cardPool, rarity);
             try
             {
-                entry.Populate();
+                entry.Populate(inventory);
             }
             catch
             {
@@ -99,8 +99,8 @@ public static class MerchantRarityOnlySlotPatch
             return entry;
         }
         // 防御：所有可售稀有度都无可用卡时，用掷出的稀有度交回原逻辑（会抛错但仅极端情况）
-        var lastResort = new MerchantCardEntry(player, inventory, cardPool, rolled);
-        lastResort.Populate();
+        var lastResort = new MerchantCardEntry(player, cardPool, rolled);
+        lastResort.Populate(inventory);
         return lastResort;
     }
 

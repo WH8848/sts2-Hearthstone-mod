@@ -32,7 +32,7 @@ public sealed class GoWithTheFlowStrengthPower : PowerModel
     /// （Amount = 累计贡献数；扣回后本 Power 随生物移除，力量加成不再保留）。
     /// </summary>
     public override async Task AfterDeath(PlayerChoiceContext choiceContext, Creature creature,
-        bool wasRemovalPrevented, float deathAnimLength)
+        MegaCrit.Sts2.Core.Models.CardModel? source, bool wasRemovalPrevented, float deathAnimLength)
     {
         if (creature != Owner)
         {

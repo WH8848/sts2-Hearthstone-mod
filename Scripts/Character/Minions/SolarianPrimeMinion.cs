@@ -38,9 +38,9 @@ public sealed class SolarianPrimeMinion : JainaMinionBase
     /// 死亡：移除 +1 力量（无亡语词条，覆写 AfterDeath 清理）
     /// </summary>
     public override async Task AfterDeath(PlayerChoiceContext choiceContext, MegaCrit.Sts2.Core.Entities.Creatures.Creature creature,
-        bool wasRemovalPrevented, float deathAnimLength)
+        MegaCrit.Sts2.Core.Models.CardModel? source, bool wasRemovalPrevented, float deathAnimLength)
     {
-        await base.AfterDeath(choiceContext, creature, wasRemovalPrevented, deathAnimLength);
+        await base.AfterDeath(choiceContext, creature, source, wasRemovalPrevented, deathAnimLength);
         if (creature != Creature)
         {
             return;

@@ -438,10 +438,8 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
     /// 队友的随从平时隐藏，鼠标悬停其主人（玩家角色）时才显示
     /// （PlayerHoverPetsHealthBarPatch，参考亡灵契约师奥斯提）。
     /// </summary>
-    public override bool IsHealthBarVisible =>
-        Creature.PetOwner != null &&
-        MegaCrit.Sts2.Core.Context.LocalContext.IsMe(Creature.PetOwner) &&
-        Creature.IsAlive;
+    // 0.113 移除了 MonsterModel.IsHealthBarVisible 虚属性——队友随从血条隐藏改由
+    // PlayerHoverPetsHealthBarPatch 控制（悬停主人时显示）。
 
     /// <summary>
     /// 血条视觉缩短一半：MinionLib 强制随从可交互使血条显示，
@@ -686,7 +684,7 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
                 jaina.Scripts.Character.Powers.PlayerHoverPetsHealthBarPatch.HoveredPlayerNetId == hoverOwner.NetId)
             {
                 var creatureNode = NCombatRoom.Instance?.GetCreatureNode(Creature);
-                creatureNode?.ToggleIsInteractable(true);
+                creatureNode?.SetIsInteractable(true, true);
             }
         }
         catch (System.Exception ex)
@@ -720,7 +718,7 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
     /// <summary>
     /// 快捷键（小键盘1-7）选中状态：显示金色选中框 + <b>攻击动作</b>（可攻击时攻击意图/行动图标闪烁，
     /// 不再弹卡面——卡面只留给鼠标悬停）。取消时清除。
-    /// 选中时强制交互（防止任何原因导致 Hitbox 被 ToggleIsInteractable(false) 屏蔽，
+    /// 选中时强制交互（防止任何原因导致 Hitbox 被 SetIsInteractable(false, true) 屏蔽，
     /// 导致"选中后点击随从无法攻击"——点击攻击入口在 Hitbox）。
     /// </summary>
     internal void SetHotkeySelected(bool selected)
@@ -737,7 +735,7 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
             try
             {
                 var node = MegaCrit.Sts2.Core.Nodes.Rooms.NCombatRoom.Instance?.GetCreatureNode(Creature);
-                node?.ToggleIsInteractable(true);
+                node?.SetIsInteractable(true, true);
                 // 攻击动作显示：刷新攻击意图（可攻击时红剑意图=攻击力）+ 攻击行动图标闪烁提示
                 node?.RefreshIntents();
                 var attackAction = Creature.Powers.OfType<JainaAttackAction>().FirstOrDefault();
@@ -985,7 +983,7 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
     /// 干扰核心死亡收尾）。
     /// </summary>
     public override async Task AfterDeath(PlayerChoiceContext choiceContext, Creature creature,
-        bool wasRemovalPrevented, float deathAnimLength)
+        MegaCrit.Sts2.Core.Models.CardModel? source, bool wasRemovalPrevented, float deathAnimLength)
     {
         if (creature != Creature)
         {

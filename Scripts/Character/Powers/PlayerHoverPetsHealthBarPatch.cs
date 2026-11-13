@@ -128,7 +128,7 @@ public static class PlayerHoverPetsHealthBarPatch
                 var node = NCombatRoom.Instance.GetCreatureNode(pet);
                 if (node != null)
                 {
-                    node.ToggleIsInteractable(visible);
+                    node.SetIsInteractable(visible, true);
                 }
             }
         }

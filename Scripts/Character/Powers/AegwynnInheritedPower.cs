@@ -40,7 +40,7 @@ public sealed class AegwynnInheritedPower : PowerModel, IModPowerAssetOverrides
     /// 继承随从死亡：返还 2*层数 力量，并将继承效果（同层数）传给下一张抽到的随从牌
     /// </summary>
     public override async Task AfterDeath(PlayerChoiceContext choiceContext, Creature creature,
-        bool wasRemovalPrevented, float deathAnimLength)
+        MegaCrit.Sts2.Core.Models.CardModel? source, bool wasRemovalPrevented, float deathAnimLength)
     {
         if (creature != Owner)
         {

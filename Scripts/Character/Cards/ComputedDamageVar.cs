@@ -60,13 +60,8 @@ public sealed class ComputedDamageVar : DamageVar
         _compute = (card) => compute(card, null);
     }
 
-    /// <summary>
-    /// 显示路径（无 formatter 的 {Damage} 等 IConvertible 取值）：委托计算值。
-    /// </summary>
-    protected override decimal GetBaseValueForIConvertible()
-    {
-        return _compute(_owner as CardModel);
-    }
+    // 0.113 移除了 DynamicVar.GetBaseValueForIConvertible 虚方法；显示路径改用
+    // ShownValue（= PreviewValue），由下方 UpdateCardPreview 负责写入。
 
     /// <summary>
     /// 预览路径（{Damage:diff()} 取 PreviewValue）：
