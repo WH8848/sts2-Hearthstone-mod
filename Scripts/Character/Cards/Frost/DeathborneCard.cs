@@ -99,7 +99,7 @@ public sealed class DeathborneCard : JainaSpellCardTemplate
             return;
         }
 
-        // 死神之躯：对所有随从造成 2 点伤害；对敌人造成 7 次 2 点伤害；
+        // 死神之躯：先对敌人造成 7 次 2 点伤害，再对所有随从造成 2 点伤害；
         // 每消灭一个角色，召唤一个 2/2 的不稳定的骷髅。
         // "所有随从" = 所有非英雄生物（我方随从 + 敌方随从）——
         // 手打不伤害队友（其它玩家）的随从：PetOwner 为其它玩家的随从排除；
@@ -111,25 +111,9 @@ public sealed class DeathborneCard : JainaSpellCardTemplate
             .Where(c => cardPlay.IsAutoPlay || c.PetOwner == null || c.PetOwner == base.Owner)
             .ToList();
 
-        // 1) 对所有随从造成 2 点伤害（记录消灭数）
-        // 走 AttackCommand（DamageCmd.Attack）：触发"被攻击命中"类效果（如胆小）；
-        // AttackCommand 无自定义多目标列表 API → 逐个目标独立攻击命令（行为等价）
+        // 1) 先对敌人造成 7 次 2 点伤害（随机分配到所有敌人，每次伤害都检查消灭）
+        // （2026-11 调整：先打敌人、再打随从，与卡面描述一致）
         int killed = 0;
-        var beforeAlive = victims.Where(c => c.IsAlive).ToHashSet();
-        foreach (var victim in victims)
-        {
-            if (!victim.IsAlive)
-            {
-                continue;
-            }
-            await DamageCmd.Attack(base.DynamicVars.Damage.BaseValue)
-                .FromCard(this, cardPlay)
-                .Targeting(victim)
-                .Execute(choiceContext);
-        }
-        killed += beforeAlive.Count(c => !c.IsAlive);
-
-        // 2) 对敌人造成 7 次 2 点伤害（随机分配到所有敌人，每次伤害都检查消灭）
         var enemies = combatState.GetOpponentsOf(base.Owner.Creature)
             .Where(e => e != null && e.IsAlive && e.IsHittable)
             .ToList();
@@ -155,6 +139,23 @@ public sealed class DeathborneCard : JainaSpellCardTemplate
                 killed++;
             }
         }
+
+        // 2) 再对所有随从造成 2 点伤害（记录消灭数）
+        // 走 AttackCommand（DamageCmd.Attack）：触发"被攻击命中"类效果（如胆小）；
+        // AttackCommand 无自定义多目标列表 API → 逐个目标独立攻击命令（行为等价）
+        var beforeAlive = victims.Where(c => c.IsAlive).ToHashSet();
+        foreach (var victim in victims)
+        {
+            if (!victim.IsAlive)
+            {
+                continue;
+            }
+            await DamageCmd.Attack(base.DynamicVars.Damage.BaseValue)
+                .FromCard(this, cardPlay)
+                .Targeting(victim)
+                .Execute(choiceContext);
+        }
+        killed += beforeAlive.Count(c => !c.IsAlive);
 
         // 3) 每消灭一个角色，召唤一个 2/2 的不稳定的骷髅；
         // 战场上放不下的骷髅会立即爆炸（对随机敌人造成 2 点伤害）
