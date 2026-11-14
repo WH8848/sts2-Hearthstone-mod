@@ -20,7 +20,7 @@ namespace jaina.Scripts.Character.Cards;
 /// 纯本地确定性逻辑，不影响多人联机同步。
 /// </summary>
 [HarmonyPatch(typeof(CardFactory), nameof(CardFactory.CreateForMerchant),
-    new[] { typeof(Player), typeof(IEnumerable<CardModel>), typeof(CardType) })]
+    new[] { typeof(Player), typeof(IEnumerable<CardModel>), typeof(IEnumerable<CardModel>), typeof(CardType) })]
 public static class MerchantPowerSlotPatch
 {
     /// <summary>
@@ -32,7 +32,8 @@ public static class MerchantPowerSlotPatch
         return card.Rarity is CardRarity.Common or CardRarity.Uncommon or CardRarity.Rare;
     }
 
-    private static void Prefix(Player player, ref CardType type, IEnumerable<CardModel> options)
+    private static void Prefix(Player player, ref CardType type, IEnumerable<CardModel> options,
+        IEnumerable<CardModel> blacklist)
     {
         // 只对吉安娜生效（其他角色保持原版商店逻辑）
         if (player?.Character is not jaina.Scripts.Character.Jaina)
