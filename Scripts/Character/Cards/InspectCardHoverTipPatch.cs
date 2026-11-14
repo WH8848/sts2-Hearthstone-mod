@@ -32,7 +32,8 @@ public static class InspectCardHoverTipPatch
     /// <summary>底部留白</summary>
     private const float BottomMargin = 24f;
 
-    [HarmonyPatch(typeof(NHoverTipSet), nameof(NHoverTipSet.SetAlignment))]
+    [HarmonyPatch(typeof(NHoverTipSet), nameof(NHoverTipSet.SetAlignment),
+        new[] { typeof(Control), typeof(MegaCrit.Sts2.Core.HoverTips.HoverTipAlignment) })]
     private static class SetAlignmentPostfix
     {
         private static void Postfix(NHoverTipSet __instance, Control node)
