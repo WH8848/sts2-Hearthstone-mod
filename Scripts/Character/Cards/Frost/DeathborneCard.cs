@@ -101,13 +101,14 @@ public sealed class DeathborneCard : JainaSpellCardTemplate
 
         // 死神之躯：先对敌人造成 7 次 2 点伤害，再对所有随从造成 2 点伤害；
         // 每消灭一个角色，召唤一个 2/2 的不稳定的骷髅。
-        // "所有随从" = 所有非英雄生物（我方随从 + 敌方随从）——
+        // "所有随从" = 随从生物（玩家随从 + 敌方随从），<b>不含敌人本体</b>：
+        // 判定 = IsPet（玩家随从）或 Monster 是 MinionLib 的 MinionModel（随从基类，
+        // 含敌方随从）；敌人本体（普通 MonsterModel）不在其中。
         // 手打不伤害队友（其它玩家）的随从：PetOwner 为其它玩家的随从排除；
-        // 随机打出（如 Yogg 等随机释放）保持全范围——随机打出的卡可以攻击队友随从；
-        // 同时排除玩家主身体（自己 + 队友英雄;多人联机下队友英雄也在 Creatures 中，
-        // 不排除会把队友英雄当随从打,实测多人错误对队友造成伤害）。
+        // 随机打出（如 Yogg 等随机释放）保持全范围——随机打出的卡可以攻击队友随从。
         var victims = combatState.Creatures
-            .Where(c => c != null && c.IsAlive && !c.IsPlayer && c != base.Owner.Creature)
+            .Where(c => c != null && c.IsAlive && c != base.Owner.Creature)
+            .Where(c => c.IsPet || c.Monster is MinionLib.Minion.MinionModel)
             .Where(c => cardPlay.IsAutoPlay || c.PetOwner == null || c.PetOwner == base.Owner)
             .ToList();
 
