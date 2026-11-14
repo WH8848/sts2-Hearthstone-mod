@@ -35,6 +35,16 @@ public sealed class FlameWardPower : PowerModel, IModPowerAssetOverrides
     /// <summary>随机攻击次数</summary>
     private const int Hits = 7;
 
+    /// <summary>
+    /// 施加本结界的卡（用于触发伤害走 AttackCommand.FromCard——吃力量/虚弱/易伤等
+    /// 完整攻击管线；0.113 起 CreatureCmd.Damage + ValueProp.Move 在钩子链内
+    /// 不叠加力量，实测火焰结界伤害没有力量加成）。
+    /// </summary>
+    private CardModel? _sourceCard;
+
+    /// <summary>记录施加本结界的卡（FlameWard.OnPlay 调用）</summary>
+    public void SetSourceCard(CardModel card) => _sourceCard = card;
+
     public override PowerType Type => PowerType.Buff;
 
     public override PowerStackType StackType => PowerStackType.Single;
@@ -81,8 +91,19 @@ public sealed class FlameWardPower : PowerModel, IModPowerAssetOverrides
                 break;
             }
             var targetEnemy = combatState.RunState.Rng.CombatTargets.NextItem(enemies);
-            // 攻击伤害：吃力量加成（与卡面 {Damage:diff()} 显示一致）
-            await CreatureCmd.Damage(choiceContext, [targetEnemy], Amount, ValueProp.Move, Owner);
+            // 攻击伤害：走 AttackCommand.FromCard——吃力量/虚弱/易伤等完整攻击管线。
+            // （CreatureCmd.Damage + ValueProp.Move 在钩子链内实测不叠加力量）
+            if (_sourceCard != null)
+            {
+                await DamageCmd.Attack(Amount)
+                    .FromCard(_sourceCard, null)
+                    .Targeting(targetEnemy)
+                    .Execute(choiceContext);
+            }
+            else
+            {
+                await CreatureCmd.Damage(choiceContext, [targetEnemy], Amount, ValueProp.Move, Owner);
+            }
         }
 
         // 一次性结界：触发后消失

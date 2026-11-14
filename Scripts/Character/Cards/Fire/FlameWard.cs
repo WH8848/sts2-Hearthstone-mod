@@ -81,8 +81,9 @@ public sealed class FlameWard : JainaSpellCardTemplate
         else
         {
             // 火焰结界：挂一次性结界（受击时触发 7 次随机伤害）
-            await PowerCmd.Apply<FlameWardPower>(
+            var power = await PowerCmd.Apply<FlameWardPower>(
                 choiceContext, [base.Owner.Creature], base.DynamicVars.Damage.BaseValue, base.Owner.Creature, this);
+            power?.FirstOrDefault()?.SetSourceCard(this);
         }
     }
 
