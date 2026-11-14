@@ -15,12 +15,15 @@ namespace jaina.Scripts.Character.Cards;
 /// 从角色卡池中选卡（与原版无色卡槽同一机制：掷 Shop 稀有度 → 按稀有度取卡，
 /// 不限类型）。无色卡槽保留原逻辑。
 /// <b>只对吉安娜生效</b>（其他角色的商店保持原版按类型分槽逻辑，不受影响）。
-/// 用 Prefix 完全替换 PopulateCharacterCardEntries（该方法是私有实例方法，
-/// 直接替换实现最简单；原版稀有度回退 GetNextAllowedRarity 逻辑在
-/// CardFactory.CreateForMerchant(Player, IEnumerable, CardRarity) 中缺失，
-/// 因此这里自行处理"掷出的稀有度无可售卡"的回退）。
+/// <para>
+/// 0.113 适配：原版删除了 <c>MerchantInventory.PopulateCharacterCardEntries</c>，
+/// 改为 <c>GetDefaultCharacterCardEntries(Player)</c>（private static，返回 5 个按类型的
+/// <c>MerchantCardEntry</c>，真正的选卡在 <c>Setup()</c> 里逐个 <c>Populate(inventory)</c>）。
+/// 因此这里改为 Prefix 替换该工厂方法：按稀有度创建 5 个 entry，Populate 仍由 Setup 负责
+/// （blacklist 会自动排除已选中的卡，无需手动跟踪）。
+/// </para>
 /// </summary>
-[HarmonyPatch(typeof(MerchantInventory), "PopulateCharacterCardEntries")]
+[HarmonyPatch(typeof(MerchantInventory), "GetDefaultCharacterCardEntries")]
 public static class MerchantRarityOnlySlotPatch
 {
     /// <summary>商店可售稀有度（Basic 被商店过滤，Ancient/Event/Token 等不在商店池）</summary>
@@ -31,89 +34,46 @@ public static class MerchantRarityOnlySlotPatch
         CardRarity.Rare
     ];
 
-    private static bool Prefix(MerchantInventory __instance)
+    private static bool Prefix(Player player, ref List<MerchantCardEntry> __result)
     {
         // 只对吉安娜生效：其他角色的商店保持原版按类型分槽逻辑
-        if (__instance.Player?.Character is not jaina.Scripts.Character.Jaina)
+        if (player?.Character is not jaina.Scripts.Character.Jaina)
         {
             return true; // 走原方法
         }
-        var player = __instance.Player;
         var cardPool = player.Character.CardPool
             .GetUnlockedCards(player.UnlockState, player.RunState.CardMultiplayerConstraint)
             .ToList();
 
         // 5 个角色卡槽：各自掷 Shop 稀有度，从角色卡池按稀有度选卡（不限类型）
-        int saleIndex = player.PlayerRng.Shops.NextInt(5);
-        var alreadyTaken = new HashSet<CardModel>();
+        var entries = new List<MerchantCardEntry>();
         for (int i = 0; i < 5; i++)
         {
-            var entry = CreateEntryWithFallback(player, __instance, cardPool, alreadyTaken);
-            AddEntry(__instance, entry);
-            if (entry.CreationResult?.Card is { } chosen)
-            {
-                alreadyTaken.Add(chosen.CanonicalInstance);
-            }
-            if (saleIndex == i)
-            {
-                entry.SetOnSale();
-            }
+            entries.Add(new MerchantCardEntry(player, cardPool, PickRarityWithCards(player, cardPool)));
         }
+        __result = entries;
         return false; // 跳过原方法
     }
 
     /// <summary>
-    /// 掷稀有度并创建卡槽条目；若该稀有度的卡已被其他槽选走（Populate 内部
-    /// Except(alreadyTaken) 后为空会抛错），回退到下一个有卡可选的稀有度重试。
+    /// 掷 Shop 稀有度；若该稀有度在卡池里没有可售卡，回退到下一个有卡可选的稀有度，
+    /// 避免 0.113 <c>Setup → Populate</c> 时 <c>CardFactory.GetNextAllowedRarity</c>
+    /// 走到 CardRarity.None 抛 InvalidOperationException。
     /// </summary>
-    private static MerchantCardEntry CreateEntryWithFallback(Player player, MerchantInventory inventory,
-        List<CardModel> cardPool, HashSet<CardModel> alreadyTaken)
+    private static CardRarity PickRarityWithCards(Player player, List<CardModel> cardPool)
     {
-        var rarities = new List<CardRarity>();
         CardRarity rolled = player.PlayerOdds.CardRarity.RollWithoutChangingFutureOdds(CardRarityOddsType.Shop);
-        rarities.Add(rolled);
+        if (cardPool.Any(c => c.Rarity == rolled))
+        {
+            return rolled;
+        }
         foreach (var rarity in _merchantRarities)
         {
-            if (rarity != rolled)
+            if (cardPool.Any(c => c.Rarity == rarity))
             {
-                rarities.Add(rarity);
+                return rarity;
             }
         }
-
-        foreach (var rarity in rarities)
-        {
-            if (!cardPool.Any(c => c.Rarity == rarity))
-            {
-                continue;
-            }
-            var entry = new MerchantCardEntry(player, cardPool, rarity);
-            try
-            {
-                entry.Populate(inventory);
-            }
-            catch
-            {
-                // 该稀有度的卡全被其他槽选走：尝试下一稀有度
-                continue;
-            }
-            return entry;
-        }
-        // 防御：所有可售稀有度都无可用卡时，用掷出的稀有度交回原逻辑（会抛错但仅极端情况）
-        var lastResort = new MerchantCardEntry(player, cardPool, rolled);
-        lastResort.Populate(inventory);
-        return lastResort;
-    }
-
-    /// <summary>
-    /// 向 MerchantInventory 的私有 _characterCardEntries 列表添加条目
-    /// </summary>
-    private static readonly System.Reflection.FieldInfo CharacterEntriesField =
-        typeof(MerchantInventory).GetField("_characterCardEntries",
-            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!;
-
-    private static void AddEntry(MerchantInventory inventory, MerchantCardEntry entry)
-    {
-        var list = (List<MerchantCardEntry>)CharacterEntriesField.GetValue(inventory)!;
-        list.Add(entry);
+        return CardRarity.Common;
     }
 }
