@@ -234,8 +234,8 @@
     "JAINA_CARD_ANCIENT_TREE_CARD.title":  "Ancient Tree",
     "JAINA_CARD_ANCIENT_TREE_CARD.titleUpgraded":  "Gurubashi Offering",
     "JAINA_CARD_ANCIENT_TREE_CARD.description":  "Gain {Block:diff()} Block.",
-    "JAINA_CARD_ICEBLOOD_TOWER_CARD.title":  "Iceblood Tower",
-    "JAINA_CARD_ICEBLOOD_TOWER_CARD.description":  "At the end of your turn, cast another random spell from your draw pile. Lasts 3 turns.",
+    "JAINA_CARD_TESSLAN_BLOODWATCHER_CARD.title":  "Tesslan Bloodwatcher",
+    "JAINA_CARD_TESSLAN_BLOODWATCHER_CARD.description":  "Summon a [blue]2/5[/blue] [red]Tesslan Bloodwatcher[/red].\nCards outside your deck cost (1) less.",
     "JAINA_CARD_SHIFTING_SCROLL_CARD.title":  "Shifting Scroll",
     "JAINA_CARD_SHIFTING_SCROLL_CARD.description":  "Each turn this is in your hand, transform it into a random Mage spell{IfUpgraded:show: (the transformed card also has Retain)|}."
 }

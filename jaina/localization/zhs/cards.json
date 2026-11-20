@@ -1,4 +1,4 @@
-﻿{
+{
     "JAINA_CARD_FIREBALL.title":  "火球术",
     "JAINA_CARD_FIREBALL.titleUpgraded":  "炎爆术",
     "JAINA_CARD_FIREBALL.description":  "造成{Damage:diff()}点伤害。",
@@ -234,8 +234,8 @@
     "JAINA_CARD_ANCIENT_TREE_CARD.title":  "昔时古树",
     "JAINA_CARD_ANCIENT_TREE_CARD.titleUpgraded":  "古拉巴什贡品",
     "JAINA_CARD_ANCIENT_TREE_CARD.description":  "获得{Block:diff()}点[gold]格挡[/gold]。",
-    "JAINA_CARD_ICEBLOOD_TOWER_CARD.title":  "冰血哨塔",
-    "JAINA_CARD_ICEBLOOD_TOWER_CARD.description":  "在你的回合结束时，随机从你的[gold]抽牌堆[/gold]中施放另一张法术牌。\n持续3回合。",
+    "JAINA_CARD_TESSLAN_BLOODWATCHER_CARD.title":  "泰瑟兰·血望者",
+    "JAINA_CARD_TESSLAN_BLOODWATCHER_CARD.description":  "[gold]召唤[/gold]一个[blue]2/5[/blue]的[red]泰瑟兰·血望者[/red]。\n你的套牌之外的卡牌耗能减少1点。",
     "JAINA_CARD_SHIFTING_SCROLL_CARD.title":  "变形卷轴",
     "JAINA_CARD_SHIFTING_SCROLL_CARD.description":  "如果这张牌在你的[gold]手牌[/gold]中，每个回合都会[gold]变化[/gold]成一张随机法师法术牌{IfUpgraded:show:\n（变形后的牌也具有保留）|}。"
 }

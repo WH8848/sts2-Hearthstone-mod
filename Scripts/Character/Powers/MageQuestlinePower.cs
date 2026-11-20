@@ -127,7 +127,7 @@ public sealed class MageQuestlinePower : PowerModel, IModPowerAssetOverrides
             return;
         }
         // 只统计法术牌（攻击牌、技能牌、状态牌，或带"法术牌"关键词的能力牌；
-        // 寒冰屏障/冰血哨塔视为法术牌，施放计入任务进度；随从/地标不算）
+        // 寒冰屏障等带"法术牌"关键词的能力牌，施放计入任务进度；随从/地标不算）
         if (!jaina.Scripts.Character.JainaCastTracker.IsSpellCard(card))
         {
             return;

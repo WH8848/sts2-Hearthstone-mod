@@ -82,7 +82,7 @@ public static class JainaRandomPoolHelper
 
     /// <summary>
     /// 该 canonical 卡是否可进入 Jaina 随机卡牌池：
-    /// 不属于 7 个非角色池、不是先古稀有度、不是多人游戏专属卡、
+    /// 不属于 7 个非角色池、不是先古或事件稀有度、不是多人游戏专属卡、
     /// 不是任务卡（带 Quest 关键词——不可被随机释放/随机生成）。
     /// </summary>
     public static bool IsEligible(CardModel? canonical)
@@ -95,7 +95,8 @@ public static class JainaRandomPoolHelper
         {
             return false;
         }
-        if (canonical.Rarity == CardRarity.Ancient)
+        // 与游戏 CardFactory.FilterForCombat 的规则一致（sts2/0.113.0/src/Core/Factories/CardFactory.cs:162）。
+        if (canonical.Rarity is CardRarity.Ancient or CardRarity.Event)
         {
             return false;
         }
