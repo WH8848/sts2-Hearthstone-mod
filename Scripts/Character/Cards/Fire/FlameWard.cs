@@ -17,8 +17,8 @@ namespace jaina.Scripts.Character.Cards;
 /// <summary>
 /// 火焰结界 (Flame Ward) - 吉安娜专属攻击牌（稀有，1 费，火焰派系）。
 /// 受到攻击时，对敌人造成 7 次 3 点伤害，随机分配到所有敌人身上。
-/// 升级后变为"火热促销 (Fire Sale)"（1 费）：交易。对所有随从造成 3 点伤害；
-/// 对敌人造成 7 次 3 点伤害，随机分配到所有敌人身上。
+/// 升级后变为"火热促销 (Fire Sale)"（1 费）：交易。对敌人造成 7 次 3 点伤害，随机分配到所有敌人身上；
+/// 然后对所有随从造成 3 点伤害。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
 public sealed class FlameWard : JainaSpellCardTemplate
@@ -74,9 +74,9 @@ public sealed class FlameWard : JainaSpellCardTemplate
 
         if (IsUpgraded)
         {
-            // 火热促销：对所有随从造成 3 点伤害；对敌人造成 7 次 3 点伤害，随机分配到所有敌人
-            await DealAllMinionDamage(choiceContext, cardPlay);
+            // 火热促销：先对敌人造成 7 次 3 点伤害，随机分配到所有敌人；再对所有随从造成 3 点伤害
             await DealRandomDamage(choiceContext, cardPlay);
+            await DealAllMinionDamage(choiceContext, cardPlay);
         }
         else
         {
