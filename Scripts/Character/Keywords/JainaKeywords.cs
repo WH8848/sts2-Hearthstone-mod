@@ -65,7 +65,7 @@ namespace jaina.Scripts.Character.Keywords;
 [RegisterOwnedKeyword(nameof(Miniaturize), IconPath = "res://assets/keyword_icons/keyword_Miniaturize.png")]
 // 微型：微缩效果产生的0费1/1复制卡牌本身（衍生关键词，只能通过微缩获得）
 [RegisterOwnedKeyword(nameof(Mini), IconPath = "res://assets/keyword_icons/keyword_Mini.png")]
-// 交易：左键点击此卡牌（右键取消），3 秒内点击弃牌堆触发交易——此卡牌进入弃牌堆，抽一张牌
+// 交易：拖到弃牌堆并松手，将此牌洗入弃牌堆并抽一张牌
 [RegisterOwnedKeyword(nameof(Tradeable), IconPath = "res://assets/keyword_icons/keyword_Tradeable.png",CardDescriptionPlacement = ModKeywordCardDescriptionPlacement.BeforeCardDescription)]
 // 零费标记：旅社谍战洗入的其它角色卡牌内部标记（能量/星星/X 全部费用归零用；
 // 不作为关键词展示，仅用于 ZeroCostMarkPatch 识别）
@@ -266,7 +266,7 @@ public class JainaKeywords
     public static readonly CardKeyword Mini = ModContentRegistry.GetQualifiedKeywordId(Entry.ModId, nameof(Mini)).GetModCardKeyword();
 
     /// <summary>
-    /// 交易：左键点击此卡牌（右键取消），3 秒内点击弃牌堆触发交易——此卡牌进入弃牌堆，抽一张牌。
+    /// 交易：拖到弃牌堆并松手，将此牌洗入弃牌堆并抽一张牌。
     /// </summary>
     public static readonly CardKeyword Tradeable = ModContentRegistry.GetQualifiedKeywordId(Entry.ModId, nameof(Tradeable)).GetModCardKeyword();
 

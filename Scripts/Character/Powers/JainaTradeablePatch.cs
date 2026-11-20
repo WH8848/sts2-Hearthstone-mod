@@ -1,7 +1,7 @@
 using System;
-using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Godot;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -17,125 +17,150 @@ using STS2RitsuLib.Networking.ManagedActions;
 namespace jaina.Scripts.Character.Powers;
 
 /// <summary>
-/// 交易（Tradeable）：把带"交易"关键词的卡（如火热促销）拖到弃牌堆上方松手后，
-/// 点击弃牌堆触发交易——洗入你的弃牌堆，然后从抽牌堆抽一张牌。
-/// 交互流程：拖牌松手（未打出，卡取消回手牌）时记录最后拖拽的卡；
-/// 3 秒内点击弃牌堆 → 请求交易动作（替代打开弃牌堆查看）。
-/// 联机同步：交易动作通过 RitsuLib 托管网络动作（<see cref="RitsuLibManagedNetActions"/>）
-/// 在两端同步执行——原版没有牌堆同步消息，牌堆变更必须发生在 networked 动作内
-/// 两端同步执行；旧实现是本地 fire-and-forget 改牌堆，联机中会直接导致
-/// StateDivergence 断联（且旧实现拦截 TryPlayCard，拖到弃牌堆（Play Zone 外）松手
-/// 根本不会调用 TryPlayCard，交易从未触发）。
+/// 交易（Tradeable）：把带“交易”关键词的卡拖到弃牌堆上方松手，立即将其弃掉并抽一张牌。
+/// 普通点击弃牌堆仍然打开弃牌堆界面。
 /// </summary>
 public static class JainaTradeTracker
 {
-    /// <summary>最后拖拽（取消）的卡。</summary>
-    public static CardModel? LastDraggedCard { get; private set; }
+    private static NMouseCardPlay? _pendingPlay;
+    private static CardModel? _pendingCard;
+    private static bool _pendingDiscardDrop;
 
-    /// <summary>最后拖拽时间（毫秒时间戳）。</summary>
-    private static long _lastDragTimeMs;
-
-    /// <summary>点击弃牌堆触发交易的窗口（拖拽取消后多久内点击有效）。</summary>
-    private const long TradeWindowMs = 3000;
-
-    /// <summary>3 秒内拖拽过带"交易"关键词的卡。</summary>
-    public static bool HasRecentTradeableDrag()
+    /// <summary>记录一次鼠标左键释放，并判断释放位置是否命中弃牌堆。</summary>
+    internal static void RecordLeftRelease(NMouseCardPlay play)
     {
-        return LastDraggedCard != null &&
-               LastDraggedCard.Keywords.Contains(JainaKeywords.Tradeable) &&
-               Environment.TickCount64 - _lastDragTimeMs < TradeWindowMs;
+        Clear(play);
+
+        var card = play.Holder?.CardModel;
+        var discardPile = NCombatRoom.Instance?.Ui.DiscardPile;
+        if (card == null || discardPile == null ||
+            !card.Keywords.Contains(JainaKeywords.Tradeable))
+        {
+            return;
+        }
+
+        var mousePosition = play.GetViewport().GetMousePosition();
+        if (!discardPile.GetGlobalRect().HasPoint(mousePosition))
+        {
+            return;
+        }
+
+        _pendingPlay = play;
+        _pendingCard = card;
+        _pendingDiscardDrop = true;
     }
 
-    internal static void RecordDrag(CardModel card)
+    /// <summary>交易拖拽命中弃牌堆时阻止弃牌堆界面打开。</summary>
+    internal static bool ShouldConsumeDiscardRelease(NCombatCardPile pile)
     {
-        LastDraggedCard = card;
-        _lastDragTimeMs = Environment.TickCount64;
+        return pile is NDiscardPileButton && _pendingDiscardDrop;
     }
 
-    internal static void Clear()
+    /// <summary>卡牌取消拖拽时执行交易，其他取消操作只清理暂存状态。</summary>
+    internal static void HandleCancel(NMouseCardPlay play)
     {
-        LastDraggedCard = null;
-        _lastDragTimeMs = 0;
+        if (!ReferenceEquals(_pendingPlay, play))
+        {
+            return;
+        }
+
+        var card = _pendingCard;
+        var shouldTrade = _pendingDiscardDrop && card != null;
+        Clear(play);
+        if (shouldTrade)
+        {
+            JainaTradeAction.Request(card!);
+        }
+    }
+
+    /// <summary>卡牌进入正常出牌流程时清理拖拽状态。</summary>
+    internal static void Clear(NCardPlay play)
+    {
+        if (!ReferenceEquals(_pendingPlay, play))
+        {
+            return;
+        }
+
+        _pendingPlay = null;
+        _pendingCard = null;
+        _pendingDiscardDrop = false;
     }
 }
 
-/// <summary>
-/// 拖牌取消（松手未打出/右键取消）时记录最后拖拽的卡（供点击弃牌堆交易用）。
-/// 正常打出（TryPlayCard 成功）不走取消，不会记录。
-/// </summary>
-[HarmonyPatch(typeof(NCardPlay), "CancelPlayCard")]
-public static class JainaTradeDragPatch
+/// <summary>记录左键释放位置，用于识别拖牌释放到弃牌堆的操作。</summary>
+[HarmonyPatch(typeof(NMouseCardPlay), "_Input")]
+public static class JainaTradeMouseReleasePatch
 {
-    public static void Postfix(NCardPlay __instance)
+    public static void Postfix(NMouseCardPlay __instance, InputEvent inputEvent)
     {
         try
         {
-            var card = __instance.Holder?.CardModel;
-            if (card == null)
+            if (inputEvent is InputEventMouseButton
+                {
+                    ButtonIndex: MouseButton.Left
+                } mouseButton && mouseButton.IsReleased())
             {
-                return;
+                JainaTradeTracker.RecordLeftRelease(__instance);
             }
-            JainaTradeTracker.RecordDrag(card);
         }
         catch
         {
-            // 记录失败不影响原流程
+            // 识别失败不影响原版拖牌流程。
         }
     }
 }
 
-/// <summary>
-/// 点击弃牌堆：3 秒内拖拽过带"交易"关键词的卡 → 请求交易动作（替代打开弃牌堆）。
-/// </summary>
+/// <summary>拖牌取消时执行命中弃牌堆的交易。</summary>
+[HarmonyPatch(typeof(NMouseCardPlay), "OnCancelPlayCard")]
+public static class JainaTradeCancelPatch
+{
+    public static void Prefix(NMouseCardPlay __instance)
+    {
+        try
+        {
+            JainaTradeTracker.HandleCancel(__instance);
+        }
+        catch
+        {
+            // 交易识别失败不影响原版取消流程。
+        }
+    }
+}
+
+/// <summary>正常出牌时清理未完成的拖拽识别状态。</summary>
+[HarmonyPatch(typeof(NCardPlay), "TryPlayCard")]
+public static class JainaTradePlayPatch
+{
+    public static void Prefix(NCardPlay __instance)
+    {
+        JainaTradeTracker.Clear(__instance);
+    }
+}
+
+/// <summary>交易拖牌释放到弃牌堆时，阻止普通弃牌堆界面打开。</summary>
 [HarmonyPatch(typeof(NCombatCardPile), "OnRelease")]
-public static class JainaTradeDiscardClickPatch
+public static class JainaTradeDiscardReleasePatch
 {
     public static bool Prefix(NCombatCardPile __instance)
     {
         try
         {
-            if (__instance is not NDiscardPileButton)
-            {
-                return true;
-            }
-            if (!JainaTradeTracker.HasRecentTradeableDrag())
-            {
-                return true;
-            }
-            var card = JainaTradeTracker.LastDraggedCard!;
-            JainaTradeTracker.Clear();
-            RequestTrade(card);
-            return false; // 交易替代打开弃牌堆
+            return !JainaTradeTracker.ShouldConsumeDiscardRelease(__instance);
         }
         catch
         {
             return true;
         }
     }
-
-    private static void RequestTrade(CardModel card)
-    {
-        var player = card.Owner;
-        if (player == null || player.Creature?.CombatState == null)
-        {
-            return;
-        }
-        var payload = new TradePayload { CombatCardIndex = NetCombatCard.FromModel(card).CombatCardIndex };
-        JainaTradeAction.Request(payload, player);
-    }
 }
 
-/// <summary>
-/// 交易动作载荷：联机两端按战斗卡索引（NetCombatCard.CombatCardIndex）定位同一张卡。
-/// </summary>
+/// <summary>交易动作载荷：联机两端按战斗卡索引定位同一张卡。</summary>
 public sealed record TradePayload
 {
     public uint CombatCardIndex { get; set; }
 }
 
-/// <summary>
-/// 交易网络动作：发起端入队后两端同步执行——洗入弃牌堆 + 从抽牌堆抽一张牌（顶牌）。
-/// </summary>
+/// <summary>交易网络动作：弃掉交易卡后抽一张牌，两端通过托管动作同步执行。</summary>
 public static class JainaTradeAction
 {
     private static readonly RitsuLibManagedNetActionDescriptor<TradePayload> Descriptor = new(
@@ -146,15 +171,7 @@ public static class JainaTradeAction
         ExecuteAsync,
         GameActionType.CombatPlayPhaseOnly);
 
-    /// <summary>
-    /// 确保托管动作描述符在<b>所有进程（含联机远端）</b>尽早注册。
-    /// 描述符是惰性静态实例：若远端进程从未触发过本类静态初始化，远端收到
-    /// 托管动作广播时反序列化查不到 opcode（未知托管动作）会被静默丢弃 →
-    /// 远端不执行交易 → 两端牌堆分歧 → StateDivergence 断联
-    /// （实测现象：只在一端有 [JainaTrade] resolve 日志、players[0].piles.Draw 差 1 张）。
-    /// <b>日志输出注册的 action key</b>——两端日志应一致：若远端日志缺此行，
-    /// 说明远端加载的是未含本调用的旧版 dll（典型：mods 目录存在"Jaina (1)"旧副本）。
-    /// </summary>
+    /// <summary>确保托管动作描述符在所有进程尽早注册。</summary>
     public static void EnsureRegistered()
     {
         _ = Descriptor;
@@ -162,9 +179,19 @@ public static class JainaTradeAction
             $"[JainaTrade] managed-action descriptor registered: {Descriptor.ModuleId}/{Descriptor.ActionKey} ({GameActionType.CombatPlayPhaseOnly})");
     }
 
-    /// <summary>请求交易动作（由操作玩家本机发起；两端同步执行）。</summary>
-    public static bool Request(TradePayload payload, Player player)
+    /// <summary>请求交易动作。</summary>
+    public static bool Request(CardModel card)
     {
+        var player = card.Owner;
+        if (player == null || player.Creature?.CombatState == null)
+        {
+            return false;
+        }
+
+        var payload = new TradePayload
+        {
+            CombatCardIndex = NetCombatCard.FromModel(card).CombatCardIndex
+        };
         return RitsuLibManagedNetActions.Request(RunManager.Instance, Descriptor, payload, player.NetId);
     }
 
@@ -177,33 +204,21 @@ public static class JainaTradeAction
             {
                 return;
             }
+
             var card = NetCombatCard.ForTesting(ctx.Message.CombatCardIndex).ToCardModelOrNull();
             MegaCrit.Sts2.Core.Logging.Log.Info(
                 $"[JainaTrade] resolve id={ctx.Message.CombatCardIndex} card={(card == null ? "null" : $"{card.Id.Entry}({card.GetType().Name})")} pile={card?.Pile?.Type} owner={(card?.Owner?.NetId)} player={player.NetId}");
-            if (card == null || card.Pile?.Type != PileType.Hand || card.Owner != player)
+            if (card == null || card.Pile?.Type != PileType.Hand || card.Owner != player ||
+                !card.Keywords.Contains(JainaKeywords.Tradeable))
             {
-                return; // 卡已不在手牌（排队期间被打出等）：跳过
-            }
-            // 防御：只有带"交易"关键词的卡可被交易（若两端战斗卡索引/ID 数据库不一致,
-            // 索引解析到非交易卡时跳过——防止把错误的卡洗入弃牌堆导致状态分歧）
-            if (!card.Keywords.Contains(JainaKeywords.Tradeable))
-            {
-                MegaCrit.Sts2.Core.Logging.Log.Warn(
-                    $"[JainaTrade] resolve id={ctx.Message.CombatCardIndex} -> non-tradeable card {card.Id.Entry}, skip");
                 return;
             }
-            // 洗入弃牌堆
-            await CardPileCmd.Add(card, PileType.Discard);
-            // 从抽牌堆抽一张牌（顶牌入手；无牌可抽不抽）
-            var drawPile = player.PlayerCombatState?.DrawPile;
-            if (drawPile != null && drawPile.Cards.Count > 0)
-            {
-                var top = drawPile.Cards.FirstOrDefault();
-                if (top != null)
-                {
-                    await CardPileCmd.Add(top, PileType.Hand);
-                }
-            }
+
+            // 使用原版弃牌并抽牌命令，保留弃牌钩子、抽牌钩子、动画和满手牌规则。
+            await CardCmd.DiscardAndDraw(
+                ctx.PlayerChoiceContext,
+                new[] { card },
+                1);
         }
         catch (Exception ex)
         {
