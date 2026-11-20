@@ -69,14 +69,14 @@ public sealed class ArcaneIntellect : JainaSpellCardTemplate
 
         var drawn = await CardPileCmd.Draw(choiceContext, DynamicVars.Cards.BaseValue, base.Owner);
 
-        // 清凉的泉水（升级后）：每抽到一张法术牌（攻击/技能）复原 1 能量——
+        // 清凉的泉水（升级后）：每抽到一张攻击牌、技能牌或状态牌，复原 1 能量。
         // 复原 = 只补到能量上限（不超出上限；能量已满则不再增加）
         if (IsUpgraded)
         {
             var pcs = base.Owner.PlayerCombatState;
             foreach (var card in drawn)
             {
-                if (card.Type == CardType.Attack || card.Type == CardType.Skill)
+                if (JainaCastTracker.IsSpellCardType(card.Type))
                 {
                     if (pcs != null && pcs.Energy < pcs.MaxEnergy)
                     {

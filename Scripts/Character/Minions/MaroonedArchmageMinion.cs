@@ -68,7 +68,7 @@ public sealed class MaroonedArchmageMinion : JainaMinionBase
             return false;
         }
         if (_spellsCastThisTurn == 0 && Creature.PetOwner is { } po &&
-            jaina.Scripts.Character.JainaCastTracker.HasPlayedAttackOrSkillThisTurn(po))
+            jaina.Scripts.Character.JainaCastTracker.HasPlayedSpellThisTurn(po))
         {
             _spellsCastThisTurn = 1; // 窗口已过:本回合第一张法术已在登场前打出
         }
@@ -81,8 +81,8 @@ public sealed class MaroonedArchmageMinion : JainaMinionBase
         {
             return false;
         }
-        // 法术牌 = 攻击/技能牌（不含英雄技能卡）
-        if (card.Type != CardType.Attack && card.Type != CardType.Skill)
+        // 英雄技能卡单独排除。
+        if (!JainaCastTracker.IsSpellCardType(card.Type))
         {
             return false;
         }
@@ -104,7 +104,7 @@ public sealed class MaroonedArchmageMinion : JainaMinionBase
             return;
         }
         var card = cardPlay.Card;
-        if (card.Type != CardType.Attack && card.Type != CardType.Skill)
+        if (!JainaCastTracker.IsSpellCardType(card.Type))
         {
             return;
         }

@@ -49,8 +49,8 @@ public sealed class VexallusMinion : JainaMinionBase
             return;
         }
         var card = cardPlay.Card;
-        // 只统计法术牌（攻击牌和技能牌）且带奥术派系关键词
-        if (card.Type != CardType.Attack && card.Type != CardType.Skill)
+        // 只统计法术牌（攻击牌、技能牌和状态牌）且带奥术派系关键词
+        if (!JainaCastTracker.IsSpellCardType(card.Type))
         {
             return;
         }

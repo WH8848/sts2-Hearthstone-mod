@@ -41,12 +41,11 @@ public sealed class IcebloodTowerPower : PowerModel
             var drawPile = player.PlayerCombatState?.DrawPile;
             if (drawPile != null)
             {
-                // "另一个法术"：抽牌堆中的攻击/技能类法术牌（带"法术牌"关键词）。
-                // 冰血哨塔自身是能力牌，不会进入该池。
+                // 从抽牌堆选择可打出的状态牌，或带法术标记的攻击牌和技能牌。
                 var spells = drawPile.Cards
-                    .Where(c => c != null
-                                && (c.Type == CardType.Attack || c.Type == CardType.Skill)
-                                && c.Keywords.Contains(JainaKeywords.Spell))
+                    .Where(c => c != null && JainaCastTracker.IsSpellCardType(c.Type)
+                                && (c.Type == CardType.Status || c.Keywords.Contains(JainaKeywords.Spell))
+                                && !c.Keywords.Contains(CardKeyword.Unplayable))
                     .ToList();
                 if (spells.Count > 0)
                 {

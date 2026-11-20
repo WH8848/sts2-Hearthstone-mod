@@ -40,7 +40,7 @@ public sealed class ArcaneArtificerCard : JainaMinionCardTemplate
     protected override int MinionHealth => 3;
 
     public ArcaneArtificerCard()
-        : base(0, CardRarity.Common)
+        : base(0, CardRarity.Uncommon)
     {
     }
 }

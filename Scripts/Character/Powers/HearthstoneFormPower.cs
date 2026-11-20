@@ -19,7 +19,7 @@ using STS2RitsuLib.Scaffolding.Content.Patches;
 namespace jaina.Scripts.Character.Powers;
 
 /// <summary>
-/// 炉石形态：你的全部卡牌获得保留和消耗；当你抽到状态卡时额外抽一张。
+/// 炉石形态：你的全部卡牌获得保留和消耗。
 /// 此后每回合你获得十点能量。
 /// 当你手牌上限再抽牌时，抽到的牌会被消耗。
 /// 当你抽牌堆和弃牌堆无牌可抽时，进入疲劳（第1次扣1血，第2次扣2血，以此类推）。
@@ -66,24 +66,6 @@ public sealed class HearthstoneFormPower : PowerModel, IModPowerAssetOverrides
         if (player == Owner?.Player && player.PlayerCombatState != null)
         {
             player.PlayerCombatState.Energy = 10;
-        }
-        await Task.CompletedTask;
-    }
-
-    /// <summary>
-    /// 抽牌后：抽到状态卡时额外抽一张（可能连锁）
-    /// </summary>
-    public override async Task AfterCardDrawn(PlayerChoiceContext choiceContext, CardModel card, bool fromHandDraw)
-    {
-        var player = Owner?.Player;
-        if (player == null || card.Owner != player)
-        {
-            return;
-        }
-        if (card.Type == CardType.Status)
-        {
-            // 抽到状态卡：额外抽一张（可能连锁）
-            await CardPileCmd.Draw(choiceContext, 1, player);
         }
         await Task.CompletedTask;
     }

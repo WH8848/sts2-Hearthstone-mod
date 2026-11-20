@@ -1,5 +1,4 @@
 using System.Threading.Tasks;
-using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
@@ -48,6 +47,6 @@ public sealed class FrostElementalMinion : JainaMinionBase
         {
             return;
         }
-        await PowerCmd.Apply<FreezePower>(choiceContext, [target], 1m, owner.Creature, cardSource);
+        await FreezePower.ApplyIgnoringArtifact(choiceContext, target, 1m, owner.Creature, cardSource);
     }
 }

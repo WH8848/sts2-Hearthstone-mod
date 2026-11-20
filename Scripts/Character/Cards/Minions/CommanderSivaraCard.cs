@@ -17,7 +17,7 @@ namespace jaina.Scripts.Character.Cards;
 /// 指挥官西瓦拉 (Commander Sivara) - 1费随从卡（稀有，纳迦种族）。
 /// 战吼：如果你在此牌在你手中时施放过三个法术，则将那些法术的复制置回你的手牌。
 /// 属性 3/5。
-/// 追踪：本卡在手牌期间，玩家每施放一张法术牌（攻击/技能牌，不含英雄技能卡）
+/// 追踪：本卡在手牌期间，玩家每施放一张法术牌（英雄技能卡除外）
 /// 记录其类型与升级级别（最多 3 个）；打出时若已满 3 个，将它们的复制置入手牌。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
@@ -96,7 +96,7 @@ public sealed class CommanderSivaraCard : JainaMinionCardTemplate
 
     /// <summary>
     /// 玩家打出任意卡后（本卡在手牌时收到该 hook）：
-    /// 记录施放的法术牌（攻击/技能牌，不含英雄技能卡），最多 3 个。
+    /// 记录施放的法术牌（英雄技能卡除外），最多 3 个。
     /// </summary>
     public override async Task AfterCardPlayed(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
@@ -118,9 +118,9 @@ public sealed class CommanderSivaraCard : JainaMinionCardTemplate
             return;
         }
         var played = cardPlay.Card;
-        // 法术牌 = 攻击牌/技能牌，或挂"法术牌"关键词的卡（任务线卡等视为法术牌，可被复制）；
+        // 法术牌 = 攻击牌、技能牌、状态牌，或挂"法术牌"关键词的卡（任务线卡等视为法术牌，可被复制）；
         // 英雄技能卡（火焰冲击等）不算法术
-        if (played.Type != CardType.Attack && played.Type != CardType.Skill &&
+        if (!JainaCastTracker.IsSpellCardType(played.Type) &&
             !played.Keywords.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Spell))
         {
             return;

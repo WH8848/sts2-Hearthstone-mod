@@ -72,16 +72,7 @@ public sealed class SkatingElementalMinion : JainaMinionBase
             return;
         }
 
-        // 给于1层冻结（无视人工制品：滑冰元素的冻结不被人工制品阻挡）
-        FreezePower.BypassArtifactNextApply = true;
-        try
-        {
-            await PowerCmd.Apply<FreezePower>(choiceContext, [enemy], 1m, Creature, null);
-        }
-        finally
-        {
-            FreezePower.BypassArtifactNextApply = false;
-        }
+        await FreezePower.ApplyIgnoringArtifact(choiceContext, enemy, 1m, Creature, null);
 
         // 获得等同于目标冻结层数的格挡（施加后读取，含本次的 1 层）
         int block = Math.Max(0, (int)enemy.GetPowerAmount<FreezePower>());

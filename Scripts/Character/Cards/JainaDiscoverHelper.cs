@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using jaina.Scripts.Character.Powers;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Models;
@@ -196,7 +197,7 @@ public static class JainaDiscoverHelper
     /// <summary>
     /// 发现一张火焰/冰霜/奥术派系法术牌（任务线阶段 2 奖励用）：
     /// 三派系动态池合并（BuildSchoolSpellPool × Fire/Frost/Arcane），
-    /// 三选一，选中的牌加入手牌。
+    /// 三选一，选中的牌在手牌有空位时入手。
     /// </summary>
     public static async Task<CardModel?> DiscoverSchoolSpellAndAddToHand(
         PlayerChoiceContext choiceContext, Player player)
@@ -244,9 +245,9 @@ public static class JainaDiscoverHelper
         var chosen = await CardSelectCmd.FromChooseACardScreen(choiceContext, candidates, player, canSkip: true);
         if (chosen != null)
         {
-            // 手牌满时 AddGeneratedCardToCombat 自动改道弃牌堆（原版满手语义，牌不消失不消耗）
             jaina.Scripts.Character.JainaCastTracker.MarkGenerated(chosen);
-            await CardPileCmd.AddGeneratedCardToCombat(chosen, PileType.Hand, player);
+            DiscoverTracker.OnCardAddedToHand(player, chosen);
+            await JainaPendingRewardQueue.GrantOrQueue(choiceContext, player, chosen);
         }
         return chosen;
     }

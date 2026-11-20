@@ -12,7 +12,7 @@
     "JAINA_KEYWORD_FINISHER.title":  "压轴",
     "JAINA_KEYWORD_FINISHER.description":  "此牌恰好消耗你的剩余所有能量。",
     "JAINA_KEYWORD_SPELL.title":  "法术牌",
-    "JAINA_KEYWORD_SPELL.description":  "攻击牌和技能牌都视为法术牌。",
+    "JAINA_KEYWORD_SPELL.description":  "攻击牌、技能牌和状态牌都视为法术牌。",
     "JAINA_KEYWORD_BATTLECRY.title":  "战吼",
     "JAINA_KEYWORD_BATTLECRY.description":  "卡牌从手牌中被使用时，会立即触发其效果。",
     "JAINA_KEYWORD_HERO_POWER.title":  "英雄技能",

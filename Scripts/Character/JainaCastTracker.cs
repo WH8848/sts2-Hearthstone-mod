@@ -29,7 +29,7 @@ public enum JainaSpellSchool
 /// 本局对战施放追踪器（倒带/罗曼斯/诺甘农的智慧用）。
 /// 每场战斗一份记录（ConditionalWeakTable 随战斗结束自动清理）：
 /// - 施放过的攻击/技能牌类型（倒带"施放过的其他攻击牌或技能牌"）
-/// - 施放过的"牌库之外"攻击/技能牌类型（罗曼斯重放）
+/// - 施放过的"牌库之外"攻击、技能和状态牌类型（罗曼斯重放）
 /// - 施放过的法术派系（诺甘农的智慧降费）
 /// </summary>
 public static class JainaCastTracker
@@ -48,12 +48,12 @@ public static class JainaCastTracker
         public readonly Dictionary<ulong, HashSet<Type>> PlayedAttackSkillsByPlayer = [];
 
         /// <summary>
-        /// 各玩家生成过的攻击/技能牌类型（"牌库之外"类型级判定用，罗曼斯/任务线）。
+        /// 各玩家生成过的攻击、技能和状态牌类型（"牌库之外"类型级判定用，罗曼斯/任务线）。
         /// </summary>
         public readonly Dictionary<ulong, HashSet<Type>> GeneratedAttackSkillsByPlayer = [];
 
         /// <summary>
-        /// 各玩家手打的"牌库之外"攻击/技能牌次数（按类型计数，罗曼斯重放用）。
+        /// 各玩家手打的"牌库之外"攻击、技能和状态牌次数（按类型计数，罗曼斯重放用）。
         /// 只计玩家手打（排除罗曼斯重放等自动打出）。
         /// </summary>
         public readonly Dictionary<ulong, Dictionary<Type, int>> PlayerCastOutsideDeckCountsByPlayer = [];
@@ -157,11 +157,11 @@ public static class JainaCastTracker
         public readonly Dictionary<ulong, (Type Type, int UpgradeLevel, bool IsGenerated)?> LastPlayedCardByPlayer = [];
 
         /// <summary>
-        /// 各玩家<b>本回合</b>已手打的攻击/技能牌数量（卡雷苟斯/落难的大法师
+        /// 各玩家<b>本回合</b>已手打的攻击、技能和状态牌数量（卡雷苟斯/落难的大法师
         /// "当前回合第一张法术减费"判定用——随从登场时若本回合已打过法术，
         /// 减费窗口已过，不再给后续法术减费）。玩家回合开始清零。
         /// </summary>
-        public readonly Dictionary<ulong, int> AttackOrSkillCountThisTurnByPlayer = [];
+        public readonly Dictionary<ulong, int> SpellCountThisTurnByPlayer = [];
 
         /// <summary>
         /// 取某玩家的类型集合（不存在则创建）
@@ -271,20 +271,20 @@ public static class JainaCastTracker
     public static CombatRecord For(ICombatState combatState) => Records.GetValue(combatState, _ => new CombatRecord());
 
     /// <summary>
-    /// 该玩家<b>本回合</b>是否已手打过攻击/技能牌（卡雷苟斯/落难的大法师
+    /// 该玩家<b>本回合</b>是否已手打过攻击牌、技能牌或状态牌（卡雷苟斯/落难的大法师
     /// "当前回合第一张法术减费"窗口判定用——随从登场时已打过 → 窗口已过）。
     /// </summary>
-    public static bool HasPlayedAttackOrSkillThisTurn(Player player)
+    public static bool HasPlayedSpellThisTurn(Player player)
     {
         if (player?.Creature?.CombatState == null || !Records.TryGetValue(player.Creature.CombatState, out var rec))
         {
             return false;
         }
-        return rec.AttackOrSkillCountThisTurnByPlayer.TryGetValue(player.NetId, out var n) && n > 0;
+        return rec.SpellCountThisTurnByPlayer.TryGetValue(player.NetId, out var n) && n > 0;
     }
 
     /// <summary>
-    /// 玩家回合开始：清零该玩家的"本回合攻击/技能牌计数"。
+    /// 玩家回合开始：清零该玩家的"本回合攻击、技能和状态牌计数"。
     /// 由卡雷苟斯/落难的大法师的 BeforeSideTurnStart 调用（幂等）。
     /// </summary>
     public static void ResetTurnAttackSkillCount(Player player)
@@ -293,7 +293,7 @@ public static class JainaCastTracker
         {
             return;
         }
-        rec.AttackOrSkillCountThisTurnByPlayer.Remove(player.NetId);
+        rec.SpellCountThisTurnByPlayer.Remove(player.NetId);
     }
 
     /// <summary>
@@ -338,12 +338,12 @@ public static class JainaCastTracker
         }
 
         // 卡雷苟斯/落难的大法师"当前回合第一张法术"窗口判定：
-        // 只计玩家手打的<b>攻击/技能牌</b>（随从卡/能力牌不计；自动打出不计——
+        // 只计玩家手打的<b>攻击、技能和状态牌</b>（随从卡/能力牌不计；自动打出不计——
         // 与 KalecgosPower.AfterCardPlayed 的 IsAutoPlay 排除一致）；玩家回合开始清零。
-        if (isHandPlayed && (card.Type == CardType.Attack || card.Type == CardType.Skill))
+        if (isHandPlayed && IsSpellCardType(card.Type))
         {
-            rec.AttackOrSkillCountThisTurnByPlayer.TryGetValue(ownerId, out var n);
-            rec.AttackOrSkillCountThisTurnByPlayer[ownerId] = n + 1;
+            rec.SpellCountThisTurnByPlayer.TryGetValue(ownerId, out var n);
+            rec.SpellCountThisTurnByPlayer[ownerId] = n + 1;
         }
 
         // "本局施放过的攻击/技能牌"集合（吉安娜的礼物+倒带候选池用）：
@@ -395,7 +395,7 @@ public static class JainaCastTracker
     /// <summary>
     /// 标记一张"牌库之外"生成的卡（AddGeneratedCardToCombat 前调用，罗曼斯重放用）。
     /// 实例级标记（法术/随从卡蓝光用）对所有衍生卡生效；
-    /// 类型级记录（罗曼斯重放）仅对攻击/技能牌生效。
+    /// 类型级记录（罗曼斯重放）仅对攻击、技能和状态牌生效。
     /// 吉安娜局内衍生出来的卡全部附加"消耗"（Exhaust）关键词：
     /// 打出后进入消耗堆而不是弃牌堆（炉石语义：衍生物打出即消失）。
     /// </summary>
@@ -419,7 +419,7 @@ public static class JainaCastTracker
             }
         }
 
-        if (card.Type != CardType.Attack && card.Type != CardType.Skill)
+        if (!IsSpellCardType(card.Type))
         {
             return;
         }
@@ -479,13 +479,13 @@ public static class JainaCastTracker
     }
 
     /// <summary>
-    /// 该攻击/技能牌是否"牌库之外"（本局对战内生成过的类型，含实例标记或类型记录）。
+    /// 该攻击牌、技能牌或状态牌是否来自牌库之外（本局对战内生成过的类型，含实例标记或类型记录）。
     /// 实例标记覆盖生成时记录过的卡；类型记录覆盖罗曼斯重放等漏标实例的卡。
     /// 类型记录按卡所属玩家区分（联机：队友生成的类型不算我的"牌库之外"）。
     /// </summary>
     public static bool IsOutsideDeckCard(CardModel card)
     {
-        if (card.Type != CardType.Attack && card.Type != CardType.Skill)
+        if (!IsSpellCardType(card.Type))
         {
             return false;
         }
@@ -673,7 +673,7 @@ public static class JainaCastTracker
     }
 
     /// <summary>
-    /// 是否为法术牌（<b>统一判定</b>）：攻击牌/技能牌，或带"法术牌"关键词的<b>能力牌</b>（Power 类型）。
+    /// 是否为法术牌（<b>统一判定</b>）：攻击牌、技能牌、状态牌，或带"法术牌"关键词的能力牌。
     /// 随从/地标/英雄卡即使带"法术牌"关键词（历史遗留：曾用于悬停解释，现 Spell 为纯内部标记）
     /// 也<b>不</b>算法术牌——防止随从混入法术发现/随机池、被倒带/任务进度/加大音量等误判为法术。
     /// </summary>
@@ -683,13 +683,16 @@ public static class JainaCastTracker
         {
             return false;
         }
-        if (card.Type == CardType.Attack || card.Type == CardType.Skill)
+        if (IsSpellCardType(card.Type))
         {
             return true;
         }
         return card.Type == CardType.Power &&
                card.Keywords.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Spell);
     }
+
+    internal static bool IsSpellCardType(CardType type) =>
+        type is CardType.Attack or CardType.Skill or CardType.Status;
 
     /// <summary>
     /// 该类型是否<b>不可</b>被法术发现/随机施放池检索（<b>动态判定，无需手动注册</b>）：
@@ -759,7 +762,7 @@ public static class JainaCastTracker
             {
                 continue;
             }
-            // 法术牌 = 统一判定（攻击/技能，或带"法术牌"关键词的能力牌；随从/地标不算）
+            // 法术牌 = 统一判定
             bool isSpellCard = IsSpellCard(canonical);
             if (!isSpellCard)
             {
@@ -820,7 +823,7 @@ public static class JainaCastTracker
             {
                 continue;
             }
-            // 法术牌 = 统一判定（攻击/技能，或带"法术牌"关键词的能力牌；随从/地标不算）
+            // 法术牌 = 统一判定
             bool isSpellCard = IsSpellCard(canonical);
             if (!isSpellCard)
             {

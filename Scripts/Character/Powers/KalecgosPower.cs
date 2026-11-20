@@ -13,8 +13,8 @@ namespace jaina.Scripts.Character.Powers;
 /// <summary>
 /// 卡雷苟斯（Kalecgos）：你每个回合使用的第一张攻击牌或技能牌的费用为0点。
 /// 光环效果：挂在随从生物自身，随从死亡时本 Power 随生物移除、效果消失。
-/// 通过费用修改钩子实时生效：本回合尚未使用攻击/技能牌时，
-/// 主人所有攻击/技能牌的展示与结算费用为 0；第一张攻击/技能牌打出后恢复原价。
+/// 通过费用修改钩子实时生效：本回合尚未使用攻击、技能和状态牌时，
+/// 主人所有攻击、技能和状态牌的展示与结算费用为 0；第一张攻击、技能和状态牌打出后恢复原价。
 /// </summary>
 [RegisterPower]
 public sealed class KalecgosPower : PowerModel
@@ -26,7 +26,7 @@ public sealed class KalecgosPower : PowerModel
     protected override bool IsVisibleInternal => false;
 
     /// <summary>
-    /// 本回合是否已使用攻击/技能牌
+    /// 本回合是否已使用攻击、技能和状态牌
     /// </summary>
     private bool _usedThisTurn;
 
@@ -35,10 +35,10 @@ public sealed class KalecgosPower : PowerModel
         modifiedCost = originalCost;
         if (!_usedThisTurn)
         {
-            // 随从是本回合中途登场：若本回合第一张攻击/技能牌已在登场前打出，
+            // 随从是本回合中途登场：若本回合第一张攻击、技能和状态牌已在登场前打出，
             // 减费窗口已过（"当前回合第一张法术"——不是"登场后下一张"）
             if (Owner?.PetOwner is { } po &&
-                jaina.Scripts.Character.JainaCastTracker.HasPlayedAttackOrSkillThisTurn(po))
+                jaina.Scripts.Character.JainaCastTracker.HasPlayedSpellThisTurn(po))
             {
                 _usedThisTurn = true;
             }
@@ -52,7 +52,7 @@ public sealed class KalecgosPower : PowerModel
         {
             return false;
         }
-        if (card.Type != CardType.Attack && card.Type != CardType.Skill)
+        if (!JainaCastTracker.IsSpellCardType(card.Type))
         {
             return false;
         }
@@ -72,8 +72,7 @@ public sealed class KalecgosPower : PowerModel
             {
                 return Task.CompletedTask;
             }
-            var type = cardPlay.Card.Type;
-            if (type == CardType.Attack || type == CardType.Skill)
+            if (JainaCastTracker.IsSpellCardType(cardPlay.Card.Type))
             {
                 _usedThisTurn = true;
             }

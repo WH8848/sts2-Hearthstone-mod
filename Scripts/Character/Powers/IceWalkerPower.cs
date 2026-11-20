@@ -1,5 +1,4 @@
 using System.Threading.Tasks;
-using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
@@ -27,8 +26,7 @@ public sealed class IceWalkerPower : PowerModel
     /// </summary>
     public override async Task AfterCardPlayed(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
-        var owner = Owner?.PetOwner;
-        if (owner == null || cardPlay.Card.Owner != owner)
+        if (Owner is not { PetOwner: { } owner } minion || cardPlay.Card.Owner != owner)
         {
             return;
         }
@@ -42,17 +40,6 @@ public sealed class IceWalkerPower : PowerModel
         {
             return;
         }
-        // 随从给予的冻结不被人工制品(Artifact)阻挡——与滑冰元素/瓦尔登一致
-        // （见 ArtifactFreezeBypassPatch / FreezePower.BypassArtifactNextApply;
-        //  联机两端命令确定性执行,行为一致）
-        try
-        {
-            FreezePower.BypassArtifactNextApply = true;
-            await PowerCmd.Apply<FreezePower>(choiceContext, [target], 1m, Owner, cardPlay.Card);
-        }
-        finally
-        {
-            FreezePower.BypassArtifactNextApply = false;
-        }
+        await FreezePower.ApplyIgnoringArtifact(choiceContext, target, 1m, minion, cardPlay.Card);
     }
 }

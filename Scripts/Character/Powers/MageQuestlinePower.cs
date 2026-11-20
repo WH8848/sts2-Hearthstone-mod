@@ -126,7 +126,7 @@ public sealed class MageQuestlinePower : PowerModel, IModPowerAssetOverrides
         {
             return;
         }
-        // 只统计法术牌（统一判定：攻击/技能，或带"法术牌"关键词的能力牌；
+        // 只统计法术牌（攻击牌、技能牌、状态牌，或带"法术牌"关键词的能力牌；
         // 寒冰屏障/冰血哨塔视为法术牌，施放计入任务进度；随从/地标不算）
         if (!jaina.Scripts.Character.JainaCastTracker.IsSpellCard(card))
         {
@@ -191,35 +191,26 @@ public sealed class MageQuestlinePower : PowerModel, IModPowerAssetOverrides
     }
 
     /// <summary>
-    /// 抽一张法术牌：从抽牌堆中找第一张攻击/技能牌（或带"法术牌"关键词的能力牌）
+    /// 抽一张法术牌：从抽牌堆中找第一张法术牌（含带"法术牌"关键词的能力牌）
     /// 置入手牌；抽牌堆没有 → 从弃牌堆找（统一语义见 JainaDrawHelper）；
     /// 两堆都没有则普通抽一张。
-    /// 手牌满时先从原堆移除再排队等待空位（炉石任务奖励语义——奖励不丢失；
-    /// 取牌堆中的卡不能直接 GrantOrQueue：卡已有牌堆，AddGeneratedCardToCombat
-    /// 会抛"不允许生成已有牌堆的卡"）。
+    /// 手牌满时，等有空位再从牌堆抽取。
     /// </summary>
-    private static async Task GrantDrawSpell(PlayerChoiceContext choiceContext, Player player)
+    private static Task GrantDrawSpell(PlayerChoiceContext choiceContext, Player player)
     {
-        var spell = jaina.Scripts.Character.JainaDrawHelper.PickMatchingFromDrawThenDiscard(
-                player, 1,
-                c => jaina.Scripts.Character.JainaCastTracker.IsSpellCard(c))
-            .FirstOrDefault();
-        if (spell == null)
+        return JainaPendingRewardQueue.GrantOrQueue(choiceContext, player, async context =>
         {
-            await CardPileCmd.Draw(choiceContext, 1, player);
-            return;
-        }
-        // 手牌有空位：从牌堆取牌入手（满手时原版 Add 语义改道弃牌堆——但任务奖励
-        // 不丢失，先移除原堆再排队，队列发放走 AddGeneratedCardToCombat 时卡已无牌堆）
-        if (!jaina.Scripts.Character.JainaHandHelper.IsHandFull(player))
-        {
-            // Add 带卡牌移动动画（从抽牌堆/弃牌堆入手）；抽牌音效与原版抽牌一致
+            var spell = JainaDrawHelper.PickMatchingFromDrawThenDiscard(player, 1, JainaCastTracker.IsSpellCard)
+                .FirstOrDefault();
+            if (spell == null)
+            {
+                await CardPileCmd.Draw(context, 1, player);
+                return;
+            }
+
             await CardPileCmd.Add(spell, PileType.Hand);
-            jaina.Scripts.Character.JainaDrawHelper.PlayDrawSfx();
-            return;
-        }
-        spell.RemoveFromCurrentPile(silent: true);
-        await JainaPendingRewardQueue.GrantOrQueue(choiceContext, player, spell);
+            JainaDrawHelper.PlayDrawSfx();
+        });
     }
 
     /// <summary>

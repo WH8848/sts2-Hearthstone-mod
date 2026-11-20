@@ -102,7 +102,7 @@ public sealed class FlameWard : JainaSpellCardTemplate
             return;
         }
         var victims = combatState.Creatures
-            .Where(c => c != null && c.IsAlive && !c.IsPlayer && c != base.Owner.Creature)
+            .Where(c => c.IsAlive && (c.IsPet || c.Monster is MinionLib.Minion.MinionModel))
             .Where(c => cardPlay.IsAutoPlay || c.PetOwner == null || c.PetOwner == base.Owner)
             .ToList();
         foreach (var victim in victims)

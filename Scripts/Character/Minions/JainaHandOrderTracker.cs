@@ -1,61 +1,55 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
-using MegaCrit.Sts2.Core.Entities.Players;
+using HarmonyLib;
+using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Models;
 
 namespace jaina.Scripts.Character.Minions;
 
 /// <summary>
-/// 露娜手牌顺序追踪（按玩家共享）：所有露娜实例共用同一份手牌顺序快照，
-/// 保证多只露娜的"最右"判定完全一致（列表末尾 = 最右），
-/// 也避免各实例独立快照因挂载时机不同而漂移。
+/// 手牌移出前记录当时能响应最右侧出牌的露娜。
 /// </summary>
-public static class JainaHandOrderTracker
+[HarmonyPatch(typeof(CardPileCmd), nameof(CardPileCmd.AddDuringManualCardPlay))]
+internal static class JainaHandOrderTracker
 {
-    private static readonly ConditionalWeakTable<Player, List<CardModel>> Orders = new();
+    private static readonly ConditionalWeakTable<CardModel, List<LunaMinion>> RightmostPlays = new();
 
-    public static List<CardModel> For(Player player) => Orders.GetValue(player, _ => new List<CardModel>());
-
-    /// <summary>
-    /// 重建快照（回合开始/召唤时用当前手牌覆盖；多只露娜重复调用幂等）
-    /// </summary>
-    public static void Rebuild(Player player, IReadOnlyList<CardModel>? hand)
+    private static void Prefix(CardModel card)
     {
-        var list = For(player);
-        list.Clear();
-        if (hand != null)
+        RightmostPlays.Remove(card);
+        var player = card.Owner;
+        var hand = player.PlayerCombatState?.Hand.Cards;
+        if (hand == null || hand.Count == 0 || hand[^1] != card ||
+            player.Creature.CombatState is not { } combat)
         {
-            list.AddRange(hand);
+            return;
+        }
+
+        var lunas = combat.Creatures
+            .Where(creature => creature.IsAlive && creature.PetOwner == player)
+            .Select(creature => creature.Monster)
+            .OfType<LunaMinion>()
+            .ToList();
+        if (lunas.Count > 0)
+        {
+            RightmostPlays.Add(card, lunas);
         }
     }
 
-    /// <summary>
-    /// 追加到末尾（抽牌/生成牌入手；幂等防重复 append）
-    /// </summary>
-    public static void Append(Player player, CardModel card)
+    internal static bool ConsumeRightmostPlay(CardPlay play, LunaMinion luna)
     {
-        var list = For(player);
-        if (!list.Contains(card))
+        if (play.IsAutoPlay || play.PlayIndex != play.PlayCount - 1 ||
+            !RightmostPlays.TryGetValue(play.Card, out var lunas) || !lunas.Remove(luna))
         {
-            list.Add(card);
+            return false;
         }
-    }
 
-    /// <summary>
-    /// 判定该卡是否为快照末尾（最右一张）。
-    /// 只判定不移除：多只露娜必须在同一时刻看到同一快照，
-    /// 若在 BeforeCardPlayed 就移除，后续露娜会判定失败（index=-1）。
-    /// 移除统一延后到 AfterCardPlayed（所有露娜判定完毕后）。
-    /// </summary>
-    public static bool IsRightmost(Player player, CardModel card)
-    {
-        var list = For(player);
-        int index = list.IndexOf(card);
-        return index >= 0 && index == list.Count - 1;
+        if (lunas.Count == 0)
+        {
+            RightmostPlays.Remove(play.Card);
+        }
+        return true;
     }
-
-    /// <summary>
-    /// 兜底移除（AfterCardPlayed 清理残留；幂等）
-    /// </summary>
-    public static void Remove(Player player, CardModel card) => For(player).Remove(card);
 }

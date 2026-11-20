@@ -26,7 +26,7 @@ public sealed class SanctumCandlesellerMinion : JainaMinionBase
     protected override string MinionVisualsPath => "res://assets/card_art/sanctum_chandler.png";
 
     /// <summary>
-    /// 施放火焰法术后：抽一张法术牌——优先从抽牌堆找攻击/技能牌入手，
+    /// 施放火焰法术后：抽一张法术牌——优先从抽牌堆找法术牌入手，
     /// 抽牌堆没有则从弃牌堆找，都没有则普通抽一张。
     /// </summary>
     public override async Task AfterCardPlayed(PlayerChoiceContext choiceContext, CardPlay cardPlay)
@@ -36,8 +36,8 @@ public sealed class SanctumCandlesellerMinion : JainaMinionBase
             return;
         }
         var card = cardPlay.Card;
-        // 只统计法术牌（攻击/技能牌，或带"法术牌"关键词的能力牌）
-        if (card.Type != CardType.Attack && card.Type != CardType.Skill &&
+        // 只统计法术牌（攻击牌、技能牌、状态牌，或带"法术牌"关键词的能力牌）
+        if (!JainaCastTracker.IsSpellCardType(card.Type) &&
             !card.Keywords.Contains(JainaKeywords.Spell))
         {
             return;
@@ -58,7 +58,7 @@ public sealed class SanctumCandlesellerMinion : JainaMinionBase
         {
             return;
         }
-        // 优先抽牌堆（法术牌统一判定：攻击/技能，或带"法术牌"关键词的能力牌）
+        // 优先抽牌堆（法术牌统一判定：攻击牌、技能牌、状态牌，或带"法术牌"关键词的能力牌）
         var drawPile = combatState.DrawPile;
         var spell = drawPile.Cards.FirstOrDefault(c =>
             c != null && jaina.Scripts.Character.JainaCastTracker.IsSpellCard(c));

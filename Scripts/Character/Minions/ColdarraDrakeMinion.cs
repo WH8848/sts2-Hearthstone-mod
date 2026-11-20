@@ -34,6 +34,10 @@ public sealed class ColdarraDrakeMinion : JainaMinionBase
     public override async Task OnSummon(PlayerChoiceContext choiceContext, Player owner, MinionSummonOptions options)
     {
         await base.OnSummon(choiceContext, owner, options);
-        await PowerCmd.Apply<ColdarraDrakePower>(choiceContext, [Creature], 1m, Creature, options.Source);
+        var power = await PowerCmd.Apply<ColdarraDrakePower>(choiceContext, Creature, 1m, Creature, options.Source);
+        if (power != null)
+        {
+            await ColdarraDrakePower.ReturnHeroPowerPlayedThisTurn(choiceContext, owner);
+        }
     }
 }

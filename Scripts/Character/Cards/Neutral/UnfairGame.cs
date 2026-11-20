@@ -93,7 +93,7 @@ public sealed class UnfairGame : JainaSpellCardTemplate, Powers.IJainaConditionG
             // 压轴：如果刚好消耗完能量，从抽到的三张法术牌中发现一张复制
             if (base.Owner.PlayerCombatState is { Energy: <= 0 })
             {
-                var spells = drawn.Where(c => c.Type == CardType.Attack || c.Type == CardType.Skill).ToList();
+                var spells = drawn.Where(c => JainaCastTracker.IsSpellCardType(c.Type)).ToList();
                 if (spells.Count > 0)
                 {
                     // 发现界面要求最多 3 张候选；抽到的法术牌超过 3 张时随机取 3 张

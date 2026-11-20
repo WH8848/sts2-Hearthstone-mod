@@ -12,7 +12,7 @@
     "JAINA_KEYWORD_FINISHER.title":  "Finisher",
     "JAINA_KEYWORD_FINISHER.description":  "This card exactly uses all of your remaining Energy.",
     "JAINA_KEYWORD_SPELL.title":  "Spell",
-    "JAINA_KEYWORD_SPELL.description":  "Attack and Skill cards are both Spell cards.",
+    "JAINA_KEYWORD_SPELL.description":  "Attack, Skill, and Status cards count as Spells.",
     "JAINA_KEYWORD_BATTLECRY.title":  "Battlecry",
     "JAINA_KEYWORD_BATTLECRY.description":  "When this card is played from your hand, its effect triggers immediately.",
     "JAINA_KEYWORD_HERO_POWER.title":  "Hero Power",

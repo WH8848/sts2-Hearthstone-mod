@@ -74,7 +74,7 @@ public sealed class ArchmagesRuneCard : JainaSpellCardTemplate
         }
         var rng = owner.RunState.Rng.CombatTargets;
 
-        // 法师法术池：吉安娜卡池中的攻击/技能牌（不含英雄技能卡），按可升级级别展开
+        // 法师法术池：吉安娜卡池中的攻击牌、技能牌和状态牌（不含英雄技能卡），按可升级级别展开
         var pool = new List<CardModel>();
         foreach (var canonical in ModelDb.CardPool<JainaCardPool>().AllCards)
         {
@@ -82,7 +82,7 @@ public sealed class ArchmagesRuneCard : JainaSpellCardTemplate
             {
                 continue;
             }
-            if (canonical.Type != CardType.Attack && canonical.Type != CardType.Skill)
+            if (!JainaCastTracker.IsSpellCardType(canonical.Type))
             {
                 continue;
             }

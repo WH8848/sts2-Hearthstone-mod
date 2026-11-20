@@ -11,8 +11,8 @@ namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
 /// 法术牌/任务牌卡面类型标签：
-/// 带"法术牌"内部标记（JainaKeywords.Spell）或"任务"关键词（JainaKeywords.Quest）的卡，
-/// 显示"基础类型丨法术"（攻击丨法术 / 技能丨法术 / 能力丨法术；
+/// 状态牌，以及带"法术牌"内部标记（JainaKeywords.Spell）或"任务"关键词（JainaKeywords.Quest）的卡，
+/// 显示"基础类型丨法术"（攻击丨法术 / 技能丨法术 / 能力丨法术 / 状态丨法术；
 /// 任务线卡底层是能力类型 → 能力丨法术），分隔符统一使用"丨"。
 /// 原版 NCard.UpdateTypePlaque 只显示基础类型（攻击/技能/能力/随从…）。
 /// 后缀文本通过 gameplay_ui.json 的 CARD_TYPE.SPELL 本地化（zhs=法术，eng=Spell）。
@@ -94,6 +94,10 @@ public static class SpellCardTypePlaquePatch
         if (model == null)
         {
             return false;
+        }
+        if (model.Type == CardType.Status)
+        {
+            return true;
         }
         var keywords = model.Keywords;
         return keywords.Contains(JainaKeywords.Spell) || keywords.Contains(JainaKeywords.Quest);

@@ -22,7 +22,7 @@ public class JainaCardPool : TypeListCardPoolModel, IModColorfulPhilosophersCard
 
     public override string? BigEnergyIconPath => "res://assets/energy/energy_jaina_big.png";
 
-    // 吉安娜主题卡框颜色：#69CCF0（RGB 105, 204, 240，冰蓝）
+    // 吉安娜主题卡框颜色：低饱和蓝灰，保留《杀戮尖塔 2》原版卡框结构。
     public override Color DeckEntryCardColor => new("#69CCF0");
 
     public override bool IsColorless => false;
@@ -30,12 +30,12 @@ public class JainaCardPool : TypeListCardPoolModel, IModColorfulPhilosophersCard
     public override string CardFrameMaterialPath => "card_frame_colorless";
 
     /// <summary>
-    /// 吉安娜主题卡框材质：HSV 调色（h=0.542 蓝、s=0.56、v=0.94——冰蓝主题）。
+    /// 吉安娜主题卡框材质：HSV 调色（h=0.56 蓝灰、s=0.30、v=0.88）。
     /// RitsuLib 的 MaterialUtils.CreateHsvShaderMaterial 加载 res://shaders/hsv.gdshader
     /// （游戏原版 shader；本 mod 的 shaders/hsv.gdshader 提供同路径兜底）。
     /// </summary>
     private static readonly Material? _poolFrameMaterial =
-        STS2RitsuLib.Utils.MaterialUtils.CreateHsvShaderMaterial(0.542f, 0.56f, 0.94f);
+        STS2RitsuLib.Utils.MaterialUtils.CreateHsvShaderMaterial(0.56f, 0.30f, 0.88f);
 
     public override Material? PoolFrameMaterial => _poolFrameMaterial;
 }

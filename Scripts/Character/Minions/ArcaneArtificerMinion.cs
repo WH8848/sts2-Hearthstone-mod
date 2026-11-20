@@ -10,8 +10,8 @@ using STS2RitsuLib.Interop.AutoRegistration;
 namespace jaina.Scripts.Character.Minions;
 
 /// <summary>
-/// 奥数工匠 (Arcane Artificer) - 吉安娜专属随从。
-/// 属性：攻击 1，生命 3。每当你打出一张攻击牌或技能牌，便获得等同于其费用的护甲值。
+/// 奥术工匠 (Arcane Artificer) - 吉安娜专属随从。
+/// 属性：攻击 1，生命 3。打出法术牌时，获得其实际耗能三倍的格挡。
 /// 光环效果：挂在随从自身，随从死亡后被动失效。
 /// </summary>
 [RegisterMonster]

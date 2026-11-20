@@ -18,7 +18,7 @@ namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
 /// 死神之躯 (Deathborne) - 2费攻击牌（罕见，冰霜派系，卡面类型标签"攻击丨法术"）。
-/// 对所有随从造成2点伤害（不伤害队友的随从），对敌人造成7次2点伤害。每消灭一个角色，召唤一个2/2的不稳定的骷髅。
+/// 对敌人造成7次2点伤害，再对所有随从造成2点伤害（手打时排除队友的随从）。每消灭一个角色，召唤一个2/2的不稳定的骷髅。
 /// 战场上放不下的骷髅会立即爆炸（对随机敌人造成 2 点伤害）。
 /// 升级后变为"暴风雪 (Blizzard)"：造成7次2点伤害，随机分配到所有敌人身上。给予敌方全体7层冻结。
 /// </summary>
@@ -113,7 +113,6 @@ public sealed class DeathborneCard : JainaSpellCardTemplate
             .ToList();
 
         // 1) 先对敌人造成 7 次 2 点伤害（随机分配到所有敌人，每次伤害都检查消灭）
-        // （2026-11 调整：先打敌人、再打随从，与卡面描述一致）
         int killed = 0;
         var enemies = combatState.GetOpponentsOf(base.Owner.Creature)
             .Where(e => e != null && e.IsAlive && e.IsHittable)

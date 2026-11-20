@@ -14,9 +14,9 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
-/// 克苏恩面具 (Mask of C'Thun) - 2费攻击牌（普通，暗影派系）。
-/// 造成 10 点伤害，随机分配到所有敌人身上。
-/// 升级后变为夕阳漫射 (Sunset Volley)：造成 10 点伤害随机分配，并随机召唤一个费用消耗为 3 的随从（火焰派系）。
+/// 克苏恩面具 (Mask of C'Thun) - 3 费攻击牌（普通，暗影派系）。
+/// 造成 30 点伤害，随机分配到所有敌人身上。
+/// 升级为夕阳漫射 (Sunset Volley) 后转为火焰派系，并随机召唤一个 3 费随从。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
 public sealed class MaskOfCthunCard : JainaSpellCardTemplate
@@ -30,10 +30,10 @@ public sealed class MaskOfCthunCard : JainaSpellCardTemplate
 
     /// <summary>
     /// 动态伤害变量（STS2 原版机制：指向目标时 {Damage} 预览实际伤害，含力量/虚弱/易伤）。
-    /// 总伤害 10 点随机分配（逐点结算，力量加成每点生效）。
+    /// 伤害逐点随机分配，力量增加总点数。
     /// </summary>
     protected override IEnumerable<DynamicVar> CanonicalVars =>
-        [new DamageVar(10m, ValueProp.Move)];
+        [new DamageVar(30m, ValueProp.Move)];
 
     /// <summary>
     /// 卡牌原画：克苏恩面具 / 升级后（夕阳漫射）切换原画
@@ -42,7 +42,7 @@ public sealed class MaskOfCthunCard : JainaSpellCardTemplate
         IsUpgraded ? "res://assets/card_art/sunset_volley.png" : "res://assets/card_art/mask_of_cthun.png";
 
     public MaskOfCthunCard()
-        : base(2, CardType.Attack, CardRarity.Common, TargetType.None, true)
+        : base(3, CardType.Attack, CardRarity.Common, TargetType.None, true)
     {
     }
 
@@ -84,27 +84,21 @@ public sealed class MaskOfCthunCard : JainaSpellCardTemplate
             return;
         }
 
-        // 造成 10 点伤害，随机分配到所有敌人身上（逐点随机，重复命中允许）。
-        // 力量改为追加次数：共 (10 + 力量) 次 <b>固定 1 点</b>（总伤害 = 10 + 力量，
-        // 与卡面 {Damage} 预览一致）。每点必须 Unpowered（不吃力量）——
-        // 否则每点 1+力量 → 实际 (10+力量)×(1+力量)，力量被重复计算（实测 bug）。
-        int hits = 10 + base.Owner.Creature.GetPowerAmount<MegaCrit.Sts2.Core.Models.Powers.StrengthPower>();
-        var enemies = combatState.GetOpponentsOf(base.Owner.Creature)
-            .Where(e => e.IsAlive && e.IsHittable)
-            .ToList();
-        if (enemies.Count > 0)
+        // 力量增加单点命中次数，各次命中的基础伤害固定为 1。
+        int hits = (int)base.DynamicVars.Damage.BaseValue +
+            base.Owner.Creature.GetPowerAmount<MegaCrit.Sts2.Core.Models.Powers.StrengthPower>();
+        for (int i = 0; i < hits; i++)
         {
-            for (int i = 0; i < hits; i++)
+            var enemies = combatState.GetOpponentsOf(base.Owner.Creature)
+                .Where(e => e.IsAlive && e.IsHittable)
+                .ToList();
+            if (enemies.Count == 0)
             {
-                var target = combatState.RunState.Rng.CombatTargets.NextItem(enemies);
-                if (target == null)
-                {
-                    break;
-                }
-                // 走 AttackCommand（DamageCmd.Attack）：触发"被攻击命中"类效果（如胆小）；
-                // Unpowered()：每点固定 1，不吃力量
-                await DamageCmd.Attack(1m).Unpowered().FromCard(this, cardPlay).Targeting(target).Execute(choiceContext);
+                break;
             }
+
+            var target = combatState.RunState.Rng.CombatTargets.NextItem(enemies)!;
+            await DamageCmd.Attack(1m).Unpowered().FromCard(this, cardPlay).Targeting(target).Execute(choiceContext);
         }
 
         // 升级后：随机召唤一个费用消耗为 3 的随从

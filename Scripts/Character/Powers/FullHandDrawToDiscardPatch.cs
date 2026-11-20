@@ -53,7 +53,7 @@ public static class FullHandDrawToDiscardPatch
     /// <summary>
     /// 满手抽牌：从抽牌堆取 count 张（抽牌堆空时弃牌堆洗回），逐张移入弃牌堆，
     /// 保留原版 Draw 的动画/音效/钩子（Add 带卡牌移动动画、card_deal 抽牌音效、
-    /// CardDrawn/AfterCardDrawn/InvokeDrawn——炉石形态"抽到状态卡额外抽一张"仍生效）。
+    /// CardDrawn/AfterCardDrawn/InvokeDrawn）。
     /// </summary>
     private static async Task<IEnumerable<CardModel>> DrawFullHandToDiscard(
         PlayerChoiceContext choiceContext, decimal count, Player player, bool fromHandDraw)
@@ -85,7 +85,7 @@ public static class FullHandDrawToDiscardPatch
             result.Add(card);
             // Add 内部从抽牌堆移除（带卡牌移动动画）并加入弃牌堆（满手改道目标）
             await CardPileCmd.Add(card, PileType.Discard);
-            // 与原版 Draw 一致：历史记录 + 抽牌钩子（炉石形态 AfterCardDrawn 连锁额外抽牌仍生效）
+            // 与原版 Draw 一致：记录历史并触发抽牌钩子。
             CombatManager.Instance.History.CardDrawn(combatState, card, fromHandDraw);
             await Hook.AfterCardDrawn(combatState, choiceContext, card, fromHandDraw);
             card.InvokeDrawn();

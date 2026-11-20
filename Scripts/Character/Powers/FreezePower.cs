@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
@@ -18,7 +19,7 @@ namespace jaina.Scripts.Character.Powers;
 /// <summary>
 /// 冻结：每层使被冻结的角色攻击造成的伤害减少12.5%，最多减少 25%。
 /// 回合结束减少 2 层。
-/// 随从给予的冻结不会被人工制品阻挡（滑冰元素/瓦尔登·晨拥，见 ArtifactFreezeBypassPatch）。
+/// 随从给予的冻结不会被人工制品阻挡。
 /// </summary>
 [RegisterPower]
 public sealed class FreezePower : PowerModel, IModPowerAssetOverrides
@@ -37,13 +38,16 @@ public sealed class FreezePower : PowerModel, IModPowerAssetOverrides
     /// </summary>
     public const int MaxStacks = 8;
 
-    /// <summary>
-    /// 下一次施加冻结时无视人工制品（ArtifactPower）阻挡。
-    /// 由滑冰元素/瓦尔登·晨拥在施加前置位、施加后清除（try/finally），
-    /// 用于实现"冻结不被人工制品阻挡"（见 ArtifactFreezeBypassPatch）。
-    /// 联机：两端各自在战吼中置位/清除（命令确定性执行），行为一致。
-    /// </summary>
-    internal static bool BypassArtifactNextApply;
+    private static readonly AsyncLocal<Creature?> ArtifactBypassTarget = new();
+
+    internal static bool BypassesArtifact(Creature target) => ReferenceEquals(ArtifactBypassTarget.Value, target);
+
+    internal static async Task ApplyIgnoringArtifact(
+        PlayerChoiceContext choiceContext, Creature target, decimal amount, Creature applier, CardModel? cardSource)
+    {
+        ArtifactBypassTarget.Value = target;
+        await PowerCmd.Apply<FreezePower>(choiceContext, target, amount, applier, cardSource);
+    }
 
     public override PowerType Type => PowerType.Debuff;
 

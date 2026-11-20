@@ -116,7 +116,7 @@ public sealed class CramSessionCard : JainaSpellCardTemplate
         return pile?.Cards.FirstOrDefault(c =>
             c != null &&
             c.GetType() != typeof(CramSessionCard) &&
-            (c.Type == CardType.Attack || c.Type == CardType.Skill) &&
+            JainaCastTracker.IsSpellCardType(c.Type) &&
             c.Keywords.Contains(jaina.Scripts.Character.Keywords.JainaKeywords.Arcane));
     }
 }

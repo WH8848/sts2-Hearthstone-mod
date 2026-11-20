@@ -34,8 +34,7 @@ public sealed class FlamewakerMinion : JainaMinionBase
         {
             return;
         }
-        var type = cardPlay.Card.Type;
-        if (type != CardType.Attack && type != CardType.Skill)
+        if (!JainaCastTracker.IsSpellCardType(cardPlay.Card.Type))
         {
             return;
         }

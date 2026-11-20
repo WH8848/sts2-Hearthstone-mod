@@ -7,7 +7,7 @@ using STS2RitsuLib.Interop.AutoRegistration;
 namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
-/// 落难的大法师 (Marooned Archmage) - 1费随从卡（罕见）。
+/// 落难的大法师 (Marooned Archmage) - 1 费随从卡（普通）。
 /// 你每个回合使用的第一张法术牌的费用消耗减少1点。属性 3/4。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
@@ -28,7 +28,7 @@ public sealed class MaroonedArchmageCard : JainaMinionCardTemplate
     /// 无种族（模板默认：随从卡打出后消耗）
     /// </summary>
     public MaroonedArchmageCard()
-        : base(1, CardRarity.Uncommon)
+        : base(1, CardRarity.Common)
     {
     }
 }

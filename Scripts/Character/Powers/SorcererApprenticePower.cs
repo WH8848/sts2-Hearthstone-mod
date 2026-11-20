@@ -9,7 +9,7 @@ using STS2RitsuLib.Interop.AutoRegistration;
 namespace jaina.Scripts.Character.Powers;
 
 /// <summary>
-/// 巫师学徒光环：当 4 只巫师学徒同时在场时，你的法术牌（攻击牌/技能牌）费用减少 1 点。
+/// 巫师学徒光环：当 4 只巫师学徒同时在场时，你的法术牌（攻击牌、技能牌和状态牌）费用减少 1 点。
 /// 挂在随从生物自身——随从死亡时本 Power 随生物移除。
 /// 减费只由场上第一只学徒的光环执行（其余返回 false），保证多只在场时总量恰好 -1。
 /// </summary>
@@ -33,7 +33,7 @@ public sealed class SorcererApprenticePower : PowerModel
         {
             return false;
         }
-        if (card.Type != CardType.Attack && card.Type != CardType.Skill)
+        if (!JainaCastTracker.IsSpellCardType(card.Type))
         {
             return false;
         }

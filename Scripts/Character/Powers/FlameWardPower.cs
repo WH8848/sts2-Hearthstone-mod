@@ -75,7 +75,7 @@ public sealed class FlameWardPower : PowerModel, IModPowerAssetOverrides
         // 只有敌方造成的伤害才算"受到攻击"：吉安娜自己/己方效果对随从造成的伤害不触发
         bool isEnemyDamage = dealer != null && dealer.Side != Owner.Side;
         // 只要被敌方攻击就触发——哪怕伤害被格挡（零点伤害）也触发（用户口径）
-        if (!isOwnerOrPet || !isEnemyDamage || Amount <= 0)
+        if (!isOwnerOrPet || !isEnemyDamage || !props.HasFlag(ValueProp.Move) || Amount <= 0)
         {
             return;
         }

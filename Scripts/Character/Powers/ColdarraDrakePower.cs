@@ -1,7 +1,10 @@
+using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
-using MegaCrit.Sts2.Core.Entities.Creatures;
+using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
@@ -20,6 +23,8 @@ namespace jaina.Scripts.Character.Powers;
 [RegisterPower]
 public sealed class ColdarraDrakePower : PowerModel, IModPowerAssetOverrides
 {
+    private static readonly ConditionalWeakTable<CardPlay, object> RequestedReturns = new();
+
     /// <inheritdoc />
     public PowerAssetProfile AssetProfile => new("res://assets/power_icons/jaina_power_coldarra_drake_power.png");
 
@@ -59,43 +64,45 @@ public sealed class ColdarraDrakePower : PowerModel, IModPowerAssetOverrides
         return true;
     }
 
-    /// <summary>
-    /// 你可以使用任意次数的英雄技能：玩家手打的英雄技能卡打出后回到手牌
-    /// （自动打出——小精灵驾驭者/鲁莽的学徒的副本——不回手，避免副本滞留）。
-    /// </summary>
-    public override async Task AfterCardPlayed(PlayerChoiceContext choiceContext, CardPlay cardPlay)
+    internal static Task ReturnHeroPowerPlayedThisTurn(PlayerChoiceContext choiceContext, Player player)
     {
-        if (Owner == null || !Owner.IsAlive)
+        var combatState = player.Creature.CombatState;
+        var play = CombatManager.Instance.History.CardPlaysFinished
+            .LastOrDefault(entry => entry.HappenedThisTurn(combatState) && IsManualHeroPower(entry.CardPlay, player))
+            ?.CardPlay;
+        return play == null ? Task.CompletedTask : ReturnOrQueue(choiceContext, player, play);
+    }
+
+    public override Task AfterCardPlayed(PlayerChoiceContext choiceContext, CardPlay cardPlay)
+    {
+        if (Owner is { IsAlive: true, PetOwner: { } player } && IsManualHeroPower(cardPlay, player))
         {
-            MegaCrit.Sts2.Core.Logging.Log.Debug($"[JainaDiag] Coldarra AfterCardPlayed: ownerNull={Owner == null} alive={Owner?.IsAlive}");
-            return;
+            return ReturnOrQueue(choiceContext, player, cardPlay);
         }
-        var player = Owner.PetOwner;
-        if (player == null || cardPlay.Card.Owner != player)
+        return Task.CompletedTask;
+    }
+
+    private static bool IsManualHeroPower(CardPlay play, Player player) =>
+        play.Player == player && !play.IsAutoPlay && play.PlayIndex == play.PlayCount - 1 &&
+        HeroPowerHandHelper.IsHeroPowerCard(play.Card);
+
+    private static Task ReturnOrQueue(PlayerChoiceContext choiceContext, Player player, CardPlay play)
+    {
+        var card = play.Card;
+        if (card.Owner != player || card.Pile == null || RequestedReturns.TryGetValue(play, out _))
         {
-            MegaCrit.Sts2.Core.Logging.Log.Debug($"[JainaDiag] Coldarra AfterCardPlayed: playerNull={player == null} cardOwner={cardPlay.Card.Owner?.NetId} player={player?.NetId}");
-            return;
+            return Task.CompletedTask;
         }
-        var card = cardPlay.Card;
-        // 只响应英雄技能卡
-        if (!HeroPowerHandHelper.IsHeroPowerCard(card))
+
+        RequestedReturns.Add(play, new object());
+        if (card.Pile.Type == PileType.Hand)
         {
-            MegaCrit.Sts2.Core.Logging.Log.Debug($"[JainaDiag] Coldarra AfterCardPlayed: {card.Id.Entry} NOT heroPower");
-            return;
+            return Task.CompletedTask;
         }
-        // 自动打出（IsAutoPlay）不回手
-        if (cardPlay.IsAutoPlay)
-        {
-            MegaCrit.Sts2.Core.Logging.Log.Debug($"[JainaDiag] Coldarra AfterCardPlayed: {card.Id.Entry} isAutoPlay skip");
-            return;
-        }
-        // 已在手牌（如打出前已在手）不重复入手
-        if (card.Pile != null && card.Pile.Type == PileType.Hand)
-        {
-            MegaCrit.Sts2.Core.Logging.Log.Debug($"[JainaDiag] Coldarra AfterCardPlayed: {card.Id.Entry} already in hand skip");
-            return;
-        }
-        MegaCrit.Sts2.Core.Logging.Log.Debug($"[JainaDiag] Coldarra AfterCardPlayed: {card.Id.Entry} returning to hand from pile={card.Pile?.Type}");
-        await CardPileCmd.Add(card, PileType.Hand);
+
+        return JainaPendingRewardQueue.GrantOrQueue(choiceContext, player, _ =>
+            card.Owner == player && card.Pile is { Type: not PileType.Hand }
+                ? CardPileCmd.Add(card, PileType.Hand)
+                : Task.CompletedTask);
     }
 }

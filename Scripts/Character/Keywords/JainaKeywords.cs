@@ -13,8 +13,7 @@ namespace jaina.Scripts.Character.Keywords;
 // 注册仍保留 Keywords 列表，悬停卡时显示词条解释。
 [RegisterOwnedKeyword(nameof(Deathrattle), IconPath = "res://assets/keyword_icons/keyword_Deathrattle.png")]
 [RegisterOwnedKeyword(nameof(Charge), IconPath = "res://assets/keyword_icons/keyword_Charge.png")]
-// 冻结：随从给予敌人的冻结无视人工制品（滑冰元素/瓦尔登·晨拥的战吼冻结
-// 不被人工制品抵挡，见 ArtifactFreezeBypassPatch / FreezePower.BypassArtifactNextApply）
+// 随从给予敌人的冻结无视人工制品（见 FreezePower.ApplyIgnoringArtifact）。
 [RegisterOwnedKeyword(nameof(Freeze), IconPath = "res://assets/keyword_icons/keyword_Freeze.png")]
 [RegisterOwnedKeyword(nameof(Twinspell), IconPath = "res://assets/keyword_icons/keyword_Twinspell.png")]
 [RegisterOwnedKeyword(nameof(Empower), IconPath = "res://assets/keyword_icons/keyword_Empower.png")]
