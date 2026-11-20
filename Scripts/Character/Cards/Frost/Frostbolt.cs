@@ -16,7 +16,7 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
-/// 寒冰箭 (Frostbolt) - 0费普通攻击牌（冰霜派系）。
+/// 寒冰箭 (Frostbolt) - 0费罕见攻击牌（冰霜派系）。
 /// 对一个角色造成 3 点伤害，并使其获得 1 层冻结。
 /// 升级后变为冰枪术 (Icy Lance)：给予一个角色 1 层冻结，造成 0 点基础伤害；
 /// 该角色身上每有一层冻结，就对其额外造成 4 点伤害（按施放后层数计算，需选择目标）。
@@ -60,7 +60,7 @@ public sealed class Frostbolt : JainaSpellCardTemplate
         IsUpgraded ? "res://assets/card_art/ice_lance.png" : "res://assets/card_art/frostbolt.png";
 
     public Frostbolt()
-        : base(0, CardType.Attack, CardRarity.Common, JainaTargetTypes.AnyTargetable, true)
+        : base(0, CardType.Attack, CardRarity.Uncommon, JainaTargetTypes.AnyTargetable, true)
     {
     }
 
