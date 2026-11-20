@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
@@ -16,7 +17,7 @@ namespace jaina.Scripts.Character.Cards;
 /// 禁忌烈焰 (Forbidden Flame) - X费攻击牌（罕见，火焰派系）。
 /// 对一个角色造成 9x 点伤害（x = 消耗的能量）。
 /// 升级后（禁忌烈焰+）：造成 12x 点伤害。
-/// 卡面文案固定显示倍率（9X/12X，X = 消耗的能量）。
+/// 卡面显示倍率（9X/12X，X = 消耗的能量），选中目标时在括号内显示实际伤害。
 /// </summary>
 [RegisterCard(typeof(JainaCardPool))]
 public sealed class ForbiddenFlameCard : JainaSpellCardTemplate
@@ -32,7 +33,13 @@ public sealed class ForbiddenFlameCard : JainaSpellCardTemplate
     public override IEnumerable<CardKeyword> CanonicalKeywords =>
         [jaina.Scripts.Character.Keywords.JainaKeywords.Spell, jaina.Scripts.Character.Keywords.JainaKeywords.Fire];
 
-    protected override IEnumerable<DynamicVar> CanonicalVars => [];
+    protected override IEnumerable<DynamicVar> CanonicalVars =>
+    [
+        new CalculationBaseVar(0m),
+        new ExtraDamageVar(9m),
+        new CalculatedDamageVar(ValueProp.Move)
+            .WithMultiplier(static (card, _) => card.EnergyCost.GetAmountToSpend())
+    ];
 
     public override string CustomPortraitPath => "res://assets/card_art/forbidden_flame.png";
 
@@ -63,5 +70,10 @@ public sealed class ForbiddenFlameCard : JainaSpellCardTemplate
                 .WithHitFx("vfx/vfx_attack_blunt")
                 .Execute(choiceContext);
         }
+    }
+
+    protected override void OnUpgrade()
+    {
+        DynamicVars.ExtraDamage.UpgradeValueBy(3m);
     }
 }
