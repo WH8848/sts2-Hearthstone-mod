@@ -390,7 +390,7 @@ public class Entry
     {
         try
         {
-            RitsuLibFramework.RegisterModSettings(ModId, page => page
+            ModSettingsRegistry.Register(ModId, page => page
                 .WithTitle(ModSettingsText.Literal("吉安娜"))
                 .WithModDisplayName(ModSettingsText.Literal("Jaina"))
                 .AddSection("card_style", section => section
@@ -405,7 +405,9 @@ public class Entry
                             s => s.AncientCardStyle,
                             (s, value) => s.AncientCardStyle = value),
                         ModSettingsText.Literal(
-                            "开启后所有吉安娜卡牌使用先古卡布局，卡图按 250x351 竖版显示。"))));
+                            "开启后所有吉安娜卡牌使用先古卡布局，卡图按 250x351 竖版显示."))),
+                "card_style");
+            Logger.Info("[Jaina] mod settings page registered: card_style (ancient_card_style)");
         }
         catch (System.Exception ex)
         {
