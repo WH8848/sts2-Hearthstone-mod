@@ -424,7 +424,8 @@ public class Entry
         dropdown.AddItem("杀戮尖塔风格（默认）", (int)JainaCardStyleMode.StsDefault);
         dropdown.AddItem("杀戮尖塔风格（先古）", (int)JainaCardStyleMode.StsAncient);
         dropdown.Selected = (int)JainaCardStyle.Mode;
-        dropdown.CustomMinimumSize = new Godot.Vector2(320, 0);
+        // 与 RitsuLib 设置页其他下拉条一致：宽度收窄到 180，主题（深色底/勾选/高亮）随父节点继承
+        dropdown.CustomMinimumSize = new Godot.Vector2(180, 0);
         dropdown.ItemSelected += index =>
         {
             var mode = (JainaCardStyleMode)(int)index;
