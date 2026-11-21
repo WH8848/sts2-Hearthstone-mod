@@ -4,8 +4,10 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace jaina.Scripts.Character.Cards;
 
 /// <summary>
-/// "先古卡样式"开关的运行时状态与持久化。
-/// 布局切换走 RitsuLib 的 ModCardTemplate.CustomVisualStyle（virtual，不 patch）；
+/// 卡面样式开关的运行时状态与持久化：
+/// ① 先古卡样式（Ancient）：布局切换走 RitsuLib 的 ModCardTemplate.CustomVisualStyle（virtual，不 patch），
+///    卡图切到 250x351 竖版目录；
+/// ② 杀戮尖塔二风格卡图（Stylized）：卡图换成 assets/card_art_stylized/ 下的手绘风格版。
 /// 卡图路径切换走 JainaAncientPortraitPatch（每张卡各自覆写 CustomPortraitPath，无法在基类统一拦截）。
 /// 证据：CardVisualStyle 枚举 ContentAssetProfiles.cs:204；ModCardTemplate.CustomVisualStyle
 /// ModCardTemplate.cs:101。
@@ -14,23 +16,24 @@ public static class JainaCardStyle
 {
     private const string SettingsPath = "user://jaina_settings.cfg";
     private const string Section = "card_style";
+    private const string ArtRoot = "/assets/card_art/";
 
     private static bool _ancient;
+    private static bool _stylized;
     private static bool _loaded;
 
-    /// <summary>先古卡样式是否开启。</summary>
+    /// <summary>先古卡样式是否开启（卡面布局 + 竖版卡图）。</summary>
     public static bool Ancient
     {
-        get
-        {
-            EnsureLoaded();
-            return _ancient;
-        }
-        set
-        {
-            EnsureLoaded();
-            _ancient = value;
-        }
+        get { EnsureLoaded(); return _ancient; }
+        set { EnsureLoaded(); _ancient = value; }
+    }
+
+    /// <summary>杀戮尖塔二风格卡图是否开启（替换卡图内容，不改布局）。</summary>
+    public static bool Stylized
+    {
+        get { EnsureLoaded(); return _stylized; }
+        set { EnsureLoaded(); _stylized = value; }
     }
 
     /// <summary>持久化当前开关状态（RitsuLib 设置页的 save 回调调用）。</summary>
@@ -40,6 +43,7 @@ public static class JainaCardStyle
         {
             var cfg = new ConfigFile();
             cfg.SetValue(Section, "ancient_card_style", _ancient);
+            cfg.SetValue(Section, "stylized_card_art", _stylized);
             cfg.Save(SettingsPath);
         }
         catch (System.Exception ex)
@@ -61,6 +65,7 @@ public static class JainaCardStyle
             if (cfg.Load(SettingsPath) == Error.Ok)
             {
                 _ancient = cfg.GetValue(Section, "ancient_card_style", false).AsBool();
+                _stylized = cfg.GetValue(Section, "stylized_card_art", false).AsBool();
             }
         }
         catch (System.Exception ex)
@@ -69,14 +74,43 @@ public static class JainaCardStyle
         }
     }
 
-    /// <summary>把 assets/card_art/ 路径换成 assets/card_art_ancient/（文件不存在则返回原路径）。</summary>
-    public static string ToAncientPath(string path)
+    /// <summary>
+    /// 按当前开关解析卡图路径。回退顺序：
+    /// 先古布局：card_art_stylized_ancient → card_art_stylized → card_art_ancient → 原路径
+    /// 普通布局：card_art_stylized → 原路径
+    /// 文件不存在时逐级回退，最终返回原路径。
+    /// </summary>
+    public static string ResolvePortrait(string path)
     {
-        if (string.IsNullOrEmpty(path) || !path.Contains("/assets/card_art/"))
+        if (string.IsNullOrEmpty(path) || !path.Contains(ArtRoot))
         {
             return path;
         }
-        var candidate = path.Replace("/assets/card_art/", "/assets/card_art_ancient/");
-        return ResourceLoader.Exists(candidate) ? candidate : path;
+
+        if (Stylized)
+        {
+            var dirs = Ancient
+                ? new[] { "card_art_stylized_ancient", "card_art_stylized", "card_art_ancient" }
+                : new[] { "card_art_stylized" };
+            foreach (var dir in dirs)
+            {
+                var candidate = path.Replace(ArtRoot, $"/assets/{dir}/");
+                if (ResourceLoader.Exists(candidate))
+                {
+                    return candidate;
+                }
+            }
+        }
+
+        if (Ancient)
+        {
+            var candidate = path.Replace(ArtRoot, "/assets/card_art_ancient/");
+            if (ResourceLoader.Exists(candidate))
+            {
+                return candidate;
+            }
+        }
+
+        return path;
     }
 }

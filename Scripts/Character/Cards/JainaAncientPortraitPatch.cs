@@ -31,7 +31,7 @@ public static class JainaAncientPortraitPatch
             {
                 return;
             }
-            __result = JainaCardStyle.ToAncientPath(__result);
+            __result = JainaCardStyle.ResolvePortrait(__result);
         }
         catch (System.Exception ex)
         {
