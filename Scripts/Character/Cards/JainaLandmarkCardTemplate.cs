@@ -101,5 +101,5 @@ public abstract class JainaLandmarkCardTemplate : ModCardTemplate
     /// ContentAssetModelVisualOverridePatches.ApplyVisualStyle ancient 分支（同文件 541-563）。
     /// </summary>
     public override CardVisualStyle CustomVisualStyle =>
-        JainaCardStyle.Ancient ? CardVisualStyle.Ancient : CardVisualStyle.Default;
+        JainaCardStyle.UseAncientLayout ? CardVisualStyle.Ancient : CardVisualStyle.Default;
 }

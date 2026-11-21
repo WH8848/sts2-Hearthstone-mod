@@ -20,6 +20,7 @@ public static class JainaCardStyle
 
     private static bool _ancient;
     private static bool _stylized;
+    private static bool _stylizedAncient;
     private static bool _loaded;
 
     /// <summary>先古卡样式是否开启（卡面布局 + 竖版卡图）。</summary>
@@ -48,6 +49,25 @@ public static class JainaCardStyle
         }
     }
 
+    /// <summary>
+    /// 杀戮尖塔二风格卡图（先古）是否开启：手绘风格 + 先古卡布局，
+    /// 卡图用 assets/card_art_stylized_ancient/ 的 250x351 竖版。
+    /// </summary>
+    public static bool StylizedAncient
+    {
+        get { EnsureLoaded(); return _stylizedAncient; }
+        set
+        {
+            EnsureLoaded();
+            if (_stylizedAncient == value) return;
+            _stylizedAncient = value;
+            RefreshCards();
+        }
+    }
+
+    /// <summary>卡面是否用先古布局（先古卡样式 或 风格卡图（先古）任一开启）。</summary>
+    public static bool UseAncientLayout => Ancient || StylizedAncient;
+
     /// <summary>持久化当前开关状态（RitsuLib 设置页的 save 回调调用）。</summary>
     public static void Save()
     {
@@ -56,6 +76,7 @@ public static class JainaCardStyle
             var cfg = new ConfigFile();
             cfg.SetValue(Section, "ancient_card_style", _ancient);
             cfg.SetValue(Section, "stylized_card_art", _stylized);
+            cfg.SetValue(Section, "stylized_ancient_card_art", _stylizedAncient);
             cfg.Save(SettingsPath);
         }
         catch (System.Exception ex)
@@ -78,6 +99,7 @@ public static class JainaCardStyle
             {
                 _ancient = cfg.GetValue(Section, "ancient_card_style", false).AsBool();
                 _stylized = cfg.GetValue(Section, "stylized_card_art", false).AsBool();
+                _stylizedAncient = cfg.GetValue(Section, "stylized_ancient_card_art", false).AsBool();
             }
         }
         catch (System.Exception ex)
@@ -139,9 +161,18 @@ public static class JainaCardStyle
             return path;
         }
 
+        if (StylizedAncient)
+        {
+            var candidate = path.Replace(ArtRoot, "/assets/card_art_stylized_ancient/");
+            if (ResourceLoader.Exists(candidate))
+            {
+                return candidate;
+            }
+        }
+
         if (Stylized)
         {
-            var dirs = Ancient
+            var dirs = UseAncientLayout
                 ? new[] { "card_art_stylized_ancient", "card_art_stylized", "card_art_ancient" }
                 : new[] { "card_art_stylized" };
             foreach (var dir in dirs)
@@ -154,7 +185,7 @@ public static class JainaCardStyle
             }
         }
 
-        if (Ancient)
+        if (UseAncientLayout)
         {
             var candidate = path.Replace(ArtRoot, "/assets/card_art_ancient/");
             if (ResourceLoader.Exists(candidate))

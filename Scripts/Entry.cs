@@ -418,7 +418,19 @@ public class Entry
                             value => JainaCardStyle.Stylized = value,
                             JainaCardStyle.Save),
                         ModSettingsText.Literal(
-                            "开启后所有吉安娜卡牌使用手绘风格卡图（血望者/二级火焰冲击保持先古卡 250x351）。"))),
+                            "开启后所有吉安娜卡牌使用手绘风格卡图（血望者/二级火焰冲击保持先古卡 250x351）。"))
+                    .AddToggle(
+                        "stylized_ancient_card_art",
+                        ModSettingsText.Literal("杀戮尖塔二风格卡图（先古）"),
+                        new ModSettingsCallbackValueBinding<bool>(
+                            ModId,
+                            "stylized_ancient_card_art",
+                            SaveScope.Global,
+                            () => JainaCardStyle.StylizedAncient,
+                            value => JainaCardStyle.StylizedAncient = value,
+                            JainaCardStyle.Save),
+                        ModSettingsText.Literal(
+                            "开启后所有吉安娜卡牌使用手绘风格卡图并按先古卡布局显示（卡图 250x351 竖版）。"))),
                 "card_style");
             Logger.Info("[Jaina] mod settings page registered: card_style (ancient_card_style)");
         }
