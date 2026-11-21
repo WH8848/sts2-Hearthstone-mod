@@ -14,7 +14,7 @@ namespace jaina.Scripts.Character.Cards;
 [RegisterDustyTomeCard(typeof(jaina.Scripts.Character.Jaina))]
 public sealed class TesslanBloodwatcherCard : JainaMinionCardTemplate
 {
-    public override string CustomPortraitPath => "res://assets/card_art/iceblood_tower.png";
+    public override string CustomPortraitPath => "res://assets/card_art/bloodwatcher.png";
 
     protected override Type MinionType => typeof(TesslanBloodwatcherMinion);
 
