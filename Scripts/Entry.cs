@@ -395,11 +395,25 @@ public class Entry
                 .WithModDisplayName(ModSettingsText.Literal("Jaina"))
                 .AddSection("card_style", section => section
                     .WithTitle(ModSettingsText.Literal("卡面样式"))
-                    .AddCustom(
+                    .AddEnumChoice<JainaCardStyleMode>(
                         "card_art_style",
                         ModSettingsText.Literal("卡图风格"),
-                        host => BuildCardStyleDropdown(),
-                        ModSettingsText.Literal("选择卡面使用的卡图风格（四选一）。"))),
+                        new ModSettingsCallbackValueBinding<JainaCardStyleMode>(
+                            ModId,
+                            "card_art_style",
+                            SaveScope.Global,
+                            () => JainaCardStyle.Mode,
+                            mode =>
+                            {
+                                JainaCardStyle.Mode = mode;
+                                STS2RitsuLib.Ui.Toast.RitsuToastService.ShowInfoTracked(
+                                    $"已切换至：{CardStyleLabel(mode)}",
+                                    "卡图风格");
+                            },
+                            JainaCardStyle.Save),
+                        optionLabelFactory: mode => ModSettingsText.Literal(CardStyleLabel(mode)),
+                        description: ModSettingsText.Literal("选择卡面使用的卡图风格（四选一）。"),
+                        presentation: ModSettingsChoicePresentation.Dropdown)),
                 "card_style");
             Logger.Info("[Jaina] mod settings page registered: card_style (card_art_style)");
         }
@@ -409,44 +423,12 @@ public class Entry
         }
     }
 
-    /// <summary>
-    /// 卡图风格下拉条：炉石传说风格（默认）/ 炉石传说风格（先古）/
-    /// 杀戮尖塔风格（默认）/ 杀戮尖塔风格（先古）。选中后立即生效并弹 toast。
-    /// 证据：ModSettingsSectionBuilder.AddCustom(id, label, Func&lt;IModSettingsUiActionHost, Control&gt;, description)
-    /// （STS2-RitsuLib/src/Settings/ModSettings/Core/ModSettingsBuilders.cs:1225）；
-    /// RitsuToastService.ShowInfoTracked(body, title, onClick)（Ui/Toast/RitsuToastService.cs:194）。
-    /// </summary>
-    private static Godot.Control BuildCardStyleDropdown()
+    /// <summary>下拉选项显示文本。</summary>
+    private static string CardStyleLabel(JainaCardStyleMode mode) => mode switch
     {
-        // 用 RitsuLib 自带的主题化下拉控件（与"界面主题"下拉同款样式）。
-        // 证据：ModSettingsDropdownChoiceControl<TValue>(IReadOnlyList<(TValue,string)>, TValue, Action<TValue>)
-        // （STS2-RitsuLib/src/Settings/ModSettingsUi/Controls/ModSettingsUiControls.cs:1280-1330）。
-        var options = new System.Collections.Generic.List<(JainaCardStyleMode, string)>
-        {
-            (JainaCardStyleMode.HearthstoneDefault, "炉石传说风格（默认）"),
-            (JainaCardStyleMode.HearthstoneAncient, "炉石传说风格（先古）"),
-            (JainaCardStyleMode.StsDefault, "杀戮尖塔风格（默认）"),
-            (JainaCardStyleMode.StsAncient, "杀戮尖塔风格（先古）"),
-        };
-        var dropdown = new STS2RitsuLib.Settings.ModSettingsDropdownChoiceControl<JainaCardStyleMode>(
-            options,
-            JainaCardStyle.Mode,
-            mode =>
-            {
-                JainaCardStyle.Mode = mode;
-                var label = "未知";
-                foreach (var (value, text) in options)
-                {
-                    if (value == mode)
-                    {
-                        label = text;
-                        break;
-                    }
-                }
-                STS2RitsuLib.Ui.Toast.RitsuToastService.ShowInfoTracked(
-                    $"已切换至：{label}",
-                    "卡图风格");
-            });
-        return dropdown;
-    }
+        JainaCardStyleMode.HearthstoneAncient => "炉石传说风格（先古）",
+        JainaCardStyleMode.StsDefault => "杀戮尖塔风格（默认）",
+        JainaCardStyleMode.StsAncient => "杀戮尖塔风格（先古）",
+        _ => "炉石传说风格（默认）",
+    };
 }
