@@ -2,6 +2,7 @@ using Godot;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.Models;
 using STS2RitsuLib.Scaffolding.Content;
+using STS2RitsuLib.Scaffolding.Content.Patches;
 
 namespace jaina.Scripts.Character.Cards;
 
@@ -37,10 +38,12 @@ public static class JainaAncientPortraitPatch
 }
 
 /// <summary>
-/// 图鉴大图（CardModel.BigPortrait）也要跟随卡图风格：它取的是
-/// PortraitPngPath（packed/card_portraits/...）而不是 PortraitPath，
-/// 所以只 patch PortraitPath 时图鉴大图仍显示炉石原画。
-/// 证据：CardModel.BigPortrait（0.113 src/Core/Models/CardModel.cs:185-193）。
+/// 图鉴大图（CardModel.BigPortrait）也要跟随卡图风格。
+/// 它取的是 PortraitPngPath（packed/card_portraits/...）或 Portrait，不是 CustomPortraitPath，
+/// 且 PortraitPath 已被 JainaAncientPortraitPatch 改过——所以这里必须用**未被修改的** CustomPortraitPath
+/// 作为基准再解析一次，否则会误判"无需替换"而保留原版大图。
+/// 证据：CardModel.BigPortrait（0.113 src/Core/Models/CardModel.cs:185-193）、
+/// NCard.SetPortraitTexture（NCard.cs:847）、图鉴调用点 NInspectCardScreen.cs:247。
 /// </summary>
 [HarmonyPatch(typeof(CardModel), "get_BigPortrait")]
 public static class JainaBigPortraitPatch
@@ -50,13 +53,17 @@ public static class JainaBigPortraitPatch
     {
         try
         {
-            if (__instance == null)
+            if (__instance is not IModCardAssetOverrides overrides)
             {
                 return;
             }
-            var original = __instance.PortraitPath;
-            var resolved = JainaCardStyle.ResolvePortrait(original);
-            if (string.IsNullOrEmpty(resolved) || resolved == original)
+            var basePath = overrides.CustomPortraitPath;
+            if (string.IsNullOrEmpty(basePath))
+            {
+                return;
+            }
+            var resolved = JainaCardStyle.ResolvePortrait(basePath);
+            if (string.IsNullOrEmpty(resolved) || resolved == basePath)
             {
                 return;
             }
