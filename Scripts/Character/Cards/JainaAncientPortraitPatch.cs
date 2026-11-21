@@ -35,3 +35,40 @@ public static class JainaAncientPortraitPatch
         }
     }
 }
+
+/// <summary>
+/// 图鉴大图（CardModel.BigPortrait）也要跟随卡图风格：它取的是
+/// PortraitPngPath（packed/card_portraits/...）而不是 PortraitPath，
+/// 所以只 patch PortraitPath 时图鉴大图仍显示炉石原画。
+/// 证据：CardModel.BigPortrait（0.113 src/Core/Models/CardModel.cs:185-193）。
+/// </summary>
+[HarmonyPatch(typeof(CardModel), "get_BigPortrait")]
+public static class JainaBigPortraitPatch
+{
+    [HarmonyPriority(Priority.Last)]
+    private static void Postfix(CardModel __instance, ref Texture2D __result)
+    {
+        try
+        {
+            if (__instance == null)
+            {
+                return;
+            }
+            var original = __instance.PortraitPath;
+            var resolved = JainaCardStyle.ResolvePortrait(original);
+            if (string.IsNullOrEmpty(resolved) || resolved == original)
+            {
+                return;
+            }
+            var tex = ResourceLoader.Load<Texture2D>(resolved);
+            if (tex != null)
+            {
+                __result = tex;
+            }
+        }
+        catch (System.Exception ex)
+        {
+            MegaCrit.Sts2.Core.Logging.Log.Warn($"[Jaina] big portrait swap failed: {ex.Message}");
+        }
+    }
+}
