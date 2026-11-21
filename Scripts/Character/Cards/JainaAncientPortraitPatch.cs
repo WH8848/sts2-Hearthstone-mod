@@ -27,10 +27,6 @@ public static class JainaAncientPortraitPatch
             {
                 return;
             }
-            if (!JainaCardStyle.Ancient)
-            {
-                return;
-            }
             __result = JainaCardStyle.ResolvePortrait(__result);
         }
         catch (System.Exception ex)

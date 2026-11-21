@@ -395,48 +395,44 @@ public class Entry
                 .WithModDisplayName(ModSettingsText.Literal("Jaina"))
                 .AddSection("card_style", section => section
                     .WithTitle(ModSettingsText.Literal("卡面样式"))
-                    .AddToggle(
-                        "ancient_card_style",
-                        ModSettingsText.Literal("先古卡样式"),
-                        new ModSettingsCallbackValueBinding<bool>(
-                            ModId,
-                            "ancient_card_style",
-                            SaveScope.Global,
-                            () => JainaCardStyle.Ancient,
-                            value => JainaCardStyle.Ancient = value,
-                            JainaCardStyle.Save),
-                        ModSettingsText.Literal(
-                            "开启后所有吉安娜卡牌使用先古卡布局，卡图按 250x351 竖版显示."))
-                    .AddToggle(
-                        "stylized_card_art",
-                        ModSettingsText.Literal("杀戮尖塔二风格卡图"),
-                        new ModSettingsCallbackValueBinding<bool>(
-                            ModId,
-                            "stylized_card_art",
-                            SaveScope.Global,
-                            () => JainaCardStyle.Stylized,
-                            value => JainaCardStyle.Stylized = value,
-                            JainaCardStyle.Save),
-                        ModSettingsText.Literal(
-                            "开启后所有吉安娜卡牌使用手绘风格卡图（血望者/二级火焰冲击保持先古卡 250x351）。"))
-                    .AddToggle(
-                        "stylized_ancient_card_art",
-                        ModSettingsText.Literal("杀戮尖塔二风格卡图（先古）"),
-                        new ModSettingsCallbackValueBinding<bool>(
-                            ModId,
-                            "stylized_ancient_card_art",
-                            SaveScope.Global,
-                            () => JainaCardStyle.StylizedAncient,
-                            value => JainaCardStyle.StylizedAncient = value,
-                            JainaCardStyle.Save),
-                        ModSettingsText.Literal(
-                            "开启后所有吉安娜卡牌使用手绘风格卡图并按先古卡布局显示（卡图 250x351 竖版）。"))),
+                    .AddCustom(
+                        "card_art_style",
+                        ModSettingsText.Literal("卡图风格"),
+                        host => BuildCardStyleDropdown(),
+                        ModSettingsText.Literal("选择卡面使用的卡图风格（四选一）。"))),
                 "card_style");
-            Logger.Info("[Jaina] mod settings page registered: card_style (ancient_card_style)");
+            Logger.Info("[Jaina] mod settings page registered: card_style (card_art_style)");
         }
         catch (System.Exception ex)
         {
             Logger.Warn($"[Jaina] register mod settings failed: {ex.Message}");
         }
+    }
+
+    /// <summary>
+    /// 卡图风格下拉条：炉石传说风格（默认）/ 炉石传说风格（先古）/
+    /// 杀戮尖塔风格（默认）/ 杀戮尖塔风格（先古）。选中后立即生效并弹 toast。
+    /// 证据：ModSettingsSectionBuilder.AddCustom(id, label, Func&lt;IModSettingsUiActionHost, Control&gt;, description)
+    /// （STS2-RitsuLib/src/Settings/ModSettings/Core/ModSettingsBuilders.cs:1225）；
+    /// RitsuToastService.ShowInfoTracked(body, title, onClick)（Ui/Toast/RitsuToastService.cs:194）。
+    /// </summary>
+    private static Godot.Control BuildCardStyleDropdown()
+    {
+        var dropdown = new Godot.OptionButton();
+        dropdown.AddItem("炉石传说风格（默认）", (int)JainaCardStyleMode.HearthstoneDefault);
+        dropdown.AddItem("炉石传说风格（先古）", (int)JainaCardStyleMode.HearthstoneAncient);
+        dropdown.AddItem("杀戮尖塔风格（默认）", (int)JainaCardStyleMode.StsDefault);
+        dropdown.AddItem("杀戮尖塔风格（先古）", (int)JainaCardStyleMode.StsAncient);
+        dropdown.Selected = (int)JainaCardStyle.Mode;
+        dropdown.CustomMinimumSize = new Godot.Vector2(320, 0);
+        dropdown.ItemSelected += index =>
+        {
+            var mode = (JainaCardStyleMode)(int)index;
+            JainaCardStyle.Mode = mode;
+            STS2RitsuLib.Ui.Toast.RitsuToastService.ShowInfoTracked(
+                $"已切换至：{dropdown.GetItemText((int)index)}",
+                "卡图风格");
+        };
+        return dropdown;
     }
 }
