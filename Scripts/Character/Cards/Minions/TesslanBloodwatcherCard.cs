@@ -2,6 +2,7 @@ using System;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using jaina.Scripts.Character.Minions;
 using STS2RitsuLib.Interop.AutoRegistration;
+using STS2RitsuLib.Scaffolding.Content;
 
 namespace jaina.Scripts.Character.Cards;
 
@@ -14,7 +15,10 @@ namespace jaina.Scripts.Character.Cards;
 [RegisterDustyTomeCard(typeof(jaina.Scripts.Character.Jaina))]
 public sealed class TesslanBloodwatcherCard : JainaMinionCardTemplate
 {
-    public override string CustomPortraitPath => "res://assets/card_art/bloodwatcher.png";
+    public override string CustomPortraitPath => "res://assets/card_art_ancient/bloodwatcher.png";
+
+    /// <summary>先古卡（Rarity.Ancient）永远使用先古布局，不跟随卡图风格开关。</summary>
+    public override CardVisualStyle CustomVisualStyle => CardVisualStyle.Ancient;
 
     protected override Type MinionType => typeof(TesslanBloodwatcherMinion);
 

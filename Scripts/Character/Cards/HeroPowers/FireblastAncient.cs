@@ -57,7 +57,10 @@ public sealed class FireblastAncient : JainaSpellCardTemplate
     /// <summary>
     /// 卡牌原画：程序绘制的"二级火焰冲击"（火焰冲击强化版：火焰+能量环）
     /// </summary>
-    public override string CustomPortraitPath => "res://assets/card_art/fireblast_ancient.png";
+    public override string CustomPortraitPath => "res://assets/card_art_ancient/fireblast_ancient.png";
+
+    /// <summary>先古卡（Rarity.Ancient）永远使用先古布局，不跟随卡图风格开关。</summary>
+    public override CardVisualStyle CustomVisualStyle => CardVisualStyle.Ancient;
 
     /// <summary>
     /// 升级后卡牌名称显示 "+级别"（每次升级 +2 伤害，标记升级状态）

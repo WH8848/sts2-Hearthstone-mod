@@ -1,5 +1,6 @@
 using Godot;
 using HarmonyLib;
+using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Models;
 using STS2RitsuLib.Scaffolding.Content;
 using STS2RitsuLib.Scaffolding.Content.Patches;
@@ -28,7 +29,7 @@ public static class JainaAncientPortraitPatch
             {
                 return;
             }
-            __result = JainaCardStyle.ResolvePortrait(__result);
+            __result = JainaCardStyle.ResolvePortrait(__result, __instance.Rarity == CardRarity.Ancient);
         }
         catch (System.Exception ex)
         {
@@ -62,7 +63,7 @@ public static class JainaBigPortraitPatch
             {
                 return;
             }
-            var resolved = JainaCardStyle.ResolvePortrait(basePath);
+            var resolved = JainaCardStyle.ResolvePortrait(basePath, __instance.Rarity == CardRarity.Ancient);
             if (string.IsNullOrEmpty(resolved) || resolved == basePath)
             {
                 return;

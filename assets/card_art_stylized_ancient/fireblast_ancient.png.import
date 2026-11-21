@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dyk4lam550pc4"
-path="res://.godot/imported/bloodwatcher.png-4a4215bbb3c9307dc2cbb179491e8322.ctex"
+uid="uid://dhqs8ymwr2e6x"
+path="res://.godot/imported/fireblast_ancient.png-a8159e05277fca5588148bead9405c41.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/card_art/bloodwatcher.png"
-dest_files=["res://.godot/imported/bloodwatcher.png-4a4215bbb3c9307dc2cbb179491e8322.ctex"]
+source_file="res://assets/card_art_stylized_ancient/fireblast_ancient.png"
+dest_files=["res://.godot/imported/fireblast_ancient.png-a8159e05277fca5588148bead9405c41.ctex"]
 
 [params]
 

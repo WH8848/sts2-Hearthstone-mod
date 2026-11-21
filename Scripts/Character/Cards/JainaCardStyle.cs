@@ -100,10 +100,32 @@ public static class JainaCardStyle
     /// 炉石先古：ancient → 原路径
     /// 炉石默认：原路径
     /// </summary>
-    public static string ResolvePortrait(string path)
+    public static string ResolvePortrait(string path, bool ancientCard = false)
     {
         if (string.IsNullOrEmpty(path) || !path.Contains(ArtRoot))
         {
+            return path;
+        }
+
+        // 先古卡（CardRarity.Ancient，如血望者/二级火焰冲击）永远使用 250x351 竖版目录，
+        // 不经过普通卡目录——游戏里它们只走 %AncientPortrait（NCard.SetPortraitTexture:847-861）。
+        if (ancientCard)
+        {
+            // 先古卡只存在于 *_ancient 目录（250x351），按文件名重组路径，不依赖原目录
+            var fileName = path.Substring(path.LastIndexOf('/') + 1);
+            var modernAncient = Mode is JainaCardStyleMode.StsDefault or JainaCardStyleMode.StsAncient;
+            var ancientDir = modernAncient ? "card_art_stylized_ancient" : "card_art_ancient";
+            var ancientCandidate = $"res://assets/{ancientDir}/{fileName}";
+            if (ResourceLoader.Exists(ancientCandidate))
+            {
+                return ancientCandidate;
+            }
+            // 尖塔风格缺图时回退到炉石原画竖版
+            var fallback = $"res://assets/card_art_ancient/{fileName}";
+            if (ResourceLoader.Exists(fallback))
+            {
+                return fallback;
+            }
             return path;
         }
 
