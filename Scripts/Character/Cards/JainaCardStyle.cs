@@ -26,14 +26,26 @@ public static class JainaCardStyle
     public static bool Ancient
     {
         get { EnsureLoaded(); return _ancient; }
-        set { EnsureLoaded(); _ancient = value; }
+        set
+        {
+            EnsureLoaded();
+            if (_ancient == value) return;
+            _ancient = value;
+            RefreshCards();
+        }
     }
 
     /// <summary>杀戮尖塔二风格卡图是否开启（替换卡图内容，不改布局）。</summary>
     public static bool Stylized
     {
         get { EnsureLoaded(); return _stylized; }
-        set { EnsureLoaded(); _stylized = value; }
+        set
+        {
+            EnsureLoaded();
+            if (_stylized == value) return;
+            _stylized = value;
+            RefreshCards();
+        }
     }
 
     /// <summary>持久化当前开关状态（RitsuLib 设置页的 save 回调调用）。</summary>
@@ -71,6 +83,46 @@ public static class JainaCardStyle
         catch (System.Exception ex)
         {
             MegaCrit.Sts2.Core.Logging.Log.Warn($"[Jaina] load card style failed: {ex.Message}");
+        }
+    }
+
+    /// <summary>
+    /// 开关变化后强制刷新场上所有卡面（否则已渲染的 NCard 会继续用旧纹理）。
+    /// 主菜单没有卡面节点时是空操作。
+    /// </summary>
+    private static void RefreshCards()
+    {
+        try
+        {
+            var tree = Engine.GetMainLoop() as SceneTree;
+            var root = tree?.Root;
+            if (root == null)
+            {
+                return;
+            }
+            RefreshNode(root);
+        }
+        catch (System.Exception ex)
+        {
+            MegaCrit.Sts2.Core.Logging.Log.Warn($"[Jaina] refresh cards failed: {ex.Message}");
+        }
+    }
+
+    private static readonly System.Reflection.MethodInfo? ReloadMethod =
+        typeof(MegaCrit.Sts2.Core.Nodes.Cards.NCard).GetMethod(
+            "Reload",
+            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+
+    private static void RefreshNode(Node node)
+    {
+        if (node is MegaCrit.Sts2.Core.Nodes.Cards.NCard card)
+        {
+            // NCard.Reload 是 private（0.113 src/Core/Nodes/Cards/NCard.cs:728），只能反射调用
+            ReloadMethod?.Invoke(card, null);
+        }
+        foreach (var child in node.GetChildren())
+        {
+            RefreshNode(child);
         }
     }
 
