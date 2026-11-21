@@ -33,17 +33,7 @@ public static class JainaAncientPortraitPatch
             {
                 return;
             }
-            const string from = "/assets/card_art/";
-            const string to = "/assets/card_art_ancient/";
-            if (!__result.Contains(from))
-            {
-                return;
-            }
-            var candidate = __result.Replace(from, to);
-            if (ResourceLoader.Exists(candidate))
-            {
-                __result = candidate;
-            }
+            __result = JainaCardStyle.ToAncientPath(__result);
         }
         catch (System.Exception ex)
         {

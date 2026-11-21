@@ -398,12 +398,13 @@ public class Entry
                     .AddToggle(
                         "ancient_card_style",
                         ModSettingsText.Literal("先古卡样式"),
-                        new ModSettingsValueBinding<JainaSettings, bool>(
+                        new ModSettingsCallbackValueBinding<bool>(
                             ModId,
-                            "settings",
+                            "ancient_card_style",
                             SaveScope.Global,
-                            s => s.AncientCardStyle,
-                            (s, value) => s.AncientCardStyle = value),
+                            () => JainaCardStyle.Ancient,
+                            value => JainaCardStyle.Ancient = value,
+                            JainaCardStyle.Save),
                         ModSettingsText.Literal(
                             "开启后所有吉安娜卡牌使用先古卡布局，卡图按 250x351 竖版显示."))),
                 "card_style");
