@@ -418,22 +418,35 @@ public class Entry
     /// </summary>
     private static Godot.Control BuildCardStyleDropdown()
     {
-        var dropdown = new Godot.OptionButton();
-        dropdown.AddItem("炉石传说风格（默认）", (int)JainaCardStyleMode.HearthstoneDefault);
-        dropdown.AddItem("炉石传说风格（先古）", (int)JainaCardStyleMode.HearthstoneAncient);
-        dropdown.AddItem("杀戮尖塔风格（默认）", (int)JainaCardStyleMode.StsDefault);
-        dropdown.AddItem("杀戮尖塔风格（先古）", (int)JainaCardStyleMode.StsAncient);
-        dropdown.Selected = (int)JainaCardStyle.Mode;
-        // 与 RitsuLib 设置页其他下拉条一致：宽度收窄到 180，主题（深色底/勾选/高亮）随父节点继承
-        dropdown.CustomMinimumSize = new Godot.Vector2(180, 0);
-        dropdown.ItemSelected += index =>
+        // 用 RitsuLib 自带的主题化下拉控件（与"界面主题"下拉同款样式）。
+        // 证据：ModSettingsDropdownChoiceControl<TValue>(IReadOnlyList<(TValue,string)>, TValue, Action<TValue>)
+        // （STS2-RitsuLib/src/Settings/ModSettingsUi/Controls/ModSettingsUiControls.cs:1280-1330）。
+        var options = new System.Collections.Generic.List<(JainaCardStyleMode, string)>
         {
-            var mode = (JainaCardStyleMode)(int)index;
-            JainaCardStyle.Mode = mode;
-            STS2RitsuLib.Ui.Toast.RitsuToastService.ShowInfoTracked(
-                $"已切换至：{dropdown.GetItemText((int)index)}",
-                "卡图风格");
+            (JainaCardStyleMode.HearthstoneDefault, "炉石传说风格（默认）"),
+            (JainaCardStyleMode.HearthstoneAncient, "炉石传说风格（先古）"),
+            (JainaCardStyleMode.StsDefault, "杀戮尖塔风格（默认）"),
+            (JainaCardStyleMode.StsAncient, "杀戮尖塔风格（先古）"),
         };
+        var dropdown = new STS2RitsuLib.Settings.ModSettingsDropdownChoiceControl<JainaCardStyleMode>(
+            options,
+            JainaCardStyle.Mode,
+            mode =>
+            {
+                JainaCardStyle.Mode = mode;
+                var label = "未知";
+                foreach (var (value, text) in options)
+                {
+                    if (value == mode)
+                    {
+                        label = text;
+                        break;
+                    }
+                }
+                STS2RitsuLib.Ui.Toast.RitsuToastService.ShowInfoTracked(
+                    $"已切换至：{label}",
+                    "卡图风格");
+            });
         return dropdown;
     }
 }
