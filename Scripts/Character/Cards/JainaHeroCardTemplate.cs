@@ -189,4 +189,13 @@ public abstract class JainaHeroCardTemplate : ModCardTemplate
 
         // 4. 更改角色模型：目前无其它模型，使用铁甲战士模型代替（占位，机制预留）
     }
+
+    /// <summary>
+    /// 先古卡样式开关（RitsuLib 设置页）：开启后卡面改用游戏先古布局，
+    /// 卡图区域为 250x351 竖版（游戏 %AncientPortrait 节点）。
+    /// 证据：ModCardTemplate.CustomVisualStyle（ModCardTemplate.cs:101）→
+    /// ContentAssetModelVisualOverridePatches.ApplyVisualStyle ancient 分支（同文件 541-563）。
+    /// </summary>
+    public override CardVisualStyle CustomVisualStyle =>
+        JainaCardStyle.Ancient ? CardVisualStyle.Ancient : CardVisualStyle.Default;
 }

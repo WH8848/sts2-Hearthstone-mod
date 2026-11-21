@@ -9,6 +9,8 @@ using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Modding;
 using MinionLib.Layout;
 using STS2RitsuLib;
+using STS2RitsuLib.Settings;
+using STS2RitsuLib.Utils.Persistence;
 using STS2RitsuLib.Interop;
 using STS2RitsuLib.Scaffolding.Cards.HandGlow;
 
@@ -31,6 +33,9 @@ public class Entry
         // 动态 CardType 兼容补丁（ToLocString 显示"随从"、卡框/边框映射技能样式等）
         var harmony = new Harmony("jaina");
         harmony.PatchAll(assembly);
+
+        // 注册 RitsuLib 设置页（主菜单 / 暂停菜单的 RitsuLib 设置入口都能看到）
+        RegisterJainaSettings();
 
         // 验证 5 张原版卡的 OnPlay 状态机 patch 目标完整：
         // 游戏版本更新导致状态机结构变化时 TargetMethods 静默失配（不生效不报错），
@@ -370,6 +375,41 @@ public class Entry
         catch (System.Exception ex)
         {
             Logger.Info($"[JainaDiag] subscribe failed: {ex}");
+        }
+    }
+
+    /// <summary>
+    /// 注册吉安娜模组设置页：卡面样式 → 先古卡样式开关。
+    /// 证据：RitsuLib 设置 API RitsuLibFramework.RegisterModSettings(modId, Action&lt;ModSettingsPageBuilder&gt;)
+    /// （STS2-RitsuLib/src/RitsuLibFramework.cs:1373）；
+    /// ModSettingsSectionBuilder.AddToggle(id, label, binding, description, visibleWhen)
+    /// （Settings/ModSettings/Core/ModSettingsBuilders.cs:668）；
+    /// ModSettingsValueBinding 读写 dataStore（Settings/ModSettings/Binding/ModSettingsValueBindings.cs:43）。
+    /// </summary>
+    private static void RegisterJainaSettings()
+    {
+        try
+        {
+            RitsuLibFramework.RegisterModSettings(ModId, page => page
+                .WithTitle(ModSettingsText.Literal("吉安娜"))
+                .WithModDisplayName(ModSettingsText.Literal("Jaina"))
+                .AddSection("card_style", section => section
+                    .WithTitle(ModSettingsText.Literal("卡面样式"))
+                    .AddToggle(
+                        "ancient_card_style",
+                        ModSettingsText.Literal("先古卡样式"),
+                        new ModSettingsValueBinding<JainaSettings, bool>(
+                            ModId,
+                            "settings",
+                            SaveScope.Global,
+                            s => s.AncientCardStyle,
+                            (s, value) => s.AncientCardStyle = value),
+                        ModSettingsText.Literal(
+                            "开启后所有吉安娜卡牌使用先古卡布局，卡图按 250x351 竖版显示。"))));
+        }
+        catch (System.Exception ex)
+        {
+            Logger.Warn($"[Jaina] register mod settings failed: {ex.Message}");
         }
     }
 }

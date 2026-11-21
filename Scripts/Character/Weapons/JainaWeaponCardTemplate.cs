@@ -6,6 +6,7 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using jaina.Scripts.Character.Keywords;
 using STS2RitsuLib.Scaffolding.Content;
+using jaina.Scripts.Character.Cards;
 
 namespace jaina.Scripts.Character.Weapons;
 
@@ -58,4 +59,13 @@ public abstract class JainaWeaponCardTemplate : ModCardTemplate
     {
         await JainaWeaponSlot.Equip(choiceContext, base.Owner, WeaponAttack, WeaponDurability, this);
     }
+
+    /// <summary>
+    /// 先古卡样式开关（RitsuLib 设置页）：开启后卡面改用游戏先古布局，
+    /// 卡图区域为 250x351 竖版（游戏 %AncientPortrait 节点）。
+    /// 证据：ModCardTemplate.CustomVisualStyle（ModCardTemplate.cs:101）→
+    /// ContentAssetModelVisualOverridePatches.ApplyVisualStyle ancient 分支（同文件 541-563）。
+    /// </summary>
+    public override CardVisualStyle CustomVisualStyle =>
+        JainaCardStyle.Ancient ? CardVisualStyle.Ancient : CardVisualStyle.Default;
 }
