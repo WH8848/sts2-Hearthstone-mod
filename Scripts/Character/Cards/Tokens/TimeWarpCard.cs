@@ -4,6 +4,7 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization;
+using jaina.Scripts.Character.Cards;
 using jaina.Scripts.Character.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -25,6 +26,14 @@ public sealed class TimeWarpCard : ModCardTemplate
         [jaina.Scripts.Character.Keywords.JainaKeywords.Arcane, CardKeyword.Exhaust];
 
     public override string CustomPortraitPath => "res://assets/card_art/time_warp.png";
+
+    /// <summary>
+    /// 卡图风格（先古布局）：与 5 个卡模板一致，直接继承 ModCardTemplate 的卡也要覆写，
+    /// 否则"杀戮尖塔风格（先古）"下这张任务奖励 Token 仍是普通布局。
+    /// 证据：ModCardTemplate.CustomVisualStyle（ModCardTemplate.cs:101）。
+    /// </summary>
+    public override CardVisualStyle CustomVisualStyle =>
+        JainaCardStyle.UseAncientLayout ? CardVisualStyle.Ancient : CardVisualStyle.Default;
 
     public TimeWarpCard()
         : base(2, CardType.Skill, CardRarity.Token, TargetType.None, true)
