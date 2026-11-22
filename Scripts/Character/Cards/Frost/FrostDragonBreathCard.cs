@@ -102,6 +102,7 @@ public sealed class FrostDragonBreathCard : JainaSpellCardTemplate
                 var enemies = combatState.GetOpponentsOf(base.Owner.Creature)
                     .Where(e => e != null && e.IsAlive && e.IsHittable)
                     .ToList();
+                    jaina.Scripts.DeterministicPool.SortCreatures(enemies);
                 if (enemies.Count == 0)
                 {
                     break;
@@ -136,6 +137,7 @@ public sealed class FrostDragonBreathCard : JainaSpellCardTemplate
         var enemies2 = combatState2.GetOpponentsOf(base.Owner.Creature)
             .Where(e => e != null && e.IsAlive && e.IsHittable)
             .ToList();
+            jaina.Scripts.DeterministicPool.SortCreatures(enemies2);
         if (enemies2.Count == 0)
         {
             return;

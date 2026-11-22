@@ -61,6 +61,7 @@ public sealed class SkatingElementalMinion : JainaMinionBase
             var enemies = combatState.Creatures
                 .Where(c => c != null && c.IsAlive && c.Side != Creature.Side)
                 .ToList();
+                jaina.Scripts.DeterministicPool.SortCreatures(enemies);
             if (enemies.Count == 0)
             {
                 return;

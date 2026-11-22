@@ -75,6 +75,7 @@ public sealed class RecklessApprenticeMinion : JainaMinionBase
                     .Where(c => c != null && c.IsAlive && heroPower.IsValidTarget(c) &&
                                 c.Side != owner.Creature.Side)
                     .ToList();
+                    jaina.Scripts.DeterministicPool.SortCreatures(pool);
                 target = pool.Count > 0 ? owner.RunState.Rng.CombatTargets.NextItem(pool) : null;
                 if (target == null)
                 {

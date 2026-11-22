@@ -122,6 +122,7 @@ public static class JainaRandomPoolHelper
     private static readonly HashSet<string> EnemyLimitedEntries = new HashSet<string>(StringComparer.Ordinal);
 
     private static bool _enemyLimitedCacheLoaded;
+    private static readonly object EnemyLimitedCacheLock = new();
 
     /// <summary>
     /// 该 AnyEnemy 单体攻击牌是否描述限定"对敌人"（是 → 随机施放保持敌人目标；
@@ -197,15 +198,22 @@ public static class JainaRandomPoolHelper
         {
             return;
         }
-        _enemyLimitedCacheLoaded = true;
-        try
+        lock (EnemyLimitedCacheLock)
         {
-            CollectEnemyLimitedFromFile("res://localization/zhs/cards.json");
-            CollectEnemyLimitedFromFile("res://jaina/localization/zhs/cards.json");
-        }
-        catch (Exception ex)
-        {
-            MegaCrit.Sts2.Core.Logging.Log.Error($"[Jaina] enemy-limited cache failed: {ex}");
+            if (_enemyLimitedCacheLoaded)
+            {
+                return;
+            }
+            try
+            {
+                CollectEnemyLimitedFromFile("res://localization/zhs/cards.json");
+                CollectEnemyLimitedFromFile("res://jaina/localization/zhs/cards.json");
+            }
+            catch (Exception ex)
+            {
+                MegaCrit.Sts2.Core.Logging.Log.Error($"[Jaina] enemy-limited cache failed: {ex}");
+            }
+            _enemyLimitedCacheLoaded = true;
         }
     }
 

@@ -36,31 +36,59 @@ public static class JainaPendingRewardQueue
         }
 
         var pending = Queues.GetOrCreateValue(combatState).GetOrCreateValue(player);
-        pending.Grants.Enqueue(grant);
+        lock (pending)
+        {
+            pending.Grants.Enqueue(grant);
+        }
         return TryFlush(combatState, player, choiceContext);
     }
 
     private static async Task TryFlush(ICombatState combatState, Player player, PlayerChoiceContext? choiceContext)
     {
         if (!Queues.TryGetValue(combatState, out var players) ||
-            !players.TryGetValue(player, out var pending) || pending.IsFlushing)
+            !players.TryGetValue(player, out var pending))
         {
             return;
         }
 
-        pending.IsFlushing = true;
+        lock (pending)
+        {
+            if (pending.IsFlushing)
+            {
+                return;
+            }
+            pending.IsFlushing = true;
+        }
         try
         {
-            while (pending.Grants.Count > 0 && ReferenceEquals(player.Creature.CombatState, combatState) &&
+            while (ReferenceEquals(player.Creature.CombatState, combatState) &&
                    player.Creature.IsAlive && !CombatManager.Instance.IsOverOrEnding && JainaHandHelper.CanAddToHand(player))
             {
-                var grant = pending.Grants.Dequeue();
-                await grant(choiceContext ??= new BlockingPlayerChoiceContext());
+                Func<PlayerChoiceContext, Task>? grant;
+                lock (pending)
+                {
+                    grant = pending.Grants.Count > 0 ? pending.Grants.Dequeue() : null;
+                }
+                if (grant == null)
+                {
+                    break;
+                }
+                try
+                {
+                    await grant(choiceContext ??= new BlockingPlayerChoiceContext());
+                }
+                catch (System.Exception ex)
+                {
+                    MegaCrit.Sts2.Core.Logging.Log.Error($"[Jaina] pending reward grant failed: {ex}");
+                }
             }
         }
         finally
         {
-            pending.IsFlushing = false;
+            lock (pending)
+            {
+                pending.IsFlushing = false;
+            }
         }
     }
 

@@ -111,12 +111,14 @@ public sealed class DeathborneCard : JainaSpellCardTemplate
             .Where(c => c.IsPet || c.Monster is MinionLib.Minion.MinionModel)
             .Where(c => cardPlay.IsAutoPlay || c.PetOwner == null || c.PetOwner == base.Owner)
             .ToList();
+            jaina.Scripts.DeterministicPool.SortCreatures(victims);
 
         // 1) 先对敌人造成 7 次 2 点伤害（随机分配到所有敌人，每次伤害都检查消灭）
         int killed = 0;
         var enemies = combatState.GetOpponentsOf(base.Owner.Creature)
             .Where(e => e != null && e.IsAlive && e.IsHittable)
             .ToList();
+            jaina.Scripts.DeterministicPool.SortCreatures(enemies);
         for (int i = 0; i < 7; i++)
         {
             enemies = enemies.Where(e => e.IsAlive).ToList();
@@ -176,6 +178,7 @@ public sealed class DeathborneCard : JainaSpellCardTemplate
             var enemies = combatState.GetOpponentsOf(base.Owner.Creature)
                 .Where(e => e.IsAlive && e.IsHittable)
                 .ToList();
+                jaina.Scripts.DeterministicPool.SortCreatures(enemies);
             if (enemies.Count == 0)
             {
                 break;
@@ -197,6 +200,7 @@ public sealed class DeathborneCard : JainaSpellCardTemplate
         var allEnemies = combatState.GetOpponentsOf(base.Owner.Creature)
             .Where(e => e != null && e.IsAlive)
             .ToList();
+            jaina.Scripts.DeterministicPool.SortCreatures(allEnemies);
         foreach (var enemy in allEnemies)
         {
             await PowerCmd.Apply<FreezePower>(choiceContext, [enemy], 7m, base.Owner.Creature, this);

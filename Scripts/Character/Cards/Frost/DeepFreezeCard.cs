@@ -107,6 +107,7 @@ public sealed class DeepFreezeCard : JainaSpellCardTemplate
                     .GetOpponentsOf(minion)
                     .Where(e => e != null && e.IsAlive && e.IsHittable)
                     .ToList();
+                    jaina.Scripts.DeterministicPool.SortCreatures(enemies);
                 if (enemies.Count == 0)
                 {
                     continue;

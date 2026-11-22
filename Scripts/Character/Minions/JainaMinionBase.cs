@@ -950,6 +950,7 @@ public abstract class JainaMinionBase : MinionModel, IModCreatureVisualsFactory
             .GetOpponentsOf(Creature)
             .Where(e => e != null && e.IsAlive && e.IsHittable)
             .ToList();
+            jaina.Scripts.DeterministicPool.SortCreatures(opponents);
         if (opponents.Count == 0)
         {
             return;

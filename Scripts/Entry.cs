@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using HarmonyLib;
 using jaina.Scripts.Character.Cards;
 using jaina.Scripts.Character.Minions;
@@ -247,22 +248,30 @@ public class Entry
         try
         {
             var player = playerCreature.Player;
-            if (player?.PlayerCombatState == null)
+            var combatState = playerCreature.CombatState;
+            if (player?.PlayerCombatState == null || combatState == null)
             {
                 return;
             }
-            foreach (var pet in player.PlayerCombatState.Pets.ToList())
-            {
-                if (pet != null && pet.IsAlive)
-                {
-                    _ = MegaCrit.Sts2.Core.Helpers.TaskHelper.RunSafely(
-                        MegaCrit.Sts2.Core.Commands.CreatureCmd.Kill(pet));
-                }
-            }
+            jaina.Scripts.Character.Powers.JainaSerialExecutor.Enqueue(
+                combatState,
+                player,
+                () => KillPetsAsync(player));
         }
         catch (System.Exception ex)
         {
             Logger.Info($"[Jaina] clear pets on player death failed: {ex}");
+        }
+    }
+
+    private static async Task KillPetsAsync(MegaCrit.Sts2.Core.Entities.Players.Player player)
+    {
+        foreach (var pet in player.PlayerCombatState.Pets.ToList())
+        {
+            if (pet != null && pet.IsAlive)
+            {
+                await MegaCrit.Sts2.Core.Commands.CreatureCmd.Kill(pet, force: false);
+            }
         }
     }
 

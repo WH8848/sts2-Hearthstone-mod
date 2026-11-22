@@ -111,6 +111,7 @@ public sealed class ForbiddenStonePower : PowerModel, IModPowerAssetOverrides
                     var pool = combatState.Creatures
                         .Where(c => c != null && c.IsAlive && other.IsValidTarget(c))
                         .ToList();
+                        jaina.Scripts.DeterministicPool.SortCreatures(pool);
                     target = pool.Count > 0 ? player.RunState.Rng.CombatTargets.NextItem(pool) : null;
                     if (target == null)
                     {

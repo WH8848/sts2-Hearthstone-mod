@@ -38,6 +38,7 @@ public sealed class VardenMinion : JainaMinionBase
             return;
         }
         var enemies = Creature.CombatState.GetOpponentsOf(Creature).Where(e => e != null && e.IsAlive).ToList();
+        jaina.Scripts.DeterministicPool.SortCreatures(enemies);
         foreach (var enemy in enemies)
         {
             // 已冻结的：每层冻结造成 4 点伤害

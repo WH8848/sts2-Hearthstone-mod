@@ -58,6 +58,7 @@ public sealed class MordreshFireEyeMinion : JainaMinionBase
         var enemies = combatState.GetOpponentsOf(owner.Creature)
             .Where(e => e != null && e.IsAlive && e.IsHittable)
             .ToList();
+            jaina.Scripts.DeterministicPool.SortCreatures(enemies);
         for (int i = 0; i < 8; i++)
         {
             enemies = enemies.Where(e => e.IsAlive).ToList();

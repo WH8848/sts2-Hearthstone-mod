@@ -105,6 +105,7 @@ public sealed class FlameWard : JainaSpellCardTemplate
             .Where(c => c.IsAlive && (c.IsPet || c.Monster is MinionLib.Minion.MinionModel))
             .Where(c => cardPlay.IsAutoPlay || c.PetOwner == null || c.PetOwner == base.Owner)
             .ToList();
+            jaina.Scripts.DeterministicPool.SortCreatures(victims);
         foreach (var victim in victims)
         {
             if (!victim.IsAlive)
@@ -129,6 +130,7 @@ public sealed class FlameWard : JainaSpellCardTemplate
             var enemies = combatState.GetOpponentsOf(base.Owner.Creature)
                 .Where(e => e.IsAlive && e.IsHittable)
                 .ToList();
+                jaina.Scripts.DeterministicPool.SortCreatures(enemies);
             if (enemies.Count == 0)
             {
                 break;

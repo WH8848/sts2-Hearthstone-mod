@@ -85,6 +85,7 @@ public sealed class VexallusMinion : JainaMinionBase
             var pool = combatState.Creatures
                 .Where(c => c != null && c.IsAlive && copy.IsValidTarget(c))
                 .ToList();
+                jaina.Scripts.DeterministicPool.SortCreatures(pool);
             target = pool.Count > 0 ? owner.RunState.Rng.CombatTargets.NextItem(pool) : null;
             if (target == null)
             {

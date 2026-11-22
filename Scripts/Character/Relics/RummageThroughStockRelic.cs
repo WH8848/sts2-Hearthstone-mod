@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.Relics;
@@ -57,7 +58,13 @@ public sealed class RummageThroughStockRelic : ModRelicTemplate
         {
             return;
         }
-        _ = TaskHelper.RunSafely(DealDamageAsync(player));
+        var combatState = player.Creature.CombatState;
+        if (combatState.CurrentSide != CombatSide.Player || player.Creature.Side != CombatSide.Player)
+        {
+            return;
+        }
+        jaina.Scripts.Character.Powers.JainaSerialExecutor.Enqueue(
+            combatState, player, () => DealDamageAsync(player));
     }
 
     private static async Task DealDamageAsync(Player player)
@@ -70,6 +77,7 @@ public sealed class RummageThroughStockRelic : ModRelicTemplate
         var enemies = combatState.GetOpponentsOf(player.Creature)
             .Where(e => e != null && e.IsAlive && e.IsHittable)
             .ToList();
+        jaina.Scripts.DeterministicPool.SortCreatures(enemies);
         if (enemies.Count == 0)
         {
             return;

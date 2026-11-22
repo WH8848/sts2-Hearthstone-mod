@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using MegaCrit.Sts2.Core.Entities.Creatures;
 
 namespace jaina.Scripts;
 
@@ -33,6 +34,20 @@ public static class DeterministicPool
         {
             int byName = string.CompareOrdinal(a.Type?.FullName, b.Type?.FullName);
             return byName != 0 ? byName : a.UpgradeLevel.CompareTo(b.UpgradeLevel);
+        });
+    }
+
+    /// <summary>按战斗编号排序生物候选表，作为联机随机目标的统一顺序。</summary>
+    public static void SortCreatures(List<Creature> candidates)
+    {
+        if (candidates == null || candidates.Count <= 1)
+        {
+            return;
+        }
+        candidates.Sort((a, b) =>
+        {
+            int byId = Nullable.Compare(a.CombatId, b.CombatId);
+            return byId != 0 ? byId : string.CompareOrdinal(a.Name, b.Name);
         });
     }
 }

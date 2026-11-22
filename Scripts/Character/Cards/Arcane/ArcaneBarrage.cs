@@ -93,6 +93,7 @@ public sealed class ArcaneBarrage : JainaSpellCardTemplate
             var enemies = combatState.GetOpponentsOf(base.Owner.Creature)
                 .Where(e => e.IsAlive && e.IsHittable)
                 .ToList();
+                jaina.Scripts.DeterministicPool.SortCreatures(enemies);
             if (enemies.Count == 0)
             {
                 break;

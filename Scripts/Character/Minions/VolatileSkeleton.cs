@@ -69,6 +69,7 @@ public sealed class VolatileSkeleton : JainaMinionBase
             .GetOpponentsOf(Creature)
             .Where(e => e != null && e.IsAlive && e.IsHittable)
             .ToList();
+            jaina.Scripts.DeterministicPool.SortCreatures(opponents);
         MegaCrit.Sts2.Core.Logging.Log.Info(
             $"[JainaDeathrattle] VolatileSkeleton opponents={opponents.Count} stateNull={Creature.CombatState == null}");
         if (opponents.Count == 0)

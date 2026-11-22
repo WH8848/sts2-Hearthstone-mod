@@ -65,6 +65,7 @@ public static class AutoPlayTargetPatch
                 var hellEnemies = combatState.GetOpponentsOf(card.Owner.Creature)
                     .Where(c => c != null && c.IsAlive && c.IsHittable && card.IsValidTarget(c))
                     .ToList();
+                    jaina.Scripts.DeterministicPool.SortCreatures(hellEnemies);
                 target = hellEnemies.Count > 0
                     ? card.Owner.RunState.Rng.CombatTargets.NextItem(hellEnemies)
                     : null;

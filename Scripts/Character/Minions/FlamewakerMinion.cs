@@ -54,6 +54,7 @@ public sealed class FlamewakerMinion : JainaMinionBase
             var enemies = combatState.GetOpponentsOf(Creature)
                 .Where(e => e != null && e.IsAlive && e.IsHittable)
                 .ToList();
+                jaina.Scripts.DeterministicPool.SortCreatures(enemies);
             if (enemies.Count == 0)
             {
                 break;

@@ -107,6 +107,7 @@ public sealed class MagisterDawngraspCard : JainaHeroCardTemplate
                 var pool = combatState.Creatures
                     .Where(c => c != null && c.IsAlive && card.IsValidTarget(c))
                     .ToList();
+                    jaina.Scripts.DeterministicPool.SortCreatures(pool);
                 target = pool.Count > 0 ? base.Owner.RunState.Rng.CombatTargets.NextItem(pool) : null;
                 if (target == null)
                 {

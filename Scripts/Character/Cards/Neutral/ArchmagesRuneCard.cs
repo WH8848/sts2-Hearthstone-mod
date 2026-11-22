@@ -139,6 +139,7 @@ public sealed class ArchmagesRuneCard : JainaSpellCardTemplate
                 var enemies = combatState.Creatures
                     .Where(c => c != null && c.IsAlive && c.Side != owner.Creature.Side && card.IsValidTarget(c))
                     .ToList();
+                    jaina.Scripts.DeterministicPool.SortCreatures(enemies);
                 if (enemies.Count == 0)
                 {
                     pool.Remove(card);

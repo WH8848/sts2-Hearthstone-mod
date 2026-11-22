@@ -138,6 +138,7 @@ public static class MageSpellCaster
                 // 球施放的法术优先打敌人，不打自己/队友/己方随从）；
                 // 无敌人时回退全部合法目标（不因无敌人而放弃施放）
                 var enemies = pool.Where(c => c.Side != player.Creature.Side).ToList();
+                jaina.Scripts.DeterministicPool.SortCreatures(enemies);
                 if (enemies.Count > 0)
                 {
                     pool = enemies;

@@ -58,7 +58,11 @@ public static class TemporaryStrengthPetTurnEndFix
         {
             var amount = __instance.Amount;
             bool positive = TemporaryPowerPetTurnEndHelper.IsPositive(__instance);
-            _ = RemoveAndRestoreAsync(__instance, choiceContext, owner, positive ? -amount : amount);
+            if (owner.CombatState is { } combatState && owner.PetOwner is { } petOwner)
+            {
+                JainaSerialExecutor.Enqueue(combatState, petOwner,
+                    () => RemoveAndRestoreAsync(__instance, choiceContext, owner, positive ? -amount : amount));
+            }
             // ⚠ 必须 return true：async 方法被 Prefix 跳过会返回 null Task 导致
             // Hook.AfterSideTurnEnd 崩溃（ArgumentNullException 'task1'）。
             // 原方法对随从（不在 participants）是 no-op，执行无害。
@@ -97,7 +101,11 @@ public static class TemporaryFocusPetTurnEndFix
         {
             var amount = __instance.Amount;
             bool positive = TemporaryPowerPetTurnEndHelper.IsPositive(__instance);
-            _ = RemoveAndRestoreAsync(__instance, choiceContext, owner, positive ? -amount : amount);
+            if (owner.CombatState is { } combatState && owner.PetOwner is { } petOwner)
+            {
+                JainaSerialExecutor.Enqueue(combatState, petOwner,
+                    () => RemoveAndRestoreAsync(__instance, choiceContext, owner, positive ? -amount : amount));
+            }
             // ⚠ 必须 return true：async 方法被 Prefix 跳过会返回 null Task（同上）
         }
         return true;
@@ -134,7 +142,11 @@ public static class TemporaryDexterityPetTurnEndFix
         {
             var amount = __instance.Amount;
             bool positive = TemporaryPowerPetTurnEndHelper.IsPositive(__instance);
-            _ = RemoveAndRestoreAsync(__instance, choiceContext, owner, positive ? -amount : amount);
+            if (owner.CombatState is { } combatState && owner.PetOwner is { } petOwner)
+            {
+                JainaSerialExecutor.Enqueue(combatState, petOwner,
+                    () => RemoveAndRestoreAsync(__instance, choiceContext, owner, positive ? -amount : amount));
+            }
             // ⚠ 必须 return true：async 方法被 Prefix 跳过会返回 null Task（同上）
         }
         return true;

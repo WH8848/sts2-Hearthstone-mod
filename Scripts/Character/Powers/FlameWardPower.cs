@@ -86,6 +86,7 @@ public sealed class FlameWardPower : PowerModel, IModPowerAssetOverrides
             var enemies = combatState.GetOpponentsOf(Owner)
                 .Where(e => e.IsAlive && e.IsHittable)
                 .ToList();
+                jaina.Scripts.DeterministicPool.SortCreatures(enemies);
             if (enemies.Count == 0)
             {
                 break;

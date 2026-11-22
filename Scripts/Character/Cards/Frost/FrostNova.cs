@@ -63,6 +63,7 @@ public sealed class FrostNova : JainaSpellCardTemplate
         var enemies = combatState.GetOpponentsOf(base.Owner.Creature)
             .Where(e => e != null && e.IsAlive)
             .ToList();
+            jaina.Scripts.DeterministicPool.SortCreatures(enemies);
         foreach (var enemy in enemies)
         {
             await PowerCmd.Apply<FreezePower>(

@@ -71,16 +71,8 @@ public sealed class IceBlockPower : PowerModel, IModPowerAssetOverrides
                 return 0m;
             }
             _pendingTrigger = true;
-            // 联机诊断：两端触发不一致时（StateDivergence——一端屏障消耗+免疫、
-            // 另一端未触发）对比 amount/hp/block，定位伤害或状态分歧
-            MegaCrit.Sts2.Core.Logging.Log.Info(
-                $"[JainaIceBlock] trigger: dealer={dealer?.Name ?? "null"} amount={amount} hp={target.CurrentHp} block={target.Block} unblocked={unblocked} stacks={Amount} card={(cardSource == null ? "null" : cardSource.Id.Entry)}\n" +
-                new System.Diagnostics.StackTrace(1, false).ToString().Substring(0, Math.Min(900, new System.Diagnostics.StackTrace(1, false).ToString().Length)));
             return 0m;
         }
-        // 诊断：非致命也打印（对比两端同一发伤害的 amount/hp/block 是否一致）
-        MegaCrit.Sts2.Core.Logging.Log.Info(
-            $"[JainaIceBlock] no-trigger: dealer={dealer?.Name ?? "null"} amount={amount} hp={target.CurrentHp} block={target.Block} unblocked={unblocked} stacks={Amount} card={(cardSource == null ? "null" : cardSource.Id.Entry)}");
         return 1m;
     }
 
@@ -136,7 +128,7 @@ public sealed class IceBlockPower : PowerModel, IModPowerAssetOverrides
             {
                 return true;
             }
-            return new System.Diagnostics.StackTrace().ToString()
+            return new System.Diagnostics.StackTrace(1, false).ToString()
                 .Contains("CombatPredictionSimulator", System.StringComparison.Ordinal);
         }
         catch

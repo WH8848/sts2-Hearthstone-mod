@@ -166,11 +166,13 @@ public sealed class ForbiddenShrineCard : JainaSpellCardTemplate
             IEnumerable<Creature> targetPool = combatState.Creatures
                 .Where(c => c != null && c.IsAlive && chosen.IsValidTarget(c));
             var enemies = targetPool.Where(c => c.Side != base.Owner.Creature.Side).ToList();
+            jaina.Scripts.DeterministicPool.SortCreatures(enemies);
             if (enemies.Count > 0)
             {
                 targetPool = enemies;
             }
             var targets = targetPool.ToList();
+            jaina.Scripts.DeterministicPool.SortCreatures(targets);
             target = targets.Count > 0 ? base.Owner.RunState.Rng.CombatTargets.NextItem(targets) : null;
             if (target == null)
             {
