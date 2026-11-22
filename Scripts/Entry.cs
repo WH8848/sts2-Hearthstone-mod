@@ -266,7 +266,11 @@ public class Entry
 
     private static async Task KillPetsAsync(MegaCrit.Sts2.Core.Entities.Players.Player player)
     {
-        foreach (var pet in player.PlayerCombatState.Pets.ToList())
+        if (player.PlayerCombatState is not { } combatState)
+        {
+            return;
+        }
+        foreach (var pet in combatState.Pets.ToList())
         {
             if (pet != null && pet.IsAlive)
             {
