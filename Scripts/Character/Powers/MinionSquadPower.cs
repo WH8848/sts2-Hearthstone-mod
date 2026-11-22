@@ -105,7 +105,13 @@ public sealed class MinionSquadPower : PowerModel, IModPowerAssetOverrides
             // 否则尸体卡图留在场上挡住其他随从。
             if (minion.IsDead)
             {
-                _ = CreatureCmd.Kill(minion, force: false);
+                if (player.Creature.CombatState is { } combatState)
+                {
+                    JainaSerialExecutor.Enqueue(
+                        combatState,
+                        player,
+                        () => CreatureCmd.Kill(minion, force: false));
+                }
             }
 
             if (amount <= 0m)
@@ -130,7 +136,7 @@ public sealed class MinionSquadPower : PowerModel, IModPowerAssetOverrides
             {
                 return true;
             }
-            return new System.Diagnostics.StackTrace().ToString()
+            return new System.Diagnostics.StackTrace(1, false).ToString()
                 .Contains("CombatPredictionSimulator", System.StringComparison.Ordinal);
         }
         catch
