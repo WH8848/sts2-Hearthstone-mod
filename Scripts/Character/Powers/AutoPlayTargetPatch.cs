@@ -40,7 +40,9 @@ public static class AutoPlayTargetPatch
             // （匣中古神/惊奇卡牌/球/哨塔/图腾/重放等吉安娜卡牌发起的释放，
             // 及地狱狂徒原版效果的打击自动打出）——其它 mod 的 AutoPlay 保持
             // 原版行为（不干预其自定义目标类型处理）。
-            if (!AutoPlayGuard.CurrentAutoPlayIsJainaOrigin && !hellraiserAutoPlay)
+            bool playedCardIsJaina = AutoPlayGuard.IsJainaCard(card);
+            // ③ 自动打出的卡本身是吉安娜卡（原版破灭打抽牌堆顶卡时 target=null 会失效）
+            if (!AutoPlayGuard.CurrentAutoPlayIsJainaOrigin && !hellraiserAutoPlay && !playedCardIsJaina)
             {
                 return;
             }
