@@ -29,6 +29,15 @@ public sealed class RommathMinion : JainaMinionBase
 
     protected override string MinionVisualsPath => "res://assets/card_art/archmage_rommath.png";
 
+    private CardModel? _sourceCard;
+
+    public override async Task OnSummon(PlayerChoiceContext choiceContext, Player owner,
+        MinionSummonOptions options)
+    {
+        _sourceCard = options.Source;
+        await base.OnSummon(choiceContext, owner, options);
+    }
+
     /// <summary>
     /// 战吼：重放本局玩家手打的每张牌库之外的攻击/技能牌（免费自动打出，随机目标）。
     /// 按"玩家手打的次数"重放（炉石：每次施放都重放）——打出 N 张衍生火球术就重放 N 次。
@@ -42,6 +51,17 @@ public sealed class RommathMinion : JainaMinionBase
         {
             return;
         }
+
+        // 基础版每局对战只允许一次战吼，升级版不受限制。
+        if (_sourceCard is { IsUpgraded: false })
+        {
+            if (jaina.Scripts.Character.JainaCastTracker.IsRommathUsedThisCombat(combatState))
+            {
+                return;
+            }
+            jaina.Scripts.Character.JainaCastTracker.MarkRommathUsed(combatState);
+        }
+
         var rec = jaina.Scripts.Character.JainaCastTracker.For(combatState);
         // 重放"我"手打的牌库之外法术（按玩家区分，联机不混入队友的）
         var myCounts = rec.PlayerCastOutsideDeckCountsByPlayer.TryGetValue(owner.NetId, out var countsMap)

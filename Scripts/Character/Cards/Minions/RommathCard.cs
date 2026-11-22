@@ -27,6 +27,23 @@ public sealed class RommathCard : JainaMinionCardTemplate
 
     protected override int MinionHealth => 7;
 
+    /// <summary>
+    /// 基础版每局对战只能触发一次战吼，升级版取消限制。
+    /// </summary>
+    protected override bool IsPlayable
+    {
+        get
+        {
+            if (!base.IsPlayable || IsUpgraded)
+            {
+                return base.IsPlayable;
+            }
+            var combatState = Owner?.Creature?.CombatState;
+            return combatState == null ||
+                   !jaina.Scripts.Character.JainaCastTracker.IsRommathUsedThisCombat(combatState);
+        }
+    }
+
     public RommathCard()
         : base(3, CardRarity.Rare)
     {

@@ -204,6 +204,11 @@ public static class JainaCastTracker
     private static readonly ConditionalWeakTable<ICombatState, object> TimeWarpUsed = new();
 
     /// <summary>
+    /// 大法师罗曼斯基础版每局对战限一次的使用记录。
+    /// </summary>
+    private static readonly ConditionalWeakTable<ICombatState, object> RommathUsed = new();
+
+    /// <summary>
     /// 本局对战是否已使用过时空扭曲（每局对战限一次）
     /// </summary>
     public static bool IsTimeWarpUsedThisCombat(ICombatState combatState)
@@ -218,6 +223,23 @@ public static class JainaCastTracker
     {
         TimeWarpUsed.Remove(combatState);
         TimeWarpUsed.Add(combatState, null!);
+    }
+
+    /// <summary>
+    /// 本局对战是否已触发基础版大法师罗曼斯战吼。
+    /// </summary>
+    public static bool IsRommathUsedThisCombat(ICombatState combatState)
+    {
+        return RommathUsed.TryGetValue(combatState, out _);
+    }
+
+    /// <summary>
+    /// 标记本局对战已触发基础版大法师罗曼斯战吼。
+    /// </summary>
+    public static void MarkRommathUsed(ICombatState combatState)
+    {
+        RommathUsed.Remove(combatState);
+        RommathUsed.Add(combatState, null!);
     }
 
     /// <summary>
