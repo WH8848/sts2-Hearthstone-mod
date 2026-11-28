@@ -17,6 +17,9 @@ mono_crash.*.json
 # Packed build artifacts
 *.pck
 
+# AI 工作流生成物（上下文包含本机绝对路径，不入库）
+docs/_ctx/
+
 # Personal / temp files
 /.idea
 env.props
